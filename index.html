@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xFlip Hold to Earn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.1/feather.min.js"></script>
+    <style>
+        body { font-family: 'Signika', sans-serif; background-color: #000; }
+    </style>
+</head>
+<body class="text-white flex flex-col items-center min-h-screen">
+
+    <!-- Fixed Header -->
+    <header class="w-full bg-gray-800 py-3 shadow-lg fixed top-0 left-0 z-50">
+        <div class="container mx-auto flex justify-between items-center px-6 text-sm">
+            <h1 class="text-xl font-bold text-green-400 flex items-center">
+                <i data-feather="zap" class="mr-2 text-yellow-400"></i>xFlip Testnet
+            </h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#" id="dashboardBtn" class="hover:text-green-400">Dashboard</a></li>
+                    <li><a href="#" id="leaderboardBtn" class="hover:text-green-400">Leaderboard</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div id="dashboard" class="text-center mt-20">
+        <h2 class="text-3xl font-bold mb-4">Hold to Earn xFlip Points</h2>
+        <p class="text-sm mb-6">Keep this page open and earn xFlip points automatically!</p>
+        <div class="bg-gray-800 p-5 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Your xFlip Points:</h3>
+            <p id="points" class="text-2xl font-bold text-green-400">0.00000</p>
+        </div>
+    </div>
+
+    <!-- Leaderboard Content -->
+    <div id="leaderboard" class="mt-20 text-center hidden">
+        <h2 class="text-3xl font-bold mb-4">Top 10 Earners</h2>
+        <ul id="leaderboardList" class="bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left"></ul>
+    </div>
+
+    <script>
+        feather.replace();
+
+        let points = parseFloat(localStorage.getItem("xFlipPoints")) || 0.00010;
+        const increment = 0.00002;
+        const display = document.getElementById("points");
+
+        function updatePoints() {
+            points += increment;
+            localStorage.setItem("xFlipPoints", points.toFixed(5));
+            display.textContent = points.toFixed(5);
+            updateLeaderboard();
+        }
+
+        function updateLeaderboard() {
+            let leaderboard = JSON.parse(localStorage.getItem("xFlipLeaderboard")) || [];
+            let user = { name: "You", points: points.toFixed(5) };
+
+            let existingIndex = leaderboard.findIndex(player => player.name === "You");
+            if (existingIndex !== -1) {
+                leaderboard[existingIndex] = user;
+            } else {
+                leaderboard.push(user);
+            }
+
+            leaderboard.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+            leaderboard = leaderboard.slice(0, 10);
+            localStorage.setItem("xFlipLeaderboard", JSON.stringify(leaderboard));
+
+            document.getElementById("leaderboardList").innerHTML = leaderboard
+                .map((player, index) => `<li class="text-sm">${index + 1}. ${player.name} - ${player.points} xFlip</li>`)
+                .join("");
+        }
+
+        document.getElementById("leaderboardBtn").addEventListener("click", () => {
+            document.getElementById("dashboard").classList.add("hidden");
+            document.getElementById("leaderboard").classList.remove("hidden");
+        });
+
+        document.getElementById("dashboardBtn").addEventListener("click", () => {
+            document.getElementById("leaderboard").classList.add("hidden");
+            document.getElementById("dashboard").classList.remove("hidden");
+        });
+
+        setInterval(updatePoints, 1000);
+        updateLeaderboard();
+    </script>
+
+</body>
+</html>
