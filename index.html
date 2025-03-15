@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xFlip Hold to Earn</title>
+    <title>xFlip Play to Earn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.1/feather.min.js"></script>
@@ -17,18 +17,19 @@
     <header class="w-full bg-gray-800 py-3 shadow-lg fixed top-0 left-0 z-50">
         <div class="container mx-auto flex justify-between items-center px-6 text-sm">
             <h1 class="text-xl font-bold text-green-400 flex items-center">
-                <i data-feather="zap" class="mr-2 text-yellow-400"></i>xFlip Testnet
+                <i data-feather="zap" class="mr-2 text-yellow-400"></i>xFlip Play to Earn
             </h1>
             <nav>
                 <ul class="flex space-x-6">
                     <li><a href="#" id="dashboardBtn" class="hover:text-green-400">Dashboard</a></li>
                     <li><a href="#" id="leaderboardBtn" class="hover:text-green-400">Leaderboard</a></li>
+                    <li><a href="#" id="gamesBtn" class="hover:text-green-400">Play to Earn</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Dashboard -->
     <div id="dashboard" class="text-center mt-20">
         <h2 class="text-3xl font-bold mb-4">Hold to Earn xFlip Points</h2>
         <p class="text-sm mb-6">Keep this page open and earn xFlip points automatically!</p>
@@ -38,10 +39,40 @@
         </div>
     </div>
 
-    <!-- Leaderboard Content -->
+    <!-- Leaderboard -->
     <div id="leaderboard" class="mt-20 text-center hidden">
         <h2 class="text-3xl font-bold mb-4">Top 10 Earners</h2>
         <ul id="leaderboardList" class="bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left"></ul>
+    </div>
+
+    <!-- Play to Earn Games -->
+    <div id="games" class="mt-20 text-center hidden">
+        <h2 class="text-3xl font-bold mb-4">Play to Earn xFlip</h2>
+
+        <!-- Click to Earn -->
+        <button id="clickEarn" class="bg-green-500 px-4 py-2 rounded-lg text-black font-bold my-2">
+            Click to Earn (+0.00100 xFlip)
+        </button>
+
+        <!-- Spin the Wheel -->
+        <div class="my-4">
+            <button id="spinBtn" class="bg-blue-500 px-4 py-2 rounded-lg text-black font-bold">Spin the Wheel</button>
+            <p id="spinResult" class="mt-2 text-lg"></p>
+        </div>
+
+        <!-- Daily Bonus -->
+        <button id="dailyBonus" class="bg-purple-500 px-4 py-2 rounded-lg text-black font-bold my-2">
+            Claim Daily Bonus (+0.00500 xFlip)
+        </button>
+
+        <!-- Quiz to Earn -->
+        <div class="my-4">
+            <p class="text-sm">What is the capital of France?</p>
+            <button class="quizBtn bg-red-500 px-4 py-1 rounded-md text-black font-bold mt-2" data-answer="Paris">Paris</button>
+            <button class="quizBtn bg-red-500 px-4 py-1 rounded-md text-black font-bold" data-answer="London">London</button>
+            <button class="quizBtn bg-red-500 px-4 py-1 rounded-md text-black font-bold" data-answer="Berlin">Berlin</button>
+            <p id="quizResult" class="mt-2 text-lg"></p>
+        </div>
     </div>
 
     <script>
@@ -78,15 +109,59 @@
                 .join("");
         }
 
-        document.getElementById("leaderboardBtn").addEventListener("click", () => {
-            document.getElementById("dashboard").classList.add("hidden");
-            document.getElementById("leaderboard").classList.remove("hidden");
+        // Click to Earn
+        document.getElementById("clickEarn").addEventListener("click", () => {
+            points += 0.001;
+            updatePoints();
         });
 
-        document.getElementById("dashboardBtn").addEventListener("click", () => {
-            document.getElementById("leaderboard").classList.add("hidden");
-            document.getElementById("dashboard").classList.remove("hidden");
+        // Spin the Wheel
+        document.getElementById("spinBtn").addEventListener("click", () => {
+            let reward = (Math.random() * 0.01).toFixed(5);
+            points += parseFloat(reward);
+            document.getElementById("spinResult").textContent = `You won +${reward} xFlip!`;
+            updatePoints();
         });
+
+        // Daily Bonus
+        document.getElementById("dailyBonus").addEventListener("click", () => {
+            let lastClaimed = localStorage.getItem("dailyBonus") || 0;
+            let now = Date.now();
+
+            if (now - lastClaimed > 86400000) { 
+                points += 0.005;
+                localStorage.setItem("dailyBonus", now);
+                updatePoints();
+                alert("Daily Bonus Claimed!");
+            } else {
+                alert("Come back tomorrow for your next bonus!");
+            }
+        });
+
+        // Quiz to Earn
+        document.querySelectorAll(".quizBtn").forEach(button => {
+            button.addEventListener("click", () => {
+                if (button.getAttribute("data-answer") === "Paris") {
+                    points += 0.002;
+                    document.getElementById("quizResult").textContent = "Correct! +0.002 xFlip";
+                    updatePoints();
+                } else {
+                    document.getElementById("quizResult").textContent = "Wrong answer. Try again!";
+                }
+            });
+        });
+
+        // Page Navigation
+        document.getElementById("leaderboardBtn").addEventListener("click", () => togglePage("leaderboard"));
+        document.getElementById("dashboardBtn").addEventListener("click", () => togglePage("dashboard"));
+        document.getElementById("gamesBtn").addEventListener("click", () => togglePage("games"));
+
+        function togglePage(page) {
+            document.getElementById("dashboard").classList.add("hidden");
+            document.getElementById("leaderboard").classList.add("hidden");
+            document.getElementById("games").classList.add("hidden");
+            document.getElementById(page).classList.remove("hidden");
+        }
 
         setInterval(updatePoints, 1000);
         updateLeaderboard();
