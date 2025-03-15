@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xFlip Play to Earn</title>
+    <title>Flip Play | Testnet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.1/feather.min.js"></script>
     <style>
         body { font-family: 'Signika', sans-serif; background-color: #000; }
+        .wheel { position: relative; width: 300px; height: 300px; border-radius: 50%; background: conic-gradient(#1e3a8a 0deg 45deg, #4f46e5 45deg 90deg, #fbbf24 90deg 135deg, #10b981 135deg 180deg, #e11d48 180deg 225deg, #8b5cf6 225deg 270deg, #f43f5e 270deg 315deg, #6366f1 315deg 360deg); display: flex; justify-content: center; align-items: center; }
+        .wheel .arrow { position: absolute; top: -30px; font-size: 40px; color: #fff; transform: rotate(45deg); z-index: 10; }
     </style>
 </head>
 <body class="text-white flex flex-col items-center min-h-screen">
@@ -49,29 +51,14 @@
     <div id="games" class="mt-20 text-center hidden">
         <h2 class="text-3xl font-bold mb-4">Play to Earn xFlip</h2>
 
-        <!-- Click to Earn -->
-        <button id="clickEarn" class="bg-green-500 px-4 py-2 rounded-lg text-black font-bold my-2">
-            Click to Earn (+0.00100 xFlip)
-        </button>
-
         <!-- Spin the Wheel -->
         <div class="my-4">
-            <button id="spinBtn" class="bg-blue-500 px-4 py-2 rounded-lg text-black font-bold">Spin the Wheel</button>
+            <div class="wheel">
+                <span class="arrow">↑</span>
+            </div>
+            <button id="spinBtn" class="bg-blue-500 px-4 py-2 rounded-lg text-black font-bold mt-4">Spin the Wheel (+0.0001 xFlip Fee)</button>
             <p id="spinResult" class="mt-2 text-lg"></p>
-        </div>
-
-        <!-- Daily Bonus -->
-        <button id="dailyBonus" class="bg-purple-500 px-4 py-2 rounded-lg text-black font-bold my-2">
-            Claim Daily Bonus (+0.00500 xFlip)
-        </button>
-
-        <!-- Quiz to Earn -->
-        <div class="my-4">
-            <p class="text-sm">What is the capital of France?</p>
-            <button class="quizBtn bg-red-500 px-4 py-1 rounded-md text-black font-bold mt-2" data-answer="Paris">Paris</button>
-            <button class="quizBtn bg-red-500 px-4 py-1 rounded-md text-black font-bold" data-answer="London">London</button>
-            <button class="quizBtn bg-red-500 px-4 py-1 rounded-md text-black font-bold" data-answer="Berlin">Berlin</button>
-            <p id="quizResult" class="mt-2 text-lg"></p>
+            <p id="transactionId" class="text-xs mt-1 text-gray-400"></p>
         </div>
     </div>
 
@@ -109,47 +96,44 @@
                 .join("");
         }
 
-        // Click to Earn
-        document.getElementById("clickEarn").addEventListener("click", () => {
-            points += 0.001;
-            updatePoints();
-        });
-
         // Spin the Wheel
         document.getElementById("spinBtn").addEventListener("click", () => {
-            let reward = (Math.random() * 0.01).toFixed(5);
-            points += parseFloat(reward);
-            document.getElementById("spinResult").textContent = `You won +${reward} xFlip!`;
-            updatePoints();
-        });
-
-        // Daily Bonus
-        document.getElementById("dailyBonus").addEventListener("click", () => {
-            let lastClaimed = localStorage.getItem("dailyBonus") || 0;
-            let now = Date.now();
-
-            if (now - lastClaimed > 86400000) { 
-                points += 0.005;
-                localStorage.setItem("dailyBonus", now);
-                updatePoints();
-                alert("Daily Bonus Claimed!");
-            } else {
-                alert("Come back tomorrow for your next bonus!");
+            if (points < 0.0001) {
+                alert("You don't have enough points to spin!");
+                return;
             }
+
+            points -= 0.0001;
+            const reward = getWheelReward();
+            points += reward;
+            updatePoints();
+
+            // Generate a random transaction ID
+            const transactionId = generateTransactionId();
+
+            document.getElementById("spinResult").textContent = `You won +${reward.toFixed(5)} xFlip!`;
+            document.getElementById("transactionId").textContent = `Transaction ID: ${transactionId} | Fee: 0.0001, Win: +${reward.toFixed(5)}`;
         });
 
-        // Quiz to Earn
-        document.querySelectorAll(".quizBtn").forEach(button => {
-            button.addEventListener("click", () => {
-                if (button.getAttribute("data-answer") === "Paris") {
-                    points += 0.002;
-                    document.getElementById("quizResult").textContent = "Correct! +0.002 xFlip";
-                    updatePoints();
-                } else {
-                    document.getElementById("quizResult").textContent = "Wrong answer. Try again!";
-                }
-            });
-        });
+        // Generate random transaction ID
+        function generateTransactionId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 16; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Get random wheel reward (based on wheel segments)
+        function getWheelReward() {
+            const rewards = [
+                0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.005, 0.02, 0.1 // 8 reward slots
+            ];
+
+            const randomIndex = Math.floor(Math.random() * rewards.length);
+            return rewards[randomIndex];
+        }
 
         // Page Navigation
         document.getElementById("leaderboardBtn").addEventListener("click", () => togglePage("leaderboard"));
