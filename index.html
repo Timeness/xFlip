@@ -53,7 +53,7 @@
 
         <!-- Spin the Wheel -->
         <div class="my-4">
-            <div class="wheel">
+            <div class="wheel" id="wheel">
                 <span class="arrow">↑</span>
             </div>
             <button id="spinBtn" class="bg-blue-500 px-4 py-2 rounded-lg text-black font-bold mt-4">Spin the Wheel (+0.0001 xFlip Fee)</button>
@@ -68,7 +68,9 @@
         let points = parseFloat(localStorage.getItem("xFlipPoints")) || 0.00010;
         const increment = 0.00002;
         const display = document.getElementById("points");
-
+        let isSpinning = false;
+        let autoSpinInterval;
+        
         function updatePoints() {
             points += increment;
             localStorage.setItem("xFlipPoints", points.toFixed(5));
@@ -97,7 +99,25 @@
         }
 
         // Spin the Wheel
-        document.getElementById("spinBtn").addEventListener("click", () => {
+        document.getElementById("spinBtn").addEventListener("mousedown", startAutoSpin);
+        document.getElementById("spinBtn").addEventListener("mouseup", stopAutoSpin);
+        document.getElementById("spinBtn").addEventListener("click", handleSpin);
+
+        function startAutoSpin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            autoSpinInterval = setInterval(() => {
+                spinWheel();
+            }, 100);
+        }
+
+        function stopAutoSpin() {
+            if (!isSpinning) return;
+            clearInterval(autoSpinInterval);
+            isSpinning = false;
+        }
+
+        function handleSpin() {
             if (points < 0.0001) {
                 alert("You don't have enough points to spin!");
                 return;
@@ -113,7 +133,7 @@
 
             document.getElementById("spinResult").textContent = `You won +${reward.toFixed(5)} xFlip!`;
             document.getElementById("transactionId").textContent = `Transaction ID: ${transactionId} | Fee: 0.0001, Win: +${reward.toFixed(5)}`;
-        });
+        }
 
         // Generate random transaction ID
         function generateTransactionId() {
