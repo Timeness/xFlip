@@ -118,12 +118,12 @@
         }
 
         function handleSpin() {
-            if (points < 0.0001) {
+            if (points < 0.01) {
                 alert("You don't have enough points to spin!");
                 return;
             }
 
-            points -= 0.0001;
+            points -= 0.01;
             const reward = getWheelReward();
             points += reward;
             updatePoints();
@@ -132,7 +132,7 @@
             const transactionId = generateTransactionId();
 
             document.getElementById("spinResult").textContent = `You won +${reward.toFixed(5)} xFlip!`;
-            document.getElementById("transactionId").textContent = `Transaction ID: ${transactionId} | Fee: 0.0001, Win: +${reward.toFixed(5)}`;
+            document.getElementById("transactionId").textContent = `Transaction ID: ${transactionId} | Fee: 0.01, Win: +${reward.toFixed(5)}`;
         }
 
         // Generate random transaction ID
