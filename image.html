@@ -3,67 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flip Testnet</title>
+    <title>xFlip Play to Earn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.1/feather.min.js"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
     <style>
-        body { font-family: 'Signika', sans-serif; background-color: #000; color: #fff; }
-        .wheel-container { position: relative; width: 320px; height: 320px; }
-        .wheel { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(#1e3a8a 0deg 45deg, #4f46e5 45deg 90deg, #fbbf24 90deg 135deg, #10b981 135deg 180deg, #e11d48 180deg 225deg, #8b5cf6 225deg 270deg, #f43f5e 270deg 315deg, #6366f1 315deg 360deg); display: flex; justify-content: center; align-items: center; transform: rotate(0deg); transition: transform 3s ease-out; }
-        .wheel .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 32px; color: #fff; }
+        body { font-family: 'Signika', sans-serif; background-color: #0a0a0a; color: #fff; }
+        .container { max-width: 1000px; margin: auto; }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 20px; }
+        .btn { background: linear-gradient(45deg, #6EE7B7, #3B82F6); padding: 12px 20px; border-radius: 8px; font-weight: bold; }
+        .flex-center { display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen">
 
     <!-- Header -->
-    <header class="w-full bg-gray-900 py-4 shadow-lg fixed top-0 left-0 z-50">
-        <div class="container mx-auto flex justify-between items-center px-6">
-            <h1 class="text-xl font-bold text-green-400 flex items-center">
-                <i data-feather="zap" class="mr-2 text-yellow-400"></i>Flip Testnet
-            </h1>
-            <nav>
-                <ul class="flex space-x-6">
-                    <li><a href="#" id="dashboardBtn" class="hover:text-green-400">Dashboard</a></li>
-                    <li><a href="#" id="leaderboardBtn" class="hover:text-green-400">Leaderboard</a></li>
-                    <li><a href="#" id="gamesBtn" class="hover:text-green-400">Play</a></li>
-                </ul>
-            </nav>
-        </div>
+    <header class="w-full py-5 shadow-lg fixed top-0 left-0 bg-gray-900 flex justify-between px-6 items-center">
+        <h1 class="text-2xl font-bold text-green-400 flex items-center">
+            <span class="iconify text-yellow-400 mr-2" data-icon="mdi:lightning-bolt"></span>xFlip Testnet
+        </h1>
+        <nav>
+            <ul class="flex space-x-6 text-lg">
+                <li><a href="#" id="dashboardBtn" class="hover:text-green-400">Dashboard</a></li>
+                <li><a href="#" id="leaderboardBtn" class="hover:text-green-400">Leaderboard</a></li>
+                <li><a href="#" id="gamesBtn" class="hover:text-green-400">Play to Earn</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <!-- Dashboard -->
-    <div id="dashboard" class="text-center mt-20">
-        <h2 class="text-3xl font-bold mb-4">Hold to Earn xFlip Points</h2>
-        <div class="bg-gray-800 p-5 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold">Your xFlip Points:</h3>
-            <p id="points" class="text-2xl font-bold text-green-400">0.00000</p>
-        </div>
-    </div>
-
-    <!-- Leaderboard -->
-    <div id="leaderboard" class="mt-20 text-center hidden">
-        <h2 class="text-3xl font-bold mb-4">Top 10 Earners</h2>
-        <ul id="leaderboardList" class="bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left"></ul>
-    </div>
-
-    <!-- Play to Earn Games -->
-    <div id="games" class="mt-20 text-center hidden">
-        <h2 class="text-3xl font-bold mb-4">Spin the Wheel</h2>
-
-        <div class="wheel-container">
-            <div class="wheel" id="wheel"></div>
-            <span class="pointer">▼</span>
+    <div class="container mt-20 flex flex-col items-center">
+        <!-- Dashboard -->
+        <div id="dashboard" class="glass w-full text-center">
+            <h2 class="text-3xl font-bold mb-4">Hold to Earn xFlip Points</h2>
+            <div class="bg-gray-800 p-5 rounded-lg shadow-md w-64">
+                <h3 class="text-lg font-semibold">Your xFlip Points:</h3>
+                <p id="points" class="text-2xl font-bold text-green-400">0.00000</p>
+            </div>
         </div>
 
-        <button id="spinBtn" class="bg-blue-500 px-4 py-2 rounded-lg text-black font-bold mt-4">Spin (0.01 xFlip Fee)</button>
-        <p id="spinResult" class="mt-2 text-lg"></p>
-        <p id="transactionId" class="text-xs mt-1 text-gray-400"></p>
+        <!-- Leaderboard -->
+        <div id="leaderboard" class="glass w-full mt-6 text-center hidden">
+            <h2 class="text-3xl font-bold mb-4">Top 10 Earners</h2>
+            <ul id="leaderboardList" class="bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left"></ul>
+        </div>
+
+        <!-- Play to Earn Games -->
+        <div id="games" class="glass w-full mt-6 text-center hidden">
+            <h2 class="text-3xl font-bold mb-4">Spin the Wheel</h2>
+
+            <div class="flex-center">
+                <div class="w-64 h-64 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex-center">
+                    <div class="w-56 h-56 rounded-full bg-gray-900 flex-center">
+                        <span class="iconify text-white text-5xl" data-icon="mdi:casino"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="spinBtn" class="btn mt-4">Spin (0.01 xFlip Fee)</button>
+            <p id="spinResult" class="mt-2 text-lg"></p>
+            <p id="transactionId" class="text-xs mt-1 text-gray-400"></p>
+        </div>
     </div>
 
     <script>
-        feather.replace();
-
         let points = parseFloat(localStorage.getItem("xFlipPoints")) || 0.00010;
         const increment = 0.00002;
         const display = document.getElementById("points");
