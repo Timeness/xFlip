@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: black;
+            overflow: hidden;
+        }
+        .container {
+            position: relative;
+            width: 716px;
+            height: 1386px;
+        }
+        .container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .btn {
+            position: absolute;
+            width: 180px; /* Adjust based on actual button size */
+            height: 50px;  /* Adjust based on actual button size */
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .return-home {
+            top: 1050px; /* Adjust based on button position */
+            left: 140px; /* Adjust based on button position */
+        }
+        .try-again {
+            top: 1050px;
+            left: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="error-image.jpg" alt="Error Screen"> 
+        <button class="btn return-home" onclick="location.href='index.html'"></button>
+        <button class="btn try-again" onclick="location.reload()"></button>
+    </div>
+</body>
+</html>
