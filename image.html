@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flip | Testnet</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="css/tailwind.css" rel="stylesheet">
     <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
     <style>
         body { font-family: 'Signika', sans-serif; background-color: #0a0a0a; color: #fff; }
@@ -15,7 +14,8 @@
         .flex-center { display: flex; align-items: center; justify-content: center; }
         footer { background-color: #111; padding: 20px; text-align: center; }
         footer a { margin: 0 10px; }
-        .toast { position: fixed; top: 20px; right: 20px; background-color: #FFEB3B; color: #333; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; z-index: 1000; }
+        .mining-info { font-size: 0.9rem; color: #ccc; }
+        .leaderboard { font-size: 14px; line-height: 2; }
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen">
@@ -32,6 +32,14 @@
                 <li><a href="#" id="gamesBtn" class="hover:text-green-400">Play</a></li>
             </ul>
         </nav>
+        <!-- Social Media Icons -->
+        <div class="flex space-x-4">
+            <a href="https://discord.com" target="_blank"><img src="assets/icons/discord-icon.svg" alt="Discord" class="w-6 h-6"></a>
+            <a href="https://telegram.org" target="_blank"><img src="assets/icons/telegram-icon.svg" alt="Telegram" class="w-6 h-6"></a>
+            <a href="https://instagram.com" target="_blank"><img src="assets/icons/instagram-icon.svg" alt="Instagram" class="w-6 h-6"></a>
+            <a href="https://linkedin.com" target="_blank"><img src="assets/icons/linkedin-icon.svg" alt="LinkedIn" class="w-6 h-6"></a>
+            <a href="https://youtube.com" target="_blank"><img src="assets/icons/youtube-icon.svg" alt="YouTube" class="w-6 h-6"></a>
+        </div>
     </header>
 
     <div class="container mt-20 flex flex-col items-center">
@@ -41,22 +49,24 @@
             <div class="bg-gray-800 p-5 rounded-lg shadow-md w-64">
                 <h3 class="text-lg font-semibold">Your xFlip Points:</h3>
                 <p id="points" class="text-2xl font-bold text-green-400">0.00000</p>
+                <p id="miningStatus" class="mining-info">Mining running... Please claim after 1 hour.</p>
+                <p id="lastClaim" class="mining-info">Last claim: Never</p>
             </div>
             <div class="mt-6">
-                <a href="#" class="btn" id="inviteLink">Invite & Earn Points</a>
+                <a href="#" class="btn" id="claimBtn">Claim xFlip Points</a>
+                <a href="#" class="btn mt-3" id="inviteLink">Invite & Earn Points</a>
             </div>
         </div>
 
         <!-- Leaderboard -->
         <div id="leaderboard" class="glass w-full mt-6 text-center hidden">
             <h2 class="text-3xl font-bold mb-4">Top 10 Earners</h2>
-            <ul id="leaderboardList" class="bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left"></ul>
+            <ul id="leaderboardList" class="leaderboard bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left"></ul>
         </div>
 
         <!-- Play to Earn Games -->
         <div id="games" class="glass w-full mt-6 text-center hidden">
             <h2 class="text-3xl font-bold mb-4">Spin the Wheel</h2>
-
             <div class="flex-center">
                 <div class="w-64 h-64 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex-center">
                     <div class="w-56 h-56 rounded-full bg-gray-900 flex-center">
@@ -64,7 +74,6 @@
                     </div>
                 </div>
             </div>
-
             <button id="spinBtn" class="btn mt-4">Spin (0.01 xFlip Fee)</button>
             <p id="spinResult" class="mt-2 text-lg"></p>
             <p id="transactionId" class="text-xs mt-1 text-gray-400"></p>
@@ -72,118 +81,12 @@
     </div>
 
     <footer>
-        <a href="https://discord.com" target="_blank">
-            <span class="iconify text-white text-2xl" data-icon="mdi:discord"></span>
-        </a>
-        <a href="https://telegram.org" target="_blank">
-            <span class="iconify text-white text-2xl" data-icon="mdi:telegram"></span>
-        </a>
-        <a href="https://instagram.com" target="_blank">
-            <span class="iconify text-white text-2xl" data-icon="mdi:instagram"></span>
-        </a>
-        <a href="https://linkedin.com" target="_blank">
-            <span class="iconify text-white text-2xl" data-icon="mdi:linkedin"></span>
-        </a>
-        <a href="https://youtube.com" target="_blank">
-            <span class="iconify text-white text-2xl" data-icon="mdi:youtube"></span>
-        </a>
+        <p class="text-gray-400 text-sm">© 2025 xFlip | All Rights Reserved</p>
     </footer>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast">Toast notification will appear here!</div>
 
-    <script>
-        let points = parseFloat(localStorage.getItem("xFlipPoints")) || 0.00010;
-        const increment = 0.00002;
-        const display = document.getElementById("points");
-        let isSpinning = false;
-        let autoSpinInterval;
-
-        function updatePoints() {
-            points += increment;
-            localStorage.setItem("xFlipPoints", points.toFixed(5));
-            display.textContent = points.toFixed(5);
-            updateLeaderboard();
-        }
-
-        function updateLeaderboard() {
-            let leaderboard = JSON.parse(localStorage.getItem("xFlipLeaderboard")) || [];
-            let userIp = "1262....9"; 
-            let user = { name: `{ip ${userIp}}`, points: points.toFixed(5) };
-
-            let existingIndex = leaderboard.findIndex(player => player.name === `{ip ${userIp}}`);
-            if (existingIndex !== -1) {
-                leaderboard[existingIndex] = user;
-            } else {
-                leaderboard.push(user);
-            }
-
-            leaderboard.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
-            leaderboard = leaderboard.slice(0, 10);
-            localStorage.setItem("xFlipLeaderboard", JSON.stringify(leaderboard));
-
-            document.getElementById("leaderboardList").innerHTML = leaderboard
-                .map((player, index) => `<li class="text-sm">${index + 1}. ${player.name} - ${player.points} xFlip</li>`)
-                .join("");
-        }
-
-        function handleSpin() {
-            if (points < 0.01) {
-                showToast("You don't have enough points!");
-                return;
-            }
-
-            points -= 0.01;
-            const reward = getWheelReward();
-            points += reward;
-            updatePoints();
-
-            const transactionId = generateTransactionId();
-            document.getElementById("spinResult").textContent = `You won +${reward.toFixed(5)} xFlip!`;
-            document.getElementById("transactionId").textContent = `Tx: ${transactionId} | Fee: 0.01, Win: +${reward.toFixed(5)}`;
-        }
-
-        function generateTransactionId() {
-            return Math.random().toString(36).substring(2, 15);
-        }
-
-        function getWheelReward() {
-            const rewards = [0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.005, 0.02, 0.1];
-            return rewards[Math.floor(Math.random() * rewards.length)];
-        }
-
-        document.getElementById("spinBtn").addEventListener("click", handleSpin);
-
-        function generateReferralLink() {
-            const uniqueId = Math.random().toString(36).substring(7);
-            return `${window.location.origin}/invite/${uniqueId}`;
-        }
-
-        document.getElementById("inviteLink").addEventListener("click", function() {
-            const referralLink = generateReferralLink();
-            showToast(`Share this link: ${referralLink}`);
-        });
-
-        function showToast(message) {
-            const toast = document.getElementById("toast");
-            toast.textContent = message;
-            toast.style.display = "block";
-            setTimeout(() => toast.style.display = "none", 3000);
-        }
-
-        // Handle new user registration and referral
-        const urlParams = new URLSearchParams(window.location.search);
-        const referralId = urlParams.get('invite');
-        if (referralId) {
-            points += 0.5;
-            localStorage.setItem("xFlipPoints", points.toFixed(5));
-            showToast("You've earned 0.5 bonus points for joining via referral!");
-            updatePoints();
-        }
-
-        setInterval(updatePoints, 1000);
-        updateLeaderboard();
-    </script>
-
+    <script src="js/app.js"></script>
 </body>
 </html>
