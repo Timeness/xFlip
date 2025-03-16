@@ -1,92 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flip | Testnet</title>
-    <link href="css/tailwind.css" rel="stylesheet">
-    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
-    <style>
-        body { font-family: 'Signika', sans-serif; background-color: #0a0a0a; color: #fff; }
-        .container { max-width: 1000px; margin: auto; }
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 20px; }
-        .btn { background: linear-gradient(45deg, #6EE7B7, #3B82F6); padding: 12px 20px; border-radius: 8px; font-weight: bold; }
-        .flex-center { display: flex; align-items: center; justify-content: center; }
-        footer { background-color: #111; padding: 20px; text-align: center; }
-        footer a { margin: 0 10px; }
-        .mining-info { font-size: 0.9rem; color: #ccc; }
-        .leaderboard { font-size: 14px; line-height: 2; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flip Mining | Testnet</title>
+  <!-- Add CDN links for Tailwind CSS and Iconify Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://code.iconify.design/2/2.0.0/iconify.min.js"></script>
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      padding: 0;
+      margin: 0;
+    }
+    .container {
+      padding: 20px;
+    }
+    .section {
+      margin-bottom: 20px;
+      padding: 20px;
+      background-color: #2c2c2c;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    .section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .button {
+      padding: 10px 20px;
+      background-color: #ffcc00;
+      color: #1a1a1a;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: #e6b800;
+    }
+    .points, .miningStatus {
+      font-size: 1.2rem;
+    }
+    .spin-wheel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 10px solid #ffcc00;
+      border-radius: 50%;
+      height: 200px;
+      width: 200px;
+      margin: 10px 0;
+      position: relative;
+    }
+    .spin-wheel .icon {
+      font-size: 2rem;
+      color: #ffcc00;
+    }
+    .leaderboard ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .leaderboard li {
+      margin: 10px 0;
+    }
+    .transaction {
+      margin-top: 20px;
+      background-color: #333333;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .transaction span {
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body class="flex flex-col items-center min-h-screen">
+<body>
 
-    <!-- Header -->
-    <header class="w-full py-5 shadow-lg fixed top-0 left-0 bg-gray-900 flex justify-between px-6 items-center">
-        <h1 class="text-2xl font-bold text-green-400 flex items-center">
-            <span class="iconify text-yellow-400 mr-2" data-icon="mdi:lightning-bolt"></span>Flip
-        </h1>
-        <nav>
-            <ul class="flex space-x-6 text-lg">
-                <li><a href="#" id="dashboardBtn" class="hover:text-green-400">Dashboard</a></li>
-                <li><a href="#" id="leaderboardBtn" class="hover:text-green-400">Leaderboard</a></li>
-                <li><a href="#" id="gamesBtn" class="hover:text-green-400">Play</a></li>
-            </ul>
-        </nav>
-        <!-- Social Media Icons -->
-        <div class="flex space-x-4">
-            <a href="https://discord.com" target="_blank"><img src="assets/icons/discord-icon.svg" alt="Discord" class="w-6 h-6"></a>
-            <a href="https://telegram.org" target="_blank"><img src="assets/icons/telegram-icon.svg" alt="Telegram" class="w-6 h-6"></a>
-            <a href="https://instagram.com" target="_blank"><img src="assets/icons/instagram-icon.svg" alt="Instagram" class="w-6 h-6"></a>
-            <a href="https://linkedin.com" target="_blank"><img src="assets/icons/linkedin-icon.svg" alt="LinkedIn" class="w-6 h-6"></a>
-            <a href="https://youtube.com" target="_blank"><img src="assets/icons/youtube-icon.svg" alt="YouTube" class="w-6 h-6"></a>
-        </div>
-    </header>
-
-    <div class="container mt-20 flex flex-col items-center">
-        <!-- Dashboard -->
-        <div id="dashboard" class="glass w-full text-center">
-            <h2 class="text-3xl font-bold mb-4">Hold to Earn xFlip Points</h2>
-            <div class="bg-gray-800 p-5 rounded-lg shadow-md w-64">
-                <h3 class="text-lg font-semibold">Your xFlip Points:</h3>
-                <p id="points" class="text-2xl font-bold text-green-400">0.00000</p>
-                <p id="miningStatus" class="mining-info">Mining running... Please claim after 1 hour.</p>
-                <p id="lastClaim" class="mining-info">Last claim: Never</p>
-            </div>
-            <div class="mt-6">
-                <a href="#" class="btn" id="claimBtn">Claim xFlip Points</a>
-                <a href="#" class="btn mt-3" id="inviteLink">Invite & Earn Points</a>
-            </div>
-        </div>
-
-        <!-- Leaderboard -->
-        <div id="leaderboard" class="glass w-full mt-6 text-center hidden">
-            <h2 class="text-3xl font-bold mb-4">Top 10 Earners</h2>
-            <ul id="leaderboardList" class="leaderboard bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left"></ul>
-        </div>
-
-        <!-- Play to Earn Games -->
-        <div id="games" class="glass w-full mt-6 text-center hidden">
-            <h2 class="text-3xl font-bold mb-4">Spin the Wheel</h2>
-            <div class="flex-center">
-                <div class="w-64 h-64 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex-center">
-                    <div class="w-56 h-56 rounded-full bg-gray-900 flex-center">
-                        <span class="iconify text-white text-5xl" data-icon="mdi:casino"></span>
-                    </div>
-                </div>
-            </div>
-            <button id="spinBtn" class="btn mt-4">Spin (0.01 xFlip Fee)</button>
-            <p id="spinResult" class="mt-2 text-lg"></p>
-            <p id="transactionId" class="text-xs mt-1 text-gray-400"></p>
-        </div>
+  <div class="container">
+    <!-- Dashboard Section -->
+    <div class="section">
+      <h2>Mining Dashboard</h2>
+      <p class="points">Current xFlip Points: <span id="points">0.00010</span></p>
+      <p id="miningStatus" class="miningStatus">Mining... Claim after 1 hour.</p>
+      <button id="claimBtn" class="button">Claim Points</button>
     </div>
 
-    <footer>
-        <p class="text-gray-400 text-sm">© 2025 xFlip | All Rights Reserved</p>
-    </footer>
+    <!-- Spin the Wheel Section -->
+    <div class="section">
+      <h2>Spin the Wheel</h2>
+      <div class="spin-wheel">
+        <span class="iconify icon" data-icon="twemoji:crescent-moon"></span>
+      </div>
+      <button id="spinBtn" class="button">Spin</button>
+      <p id="spinResult"></p>
+      <div id="transactionId" class="transaction"></div>
+    </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">Toast notification will appear here!</div>
+    <!-- Leaderboard Section -->
+    <div class="section leaderboard">
+      <h2>Leaderboard</h2>
+      <ul id="leaderboardList">
+        <!-- Leaderboard will populate here -->
+      </ul>
+    </div>
 
-    <script src="js/app.js"></script>
+    <!-- Footer Section -->
+    <div class="section">
+      <h2>Referral System</h2>
+      <p>Get your unique referral link:</p>
+      <p><a href="#" id="referralLink" class="button">Copy Referral Link</a></p>
+    </div>
+  </div>
+
+  <!-- Include app.js script -->
+  <script src="js/app.js"></script>
+
 </body>
 </html>
