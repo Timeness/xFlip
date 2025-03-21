@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceat Testnet - Color Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+        }
+        header {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #F2E205;
+            text-shadow: 0 0 5px rgba(242, 226, 5, 0.5);
+        }
+        .points-box {
+            background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
+            padding: 12px 25px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+        }
+        .points-box span {
+            font-size: 18px;
+            color: #F2E205;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 400px;
+            margin-top: 30px;
+            background: rgba(29, 29, 29, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .square {
+            background-color: #1d1d1d;
+            box-shadow: 0 0 2px #000;
+            height: 16px;
+            width: 16px;
+            margin: 2px;
+            transition: 2s ease;
+            cursor: pointer;
+        }
+        .square:hover {
+            transition-duration: 0s;
+        }
+        .game-over {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #F28705;
+            text-shadow: 0 0 5px rgba(242, 135, 5, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ceat Testnet</h1>
+        <div class="points-box">
+            <span class="iconify" data-icon="mdi:star" style="color: #F2E205;"></span>
+            <span id="points">0.05 cXP</span>
+        </div>
+    </header>
+    <div class="container" id="container"></div>
+    <div class="game-over" id="gameStatus"></div>
+
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script>
+        const container = document.getElementById("container");
+        const pointsDisplay = document.getElementById("points");
+        const gameStatus = document.getElementById("gameStatus");
+        const colors = ["#056CF2", "#05AFF2", "#F2E205", "#F28705", "#A62103"];
+        const SQUARES = 500;
+        const SECRET_KEY = "ceatSecure123";
+
+        let chosenColor = null;
+        let points = 0.05;
+        let increment = 0.05;
+        let gameActive = true;
+        let username = localStorage.getItem("ceatUsername");
+
+        // Prompt for username if not set
+        if (!username) {
+            username = prompt("Enter your username to start playing Ceat Testnet:");
+            if (username) {
+                localStorage.setItem("ceatUsername", username);
+                gameStatus.textContent = `Welcome, ${username}! Start tapping to earn cXP.`;
+            } else {
+                username = "Guest";
+                localStorage.setItem("ceatUsername", username);
+            }
+        } else {
+            gameStatus.textContent = `Welcome back, ${username}!`;
+        }
+
+        // User-specific keys
+        const pointsKey = `ceatPoints_${username}`;
+        const checkKey = `ceatCheck_${username}`;
+
+        // Simple hash-like function for integrity
+        const generateCheck = (value) => btoa(value + SECRET_KEY);
+
+        // Load user-specific points
+        const loadPoints = () => {
+            const savedPoints = localStorage.getItem(pointsKey);
+            const savedCheck = localStorage.getItem(checkKey);
+            if (savedPoints && savedCheck) {
+                const decodedCheck = atob(savedCheck);
+                if (decodedCheck === savedPoints + SECRET_KEY) {
+                    return parseFloat(savedPoints);
+                } else {
+                    console.warn("Points tampered! Resetting...");
+                }
+            }
+            return 0.05; // Default welcome bonus
+        };
+
+        points = loadPoints();
+        pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+
+        const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
+
+        const setColor = (square) => {
+            const color = getRandomColor();
+            square.style.background = color;
+            square.style.boxShadow = `0 0 2px ${color}, 0 0 10px ${color}`;
+            return color;
+        };
+
+        const removeColor = (square) => {
+            square.style.background = "#1d1d1d";
+            square.style.boxShadow = "0 0 2px #000";
+        };
+
+        const savePoints = () => {
+            const pointsStr = points.toFixed(2);
+            localStorage.setItem(pointsKey, pointsStr);
+            localStorage.setItem(checkKey, generateCheck(pointsStr));
+            pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+        };
+
+        const handleTap = (square) => {
+            if (!gameActive) return;
+
+            const currentColor = setColor(square);
+            if (!chosenColor) {
+                chosenColor = currentColor;
+                square.style.transition = "none";
+            } else if (currentColor === chosenColor) {
+                gameActive = false;
+                gameStatus.textContent = `Game Over, ${username}! Final Score: ${points.toFixed(2)} cXP`;
+                container.querySelectorAll(".square").forEach(s => s.removeEventListener("click", handleTap));
+                savePoints();
+            } else {
+                points += increment;
+                increment += 0.01;
+                savePoints();
+                setTimeout(() => removeColor(square), 500);
+            }
+        };
+
+        for (let i = 0; i < SQUARES; i++) {
+            const square = document.createElement("div");
+            square.classList.add("square");
+            square.addEventListener("click", () => handleTap(square));
+            container.appendChild(square);
+        }
+    </script>
+</body>
+</html>
