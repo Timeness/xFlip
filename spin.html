@@ -1,40 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spin & Earn</title>
-    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@500;600&display=swap" rel="stylesheet">
+    <title>Flip Play | Testnet</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.1/feather.min.js"></script>
+    <style>
+        body { font-family: 'Signika', sans-serif; background-color: #000; }
+        .edit-icon { cursor: pointer; color: #fbbf24; }
+    </style>
 </head>
-<body class="h-screen bg-black flex items-center justify-center text-white">
-    <div class="w-96 bg-gray-900 p-6 rounded-lg shadow-lg text-center relative">
-        <canvas id="wheel" class="w-full"></canvas>
-        <button id="spin-btn" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-yellow-400 text-black font-bold text-lg shadow-md">Spin</button>
-        <img src="https://i.ibb.co/ccgYZcvh/IMG-20250321-095647.jpg" class="w-10 absolute top-1/2 -right-4 transform -translate-y-1/2">
-        <p id="final-value" class="mt-4 text-lg">Click Spin to Start</p>
+<body class="text-white flex flex-col items-center min-h-screen">
+
+    <!-- Fixed Header -->
+    <header class="w-full bg-gray-800 py-3 shadow-lg fixed top-0 left-0 z-50">
+        <div class="container mx-auto flex justify-between items-center px-6 text-sm">
+            <h1 class="text-xl font-bold text-green-400 flex items-center">
+                <i data-feather="zap" class="mr-2 text-yellow-400"></i>Flip Play
+            </h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#" id="dashboardBtn" class="hover:text-green-400">Dashboard</a></li>
+                    <li><a href="#" id="profileBtn" class="hover:text-green-400">Profile</a></li>
+                    <li><a href="#" id="gamesBtn" class="hover:text-green-400">Play</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="text-center mt-20">
+        <h2 class="text-3xl font-bold mb-4">Hold to Earn xFlip Points</h2>
+        <p class="text-sm mb-6">Keep this page open and earn xFlip points automatically!</p>
+        <div class="bg-gray-800 p-5 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Your xFlip Points:</h3>
+            <p id="points" class="text-2xl font-bold text-green-400">0.00000</p>
+        </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script>
+    <!-- Profile Section -->
+    <div id="profile" class="mt-20 text-center hidden">
+        <h2 class="text-3xl font-bold mb-4">Your Profile</h2>
+        <div class="bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left">
+            <p><strong>ID:</strong> <span id="profileId"></span></p>
+            <p><strong>Joining Date:</strong> <span id="joiningDate"></span></p>
+            <p><strong>Last Open:</strong> <span id="lastOpen"></span></p>
+            <p><strong>Last Close:</strong> <span id="lastClose"></span></p>
+            <p><strong>Rank:</strong> <span id="rank">-</span></p>
+            <p><strong>Total Users:</strong> <span id="totalUsers">-</span></p>
+            
+            <!-- Editable Name -->
+            <p><strong>Name:</strong> 
+                <span id="profileName">Anonymous</span>
+                <i data-feather="edit" class="edit-icon ml-2" onclick="editField('profileName')"></i>
+            </p>
+
+            <!-- Editable Username -->
+            <p><strong>Username:</strong> 
+                <span id="profileUsername"></span>
+                <i data-feather="edit" class="edit-icon ml-2" onclick="editField('profileUsername')"></i>
+            </p>
+            <p id="usernameError" class="text-red-500 text-sm hidden">Already Exists</p>
+        </div>
+    </div>
+
     <script>
-        const wheel = document.getElementById("wheel"), spinBtn = document.getElementById("spin-btn"), finalValue = document.getElementById("final-value");
-        const rotationValues = [{min: 0, max: 30, val: 2}, {min: 31, max: 90, val: 1}, {min: 91, max: 150, val: 6}, {min: 151, max: 210, val: 5}, {min: 211, max: 270, val: 4}, {min: 271, max: 330, val: 3}, {min: 331, max: 360, val: 2}];
-        const data = Array(6).fill(16), colors = ["#8b35bc", "#b163da", "#8b35bc", "#b163da", "#8b35bc", "#b163da"];
-        let myChart = new Chart(wheel, { plugins: [ChartDataLabels], type: "pie", data: { labels: [1, 2, 3, 4, 5, 6], datasets: [{ backgroundColor: colors, data }] }, options: { responsive: true, animation: { duration: 0 }, plugins: { tooltip: false, legend: { display: false }, datalabels: { color: "#fff", formatter: (_, ctx) => ctx.chart.data.labels[ctx.dataIndex], font: { size: 24 } } } } });
-        
-        const getResult = (angle) => { for (let i of rotationValues) if (angle >= i.min && angle <= i.max) return i.val; };
-        
-        spinBtn.addEventListener("click", () => {
-            spinBtn.disabled = true; finalValue.textContent = "Spinning...";
-            let randomDegree = Math.floor(Math.random() * 360), speed = 100, rotations = 15, interval = setInterval(() => {
-                myChart.options.rotation += speed; myChart.update();
-                if (myChart.options.rotation >= 360) { rotations--; speed -= 5; myChart.options.rotation = 0; }
-                if (rotations <= 0 && myChart.options.rotation == randomDegree) {
-                    finalValue.textContent = `You got: ${getResult(randomDegree)}`;
-                    clearInterval(interval); spinBtn.disabled = false;
+        feather.replace();
+
+        let points = parseFloat(localStorage.getItem("xFlipPoints")) || 0.00010;
+        const increment = 0.00002;
+        const display = document.getElementById("points");
+
+        function updatePoints() {
+            points += increment;
+            localStorage.setItem("xFlipPoints", points.toFixed(5));
+            display.textContent = points.toFixed(5);
+        }
+
+        // Profile Generation
+        function generateProfile() {
+            let profile = JSON.parse(localStorage.getItem("xFlipProfile")) || {};
+
+            if (!profile.id) {
+                profile.id = Math.random().toString(36).substring(2, 10);
+                profile.joiningDate = new Date().toLocaleDateString();
+                profile.username = `anonymous${profile.id}`;
+            }
+
+            profile.lastOpen = new Date().toLocaleString();
+            localStorage.setItem("xFlipProfile", JSON.stringify(profile));
+
+            document.getElementById("profileId").textContent = profile.id;
+            document.getElementById("joiningDate").textContent = profile.joiningDate;
+            document.getElementById("lastOpen").textContent = profile.lastOpen;
+            document.getElementById("lastClose").textContent = profile.lastClose || "-";
+            document.getElementById("profileName").textContent = profile.name || "Anonymous";
+            document.getElementById("profileUsername").textContent = profile.username;
+
+            updateTotalUsers();
+        }
+
+        function updateTotalUsers() {
+            let totalUsers = JSON.parse(localStorage.getItem("xFlipTotalUsers")) || 1;
+            document.getElementById("totalUsers").textContent = totalUsers;
+            localStorage.setItem("xFlipTotalUsers", totalUsers);
+        }
+
+        function editField(field) {
+            let value = document.getElementById(field).textContent;
+            let newValue = prompt(`Enter new ${field.replace('profile', '')}:`, value);
+
+            if (newValue) {
+                if (field === "profileUsername") {
+                    if (newValue.length < 3) {
+                        alert("Username must be at least 3 characters.");
+                        return;
+                    }
+
+                    let allUsers = JSON.parse(localStorage.getItem("xFlipUsernames")) || {};
+                    if (allUsers[newValue]) {
+                        document.getElementById("usernameError").classList.remove("hidden");
+                        return;
+                    }
+
+                    document.getElementById("usernameError").classList.add("hidden");
+                    allUsers[newValue] = true;
+                    localStorage.setItem("xFlipUsernames", JSON.stringify(allUsers));
                 }
-            }, 10);
+
+                let profile = JSON.parse(localStorage.getItem("xFlipProfile")) || {};
+                profile[field.replace("profile", "").toLowerCase()] = newValue;
+                localStorage.setItem("xFlipProfile", JSON.stringify(profile));
+
+                document.getElementById(field).textContent = newValue;
+            }
+        }
+
+        // Handle page switch
+        document.getElementById("profileBtn").addEventListener("click", () => togglePage("profile"));
+        document.getElementById("dashboardBtn").addEventListener("click", () => togglePage("dashboard"));
+        document.getElementById("gamesBtn").addEventListener("click", () => togglePage("games"));
+
+        function togglePage(page) {
+            document.getElementById("dashboard").classList.add("hidden");
+            document.getElementById("profile").classList.add("hidden");
+            document.getElementById("games").classList.add("hidden");
+            document.getElementById(page).classList.remove("hidden");
+        }
+
+        window.addEventListener("beforeunload", () => {
+            let profile = JSON.parse(localStorage.getItem("xFlipProfile")) || {};
+            profile.lastClose = new Date().toLocaleString();
+            localStorage.setItem("xFlipProfile", JSON.stringify(profile));
         });
+
+        generateProfile();
+        setInterval(updatePoints, 1000);
     </script>
+
 </body>
 </html>
