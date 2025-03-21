@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceat - Earn cXP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <style>
+        body { background-color: #111; font-family: 'Signika', sans-serif; }
+        .square { background-color: #1d1d1d; box-shadow: 0 0 2px #000; width: 40px; height: 40px; margin: 5px; transition: background 0.5s; }
+        .square:hover { cursor: pointer; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen text-white">
+    
+    <header class="w-full text-center py-4 bg-gray-900 text-lg font-bold">
+        <span class="iconify inline-block" data-icon="mdi:alpha-c-circle" width="24"></span>
+        Ceat - Earn cXP Points
+    </header>
+
+    <div class="mt-4 p-4 bg-gray-800 rounded-lg shadow-lg">
+        <p class="text-lg font-semibold">Your Points:</p>
+        <p id="points" class="text-3xl font-bold text-yellow-400">0.05¢</p>
+    </div>
+
+    <div id="container" class="grid grid-cols-10 gap-1 p-5 mt-4 bg-gray-900 rounded-lg"></div>
+
+    <button onclick="resetGame()" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+        <span class="iconify inline-block" data-icon="mdi:restart" width="20"></span> Restart Game
+    </button>
+
+    <script>
+        const container = document.getElementById("container");
+        const colors = ["#056CF2", "#05AFF2", "#F2E205", "#F28705", "#A62103"];
+        let selectedColor = localStorage.getItem("selectedColor") || null;
+        let points = parseFloat(localStorage.getItem("points")) || 0.05;
+        let isGameOver = false;
+
+        function getRandomColor() {
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function updatePoints() {
+            document.getElementById("points").innerText = points.toFixed(2) + "¢";
+            localStorage.setItem("points", points.toFixed(2));
+        }
+
+        function resetGame() {
+            selectedColor = null;
+            points = 0.05;
+            isGameOver = false;
+            localStorage.setItem("selectedColor", null);
+            localStorage.setItem("points", points.toFixed(2));
+            updatePoints();
+            document.querySelectorAll('.square').forEach(square => {
+                square.style.background = "#1d1d1d";
+                square.style.boxShadow = "0 0 2px #000";
+            });
+        }
+
+        function setColor(square) {
+            if (isGameOver) return;
+            let color = getRandomColor();
+
+            square.style.background = color;
+            square.style.boxShadow = `0 0 10px ${color}`;
+
+            if (selectedColor === null) {
+                selectedColor = color;
+                localStorage.setItem("selectedColor", color);
+            } else {
+                if (selectedColor === color) {
+                    isGameOver = true;
+                    alert("Game Over! Same color appeared again.");
+                } else {
+                    points += 0.01;
+                    localStorage.setItem("points", points.toFixed(2));
+                }
+            }
+            updatePoints();
+        }
+
+        for (let i = 0; i < 100; i++) {
+            const square = document.createElement("div");
+            square.classList.add("square");
+            square.addEventListener("click", () => setColor(square));
+            container.appendChild(square);
+        }
+
+        updatePoints();
+    </script>
+
+</body>
+</html>
