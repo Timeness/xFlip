@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin & Earn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-screen bg-black flex items-center justify-center text-white">
+    <div class="w-96 bg-gray-900 p-6 rounded-lg shadow-lg text-center relative">
+        <canvas id="wheel" class="w-full"></canvas>
+        <button id="spin-btn" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-yellow-400 text-black font-bold text-lg shadow-md">Spin</button>
+        <img src="https://i.ibb.co/ccgYZcvh/IMG-20250321-095647.jpg" class="w-10 absolute top-1/2 -right-4 transform -translate-y-1/2">
+        <p id="final-value" class="mt-4 text-lg">Click Spin to Start</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script>
+    <script>
+        const wheel = document.getElementById("wheel"), spinBtn = document.getElementById("spin-btn"), finalValue = document.getElementById("final-value");
+        const rotationValues = [{min: 0, max: 30, val: 2}, {min: 31, max: 90, val: 1}, {min: 91, max: 150, val: 6}, {min: 151, max: 210, val: 5}, {min: 211, max: 270, val: 4}, {min: 271, max: 330, val: 3}, {min: 331, max: 360, val: 2}];
+        const data = Array(6).fill(16), colors = ["#8b35bc", "#b163da", "#8b35bc", "#b163da", "#8b35bc", "#b163da"];
+        let myChart = new Chart(wheel, { plugins: [ChartDataLabels], type: "pie", data: { labels: [1, 2, 3, 4, 5, 6], datasets: [{ backgroundColor: colors, data }] }, options: { responsive: true, animation: { duration: 0 }, plugins: { tooltip: false, legend: { display: false }, datalabels: { color: "#fff", formatter: (_, ctx) => ctx.chart.data.labels[ctx.dataIndex], font: { size: 24 } } } } });
+        
+        const getResult = (angle) => { for (let i of rotationValues) if (angle >= i.min && angle <= i.max) return i.val; };
+        
+        spinBtn.addEventListener("click", () => {
+            spinBtn.disabled = true; finalValue.textContent = "Spinning...";
+            let randomDegree = Math.floor(Math.random() * 360), speed = 100, rotations = 15, interval = setInterval(() => {
+                myChart.options.rotation += speed; myChart.update();
+                if (myChart.options.rotation >= 360) { rotations--; speed -= 5; myChart.options.rotation = 0; }
+                if (rotations <= 0 && myChart.options.rotation == randomDegree) {
+                    finalValue.textContent = `You got: ${getResult(randomDegree)}`;
+                    clearInterval(interval); spinBtn.disabled = false;
+                }
+            }, 10);
+        });
+    </script>
+</body>
+</html>
