@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xFlip Play | Testnet</title>
+    <title>Flip Play | Testnet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.1/feather.min.js"></script>
     <style>
-        body { font-family: 'Signika', sans-serif; background-color: #000; color: white; }
-        .hidden { display: none; }
-        .edit-icon { cursor: pointer; color: #fbbf24; }
+        body { font-family: 'Signika', sans-serif; background-color: #000; }
+        .avatar-container { animation: pulse 1.5s infinite alternate; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
     </style>
 </head>
-<body class="flex flex-col items-center min-h-screen">
+<body class="text-white flex flex-col items-center min-h-screen">
 
-    <!-- Header -->
+    <!-- Fixed Header -->
     <header class="w-full bg-gray-800 py-3 shadow-lg fixed top-0 left-0 z-50">
         <div class="container mx-auto flex justify-between items-center px-6 text-sm">
             <h1 class="text-xl font-bold text-green-400 flex items-center">
-                <i data-feather="zap" class="mr-2 text-yellow-400"></i>xFlip Play
+                <i data-feather="zap" class="mr-2 text-yellow-400"></i>Flip Play
             </h1>
             <nav>
                 <ul class="flex space-x-6">
-                    <li><a href="#" onclick="showPage('dashboard')" class="hover:text-green-400">Dashboard</a></li>
-                    <li><a href="#" onclick="showPage('profile')" class="hover:text-green-400">Profile</a></li>
-                    <li><a href="#" onclick="showPage('play')" class="hover:text-green-400">Play</a></li>
+                    <li><a href="#" id="dashboardBtn" class="hover:text-green-400">Dashboard</a></li>
+                    <li><a href="#" id="profileBtn" class="hover:text-green-400">Profile</a></li>
+                    <li><a href="#" id="gamesBtn" class="hover:text-green-400">Play</a></li>
                 </ul>
             </nav>
         </div>
@@ -42,40 +45,39 @@
     </div>
 
     <!-- Profile Section -->
-    <div id="profile" class="mt-20 hidden">
+    <div id="profile" class="mt-20 text-center hidden">
         <h2 class="text-3xl font-bold mb-4">Your Profile</h2>
-        <div class="bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left">
+
+        <!-- Avatar -->
+        <div class="flex flex-col items-center mt-4">
+            <div class="w-24 h-24 rounded-full border-4 border-green-400 overflow-hidden avatar-container">
+                <img id="profileAvatar" class="w-full h-full object-cover" alt="Avatar">
+            </div>
+        </div>
+
+        <div class="bg-gray-800 p-5 rounded-lg shadow-md mt-5 w-80 text-left">
             <p><strong>ID:</strong> <span id="profileId"></span></p>
             <p><strong>Joining Date:</strong> <span id="joiningDate"></span></p>
             <p><strong>Last Open:</strong> <span id="lastOpen"></span></p>
-            <p><strong>Last Close:</strong> <span id="lastClose"></span></p>
-            <p><strong>Rank:</strong> <span id="rank">-</span></p>
-            <p><strong>Total Users:</strong> <span id="totalUsers">-</span></p>
-            
+            <p><strong>Last Close:</strong> <span id="lastClose">-</span></p>
+            <p><strong>Rank:</strong> <span id="profileRank">#</span></p>
+            <p><strong>Total Users:</strong> <span id="totalUsers">0</span></p>
+
             <!-- Editable Name -->
-            <p><strong>Name:</strong> 
-                <span id="profileName">Anonymous</span>
-                <i data-feather="edit" class="edit-icon ml-2" onclick="editField('profileName')"></i>
+            <p class="mt-3 flex items-center">
+                <strong>Name:</strong> <span id="profileName" class="ml-2">Anonymous</span>
+                <i data-feather="edit" class="ml-2 cursor-pointer" onclick="editProfile('name')"></i>
             </p>
 
             <!-- Editable Username -->
-            <p><strong>Username:</strong> 
-                <span id="profileUsername"></span>
-                <i data-feather="edit" class="edit-icon ml-2" onclick="editField('profileUsername')"></i>
+            <p class="mt-3 flex items-center">
+                <strong>Username:</strong> <span id="profileUsername" class="ml-2"></span>
+                <i data-feather="edit" class="ml-2 cursor-pointer" onclick="editProfile('username')"></i>
             </p>
-            <p id="usernameError" class="text-red-500 text-sm hidden">Already Exists</p>
         </div>
     </div>
 
-    <!-- Play Section -->
-    <div id="play" class="mt-20 hidden text-center">
-        <h2 class="text-3xl font-bold mb-4">Play & Earn</h2>
-        <p class="text-sm mb-6">Try your luck and earn xFlip points!</p>
-        <button class="bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition">
-            Spin the Wheel
-        </button>
-    </div>
-
+    <!-- JavaScript -->
     <script>
         feather.replace();
 
@@ -94,7 +96,9 @@
 
             if (!profile.id) {
                 profile.id = Math.random().toString(36).substring(2, 10);
-                profile.joiningDate = new Date().toLocaleDateString();
+                if (!profile.joiningDate) {
+                    profile.joiningDate = new Date().toLocaleDateString();
+                }
                 profile.username = `anonymous${profile.id}`;
             }
 
@@ -108,61 +112,46 @@
             document.getElementById("profileName").textContent = profile.name || "Anonymous";
             document.getElementById("profileUsername").textContent = profile.username;
 
-            updateTotalUsers();
+            let avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${profile.id}`;
+            document.getElementById("profileAvatar").src = avatarUrl;
         }
 
-        function updateTotalUsers() {
-            let totalUsers = JSON.parse(localStorage.getItem("xFlipTotalUsers")) || 1;
-            document.getElementById("totalUsers").textContent = totalUsers;
-            localStorage.setItem("xFlipTotalUsers", totalUsers);
-        }
-
-        function editField(field) {
-            let value = document.getElementById(field).textContent;
-            let newValue = prompt(`Enter new ${field.replace('profile', '')}:`, value);
-
-            if (newValue) {
-                if (field === "profileUsername") {
-                    if (newValue.length < 3) {
-                        alert("Username must be at least 3 characters.");
-                        return;
-                    }
-
-                    let allUsers = JSON.parse(localStorage.getItem("xFlipUsernames")) || {};
-                    if (allUsers[newValue]) {
-                        document.getElementById("usernameError").classList.remove("hidden");
-                        return;
-                    }
-
-                    document.getElementById("usernameError").classList.add("hidden");
-                    allUsers[newValue] = true;
-                    localStorage.setItem("xFlipUsernames", JSON.stringify(allUsers));
+        function editProfile(type) {
+            let profile = JSON.parse(localStorage.getItem("xFlipProfile")) || {};
+            let newValue = prompt(`Enter new ${type}:`);
+            
+            if (type === "username") {
+                if (newValue.length < 3) {
+                    alert("Username must be at least 3 characters!");
+                    return;
                 }
-
-                let profile = JSON.parse(localStorage.getItem("xFlipProfile")) || {};
-                profile[field.replace("profile", "").toLowerCase()] = newValue;
-                localStorage.setItem("xFlipProfile", JSON.stringify(profile));
-
-                document.getElementById(field).textContent = newValue;
+                if (localStorage.getItem("xFlipUsernames")?.includes(newValue)) {
+                    alert("Username already exists!");
+                    return;
+                }
+                profile.username = newValue;
+                let usernames = JSON.parse(localStorage.getItem("xFlipUsernames")) || [];
+                usernames.push(newValue);
+                localStorage.setItem("xFlipUsernames", JSON.stringify(usernames));
+            } else {
+                profile.name = newValue || "Anonymous";
             }
+
+            localStorage.setItem("xFlipProfile", JSON.stringify(profile));
+            generateProfile();
         }
 
-        function showPage(page) {
+        document.getElementById("profileBtn").addEventListener("click", () => togglePage("profile"));
+        document.getElementById("dashboardBtn").addEventListener("click", () => togglePage("dashboard"));
+        
+        function togglePage(page) {
             document.getElementById("dashboard").classList.add("hidden");
             document.getElementById("profile").classList.add("hidden");
-            document.getElementById("play").classList.add("hidden");
-
             document.getElementById(page).classList.remove("hidden");
         }
 
-        window.addEventListener("beforeunload", () => {
-            let profile = JSON.parse(localStorage.getItem("xFlipProfile")) || {};
-            profile.lastClose = new Date().toLocaleString();
-            localStorage.setItem("xFlipProfile", JSON.stringify(profile));
-        });
-
-        generateProfile();
         setInterval(updatePoints, 1000);
+        generateProfile();
     </script>
 
 </body>
