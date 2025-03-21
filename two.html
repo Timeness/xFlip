@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceat Testnet - Color Tap Game</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+        header {
+            width: 100%;
+            padding: 15px;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #F2E205;
+        }
+        .points-box {
+            background: #2a2a2a;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+        .square {
+            background-color: #1d1d1d;
+            box-shadow: 0 0 2px #000;
+            height: 16px;
+            width: 16px;
+            margin: 2px;
+            transition: 2s ease;
+            cursor: pointer;
+        }
+        .square:hover {
+            transition-duration: 0s;
+        }
+        .game-over {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #F28705;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ceat Testnet</h1>
+        <div class="points-box">
+            <span class="iconify" data-icon="mdi:star" style="color: #F2E205;"></span>
+            <span id="points">0.05 cXP</span>
+        </div>
+    </header>
+    <div class="container" id="container"></div>
+    <div class="game-over" id="gameStatus"></div>
+
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script>
+        const container = document.getElementById("container");
+        const pointsDisplay = document.getElementById("points");
+        const gameStatus = document.getElementById("gameStatus");
+        const colors = ["#056CF2", "#05AFF2", "#F2E205", "#F28705", "#A62103"];
+        const SQUARES = 500;
+
+        let chosenColor = null;
+        let points = parseFloat(localStorage.getItem("ceatPoints")) || 0.05; // Load from localStorage or start with 0.05
+        let increment = 0.05;
+        let gameActive = true;
+
+        // Update points display on page load
+        pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+
+        const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
+
+        const setColor = (square) => {
+            const color = getRandomColor();
+            square.style.background = color;
+            square.style.boxShadow = `0 0 2px ${color}, 0 0 10px ${color}`;
+            return color;
+        };
+
+        const removeColor = (square) => {
+            square.style.background = "#1d1d1d";
+            square.style.boxShadow = "0 0 2px #000";
+        };
+
+        const savePoints = () => {
+            localStorage.setItem("ceatPoints", points.toFixed(2)); // Save points to localStorage
+            pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+        };
+
+        const handleTap = (square) => {
+            if (!gameActive) return;
+
+            const currentColor = setColor(square);
+            if (!chosenColor) {
+                chosenColor = currentColor;
+                square.style.transition = "none"; // Keep the first chosen color
+            } else if (currentColor === chosenColor) {
+                gameActive = false;
+                gameStatus.textContent = `Game Over! Final Score: ${points.toFixed(2)} cXP`;
+                container.querySelectorAll(".square").forEach(s => s.removeEventListener("click", handleTap));
+                savePoints(); // Save points when game ends
+            } else {
+                points += increment;
+                increment += 0.01;
+                savePoints(); // Save points after each successful tap
+                setTimeout(() => removeColor(square), 500); // Remove color after a delay
+            }
+        };
+
+        for (let i = 0; i < SQUARES; i++) {
+            const square = document.createElement("div");
+            square.classList.add("square");
+            square.addEventListener("click", () => handleTap(square));
+            container.appendChild(square);
+        }
+    </script>
+</body>
+</html>
