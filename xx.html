@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cXP TESTNET</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+Magyarország&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Playwrite Magyarország', sans-serif;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-900 text-white">
+
+    <div class="relative flex items-center justify-center w-64 h-20 border-2 border-yellow-400 bg-transparent overflow-hidden rounded-lg">
+        <div id="counter" class="text-3xl font-bold tracking-wider flex flex-col transition-transform duration-500 ease-in-out">
+            <span>0.000000</span>
+        </div>
+    </div>
+
+    <script>
+        let points = 0.000000;
+        let increment = 0.000002;
+        const counter = document.getElementById("counter");
+
+        function updatePoints() {
+            let oldValue = points.toFixed(6);
+            points += increment;
+            let newValue = points.toFixed(6);
+            
+            if (oldValue !== newValue) {
+                let oldDigits = oldValue.split("");
+                let newDigits = newValue.split("");
+                let html = "";
+
+                for (let i = 0; i < newDigits.length; i++) {
+                    if (oldDigits[i] !== newDigits[i]) {
+                        html += `<div class="overflow-hidden inline-block w-5">
+                                    <span class="block transition-transform duration-500 ease-in-out transform -translate-y-full">${oldDigits[i]}</span>
+                                    <span class="block">${newDigits[i]}</span>
+                                 </div>`;
+                    } else {
+                        html += `<span>${newDigits[i]}</span>`;
+                    }
+                }
+
+                counter.innerHTML = html;
+                setTimeout(() => {
+                    counter.querySelectorAll("div span:first-child").forEach(el => el.style.transform = "translateY(0)");
+                }, 50);
+            }
+        }
+
+        setInterval(updatePoints, 1000);
+    </script>
+
+</body>
+</html>
