@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flip Play | Testnet</title>
+    <title>xFlip Play | Testnet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.1/feather.min.js"></script>
     <style>
-        body { font-family: 'Signika', sans-serif; background-color: #000; }
+        body { font-family: 'Signika', sans-serif; background-color: #000; color: white; }
+        .hidden { display: none; }
         .edit-icon { cursor: pointer; color: #fbbf24; }
     </style>
 </head>
-<body class="text-white flex flex-col items-center min-h-screen">
+<body class="flex flex-col items-center min-h-screen">
 
-    <!-- Fixed Header -->
+    <!-- Header -->
     <header class="w-full bg-gray-800 py-3 shadow-lg fixed top-0 left-0 z-50">
         <div class="container mx-auto flex justify-between items-center px-6 text-sm">
             <h1 class="text-xl font-bold text-green-400 flex items-center">
-                <i data-feather="zap" class="mr-2 text-yellow-400"></i>Flip Play
+                <i data-feather="zap" class="mr-2 text-yellow-400"></i>xFlip Play
             </h1>
             <nav>
                 <ul class="flex space-x-6">
-                    <li><a href="#" id="dashboardBtn" class="hover:text-green-400">Dashboard</a></li>
-                    <li><a href="#" id="profileBtn" class="hover:text-green-400">Profile</a></li>
-                    <li><a href="#" id="gamesBtn" class="hover:text-green-400">Play</a></li>
+                    <li><a href="#" onclick="showPage('dashboard')" class="hover:text-green-400">Dashboard</a></li>
+                    <li><a href="#" onclick="showPage('profile')" class="hover:text-green-400">Profile</a></li>
+                    <li><a href="#" onclick="showPage('play')" class="hover:text-green-400">Play</a></li>
                 </ul>
             </nav>
         </div>
@@ -41,7 +42,7 @@
     </div>
 
     <!-- Profile Section -->
-    <div id="profile" class="mt-20 text-center hidden">
+    <div id="profile" class="mt-20 hidden">
         <h2 class="text-3xl font-bold mb-4">Your Profile</h2>
         <div class="bg-gray-800 p-5 rounded-lg shadow-md w-80 text-left">
             <p><strong>ID:</strong> <span id="profileId"></span></p>
@@ -66,6 +67,15 @@
         </div>
     </div>
 
+    <!-- Play Section -->
+    <div id="play" class="mt-20 hidden text-center">
+        <h2 class="text-3xl font-bold mb-4">Play & Earn</h2>
+        <p class="text-sm mb-6">Try your luck and earn xFlip points!</p>
+        <button class="bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition">
+            Spin the Wheel
+        </button>
+    </div>
+
     <script>
         feather.replace();
 
@@ -79,7 +89,6 @@
             display.textContent = points.toFixed(5);
         }
 
-        // Profile Generation
         function generateProfile() {
             let profile = JSON.parse(localStorage.getItem("xFlipProfile")) || {};
 
@@ -138,15 +147,11 @@
             }
         }
 
-        // Handle page switch
-        document.getElementById("profileBtn").addEventListener("click", () => togglePage("profile"));
-        document.getElementById("dashboardBtn").addEventListener("click", () => togglePage("dashboard"));
-        document.getElementById("gamesBtn").addEventListener("click", () => togglePage("games"));
-
-        function togglePage(page) {
+        function showPage(page) {
             document.getElementById("dashboard").classList.add("hidden");
             document.getElementById("profile").classList.add("hidden");
-            document.getElementById("games").classList.add("hidden");
+            document.getElementById("play").classList.add("hidden");
+
             document.getElementById(page).classList.remove("hidden");
         }
 
