@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glowing Golden Heart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-black">
+
+    <div class="relative flex items-center justify-center">
+        <!-- Outer Glow -->
+        <div class="absolute w-48 h-48 bg-yellow-500 opacity-30 blur-3xl rounded-full"></div>
+        <div class="absolute w-40 h-40 bg-yellow-400 opacity-40 blur-2xl rounded-full"></div>
+
+        <!-- Heart Shape -->
+        <div class="relative w-24 h-24 bg-yellow-500 transform rotate-45">
+            <div class="absolute top-[-50%] left-0 w-24 h-24 bg-yellow-500 rounded-full"></div>
+            <div class="absolute top-0 left-[-50%] w-24 h-24 bg-yellow-500 rounded-full"></div>
+        </div>
+    </div>
+
+</body>
+</html>
