@@ -3,156 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cash Prize Game</title>
-    <!-- Include Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Please Wait Loader</title>
     <style>
-        /* Reset styles */
+        /* Reset default styles */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Styles for the #app container */
-        #app {
-            height: 100vh;
-            width: 100%;
-            position: relative;
+        /* Body styles */
+        body {
             display: flex;
-            align-items: center;
             justify-content: center;
-            background: linear-gradient(60deg,
-                rgb(var(--back-rgb)) 30%,
-                rgb(var(--theme-rgb) / 80%) 50%,
-                rgb(var(--back-rgb)) 70%);
+            align-items: center;
+            min-height: 100vh;
+            background: #0097d7; /* Blue background */
         }
 
-        /* Styles for the #shapes container */
-        #shapes {
-            height: calc(100% - 2rem);
-            width: calc(100% - 2rem);
-            position: fixed;
-            left: 0%;
-            margin: 1rem;
-            pointer-events: none;
+        /* Container styles */
+        .container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
-        /* Define CSS variables for the gradient colors */
-        :root {
-            --back-rgb: 0, 0, 0; /* Black background */
-            --theme-rgb: 0, 255, 0; /* Green theme for the gradient */
+        /* Container wrapper styles */
+        .container_wrapper {
+            position: absolute;
+            top: -35px;
+            transform: scale(1.5);
         }
 
-        /* Animation for the prize amount */
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        /* Loader styles */
+        .loader {
+            position: absolute;
+            left: -25px;
+            width: 50px;
+            height: 50px;
+            animation: rotate 2s linear infinite; /* Rotate the entire loader */
         }
 
-        .pop-animation {
-            animation: pop 0.3s ease-in-out;
+        /* Keyframes for rotating the loader */
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
-        /* Timer bar animation */
-        #timer-bar {
+        /* Create the dots using pseudo-elements and animate them */
+        .loader::before,
+        .loader::after,
+        .loader span {
+            content: '';
+            position: absolute;
+            width: 10px;
             height: 10px;
-            background: #ff0000;
-            transition: width 0.1s linear;
+            background: #fff;
+            border-radius: 50%;
+            animation: move 1s ease-in-out infinite;
+        }
+
+        /* Position the dots around the center */
+        .loader::before {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-delay: 0s;
+        }
+
+        .loader::after {
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            animation-delay: 0.25s;
+        }
+
+        .loader span:nth-child(1) {
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            animation-delay: 0.5s;
+        }
+
+        .loader span:nth-child(2) {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-delay: 0.75s;
+        }
+
+        /* Keyframes for moving the dots (scaling effect) */
+        @keyframes move {
+            0%, 100% {
+                transform: scale(1) translateX(-50%);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(0.5) translateX(-50%);
+                opacity: 0.5;
+            }
+        }
+
+        /* Style the "PLEASE WAIT" text */
+        .container_wrapper p {
+            position: absolute;
+            top: 60px; /* Adjust based on the loader size */
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
-    <div id="app" class="text-center">
-        <!-- Game Section -->
-        <div class="text-white">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4">CASH PRIZE</h2>
-            <p id="prize-amount" class="text-5xl md:text-6xl font-mono text-green-500 tracking-wider">$0</p>
-            <div id="timer-bar" class="w-full bg-red-500 mt-4"></div>
-            <p id="timer-text" class="text-lg mt-2">Time Left: 10s</p>
-            <button id="game-button" class="mt-6 px-6 py-2 bg-green-500 text-black font-semibold rounded-lg hover:bg-green-400 transition duration-300">BEGIN</button>
-            <p id="game-over" class="text-xl mt-4 hidden">Game Over! Final Prize: <span id="final-prize"></span></p>
+    <div class="container">
+        <div class="container_wrapper">
+            <div class="loader">
+                <span></span>
+                <span></span>
+            </div>
+            <p>PLEASE WAIT</p>
         </div>
-        <!-- Placeholder for shapes/animation -->
-        <div id="shapes"></div>
     </div>
-
-    <script>
-        // Game variables
-        let prize = 0;
-        let timeLeft = 10;
-        let gameRunning = false;
-        let timerInterval = null;
-
-        // DOM elements
-        const prizeAmount = document.getElementById('prize-amount');
-        const gameButton = document.getElementById('game-button');
-        const timerText = document.getElementById('timer-text');
-        const timerBar = document.getElementById('timer-bar');
-        const gameOverText = document.getElementById('game-over');
-        const finalPrize = document.getElementById('final-prize');
-
-        // Sound effect (placeholder - you can replace with an actual audio file)
-        const clickSound = new Audio('https://www.myinstants.com/media/sounds/coin.mp3'); // Example sound (replace if needed)
-
-        // Format number with commas
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-
-        // Update prize display
-        function updatePrize() {
-            prizeAmount.textContent = `$${formatNumber(prize)}`;
-            prizeAmount.classList.add('pop-animation');
-            clickSound.play();
-        }
-
-        // Start the game
-        function startGame() {
-            prize = 0;
-            timeLeft = 10;
-            gameRunning = true;
-            gameButton.textContent = 'ADD PRIZE';
-            gameOverText.classList.add('hidden');
-            updatePrize();
-            timerText.textContent = `Time Left: ${timeLeft}s`;
-            timerBar.style.width = '100%';
-
-            // Start the timer
-            timerInterval = setInterval(() => {
-                timeLeft -= 0.1;
-                timerText.textContent = `Time Left: ${Math.max(0, timeLeft).toFixed(1)}s`;
-                timerBar.style.width = `${(timeLeft / 10) * 100}%`;
-
-                if (timeLeft <= 0) {
-                    endGame();
-                }
-            }, 100);
-        }
-
-        // End the game
-        function endGame() {
-            clearInterval(timerInterval);
-            gameRunning = false;
-            gameButton.textContent = 'RESTART';
-            gameOverText.classList.remove('hidden');
-            finalPrize.textContent = `$${formatNumber(prize)}`;
-        }
-
-        // Handle button click
-        gameButton.addEventListener('click', () => {
-            if (!gameRunning && gameButton.textContent === 'BEGIN') {
-                startGame();
-            } else if (!gameRunning && gameButton.textContent === 'RESTART') {
-                startGame();
-            } else if (gameRunning) {
-                // Add a random amount between 1000 and 10000
-                const randomAmount = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
-                prize += randomAmount;
-                updatePrize();
-            }
-        });
-    </script>
 </body>
 </html>
