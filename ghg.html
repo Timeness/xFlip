@@ -3,139 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glowing Heart Animation</title>
+    <title>Cash Prize Game</title>
     <!-- Include Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #1a1a1a; /* Dark background similar to the image */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        /* Reset styles */
+        * {
+            box-sizing: border-box;
             margin: 0;
-            overflow: hidden;
+            padding: 0;
         }
 
-        .heart-container {
+        /* Styles for the #app container */
+        #app {
+            height: 100vh;
+            width: 100%;
             position: relative;
-            width: 300px;
-            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(60deg,
+                rgb(var(--back-rgb)) 30%,
+                rgb(var(--theme-rgb) / 80%) 50%,
+                rgb(var(--back-rgb)) 70%);
         }
 
-        /* SVG Heart Styling */
-        #heart-path {
-            fill: none;
-            stroke: #ffd700; /* Gold color for the heart */
-            stroke-width: 4;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            filter: drop-shadow(0 0 10px #ffd700); /* Glowing effect */
-            animation: drawHeart 3s ease-in-out forwards, glow 1.5s infinite alternate;
+        /* Styles for the #shapes container */
+        #shapes {
+            height: calc(100% - 2rem);
+            width: calc(100% - 2rem);
+            position: fixed;
+            left: 0%;
+            margin: 1rem;
+            pointer-events: none;
         }
 
-        /* Drawing animation for the heart */
-        @keyframes drawHeart {
-            0% {
-                stroke-dasharray: 0 1000;
-                stroke-dashoffset: 0;
-            }
-            100% {
-                stroke-dasharray: 1000 0;
-                stroke-dashoffset: 0;
-            }
+        /* Define CSS variables for the gradient colors */
+        :root {
+            --back-rgb: 0, 0, 0; /* Black background */
+            --theme-rgb: 0, 255, 0; /* Green theme for the gradient */
         }
 
-        /* Glowing effect */
-        @keyframes glow {
-            0% {
-                filter: drop-shadow(0 0 10px #ffd700);
-            }
-            100% {
-                filter: drop-shadow(0 0 20px #ffd700);
-            }
+        /* Animation for the prize amount */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        /* Sparkle particles */
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 5px #fff, 0 0 10px #ffd700;
-            animation: sparkle 2s ease-in-out infinite;
-            opacity: 0;
+        .pop-animation {
+            animation: pop 0.3s ease-in-out;
         }
 
-        /* Position and animate sparkles along the heart path */
-        .sparkle-1 { top: 50%; left: 80%; animation-delay: 0s; }
-        .sparkle-2 { top: 30%; left: 70%; animation-delay: 0.2s; }
-        .sparkle-3 { top: 20%; left: 60%; animation-delay: 0.4s; }
-        .sparkle-4 { top: 10%; left: 50%; animation-delay: 0.6s; }
-        .sparkle-5 { top: 20%; left: 40%; animation-delay: 0.8s; }
-        .sparkle-6 { top: 30%; left: 30%; animation-delay: 1s; }
-
-        @keyframes sparkle {
-            0% {
-                opacity: 0;
-                transform: scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0);
-            }
-        }
-
-        /* Trail effect */
-        .trail {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #ffd700;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
-            animation: trail 3s linear forwards;
-        }
-
-        @keyframes trail {
-            0% {
-                top: 70%;
-                left: 20%;
-                opacity: 1;
-            }
-            50% {
-                top: 50%;
-                left: 80%;
-                opacity: 1;
-            }
-            100% {
-                top: 50%;
-                left: 80%;
-                opacity: 0;
-            }
+        /* Timer bar animation */
+        #timer-bar {
+            height: 10px;
+            background: #ff0000;
+            transition: width 0.1s linear;
         }
     </style>
 </head>
 <body>
-    <div class="heart-container">
-        <!-- SVG for the heart shape -->
-        <svg width="300" height="300" viewBox="0 0 100 100">
-            <path id="heart-path" d="M50 30 C 40 10, 20 10, 20 30 C 20 50, 50 70, 50 70 C 50 70, 80 50, 80 30 C 80 10, 60 10, 50 30 Z" />
-        </svg>
-        <!-- Sparkle particles -->
-        <div class="sparkle sparkle-1"></div>
-        <div class="sparkle sparkle-2"></div>
-        <div class="sparkle sparkle-3"></div>
-        <div class="sparkle sparkle-4"></div>
-        <div class="sparkle sparkle-5"></div>
-        <div class="sparkle sparkle-6"></div>
-        <!-- Trail effect -->
-        <div class="trail"></div>
+    <div id="app" class="text-center">
+        <!-- Game Section -->
+        <div class="text-white">
+            <h2 class="text-2xl md:text-3xl font-bold mb-4">CASH PRIZE</h2>
+            <p id="prize-amount" class="text-5xl md:text-6xl font-mono text-green-500 tracking-wider">$0</p>
+            <div id="timer-bar" class="w-full bg-red-500 mt-4"></div>
+            <p id="timer-text" class="text-lg mt-2">Time Left: 10s</p>
+            <button id="game-button" class="mt-6 px-6 py-2 bg-green-500 text-black font-semibold rounded-lg hover:bg-green-400 transition duration-300">BEGIN</button>
+            <p id="game-over" class="text-xl mt-4 hidden">Game Over! Final Prize: <span id="final-prize"></span></p>
+        </div>
+        <!-- Placeholder for shapes/animation -->
+        <div id="shapes"></div>
     </div>
+
+    <script>
+        // Game variables
+        let prize = 0;
+        let timeLeft = 10;
+        let gameRunning = false;
+        let timerInterval = null;
+
+        // DOM elements
+        const prizeAmount = document.getElementById('prize-amount');
+        const gameButton = document.getElementById('game-button');
+        const timerText = document.getElementById('timer-text');
+        const timerBar = document.getElementById('timer-bar');
+        const gameOverText = document.getElementById('game-over');
+        const finalPrize = document.getElementById('final-prize');
+
+        // Sound effect (placeholder - you can replace with an actual audio file)
+        const clickSound = new Audio('https://www.myinstants.com/media/sounds/coin.mp3'); // Example sound (replace if needed)
+
+        // Format number with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Update prize display
+        function updatePrize() {
+            prizeAmount.textContent = `$${formatNumber(prize)}`;
+            prizeAmount.classList.add('pop-animation');
+            clickSound.play();
+        }
+
+        // Start the game
+        function startGame() {
+            prize = 0;
+            timeLeft = 10;
+            gameRunning = true;
+            gameButton.textContent = 'ADD PRIZE';
+            gameOverText.classList.add('hidden');
+            updatePrize();
+            timerText.textContent = `Time Left: ${timeLeft}s`;
+            timerBar.style.width = '100%';
+
+            // Start the timer
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                timerText.textContent = `Time Left: ${Math.max(0, timeLeft).toFixed(1)}s`;
+                timerBar.style.width = `${(timeLeft / 10) * 100}%`;
+
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 100);
+        }
+
+        // End the game
+        function endGame() {
+            clearInterval(timerInterval);
+            gameRunning = false;
+            gameButton.textContent = 'RESTART';
+            gameOverText.classList.remove('hidden');
+            finalPrize.textContent = `$${formatNumber(prize)}`;
+        }
+
+        // Handle button click
+        gameButton.addEventListener('click', () => {
+            if (!gameRunning && gameButton.textContent === 'BEGIN') {
+                startGame();
+            } else if (!gameRunning && gameButton.textContent === 'RESTART') {
+                startGame();
+            } else if (gameRunning) {
+                // Add a random amount between 1000 and 10000
+                const randomAmount = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+                prize += randomAmount;
+                updatePrize();
+            }
+        });
+    </script>
 </body>
 </html>
