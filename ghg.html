@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glowing Heart Animation</title>
+    <!-- Include Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #1a1a1a; /* Dark background similar to the image */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        /* SVG Heart Styling */
+        #heart-path {
+            fill: none;
+            stroke: #ffd700; /* Gold color for the heart */
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 10px #ffd700); /* Glowing effect */
+            animation: drawHeart 3s ease-in-out forwards, glow 1.5s infinite alternate;
+        }
+
+        /* Drawing animation for the heart */
+        @keyframes drawHeart {
+            0% {
+                stroke-dasharray: 0 1000;
+                stroke-dashoffset: 0;
+            }
+            100% {
+                stroke-dasharray: 1000 0;
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Glowing effect */
+        @keyframes glow {
+            0% {
+                filter: drop-shadow(0 0 10px #ffd700);
+            }
+            100% {
+                filter: drop-shadow(0 0 20px #ffd700);
+            }
+        }
+
+        /* Sparkle particles */
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #fff, 0 0 10px #ffd700;
+            animation: sparkle 2s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        /* Position and animate sparkles along the heart path */
+        .sparkle-1 { top: 50%; left: 80%; animation-delay: 0s; }
+        .sparkle-2 { top: 30%; left: 70%; animation-delay: 0.2s; }
+        .sparkle-3 { top: 20%; left: 60%; animation-delay: 0.4s; }
+        .sparkle-4 { top: 10%; left: 50%; animation-delay: 0.6s; }
+        .sparkle-5 { top: 20%; left: 40%; animation-delay: 0.8s; }
+        .sparkle-6 { top: 30%; left: 30%; animation-delay: 1s; }
+
+        @keyframes sparkle {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+        }
+
+        /* Trail effect */
+        .trail {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: trail 3s linear forwards;
+        }
+
+        @keyframes trail {
+            0% {
+                top: 70%;
+                left: 20%;
+                opacity: 1;
+            }
+            50% {
+                top: 50%;
+                left: 80%;
+                opacity: 1;
+            }
+            100% {
+                top: 50%;
+                left: 80%;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="heart-container">
+        <!-- SVG for the heart shape -->
+        <svg width="300" height="300" viewBox="0 0 100 100">
+            <path id="heart-path" d="M50 30 C 40 10, 20 10, 20 30 C 20 50, 50 70, 50 70 C 50 70, 80 50, 80 30 C 80 10, 60 10, 50 30 Z" />
+        </svg>
+        <!-- Sparkle particles -->
+        <div class="sparkle sparkle-1"></div>
+        <div class="sparkle sparkle-2"></div>
+        <div class="sparkle sparkle-3"></div>
+        <div class="sparkle sparkle-4"></div>
+        <div class="sparkle sparkle-5"></div>
+        <div class="sparkle sparkle-6"></div>
+        <!-- Trail effect -->
+        <div class="trail"></div>
+    </div>
+</body>
+</html>
