@@ -1,0 +1,111 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport"/>
+    <title>Testnet Faucet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
+        body {
+            font-family: 'Exo 2', sans-serif;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        /* Disable right-click, text selection, and inspect element */
+        body {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+        }
+        html, body {
+            overflow: hidden;
+        }
+        body {
+            -webkit-user-drag: none;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            -webkit-touch-callout: none;
+        }
+        body {
+            -webkit-user-select: none;
+        }
+        body {
+            -moz-user-select: none;
+        }
+        body {
+            -ms-user-select: none;
+        }
+        body {
+            user-select: none;
+        }
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I')) {
+                event.preventDefault();
+            }
+        });
+
+        let claimTimes = {};
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function handleSubmit() {
+            const addressInput = document.getElementById('addressInput');
+            const address = addressInput.value.trim();
+            const currentTime = new Date().getTime();
+
+            if (claimTimes[address] && currentTime - claimTimes[address] < 4 * 60 * 60 * 1000) {
+                showToast('You can claim again after 4 hours');
+            } else {
+                claimTimes[address] = currentTime;
+                showToast('Claim successful');
+            }
+        }
+    </script>
+</head>
+<body class="bg-black text-white">
+    <main class="flex flex-col items-center justify-center min-h-screen p-4">
+        <div class="w-full max-w-md">
+            <h1 class="text-2xl font-bold mb-4 text-left">Testnet Faucet</h1>
+            <p class="text-gray-400 mb-8 text-left text-sm">
+                Use this faucet to get tokens for the latest Initia testnet. Don't abuse this service—the number of available tokens is limited.
+            </p>
+            <label class="block text-gray-400 mb-2 text-sm">Wallet address</label>
+            <input id="addressInput" class="w-full p-4 mb-4 bg-black border border-gray-700 rounded text-gray-400 text-sm" placeholder="Recipient address" type="text"/>
+            <button onclick="handleSubmit()" class="w-full p-4 bg-black border border-gray-700 rounded text-gray-400 text-sm">Submit</button>
+        </div>
+    </main>
+    <div id="toast" class="toast"></div>
+</body>
+</html>
