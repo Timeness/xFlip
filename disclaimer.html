@@ -1,0 +1,52 @@
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Signika', sans-serif;
+            user-select: none; /* Disable text selection */
+            -webkit-user-select: none; /* Disable text selection for Safari */
+            -ms-user-select: none; /* Disable text selection for IE/Edge */
+            overflow: hidden; /* Prevent zooming */
+        }
+        /* Prevent zooming on mobile devices */
+        @viewport {
+            zoom: 1.0;
+            width: device-width;
+        }
+        @-ms-viewport {
+            width: device-width;
+            zoom: 1.0;
+        }
+    </style>
+    <script>
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) {
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+                return false;
+            }
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+                return false;
+            }
+        }
+    </script>
+</head>
+<body class="bg-black flex items-center justify-center min-h-screen">
+    <div class="text-center">
+        <h1 class="text-red-600 text-lg font-bold mb-4">Disclaimer</h1>
+        <p class="text-white text-sm">
+            This website does not promote any violent, harmful or illegal activities. All content provided by this website is meant for an educational purpose only.
+        </p>
+    </div>
+</body>
+</html>
