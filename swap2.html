@@ -1,0 +1,95 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Swap Interface
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+   body {
+     font-family: 'Signika', sans-serif;
+   }
+  </style>
+  <script>
+   document.addEventListener('DOMContentLoaded', function () {
+     const tBNBInput = document.getElementById('tBNB-input');
+     const CAKE2Input = document.getElementById('CAKE2-input');
+     const ratio = 3.45;
+
+     tBNBInput.addEventListener('input', function () {
+       const tBNBValue = parseFloat(tBNBInput.value) || 0;
+       CAKE2Input.value = (tBNBValue * ratio).toFixed(2);
+     });
+
+     CAKE2Input.addEventListener('input', function () {
+       const CAKE2Value = parseFloat(CAKE2Input.value) || 0;
+       tBNBInput.value = (CAKE2Value / ratio).toFixed(2);
+     });
+   });
+  </script>
+ </head>
+ <body class="bg-black min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md mx-auto p-4">
+   <!-- Header -->
+   <div class="flex justify-between items-center mb-4">
+    <img alt="Logo" class="h-10" height="40" src="https://storage.googleapis.com/a1aa/image/wCH-7INNKvdlyvtx-0bjvPrZj9XcMp2v8irSITL9u44.jpg" width="40"/>
+    <button class="bg-teal-400 text-black font-semibold py-2 px-4 rounded-full">
+     Connect
+    </button>
+   </div>
+   <!-- Swap Container -->
+   <div class="bg-transparent border-2 border-gray-800 rounded-2xl p-4">
+    <!-- Swap Header -->
+    <div class="flex justify-center items-center mb-4">
+     <button class="bg-transparent border-2 border-purple-400 text-purple-400 font-semibold py-2 px-4 rounded-full">
+      Swap
+     </button>
+    </div>
+    <!-- From Section -->
+    <div class="bg-gray-900 rounded-2xl p-4 mb-4">
+     <div class="text-gray-400 mb-2">
+      From
+     </div>
+     <div class="flex justify-between items-center">
+      <div class="flex items-center">
+       <img alt="tBNB Icon" class="h-6 w-6 mr-2" height="24" src="https://storage.googleapis.com/a1aa/image/-jCPnnFakjwoViJDeTlg2B-O63yYL4U3Cf3Vmf1Wnno.jpg" width="24"/>
+       <span class="text-white font-semibold">
+        tBNB
+       </span>
+       <i class="fas fa-chevron-down text-gray-400 ml-2">
+       </i>
+      </div>
+      <input class="bg-transparent text-white font-semibold text-right w-24 focus:outline-none" id="tBNB-input" inputmode="decimal" placeholder="0.00" type="number"/>
+     </div>
+    </div>
+    <!-- To Section -->
+    <div class="bg-gray-900 rounded-2xl p-4 mb-4">
+     <div class="text-gray-400 mb-2">
+      To
+     </div>
+     <div class="flex justify-between items-center">
+      <div class="flex items-center">
+       <img alt="CAKE2 Icon" class="h-6 w-6 mr-2" height="24" src="https://storage.googleapis.com/a1aa/image/OyuEL72PdGHZ8NYXNVa44B8l-3_lRvzLNMzX_CbORiE.jpg" width="24"/>
+       <span class="text-white font-semibold">
+        CAKE2
+       </span>
+       <i class="fas fa-chevron-down text-gray-400 ml-2">
+       </i>
+      </div>
+      <input class="bg-transparent text-white font-semibold text-right w-24 focus:outline-none" id="CAKE2-input" inputmode="decimal" placeholder="0.00" type="number"/>
+     </div>
+    </div>
+    <!-- Connect Wallet Button -->
+    <button class="bg-teal-400 text-black font-semibold py-2 px-4 rounded-full w-full flex items-center justify-center">
+     Connect Wallet
+     <i class="fas fa-wallet ml-2">
+     </i>
+    </button>
+   </div>
+  </div>
+ </body>
+</html>
