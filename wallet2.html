@@ -1,0 +1,43 @@
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&display=swap');
+        body {
+            font-family: 'Eczar', serif;
+            user-select: none; /* Prevent text selection */
+            overflow: hidden; /* Prevent page zoom */
+        }
+        img, button {
+            -webkit-touch-callout: none; /* Prevent image and button context menu on iOS */
+            -webkit-user-select: none; /* Prevent image and button selection on iOS */
+            -moz-user-select: none; /* Prevent image and button selection on Firefox */
+            -ms-user-select: none; /* Prevent image and button selection on IE */
+            user-select: none; /* Prevent image and button selection on other browsers */
+        }
+        img {
+            pointer-events: none; /* Prevent image link on tap and hold */
+        }
+    </style>
+    <title>Web3 Wallet: Testnet</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="The most suitable wallet for Internet users, safe and efficient.">
+    <meta name="keywords" content="Web3, Wallet, Cryptocurrency, Safe, Efficient">
+    <meta name="author" content="Yash00x">
+</head>
+<body class="bg-black flex items-center justify-center min-h-screen">
+    <div class="text-left p-6">
+        <img alt="Illustration of a shield with a check mark, a wallet, and coins" class="mx-auto mb-6" src="https://framerusercontent.com/images/4yWuZhYgrbEf24mM1QSmRoMsbiI.png?scale-down-to=512"/>
+        <h1 class="text-3xl text-white mb-2">Web3 wallet, one is enough</h1>
+        <p class="text-gray-400 mb-6">The most suitable wallet for Internet users, safe and efficient</p>
+        <div class="flex justify-center">
+            <button class="bg-white text-black py-3 px-10 rounded-full">Create wallet</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault()); // Prevent right-click context menu
+    </script>
+</body>
+</html>
