@@ -1,0 +1,115 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Fairdrops by Humanity Protocol
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap');
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background: url('https://framerusercontent.com/images/1OR3XFfkJHF1nKzQotkFjklu3FQ.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
+            user-select: none; /* Disable text selection */
+        }
+        /* Disable right-click */
+        body {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+        }
+        .toast {
+            visibility: hidden;
+            max-width: 50px; 
+            height: 50px; 
+            /*margin-left: -125px;*/
+            margin: auto;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            position: fixed;
+            z-index: 1;
+            left: 0;right:0;
+            bottom: 30px;
+            font-size: 17px;
+            white-space: nowrap;
+        }
+        .toast #desc{
+            color: #fff;
+            padding: 16px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .toast.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;} 
+            to {bottom: 30px; opacity: 1;}
+        }
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;} 
+            to {bottom: 0; opacity: 0;}
+        }
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+  </style>
+ </head>
+ <body class="flex flex-col items-center justify-center min-h-screen p-4" oncontextmenu="return false;">
+  <div class="w-full max-w-md text-center bg-black bg-opacity-70 p-4 rounded-3xl">
+   <div class="flex items-center space-x-2 mb-4">
+    <img alt="Fairdrops logo" class="w-10 h-10" height="40" src="./pswap.png" width="40"/>
+    <div class="ml-2">
+     <p class="text-white font-bold text-sm">
+      fairdrops
+     </p>
+     <p class="text-gray-400 text-xs">
+      by humanity protocol
+     </p>
+    </div>
+   </div>
+   <p class="text-lime-500 mb-4 text-xs">
+    Introducing Fairdrops by Humanity Protocol
+   </p>
+   <h1 class="text-2xl font-bold mb-4">
+    Welcome to the future of fair and transparent airdrops
+   </h1>
+   <p class="text-gray-400 mb-6 text-xs">
+    Fairdrops by Humanity Protocol ensures that token distributions are reaching real people, not bots, bringing true value to Web3 projects looking to onboard human users without wasting user acquisition costs on airdrop farmers or Sybils.
+   </p>
+   <p class="text-gray-400 mb-6 text-xs">
+    Join us on this journey to revolutionize the way airdrops are handled in Web3.
+   </p>
+   <button class="w-full py-3 text-black bg-lime-500 rounded-full font-bold text-sm" onclick="showToast()">
+    JOIN WAITLIST
+   </button>
+  </div>
+  <div id="toast" class="toast">
+   <div id="desc">Coming Soon</div>
+  </div>
+  <script>
+   function showToast() {
+            var x = document.getElementById("toast");
+            x.className = "toast show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+        }
+  </script>
+ </body>
+</html>
