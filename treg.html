@@ -1,0 +1,83 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Fairdrop : Registration
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+   body {
+            background: url('https://framerusercontent.com/images/1OR3XFfkJHF1nKzQotkFjklu3FQ.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Signika Negative', sans-serif;
+        }
+  </style>
+ </head>
+ <body class="flex items-center justify-center min-h-screen p-4">
+  <div class="bg-black bg-opacity-80 p-8 rounded-3xl shadow-lg w-full max-w-md">
+   <div class="flex items-center mb-6">
+    <img alt="App logo" class="w-12 h-12 rounded-lg" height="50" src="./tswap.png" width="50"/>
+    <div class="ml-4">
+     <h1 class="text-xl text-white font-semibold">
+      Fairdrop
+     </h1>
+     <p class="text-sm text-gray-400">
+      Choose your username for waitlist
+     </p>
+    </div>
+   </div>
+   <form>
+    <div class="mb-4">
+     <label class="block text-sm text-gray-400 mb-1" for="username">
+      Username
+     </label>
+     <input class="w-full px-4 py-2 bg-black text-white border border-gray-600 rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500" id="username" placeholder="Username" type="text"/>
+    </div>
+    <div class="mb-4">
+     <label class="block text-sm text-gray-400 mb-1" for="referral">
+      Referral code
+     </label>
+     <div class="relative">
+      <input class="w-full px-4 py-2 bg-black text-white border border-gray-600 rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500" id="referral" placeholder="Enter code here" type="number"/>
+      <i class="fas fa-question-circle absolute right-3 top-3 text-gray-400">
+      </i>
+     </div>
+    </div>
+    <button class="w-full py-2 bg-blue-600 text-white rounded-3xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" type="submit">
+     Continue
+    </button>
+   </form>
+  </div>
+  <script>
+   document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const dot = this.nextElementSibling.querySelector('.dot');
+                if (this.checked) {
+                    dot.classList.add('translate-x-full', 'bg-blue-500');
+                    dot.classList.remove('bg-gray-400');
+                } else {
+                    dot.classList.remove('translate-x-full', 'bg-blue-500');
+                    dot.classList.add('bg-gray-400');
+                }
+            });
+        });
+
+        // 
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referralCode = urlParams.get('invite');
+            const referralInput = document.getElementById('referral');
+            if (referralCode && referralCode !== 'none') {
+                referralInput.value = referralCode;
+                referralInput.readOnly = true;
+            } else {
+                referralInput.readOnly = false;
+            }
+        });
+  </script>
+ </body>
+</html>
