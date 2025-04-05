@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head><title>Device Info</title>
+<style>
+body { background: #111; color: #eee; font-family: sans-serif; padding: 20px; }
+h2 { color: #0f0; }
+</style>
+</head>
+<body>
+<h2>Device Information</h2>
+<div id="info">Loading...</div>
+<script>
+async function getInfo() {
+  let info = "";
+  info += "User Agent: " + navigator.userAgent + "<br>";
+  info += "Language: " + navigator.language + "<br>";
+  info += "Platform: " + navigator.platform + "<br>";
+  info += "Battery: Loading...<br>";
+  info += "IP Address: (Use real API)<br>";
+  document.getElementById("info").innerHTML = info;
+
+  if (navigator.getBattery) {
+    const battery = await navigator.getBattery();
+    document.getElementById("info").innerHTML += "Battery Level: " + Math.round(battery.level * 100) + "%<br>";
+  }
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      document.getElementById("info").innerHTML += "Location: Lat " + pos.coords.latitude + ", Long " + pos.coords.longitude + "<br>";
+    });
+  }
+}
+getInfo();
+</script>
+</body>
+</html>

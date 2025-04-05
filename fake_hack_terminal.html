@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>Hacking in Progress</title>
+<style>
+body { background: black; color: green; font-family: monospace; padding: 20px; }
+</style>
+</head>
+<body>
+<pre id="terminal">Initializing hack tool...</pre>
+<script>
+const lines = [
+  "Connecting to satellite...",
+  "Bypassing firewall...",
+  "Extracting credentials...",
+  "Uploading payload...",
+  "Access granted. You're in.",
+];
+let i = 0;
+function typeLine() {
+  if (i < lines.length) {
+    document.getElementById("terminal").innerText += "\n" + lines[i++];
+    setTimeout(typeLine, 1000);
+  }
+}
+typeLine();
+</script>
+</body>
+</html>
