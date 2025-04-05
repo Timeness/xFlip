@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-gray-900 text-white font-sans">
+<html lang="en" class="bg-black text-white">
 <head>
   <meta charset="UTF-8">
-  <title>Testnet Faucet</title>
+  <title>Multi Testnet Faucet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    body {
+      font-family: 'Signika Negative', sans-serif;
+    }
     .notification {
       position: fixed;
       top: 1rem;
@@ -13,10 +18,11 @@
       color: white;
       padding: 1rem;
       border-radius: 0.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       opacity: 0;
       transform: translateY(-20px);
       transition: opacity 0.3s, transform 0.3s;
+      z-index: 50;
     }
     .notification.show {
       opacity: 1;
@@ -30,14 +36,14 @@
 
     <div class="bg-gray-800 p-6 rounded-xl space-y-4">
       <input id="wallet" type="text" placeholder="Enter Wallet Address" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400">
-      
-      <select id="network" class="w-full p-3 rounded-lg bg-gray-700 text-white">
-        <option value="ethereum">Ethereum Sepolia</option>
-        <option value="solana">Solana Devnet</option>
-        <option value="sui">Sui Testnet</option>
-      </select>
 
-      <button onclick="requestFaucet()" class="w-full bg-yellow-400 text-black py-3 rounded-lg font-bold hover:bg-yellow-300">Request Tokens</button>
+      <div id="networkOptions" class="flex justify-between gap-2">
+        <div class="network-option bg-gray-700 hover:bg-gray-600 cursor-pointer p-3 flex-1 text-center rounded-lg border-2 border-transparent" data-network="ethereum">Ethereum</div>
+        <div class="network-option bg-gray-700 hover:bg-gray-600 cursor-pointer p-3 flex-1 text-center rounded-lg border-2 border-transparent" data-network="solana">Solana</div>
+        <div class="network-option bg-gray-700 hover:bg-gray-600 cursor-pointer p-3 flex-1 text-center rounded-lg border-2 border-transparent" data-network="sui">Sui</div>
+      </div>
+
+      <button id="faucetBtn" class="w-full bg-yellow-400 text-black py-3 rounded-lg font-bold hover:bg-yellow-300">Request Tokens</button>
     </div>
 
     <div id="result" class="text-sm space-y-2"></div>
@@ -46,67 +52,78 @@
   <div id="notification" class="notification"></div>
 
   <script>
-    async function requestFaucet() {
-      const address = document.getElementById('wallet').value.trim();
-      const network = document.getElementById('network').value;
+    let selectedNetwork = null;
 
-      if (!address) {
-        showNotification("Please enter a wallet address!", true);
+    document.querySelectorAll('.network-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.network-option').forEach(b => b.classList.remove('border-yellow-400'));
+        btn.classList.add('border-yellow-400');
+        selectedNetwork = btn.dataset.network;
+      });
+    });
+
+    document.getElementById("faucetBtn").addEventListener("click", async () => {
+      const address = document.getElementById("wallet").value.trim();
+      const result = document.getElementById("result");
+
+      if (!address || !selectedNetwork) {
+        showNotification("Wallet address aur coin select karo!", true);
         return;
       }
 
-      let url = '';
-      let explorer = '';
+      let url = '', explorer = '', method = 'POST', body = null;
 
-      switch (network) {
-        case 'ethereum':
-          url = `https://faucet-api.sepolia.dev/request/${address}`;
-          explorer = 'https://sepolia.etherscan.io/tx/';
-          break;
-        case 'solana':
-          url = `https://faucet.solana.com/request?address=${address}`;
-          explorer = 'https://explorer.solana.com/tx/';
-          break;
-        case 'sui':
-          url = `https://faucet.sui.io/gas?recipient=${address}`;
-          explorer = 'https://explorer.sui.io/transaction/';
-          break;
-        default:
-          showNotification("Invalid network selected!", true);
-          return;
+      if (selectedNetwork === "ethereum") {
+        url = `https://faucet-api.sepolia.dev/request/${address}`;
+        explorer = 'https://sepolia.etherscan.io/tx/';
+        method = 'GET';
+      } else if (selectedNetwork === "solana") {
+        url = `https://faucet.devnet.solana.com?address=${address}`;
+        explorer = 'https://explorer.solana.com/address/';
+        method = 'POST';
+      } else if (selectedNetwork === "sui") {
+        url = `https://faucet.testnet.sui.io/gas`;
+        explorer = 'https://explorer.sui.io/transaction/';
+        method = 'POST';
+        body = JSON.stringify({ recipient: address });
       }
 
       try {
-        const res = await fetch(url, { method: 'POST' });
-        const data = await res.json();
+        const res = await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: body
+        });
 
-        if (data?.transactionHash || data?.txId) {
-          const txId = data.transactionHash || data.txId;
-          const link = `${explorer}${txId}`;
-          document.getElementById('result').innerHTML = `
+        const data = await res.json();
+        const txId = data?.transactionHash || data?.txId || data?.taskId || null;
+
+        if (txId) {
+          const link = explorer + txId;
+          result.innerHTML = `
             <p class="text-green-400">Transaction Sent!</p>
             <p><strong>TxID:</strong> ${txId}</p>
             <p><a href="${link}" target="_blank" class="text-yellow-400 underline">View on Explorer</a></p>
             <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
           `;
-          showNotification("Tokens successfully requested!", false);
+          showNotification("Tokens requested successfully!", false);
         } else {
-          showNotification("Faucet request failed or already requested.", true);
+          result.innerHTML = '';
+          showNotification("Faucet failed ya already requested!", true);
         }
       } catch (err) {
         console.error(err);
-        showNotification(`Error: ${err.message}`, true);
+        result.innerHTML = '';
+        showNotification("Error: " + err.message, true);
       }
-    }
+    });
 
     function showNotification(message, isError) {
-      const notification = document.getElementById('notification');
-      notification.textContent = message;
-      notification.style.backgroundColor = isError ? '#EF4444' : '#10B981';
-      notification.classList.add('show');
-      setTimeout(() => {
-        notification.classList.remove('show');
-      }, 3000);
+      const note = document.getElementById('notification');
+      note.textContent = message;
+      note.style.backgroundColor = isError ? '#EF4444' : '#10B981';
+      note.classList.add('show');
+      setTimeout(() => note.classList.remove('show'), 3000);
     }
   </script>
 </body>
