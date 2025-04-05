@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-900 text-white font-sans">
+<head>
+  <meta charset="UTF-8">
+  <title>Testnet Faucet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .notification {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background-color: #10B981;
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+  <div class="max-w-md w-full space-y-6">
+    <h1 class="text-3xl font-bold text-center text-yellow-400">Multi Testnet Faucet</h1>
+
+    <div class="bg-gray-800 p-6 rounded-xl space-y-4">
+      <input id="wallet" type="text" placeholder="Enter Wallet Address" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400">
+      
+      <select id="network" class="w-full p-3 rounded-lg bg-gray-700 text-white">
+        <option value="ethereum">Ethereum Sepolia</option>
+        <option value="solana">Solana Devnet</option>
+        <option value="sui">Sui Testnet</option>
+      </select>
+
+      <button onclick="requestFaucet()" class="w-full bg-yellow-400 text-black py-3 rounded-lg font-bold hover:bg-yellow-300">Request Tokens</button>
+    </div>
+
+    <div id="result" class="text-sm space-y-2"></div>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
+  <script>
+    async function requestFaucet() {
+      const address = document.getElementById('wallet').value.trim();
+      const network = document.getElementById('network').value;
+
+      if (!address) {
+        showNotification("Please enter a wallet address!", true);
+        return;
+      }
+
+      let url = '';
+      let explorer = '';
+
+      switch (network) {
+        case 'ethereum':
+          url = `https://faucet-api.sepolia.dev/request/${address}`;
+          explorer = 'https://sepolia.etherscan.io/tx/';
+          break;
+        case 'solana':
+          url = `https://faucet.solana.com/request?address=${address}`;
+          explorer = 'https://explorer.solana.com/tx/';
+          break;
+        case 'sui':
+          url = `https://faucet.sui.io/gas?recipient=${address}`;
+          explorer = 'https://explorer.sui.io/transaction/';
+          break;
+        default:
+          showNotification("Invalid network selected!", true);
+          return;
+      }
+
+      try {
+        const res = await fetch(url, { method: 'POST' });
+        const data = await res.json();
+
+        if (data?.transactionHash || data?.txId) {
+          const txId = data.transactionHash || data.txId;
+          const link = `${explorer}${txId}`;
+          document.getElementById('result').innerHTML = `
+            <p class="text-green-400">Transaction Sent!</p>
+            <p><strong>TxID:</strong> ${txId}</p>
+            <p><a href="${link}" target="_blank" class="text-yellow-400 underline">View on Explorer</a></p>
+            <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+          `;
+          showNotification("Tokens successfully requested!", false);
+        } else {
+          showNotification("Faucet request failed or already requested.", true);
+        }
+      } catch (err) {
+        console.error(err);
+        showNotification(`Error: ${err.message}`, true);
+      }
+    }
+
+    function showNotification(message, isError) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.backgroundColor = isError ? '#EF4444' : '#10B981';
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
