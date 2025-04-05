@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head><title>Hacking in Progress</title>
+<style>
+body { background: black; color: green; font-family: monospace; padding: 20px; }
+</style>
+</head>
+<body>
+<pre id="terminal">Initializing hack tool...</pre>
+<script>
+const lines = [
+  "Connecting to satellite...",
+  "Bypassing firewall...",
+  "Extracting credentials...",
+  "Uploading payload...",
+  "Access granted. You're in.",
+];
+let i = 0;
+let charIndex = 0;
+let currentLine = "";
+function typeChar() {
+  if (i < lines.length) {
+    if (charIndex < lines[i].length) {
+      currentLine += lines[i][charIndex++];
+      document.getElementById("terminal").innerHTML = "Initializing hack tool...\n" + currentLine;
+      setTimeout(typeChar, 50);
+    } else {
+      currentLine += "\n";
+      document.getElementById("terminal").innerHTML += "\n";
+      i++;
+      charIndex = 0;
+      currentLine = "";
+      setTimeout(typeChar, 500);
+    }
+  }
+}
+setTimeout(typeChar, 1000);
+</script>
+</body>
+</html>
