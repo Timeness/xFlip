@@ -1,130 +1,55 @@
-<!DOCTYPE html>
-<html lang="en" class="bg-black text-white">
+<!DOCTYPE html><html lang="en" class="bg-gray-950 text-white">
 <head>
   <meta charset="UTF-8">
-  <title>Multi Testnet Faucet</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      font-family: 'Signika Negative', sans-serif;
-    }
-    .notification {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background-color: #10B981;
-      color: white;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      opacity: 0;
-      transform: translateY(-20px);
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 50;
-    }
-    .notification.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZetaX Faucet</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
-  <div class="max-w-md w-full space-y-6">
-    <h1 class="text-3xl font-bold text-center text-yellow-400">Multi Testnet Faucet</h1>
+<body class="font-sans">
+  <div class="w-full py-4 px-6 bg-black shadow-md flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-green-400">ZetaX Faucet</h1>
+  </div>  <div class="max-w-lg mx-auto p-6">
+    <h2 class="text-lg font-semibold mb-4">Request Testnet Coins</h2>
+    <div class="space-y-4">
+      <select id="chain" class="w-full p-2 rounded bg-gray-800 text-white">
+        <option value="solana">Solana</option>
+        <option value="bsc">Binance Smart Chain</option>
+      </select>
+      <input id="wallet" type="text" placeholder="Enter Wallet Address" class="w-full p-2 rounded bg-gray-800 text-white">
+      <button onclick="sendCoins()" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 w-full">Request</button>
+    </div><div id="result" class="mt-6 text-sm bg-gray-800 p-4 rounded hidden">
+  <div><strong>Chain:</strong> <span id="resChain"></span></div>
+  <div><strong>Wallet:</strong> <span id="resWallet"></span></div>
+  <div><strong>TxID:</strong> <span id="resTx"></span></div>
+  <div><strong>Date:</strong> <span id="resDate"></span></div>
+  <div><strong>Explorer:</strong> <a id="resExplorer" href="#" class="text-blue-400" target="_blank">View Tx</a></div>
+</div>
 
-    <div class="bg-gray-800 p-6 rounded-xl space-y-4">
-      <input id="wallet" type="text" placeholder="Enter Wallet Address" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400">
-
-      <div id="networkOptions" class="flex justify-between gap-2">
-        <div class="network-option bg-gray-700 hover:bg-gray-600 cursor-pointer p-3 flex-1 text-center rounded-lg border-2 border-transparent" data-network="ethereum">Ethereum</div>
-        <div class="network-option bg-gray-700 hover:bg-gray-600 cursor-pointer p-3 flex-1 text-center rounded-lg border-2 border-transparent" data-network="solana">Solana</div>
-        <div class="network-option bg-gray-700 hover:bg-gray-600 cursor-pointer p-3 flex-1 text-center rounded-lg border-2 border-transparent" data-network="sui">Sui</div>
-      </div>
-
-      <button id="faucetBtn" class="w-full bg-yellow-400 text-black py-3 rounded-lg font-bold hover:bg-yellow-300">Request Tokens</button>
-    </div>
-
-    <div id="result" class="text-sm space-y-2"></div>
-  </div>
-
-  <div id="notification" class="notification"></div>
-
-  <script>
-    let selectedNetwork = null;
-
-    document.querySelectorAll('.network-option').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.network-option').forEach(b => b.classList.remove('border-yellow-400'));
-        btn.classList.add('border-yellow-400');
-        selectedNetwork = btn.dataset.network;
-      });
-    });
-
-    document.getElementById("faucetBtn").addEventListener("click", async () => {
-      const address = document.getElementById("wallet").value.trim();
-      const result = document.getElementById("result");
-
-      if (!address || !selectedNetwork) {
-        showNotification("Wallet address aur coin select karo!", true);
-        return;
-      }
-
-      let url = '', explorer = '', method = 'POST', body = null;
-
-      if (selectedNetwork === "ethereum") {
-        url = `https://faucet-api.sepolia.dev/request/${address}`;
-        explorer = 'https://sepolia.etherscan.io/tx/';
-        method = 'GET';
-      } else if (selectedNetwork === "solana") {
-        url = `https://faucet.devnet.solana.com?address=${address}`;
-        explorer = 'https://explorer.solana.com/address/';
-        method = 'POST';
-      } else if (selectedNetwork === "sui") {
-        url = `https://faucet.testnet.sui.io/gas`;
-        explorer = 'https://explorer.sui.io/transaction/';
-        method = 'POST';
-        body = JSON.stringify({ recipient: address });
-      }
-
-      try {
-        const res = await fetch(url, {
-          method: method,
-          headers: { 'Content-Type': 'application/json' },
-          body: body
-        });
-
-        const data = await res.json();
-        const txId = data?.transactionHash || data?.txId || data?.taskId || null;
-
-        if (txId) {
-          const link = explorer + txId;
-          result.innerHTML = `
-            <p class="text-green-400">Transaction Sent!</p>
-            <p><strong>TxID:</strong> ${txId}</p>
-            <p><a href="${link}" target="_blank" class="text-yellow-400 underline">View on Explorer</a></p>
-            <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-          `;
-          showNotification("Tokens requested successfully!", false);
-        } else {
-          result.innerHTML = '';
-          showNotification("Faucet failed ya already requested!", true);
-        }
-      } catch (err) {
-        console.error(err);
-        result.innerHTML = '';
-        showNotification("Error: " + err.message, true);
-      }
-    });
-
-    function showNotification(message, isError) {
-      const note = document.getElementById('notification');
-      note.textContent = message;
-      note.style.backgroundColor = isError ? '#EF4444' : '#10B981';
-      note.classList.add('show');
-      setTimeout(() => note.classList.remove('show'), 3000);
+  </div>  <!-- Toast -->  <div id="toast" class="fixed bottom-4 right-4 bg-green-700 text-white px-4 py-2 rounded shadow-lg opacity-0 transition-opacity duration-300"></div>  <script>
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+      setTimeout(() => toast.classList.replace('opacity-100', 'opacity-0'), 3000);
     }
-  </script>
-</body>
+
+    function sendCoins() {
+      const chain = document.getElementById('chain').value;
+      const wallet = document.getElementById('wallet').value.trim();
+      if (!wallet) return showToast("Enter a valid wallet address.");
+
+      const tx = Math.random().toString(36).substring(2, 15);
+      const date = new Date().toLocaleString();
+
+      document.getElementById('resChain').innerText = chain.toUpperCase();
+      document.getElementById('resWallet').innerText = wallet;
+      document.getElementById('resTx').innerText = tx;
+      document.getElementById('resDate').innerText = date;
+      document.getElementById('resExplorer').href = `https://${chain}.testnet.explorer/tx/${tx}`;
+
+      document.getElementById('result').classList.remove('hidden');
+      showToast("Coins sent to wallet!");
+    }
+  </script></body>
 </html>
