@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ceat Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Wallpoet&display=swap');
+
+    body {
+      font-family: 'Wallpoet', sans-serif;
+    }
+
+    #notification {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #10b981;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      z-index: 50;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-black text-white flex flex-col items-center justify-center min-h-screen px-4">
+  <div id="notification">Registered! Please refresh the page.</div>
+
+  <div id="registerBox" class="w-full max-w-md p-6 bg-gray-900 rounded-2xl shadow-lg space-y-4">
+    <h2 class="text-2xl font-bold text-center text-yellow-400">Welcome to Ceat Testnet</h2>
+    <p class="text-sm text-left text-gray-300">Get ready to experience the decentralized gaming adventure!</p>
+    <input id="username" type="text" placeholder="Enter your username"
+      class="w-full px-4 py-2 bg-gray-800 text-sm text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+    <input id="wallet" type="text" placeholder="Enter your wallet address"
+      class="w-full px-4 py-2 bg-gray-800 text-sm text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+    <button onclick="registerUser()"
+      class="w-full bg-yellow-400 text-black font-bold py-2 rounded-xl hover:bg-yellow-300 transition">Register Now</button>
+    <p class="text-xs text-center text-gray-400 mt-2">Already registered? Please refresh the page to continue.</p>
+  </div>
+
+  <div id="gameContainer" class="mt-10 flex flex-col items-center justify-center hidden space-y-4">
+    <div class="text-lg font-semibold text-yellow-300">Game will be here!</div>
+    <button id="restartBtn"
+      class="bg-yellow-400 text-black px-4 py-2 rounded-xl font-semibold hover:bg-yellow-300 transition">Restart</button>
+  </div>
+
+  <script>
+    function registerUser() {
+      const username = document.getElementById("username").value.trim();
+      const wallet = document.getElementById("wallet").value.trim();
+
+      if (username && wallet) {
+        localStorage.setItem("ceat_username", username);
+        localStorage.setItem("ceat_wallet", wallet);
+        showNotification();
+        setTimeout(() => {
+          document.getElementById("registerBox").style.display = "none";
+          document.getElementById("gameContainer").style.display = "flex";
+        }, 1000);
+      } else {
+        alert("Please fill all fields.");
+      }
+    }
+
+    function showNotification() {
+      const notification = document.getElementById("notification");
+      notification.style.display = "block";
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 3000);
+    }
+
+    window.onload = () => {
+      const username = localStorage.getItem("ceat_username");
+      const wallet = localStorage.getItem("ceat_wallet");
+      if (username && wallet) {
+        document.getElementById("registerBox").style.display = "none";
+        document.getElementById("gameContainer").style.display = "flex";
+      }
+    };
+  </script>
+</body>
+</html>
