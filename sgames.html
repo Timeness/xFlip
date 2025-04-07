@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>Ceat Testnet - Color Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Signika+Negative:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-drag: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      touch-action: manipulation;
+    }
+    .square {
+      background-color: #1d1d1d;
+      height: 16px;
+      width: 16px;
+      margin: 2px;
+      transition: 2s ease;
+      cursor: pointer;
+    }
+    .square:hover {
+      transition-duration: 0s;
+    }
+  </style>
+</head>
+<body>
+  <!-- Registration Modal -->
+  <div id="registerModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50">
+    <div class="bg-[#111] rounded-xl p-6 max-w-sm w-full text-white shadow-xl border border-yellow-500 font-[Signika_Negative]">
+      <h2 class="text-xl text-yellow-400 mb-3 font-semibold text-center">Join Ceat Testnet</h2>
+      <p class="text-sm text-gray-300 mb-4 leading-relaxed text-center">
+        Tap different blocks to earn <span class="text-yellow-400">cXP</span> points.<br/>
+        If the same color appears twice, the game ends.<br/>
+        Points will be useful for the <span class="text-yellow-400">future Ceat Airdrop</span>.<br/>
+        Enter your unique username to begin!
+      </p>
+      <input type="text" id="usernameInput" placeholder="Your Username"
+        class="w-full px-4 py-2 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-4"/>
+      <button id="startGameBtn"
+        class="w-full py-2 bg-yellow-500 text-black rounded-md hover:bg-yellow-600 transition font-semibold">
+        Start Playing
+      </button>
+    </div>
+  </div>
+
+  <header class="w-full p-4 bg-black flex justify-between items-center shadow-md">
+    <h1 class="text-yellow-400 text-lg">Ceat Testnet</h1>
+    <div class="points-box bg-[#111] px-3 py-1 rounded-lg flex items-center gap-2 shadow">
+      <img src="https://files.catbox.moe/0a5iq0.gif" alt="star" class="w-4 h-4 pointer-events-none"/>
+      <span id="points" class="text-sm text-yellow-400">0.05 cXP</span>
+    </div>
+  </header>
+
+  <div class="container flex flex-wrap justify-center items-center mt-4 p-2 max-w-md rounded-md" id="container"></div>
+  <div class="game-over text-yellow-500 text-sm text-center mt-2" id="gameStatus"></div>
+
+  <button id="restartBtn" disabled
+    class="mt-4 flex items-center gap-2 px-4 py-2 rounded-md text-yellow-400 border border-yellow-600 bg-black font-[Signika_Negative] text-xs opacity-50 cursor-not-allowed focus:outline-none pointer-events-none">
+    <img src="https://i.ibb.co/HT5CdBmC/codicon-debug-restart-frame.png" class="w-4 h-4 pointer-events-none" alt="Restart"/>
+    Restart Game
+  </button>
+
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <script>
+    const container = document.getElementById("container");
+    const pointsDisplay = document.getElementById("points");
+    const gameStatus = document.getElementById("gameStatus");
+    const restartBtn = document.getElementById("restartBtn");
+
+    const registerModal = document.getElementById("registerModal");
+    const usernameInput = document.getElementById("usernameInput");
+    const startGameBtn = document.getElementById("startGameBtn");
+
+    const colors = ["#056CF2", "#05AFF2", "#F2E205", "#F28705", "#A62103"];
+    const SQUARES = 228;
+    const SECRET_KEY = "ceatSecure123";
+
+    let chosenColor = null;
+    let points = 0.05;
+    let increment = 0.05;
+    let gameActive = true;
+    let username = localStorage.getItem("ceatUsername");
+
+    if (!username) {
+      registerModal.classList.remove("hidden");
+    } else {
+      document.getElementById("registerModal").style.display = "none";
+      gameStatus.textContent = `Welcome back, ${username}!`;
+    }
+
+    startGameBtn.addEventListener("click", () => {
+      const inputName = usernameInput.value.trim();
+      if (inputName.length < 3) {
+        alert("Username must be at least 3 characters long.");
+        return;
+      }
+      username = inputName;
+      localStorage.setItem("ceatUsername", username);
+      registerModal.style.display = "none";
+      gameStatus.textContent = `Welcome, ${username}! Start tapping to earn cXP.`;
+    });
+
+    const pointsKey = `ceatPoints_${username}`;
+    const checkKey = `ceatCheck_${username}`;
+    const generateCheck = (value) => btoa(value + SECRET_KEY);
+
+    const loadPoints = () => {
+      const savedPoints = localStorage.getItem(pointsKey);
+      const savedCheck = localStorage.getItem(checkKey);
+      if (savedPoints && savedCheck && atob(savedCheck) === savedPoints + SECRET_KEY) {
+        return parseFloat(savedPoints);
+      }
+      return 0.05;
+    };
+
+    const savePoints = () => {
+      const pointsStr = points.toFixed(2);
+      localStorage.setItem(pointsKey, pointsStr);
+      localStorage.setItem(checkKey, generateCheck(pointsStr));
+      pointsDisplay.textContent = `${pointsStr} cXP`;
+    };
+
+    const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
+
+    const setColor = (square) => {
+      const color = getRandomColor();
+      square.style.background = color;
+      square.style.boxShadow = `0 0 2px ${color}, 0 0 10px ${color}`;
+      return color;
+    };
+
+    const removeColor = (square) => {
+      square.style.background = "#1d1d1d";
+      square.style.boxShadow = "0 0 2px #000";
+    };
+
+    const handleTap = (square) => {
+      if (!gameActive) return;
+
+      const currentColor = setColor(square);
+      if (!chosenColor) {
+        chosenColor = currentColor;
+        square.style.transition = "none";
+      } else if (currentColor === chosenColor) {
+        gameActive = false;
+        gameStatus.textContent = `Game Over, ${username}! Final Score: ${points.toFixed(2)} cXP`;
+        container.querySelectorAll(".square").forEach(s => s.removeEventListener("click", () => handleTap(s)));
+        savePoints();
+
+        restartBtn.disabled = false;
+        restartBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        restartBtn.classList.add("opacity-100", "cursor-pointer", "pointer-events-auto");
+      } else {
+        points += increment;
+        increment += 0.01;
+        savePoints();
+        setTimeout(() => removeColor(square), 500);
+      }
+    };
+
+    const createGrid = () => {
+      container.innerHTML = "";
+      for (let i = 0; i < SQUARES; i++) {
+        const square = document.createElement("div");
+        square.classList.add("square");
+        square.addEventListener("click", () => handleTap(square));
+        container.appendChild(square);
+      }
+    };
+
+    restartBtn.addEventListener("click", () => {
+      if (!gameActive) {
+        chosenColor = null;
+        increment = 0.05;
+        gameActive = true;
+        gameStatus.textContent = `Restarted! Good luck, ${username}.`;
+        createGrid();
+
+        restartBtn.disabled = true;
+        restartBtn.classList.remove("opacity-100", "cursor-pointer", "pointer-events-auto");
+        restartBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+      }
+    });
+
+    if (username) {
+      points = loadPoints();
+      pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+      createGrid();
+    }
+  </script>
+</body>
+</html>
