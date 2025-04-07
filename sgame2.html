@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ceat Testnet - Color Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      font-size: 13px;
+    }
+    header {
+      width: 100%;
+      padding: 16px;
+      background-color: #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #F2E205;
+      text-shadow: 0 0 5px rgba(242, 226, 5, 0.5);
+    }
+    .points-box {
+      background: #1a1a1a;
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    }
+    .points-box img {
+      width: 20px;
+      height: 20px;
+    }
+    .points-box span {
+      font-size: 13px;
+      color: #F2E205;
+    }
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 400px;
+      margin-top: 20px;
+      background: rgba(29, 29, 29, 0.8);
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .square {
+      background-color: #1d1d1d;
+      box-shadow: 0 0 2px #000;
+      height: 14px;
+      width: 14px;
+      margin: 2px;
+      transition: 2s ease;
+      cursor: pointer;
+    }
+    .square:hover {
+      transition-duration: 0s;
+    }
+    .game-over {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #F28705;
+      text-shadow: 0 0 5px rgba(242, 135, 5, 0.5);
+    }
+    .restart-btn {
+      margin-top: 10px;
+      background: #111;
+      border: 1px solid #333;
+      padding: 5px 10px;
+      color: #F2E205;
+      font-size: 12px;
+      border-radius: 5px;
+      cursor: not-allowed;
+      opacity: 0.5;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .restart-btn.enabled {
+      cursor: pointer;
+      opacity: 1;
+    }
+    .restart-btn img {
+      width: 14px;
+      height: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Ceat Testnet</h1>
+    <div class="points-box">
+      <img src="https://files.catbox.moe/0a5iq0.gif" alt="Star"/>
+      <span id="points">0.05 cXP</span>
+    </div>
+  </header>
+
+  <div class="container" id="container"></div>
+  <div class="game-over" id="gameStatus"></div>
+  <button class="restart-btn" id="restartBtn" disabled>
+    <img src="https://cdn-icons-png.flaticon.com/512/1827/1827345.png" alt="Restart"/>
+    Restart Game
+  </button>
+
+  <script>
+    const container = document.getElementById("container");
+    const pointsDisplay = document.getElementById("points");
+    const gameStatus = document.getElementById("gameStatus");
+    const restartBtn = document.getElementById("restartBtn");
+    const colors = ["#056CF2", "#05AFF2", "#F2E205", "#F28705", "#A62103"];
+    const SQUARES = 500;
+    const SECRET_KEY = "ceatSecure123";
+
+    let chosenColor = null;
+    let points = 0.05;
+    let increment = 0.05;
+    let gameActive = true;
+    let username = localStorage.getItem("ceatUsername");
+
+    if (!username) {
+      username = prompt("Enter your username to start playing Ceat Testnet:");
+      if (username) {
+        localStorage.setItem("ceatUsername", username);
+        gameStatus.textContent = `Welcome, ${username}! Start tapping to earn cXP.`;
+      } else {
+        username = "Guest";
+        localStorage.setItem("ceatUsername", username);
+      }
+    } else {
+      gameStatus.textContent = `Welcome back, ${username}!`;
+    }
+
+    const pointsKey = `ceatPoints_${username}`;
+    const checkKey = `ceatCheck_${username}`;
+    const generateCheck = (value) => btoa(value + SECRET_KEY);
+
+    const loadPoints = () => {
+      const savedPoints = localStorage.getItem(pointsKey);
+      const savedCheck = localStorage.getItem(checkKey);
+      if (savedPoints && savedCheck) {
+        const decodedCheck = atob(savedCheck);
+        if (decodedCheck === savedPoints + SECRET_KEY) {
+          return parseFloat(savedPoints);
+        } else {
+          console.warn("Points tampered! Resetting...");
+        }
+      }
+      return 0.05;
+    };
+
+    points = loadPoints();
+    pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+
+    const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
+
+    const setColor = (square) => {
+      const color = getRandomColor();
+      square.style.background = color;
+      square.style.boxShadow = `0 0 2px ${color}, 0 0 10px ${color}`;
+      return color;
+    };
+
+    const removeColor = (square) => {
+      square.style.background = "#1d1d1d";
+      square.style.boxShadow = "0 0 2px #000";
+    };
+
+    const savePoints = () => {
+      const pointsStr = points.toFixed(2);
+      localStorage.setItem(pointsKey, pointsStr);
+      localStorage.setItem(checkKey, generateCheck(pointsStr));
+      pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+    };
+
+    const handleTap = (square) => {
+      if (!gameActive) return;
+      const currentColor = setColor(square);
+      if (!chosenColor) {
+        chosenColor = currentColor;
+        square.style.transition = "none";
+      } else if (currentColor === chosenColor) {
+        gameActive = false;
+        gameStatus.textContent = `Game Over, ${username}! Final Score: ${points.toFixed(2)} cXP`;
+        document.querySelectorAll(".square").forEach(s => s.removeEventListener("click", handleTap));
+        savePoints();
+        restartBtn.classList.add("enabled");
+        restartBtn.disabled = false;
+      } else {
+        points += increment;
+        increment += 0.01;
+        savePoints();
+        setTimeout(() => removeColor(square), 500);
+      }
+    };
+
+    const createSquares = () => {
+      container.innerHTML = "";
+      for (let i = 0; i < SQUARES; i++) {
+        const square = document.createElement("div");
+        square.classList.add("square");
+        square.addEventListener("click", () => handleTap(square));
+        container.appendChild(square);
+      }
+    };
+
+    restartBtn.addEventListener("click", () => {
+      if (!gameActive) {
+        gameActive = true;
+        chosenColor = null;
+        increment = 0.05;
+        gameStatus.textContent = `Game restarted! Good luck, ${username}!`;
+        restartBtn.classList.remove("enabled");
+        restartBtn.disabled = true;
+        createSquares();
+      }
+    });
+
+    createSquares();
+  </script>
+</body>
+</html>
