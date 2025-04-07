@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
-  <title>Ceat Testnet - Color Game</title>
+  <title>Oblivion Labs - Testnet</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Signika+Negative:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -188,17 +188,17 @@
   </style>
 </head>
 <body>
-  <div class="toast" id="toastMsg">Registered! Please refresh the page.</div>
+  <div class="toast" id="toastMsg">Registered !</div>
 
   <div id="registerModal">
     <div id="registerBox">
-      <h2>Register to Join Ceat Testnet</h2>
+      <h2>Register</h2>
       <p>
-        Welcome to the Color Game on Ceat Testnet!<br><br>
-        Tap unique boxes to earn <strong>cXP points</strong>.<br>
-        If the same color appears twice, game ends.<br>
-        Earn points and qualify for the <span style="color:#F28705;">future Ceat Airdrop</span>!<br><br>
-        <em>After registration, please refresh the page.</em>
+        Welcome to the Oblivion Labs Arcade - Where every Tap is a Step Toward On-Chain Glory.<br><br>
+        Unleash the Tap - Score <strong>xOBT Points</strong> with every unique box.<br>
+        Match the same color Twice... and It’s game over.<br>
+        Rack up points & Secure your spot in <span style="color:#F28705;">Oblivion's future airdrops </span>!<br><br>
+        <em>After registered, please refresh the page to get started.</em>
       </p>
       <input type="text" id="usernameInput" placeholder="Enter your username" />
       <button onclick="registerUser()">Register Now</button>
@@ -206,10 +206,10 @@
   </div>
 
   <header>
-    <h1>Ceat Testnet</h1>
+    <h1>Oblivion Labs</h1>
     <div class="points-box">
       <img src="https://files.catbox.moe/0a5iq0.gif" alt="star"/>
-      <span id="points">0.05 cXP</span>
+      <span id="points">0.05 xOBT</span>
     </div>
   </header>
 
@@ -219,7 +219,7 @@
   <div class="flex justify-center mt-4">
     <button id="restartBtn" disabled
       class="flex items-center gap-2 px-4 py-2 rounded-md text-yellow-400 border border-yellow-600 bg-black font-[Signika_Negative] text-xs opacity-50 cursor-not-allowed focus:outline-none pointer-events-none">
-      <img src="https://i.ibb.co/HT5CdBm/codicon-debug-restart-frame.png" class="w-4 h-4 pointer-events-none" alt="Restart"/>
+      <img src="https://i.ibb.co/HT5CdBm/codicon-debug-restart-frame.png" class="w-4 h-4 pointer-events-none" alt="RestartGame"/>
       Restart Game
     </button>
   </div>
@@ -228,7 +228,7 @@
     <p><strong>How to Play:</strong><br>
       Tap a square to reveal a color.<br>
       Don’t repeat the same color twice.<br>
-      Keep tapping different ones to earn more <strong>cXP</strong> points!
+      Keep tapping different ones to earn more <strong>xOBT</strong> points!
     </p>
   </div>
 
@@ -247,7 +247,7 @@
     let points = 0.05;
     let increment = 0.05;
     let gameActive = true;
-    let username = localStorage.getItem("ceatUsername");
+    let username = localStorage.getItem("OblivionUsername");
 
     if (!username) {
       document.getElementById("registerModal").style.display = "flex";
@@ -259,7 +259,7 @@
     function registerUser() {
       const name = document.getElementById("usernameInput").value.trim();
       if (name.length > 0) {
-        localStorage.setItem("ceatUsername", name);
+        localStorage.setItem("OblivionUsername", name);
         toastMsg.style.display = "block";
         setTimeout(() => toastMsg.style.display = "none", 3000);
       }
@@ -280,7 +280,7 @@
 
     if (username) {
       points = loadPoints();
-      pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+      pointsDisplay.textContent = `${points.toFixed(2)} xOBT`;
     }
 
     const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
@@ -313,7 +313,7 @@
         square.style.transition = "none";
       } else if (currentColor === chosenColor) {
         gameActive = false;
-        gameStatus.textContent = `Game Over, ${username}! Final Score: ${points.toFixed(2)} cXP`;
+        gameStatus.textContent = `Game Over, ${username}! Final Score: ${points.toFixed(2)} xOBT`;
         container.querySelectorAll(".square").forEach(s => s.removeEventListener("click", () => handleTap(s)));
         savePoints();
 
@@ -345,7 +345,7 @@
         chosenColor = null;
         increment = 0.05;
         gameActive = true;
-        gameStatus.textContent = `Restarted! Good luck, ${username}.`;
+        gameStatus.textContent = `Restarted ! Good luck, ${username}.`;
         createGrid();
 
         restartBtn.disabled = true;
