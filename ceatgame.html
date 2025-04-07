@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
+  <title>Ceat Testnet - Color Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Signika+Negative:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Wallpoet&display=swap');
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-drag: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      font-family: 'Wallpoet', sans-serif;
+      background-color: #000;
+      color: #fff;
+    }
+
+    header {
+      width: 100%;
+      padding: 16px;
+      background-color: #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+      color: #F2E205;
+    }
+
+    .points-box {
+      background: #111;
+      padding: 8px 16px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    }
+
+    .points-box img {
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+
+    .points-box span {
+      font-size: 14px;
+      color: #F2E205;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 400px;
+      margin: 40px auto 20px;
+      background: rgba(10, 10, 10, 0.9);
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .square {
+      background-color: #1d1d1d;
+      height: 16px;
+      width: 16px;
+      margin: 2px;
+      transition: 2s ease;
+      cursor: pointer;
+    }
+
+    .square:hover {
+      transition-duration: 0s;
+    }
+
+    .game-over {
+      font-size: 14px;
+      color: #F28705;
+      text-align: center;
+    }
+
+    #registerModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #registerBox {
+      background: #111;
+      padding: 28px;
+      border-radius: 16px;
+      max-width: 360px;
+      width: 90%;
+      text-align: left;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+
+    #registerBox h2 {
+      font-size: 20px;
+      color: #F2E205;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    #registerBox p {
+      font-size: 12px;
+      color: #bbb;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    #registerBox input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 12px;
+      width: 100%;
+      background: #000;
+      color: #F2E205;
+      margin-bottom: 16px;
+    }
+
+    #registerBox button {
+      padding: 10px 18px;
+      background: #F2E205;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    #registerBox button:hover {
+      background: #fff200;
+    }
+
+    .toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #F2E205;
+      color: #000;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 9999;
+      box-shadow: 0 0 12px #F2E20544;
+      display: none;
+    }
+
+    .how-to-play {
+      text-align: center;
+      font-size: 12px;
+      padding: 8px;
+      margin-top: 10px;
+      color: #aaa;
+    }
+
+    .how-to-play strong {
+      color: #F2E205;
+    }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toastMsg">Registered! Please refresh the page.</div>
+
+  <div id="registerModal">
+    <div id="registerBox">
+      <h2>Register to Join Ceat Testnet</h2>
+      <p>
+        Welcome to the Color Game on Ceat Testnet!<br><br>
+        Tap unique boxes to earn <strong>cXP points</strong>.<br>
+        If the same color appears twice, game ends.<br>
+        Earn points and qualify for the <span style="color:#F28705;">future Ceat Airdrop</span>!<br><br>
+        <em>After registration, please refresh the page.</em>
+      </p>
+      <input type="text" id="usernameInput" placeholder="Enter your username" />
+      <button onclick="registerUser()">Register Now</button>
+    </div>
+  </div>
+
+  <header>
+    <h1>Ceat Testnet</h1>
+    <div class="points-box">
+      <img src="https://files.catbox.moe/0a5iq0.gif" alt="star"/>
+      <span id="points">0.05 cXP</span>
+    </div>
+  </header>
+
+  <div class="container" id="container"></div>
+  <div class="game-over" id="gameStatus"></div>
+
+  <div class="flex justify-center mt-4">
+    <button id="restartBtn" disabled
+      class="flex items-center gap-2 px-4 py-2 rounded-md text-yellow-400 border border-yellow-600 bg-black font-[Signika_Negative] text-xs opacity-50 cursor-not-allowed focus:outline-none pointer-events-none">
+      <img src="https://i.ibb.co/HT5CdBm/codicon-debug-restart-frame.png" class="w-4 h-4 pointer-events-none" alt="Restart"/>
+      Restart Game
+    </button>
+  </div>
+
+  <div class="how-to-play">
+    <p><strong>How to Play:</strong><br>
+      Tap a square to reveal a color.<br>
+      Don’t repeat the same color twice.<br>
+      Keep tapping different ones to earn more <strong>cXP</strong> points!
+    </p>
+  </div>
+
+  <script>
+    const container = document.getElementById("container");
+    const pointsDisplay = document.getElementById("points");
+    const gameStatus = document.getElementById("gameStatus");
+    const restartBtn = document.getElementById("restartBtn");
+    const toastMsg = document.getElementById("toastMsg");
+
+    const colors = ["#056CF2", "#05AFF2", "#F2E205", "#F28705", "#A62103"];
+    const SQUARES = 228;
+    const SECRET_KEY = "ceatSecure123";
+
+    let chosenColor = null;
+    let points = 0.05;
+    let increment = 0.05;
+    let gameActive = true;
+    let username = localStorage.getItem("ceatUsername");
+
+    if (!username) {
+      document.getElementById("registerModal").style.display = "flex";
+    } else {
+      document.getElementById("registerModal").style.display = "none";
+      gameStatus.textContent = `Welcome back, ${username}!`;
+    }
+
+    function registerUser() {
+      const name = document.getElementById("usernameInput").value.trim();
+      if (name.length > 0) {
+        localStorage.setItem("ceatUsername", name);
+        toastMsg.style.display = "block";
+        setTimeout(() => toastMsg.style.display = "none", 3000);
+      }
+    }
+
+    const pointsKey = `ceatPoints_${username}`;
+    const checkKey = `ceatCheck_${username}`;
+    const generateCheck = (value) => btoa(value + SECRET_KEY);
+
+    const loadPoints = () => {
+      const savedPoints = localStorage.getItem(pointsKey);
+      const savedCheck = localStorage.getItem(checkKey);
+      if (savedPoints && savedCheck && atob(savedCheck) === savedPoints + SECRET_KEY) {
+        return parseFloat(savedPoints);
+      }
+      return 0.05;
+    };
+
+    if (username) {
+      points = loadPoints();
+      pointsDisplay.textContent = `${points.toFixed(2)} cXP`;
+    }
+
+    const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
+
+    const setColor = (square) => {
+      const color = getRandomColor();
+      square.style.background = color;
+      square.style.boxShadow = `0 0 2px ${color}, 0 0 10px ${color}`;
+      return color;
+    };
+
+    const removeColor = (square) => {
+      square.style.background = "#1d1d1d";
+      square.style.boxShadow = "0 0 2px #000";
+    };
+
+    const savePoints = () => {
+      const pointsStr = points.toFixed(2);
+      localStorage.setItem(pointsKey, pointsStr);
+      localStorage.setItem(checkKey, generateCheck(pointsStr));
+      pointsDisplay.textContent = `${pointsStr} cXP`;
+    };
+
+    const handleTap = (square) => {
+      if (!gameActive) return;
+
+      const currentColor = setColor(square);
+      if (!chosenColor) {
+        chosenColor = currentColor;
+        square.style.transition = "none";
+      } else if (currentColor === chosenColor) {
+        gameActive = false;
+        gameStatus.textContent = `Game Over, ${username}! Final Score: ${points.toFixed(2)} cXP`;
+        container.querySelectorAll(".square").forEach(s => s.removeEventListener("click", () => handleTap(s)));
+        savePoints();
+
+        restartBtn.disabled = false;
+        restartBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        restartBtn.classList.add("opacity-100", "cursor-pointer", "pointer-events-auto");
+      } else {
+        points += increment;
+        increment += 0.01;
+        savePoints();
+        setTimeout(() => removeColor(square), 500);
+      }
+    };
+
+    const createGrid = () => {
+      container.innerHTML = "";
+      for (let i = 0; i < SQUARES; i++) {
+        const square = document.createElement("div");
+        square.classList.add("square");
+        square.addEventListener("click", () => handleTap(square));
+        container.appendChild(square);
+      }
+    };
+
+    if (username) createGrid();
+
+    restartBtn.addEventListener("click", () => {
+      if (!gameActive) {
+        chosenColor = null;
+        increment = 0.05;
+        gameActive = true;
+        gameStatus.textContent = `Restarted! Good luck, ${username}.`;
+        createGrid();
+
+        restartBtn.disabled = true;
+        restartBtn.classList.remove("opacity-100", "cursor-pointer", "pointer-events-auto");
+        restartBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+      }
+    });
+  </script>
+</body>
+</html>
