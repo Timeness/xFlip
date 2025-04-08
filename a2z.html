@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A-Z PWA Permissions Tester</title>
+  <link rel="manifest" href="manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Signika Negative', sans-serif;
+      margin: 0;
+      padding: 1rem;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    section {
+      border: 1px solid #444;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      background: #111;
+    }
+    button {
+      margin-top: 0.5rem;
+      background: #333;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .output {
+      margin-top: 0.5rem;
+      color: #0f0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>A-Z Permission Tester</h1>
+
+  <section>
+    <h2>A - Accelerometer & Audio</h2>
+    <button onclick="getAudio()">Access Mic</button>
+    <div class="output" id="audioOut"></div>
+  </section>
+
+  <section>
+    <h2>B - Background Sync & Battery</h2>
+    <button onclick="getBattery()">Battery Status</button>
+    <div class="output" id="batteryOut"></div>
+  </section>
+
+  <section>
+    <h2>C - Camera & Clipboard</h2>
+    <button onclick="getCamera()">Access Camera</button>
+    <div class="output" id="cameraOut"></div>
+    <button onclick="pasteClipboard()">Paste Clipboard</button>
+    <div class="output" id="clipOut"></div>
+  </section>
+
+  <section>
+    <h2>D - Device Orientation</h2>
+    <div class="output" id="orientationOut"></div>
+  </section>
+
+  <section>
+    <h2>F - File System & Fullscreen</h2>
+    <button onclick="document.documentElement.requestFullscreen()">Go Fullscreen</button>
+  </section>
+
+  <section>
+    <h2>G - Geolocation</h2>
+    <button onclick="getLocation()">Get Location</button>
+    <div class="output" id="locationOut"></div>
+  </section>
+
+  <section>
+    <h2>H - Hardware Concurrency</h2>
+    <div class="output" id="coreOut"></div>
+  </section>
+
+  <section>
+    <h2>I - Idle Detection</h2>
+    <button onclick="detectIdle()">Start Idle Detection</button>
+    <div class="output" id="idleOut"></div>
+  </section>
+
+  <section>
+    <h2>L - Local Storage</h2>
+    <button onclick="saveLocal()">Save & Load Local</button>
+    <div class="output" id="localOut"></div>
+  </section>
+
+  <section>
+    <h2>M - Motion Sensor</h2>
+    <div class="output" id="motionOut"></div>
+  </section>
+
+  <section>
+    <h2>N - Notifications</h2>
+    <button onclick="notify()">Send Notification</button>
+  </section>
+
+  <section>
+    <h2>O - Offline Access (via Service Worker)</h2>
+    <p>Check: Open app → turn off internet → reload → works offline</p>
+  </section>
+
+  <section>
+    <h2>P - Push Notification (needs server)</h2>
+    <p>Only works with server & push API setup.</p>
+  </section>
+
+  <section>
+    <h2>R - Runtime Permissions</h2>
+    <p>Triggered as needed (camera, location, mic...)</p>
+  </section>
+
+  <section>
+    <h2>S - Share API</h2>
+    <button onclick="shareContent()">Share This</button>
+  </section>
+
+  <section>
+    <h2>T - Touch Events</h2>
+    <div ontouchstart="this.innerHTML='Touch detected!'" style="padding:10px;">Touch me</div>
+  </section>
+
+  <section>
+    <h2>U - WebUSB (not supported in all browsers)</h2>
+    <p>Needs special hardware</p>
+  </section>
+
+  <section>
+    <h2>V - Vibration</h2>
+    <button onclick="vibrate()">Vibrate Device</button>
+  </section>
+
+  <section>
+    <h2>W - Wake Lock</h2>
+    <button onclick="stayAwake()">Keep Screen On</button>
+  </section>
+
+  <script>
+    function getAudio() {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(() => document.getElementById('audioOut').innerText = "Microphone Access Granted")
+        .catch(err => document.getElementById('audioOut').innerText = err);
+    }
+
+    function getBattery() {
+      navigator.getBattery().then(b => {
+        document.getElementById('batteryOut').innerText = `Level: ${Math.round(b.level * 100)}%, Charging: ${b.charging}`;
+      });
+    }
+
+    function getCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(() => document.getElementById('cameraOut').innerText = "Camera Access Granted")
+        .catch(err => document.getElementById('cameraOut').innerText = err);
+    }
+
+    async function pasteClipboard() {
+      try {
+        const text = await navigator.clipboard.readText();
+        document.getElementById('clipOut').innerText = `Clipboard: ${text}`;
+      } catch (err) {
+        document.getElementById('clipOut').innerText = "Permission denied or not supported.";
+      }
+    }
+
+    function getLocation() {
+      navigator.geolocation.getCurrentPosition(
+        pos => document.getElementById('locationOut').innerText = `Lat: ${pos.coords.latitude}, Lon: ${pos.coords.longitude}`,
+        err => document.getElementById('locationOut').innerText = err.message
+      );
+    }
+
+    function detectIdle() {
+      if ('IdleDetector' in window) {
+        const idleDetector = new IdleDetector();
+        idleDetector.addEventListener('change', () => {
+          const userState = idleDetector.userState;
+          document.getElementById('idleOut').innerText = `User is ${userState}`;
+        });
+        idleDetector.start({ threshold: 10000 });
+      } else {
+        document.getElementById('idleOut').innerText = "IdleDetector not supported.";
+      }
+    }
+
+    function saveLocal() {
+      localStorage.setItem('test', 'Hello LocalStorage!');
+      const value = localStorage.getItem('test');
+      document.getElementById('localOut').innerText = `Stored: ${value}`;
+    }
+
+    window.addEventListener("deviceorientation", (event) => {
+      document.getElementById("orientationOut").innerText =
+        `Alpha: ${event.alpha}, Beta: ${event.beta}, Gamma: ${event.gamma}`;
+    });
+
+    window.addEventListener("devicemotion", (event) => {
+      document.getElementById("motionOut").innerText =
+        `X: ${event.acceleration.x}, Y: ${event.acceleration.y}, Z: ${event.acceleration.z}`;
+    });
+
+    function notify() {
+      Notification.requestPermission().then(p => {
+        if (p === "granted") {
+          new Notification("Hello from your PWA!");
+        }
+      });
+    }
+
+    function shareContent() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'A-Z Permission Test',
+          text: 'Check all permissions on this awesome PWA',
+          url: window.location.href
+        });
+      } else {
+        alert("Share not supported on this browser");
+      }
+    }
+
+    function vibrate() {
+      navigator.vibrate([200, 100, 200]);
+    }
+
+    function stayAwake() {
+      if ('wakeLock' in navigator) {
+        navigator.wakeLock.request('screen').then(() => {
+          alert('Screen Wake Lock is active');
+        }).catch(console.error);
+      } else {
+        alert("Wake Lock not supported.");
+      }
+    }
+
+    document.getElementById("coreOut").innerText = `CPU Cores: ${navigator.hardwareConcurrency || 'N/A'}`;
+  </script>
+</body>
+</html>
