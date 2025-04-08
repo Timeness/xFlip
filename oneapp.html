@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open Apps</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <style>
+    body {
+      font-family: 'Signika', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-black text-white flex items-center justify-center min-h-screen">
+  <div class="text-center space-y-6 px-4">
+    <h1 class="text-3xl font-bold">Open External Apps</h1>
+    <p class="text-gray-400">Tap any button below to launch its respective app</p>
+
+    <!-- WhatsApp -->
+    <button onclick="openApp('whatsapp://send?text=Hello')" class="flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-xl shadow-lg w-full sm:w-96 mx-auto">
+      <span class="iconify text-2xl" data-icon="logos:whatsapp-icon"></span>
+      Open WhatsApp
+    </button>
+
+    <!-- Trust Wallet -->
+    <button onclick="openApp('trust://')" class="flex items-center justify-center gap-3 bg-blue-700 hover:bg-blue-800 px-6 py-3 rounded-xl shadow-lg w-full sm:w-96 mx-auto">
+      <span class="iconify text-2xl" data-icon="simple-icons:trustwallet"></span>
+      Open Trust Wallet
+    </button>
+
+    <!-- MetaMask -->
+    <button onclick="openApp('metamask://')" class="flex items-center justify-center gap-3 bg-yellow-400 hover:bg-yellow-500 px-6 py-3 rounded-xl text-black shadow-lg w-full sm:w-96 mx-auto">
+      <span class="iconify text-2xl" data-icon="logos:metamask-icon"></span>
+      Open MetaMask
+    </button>
+
+    <!-- Custom App (Android Intent) -->
+    <button onclick="openApp('intent://scan/#Intent;scheme=zxing;package=com.google.zxing.client.android;end')" class="flex items-center justify-center gap-3 bg-gray-700 hover:bg-gray-800 px-6 py-3 rounded-xl shadow-lg w-full sm:w-96 mx-auto">
+      <span class="iconify text-2xl" data-icon="mdi:qrcode-scan"></span>
+      Open Scanner App
+    </button>
+  </div>
+
+  <script>
+    function openApp(url) {
+      window.location.href = url;
+    }
+  </script>
+</body>
+</html>
