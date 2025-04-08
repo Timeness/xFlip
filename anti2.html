@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Anti-Theft v4</title>
+  <title>Anti-Theft v5</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
   <style>
@@ -15,10 +15,16 @@
       from { background-color: black; color: red; }
       to { background-color: red; color: black; }
     }
+    img.selfie-preview {
+      width: 100%;
+      margin-top: 5px;
+      border: 2px solid #FFD700;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body class="bg-black text-white flex flex-col items-center justify-center min-h-screen p-4">
-  <h1 class="text-3xl text-yellow-400 mb-6 font-bold">Anti-Theft v4 - Lockdown Mode</h1>
+  <h1 class="text-3xl text-yellow-400 mb-6 font-bold">Anti-Theft v5 - Selfie Logger Mode</h1>
 
   <div class="bg-gray-900 border border-yellow-500 p-4 rounded-xl w-full max-w-md shadow-lg">
     <p><strong>Status:</strong> <span id="status" class="text-red-500">Disarmed</span></p>
@@ -35,8 +41,8 @@
     </div>
 
     <div class="mt-4">
-      <strong>Events:</strong>
-      <div id="log" class="text-xs bg-black/50 p-2 rounded h-32 overflow-y-auto">No activity.</div>
+      <strong>Logger:</strong>
+      <div id="log" class="text-xs bg-black/50 p-2 rounded h-48 overflow-y-auto">Loading selfie...</div>
     </div>
   </div>
 
@@ -53,9 +59,13 @@
     const log = document.getElementById("log");
     const alertFlash = document.getElementById("alertFlash");
 
-    function logger(msg) {
+    function logger(msg, isImg = false) {
       const t = new Date().toLocaleTimeString();
-      log.innerHTML += `<div>[${t}] ${msg}</div>`;
+      if (isImg) {
+        log.innerHTML += `<div class="mt-2">[${t}] Selfie Captured:<br><img src="${msg}" class="selfie-preview" /></div>`;
+      } else {
+        log.innerHTML += `<div>[${t}] ${msg}</div>`;
+      }
       log.scrollTop = log.scrollHeight;
     }
 
@@ -85,26 +95,41 @@
         });
       }
 
-      // Selfie
+      // Selfie again
+      takeSelfie();
+
+      setTimeout(() => {
+        alertFlash.classList.add("hidden");
+        triggered = false;
+      }, 40000);
+    }
+
+    function takeSelfie() {
       if (navigator.mediaDevices?.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
           const video = document.createElement("video");
+          video.setAttribute("playsinline", true);
           video.srcObject = stream;
           video.play();
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
           setTimeout(() => {
+            canvas.width = 320;
+            canvas.height = 240;
             ctx.drawImage(video, 0, 0, 320, 240);
-            logger("Selfie Captured");
+            const imgData = canvas.toDataURL("image/png");
+            logger(imgData, true);
             stream.getTracks().forEach(t => t.stop());
           }, 1500);
         }).catch(() => logger("Camera Access Denied"));
+      } else {
+        logger("Camera not supported.");
       }
+    }
 
-      setTimeout(() => {
-        alertFlash.classList.add("hidden");
-        triggered = false;
-      }, 45000);
+    // Capture selfie on load
+    window.onload = () => {
+      takeSelfie();
     }
 
     try {
