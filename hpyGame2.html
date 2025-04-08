@@ -1,131 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Happiness Universe</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Soul Waves – Flow of Happiness</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Orbitron', sans-serif;
-      background: radial-gradient(circle, #0f0f1c, #000000);
+      background: radial-gradient(circle, #000010, #010024);
       overflow: hidden;
     }
-    .glow-text {
-      text-shadow: 0 0 15px #ffd700;
+    .wave {
+      animation: flow 3s linear infinite;
     }
-    .dimensional-ring {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: conic-gradient(from 0deg, #fff700, #ff6b6b, #7bed9f, #70a1ff, #fff700);
-      animation: rotate 4s linear infinite;
-      box-shadow: 0 0 25px #fefefe;
-    }
-    @keyframes rotate {
-      to { transform: rotate(360deg); }
-    }
-    .portal {
-      font-size: 2.5rem;
-      transition: transform 0.2s;
-      outline: none;
-    }
-    .portal:active {
-      transform: scale(1.2);
-    }
-    .portal:focus {
-      outline: none;
-      box-shadow: none;
-    }
-    .particle {
-      position: absolute;
-      font-size: 1.5rem;
-      animation: float 1s ease-out forwards;
-    }
-    @keyframes float {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
+    @keyframes flow {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
   </style>
 </head>
-<body class="min-h-screen p-4 relative text-white">
+<body class="min-h-screen text-white">
 
   <!-- Header -->
-  <header class="w-full text-center py-4">
-    <h1 class="text-4xl md:text-5xl font-bold glow-text">Happiness Universe</h1>
+  <header class="text-center py-4">
+    <h1 class="text-4xl md:text-5xl font-bold text-yellow-300 tracking-wide">Soul Waves – Flow of Happiness</h1>
   </header>
 
-  <!-- Main Game Area -->
-  <div class="flex flex-col md:flex-row items-center justify-center gap-6 mt-10 md:mt-20">
-
-    <!-- Portal Area -->
-    <div class="dimensional-ring flex items-center justify-center">
-      <button id="portal" class="portal focus:outline-none">🌀</button>
-    </div>
-
-    <!-- Stats Area -->
-    <div class="text-left mt-6 md:mt-0">
-      <div class="text-lg md:text-xl">Soul Energy: <span id="energy" class="text-yellow-400 font-bold">0</span></div>
-      <div class="text-sm mt-1 text-green-300">Soul Level: <span id="level">Wanderer</span></div>
-    </div>
-
+  <!-- Energy Display -->
+  <div class="flex flex-col items-center mt-10">
+    <div class="text-2xl mb-2">Soul Energy</div>
+    <div id="energy" class="text-4xl text-green-400 font-bold">0</div>
+    <div class="text-sm mt-1 text-blue-300">Flowing every second...</div>
   </div>
 
-  <!-- Audio -->
-  <audio id="portalSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6539f1f6d6.mp3?filename=magic-sparkle-94321.mp3" preload="auto"></audio>
+  <!-- Wave Animation -->
+  <div class="relative w-full h-32 mt-10 overflow-hidden">
+    <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gradient-to-r from-purple-500 via-blue-400 to-green-300 blur-md wave"></div>
+  </div>
 
-  <!-- Script -->
+  <!-- Upgrade Buttons -->
+  <div class="flex flex-wrap justify-center gap-4 mt-12">
+    <button id="upgrade" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl transition duration-200 focus:outline-none">
+      Upgrade Soul (+1/sec)
+    </button>
+    <button id="double" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition duration-200 focus:outline-none">
+      Double Flow (x2)
+    </button>
+    <button id="slow" class="bg-yellow-500 hover:bg-yellow-600 text-black px-5 py-3 rounded-xl transition duration-200 focus:outline-none">
+      Slow Time (Freeze)
+    </button>
+  </div>
+
+  <!-- Hidden Background Audio -->
+  <audio id="bgAudio" loop autoplay class="hidden">
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/01/audio_08b58fcb89.mp3?filename=space-ambient-111661.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Scripts -->
   <script>
-    const portal = document.getElementById('portal');
-    const energyEl = document.getElementById('energy');
-    const levelEl = document.getElementById('level');
-    const portalSound = document.getElementById('portalSound');
+    let energy = 0;
+    let energyRate = 1;
+    let interval = 1000;
+    let flowing = true;
 
-    const levels = [
-      { points: 0, name: "Wanderer" },
-      { points: 100, name: "Smiler" },
-      { points: 250, name: "Radiant" },
-      { points: 500, name: "Cosmic Joy" },
-      { points: 1000, name: "Happiness Monk" },
-      { points: 2000, name: "Dimension Bender" },
-      { points: 5000, name: "Euphoric Entity" }
-    ];
+    const energyDisplay = document.getElementById("energy");
 
-    let energy = parseInt(localStorage.getItem('soulEnergy')) || 0;
-    energyEl.textContent = energy;
-
-    function updateLevel() {
-      for (let i = levels.length - 1; i >= 0; i--) {
-        if (energy >= levels[i].points) {
-          levelEl.textContent = levels[i].name;
-          break;
-        }
+    function updateEnergy() {
+      if (flowing) {
+        energy += energyRate;
+        energyDisplay.textContent = energy;
       }
     }
 
-    function spawnParticle() {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.innerText = ["✨","😊","🌈","⭐","💫"][Math.floor(Math.random() * 5)];
-      particle.style.left = `${Math.random() * 80 + 10}%`;
-      particle.style.top = `${Math.random() * 80 + 10}%`;
-      document.body.appendChild(particle);
-      setTimeout(() => particle.remove(), 1000);
-    }
+    setInterval(updateEnergy, interval);
 
-    portal.addEventListener('click', () => {
-      energy++;
-      localStorage.setItem('soulEnergy', energy);
-      energyEl.textContent = energy;
-      updateLevel();
-      portalSound.currentTime = 0;
-      portalSound.play();
-      spawnParticle();
-      if (navigator.vibrate) navigator.vibrate(50);
+    document.getElementById("upgrade").addEventListener("click", () => {
+      energyRate += 1;
     });
 
-    updateLevel();
+    document.getElementById("double").addEventListener("click", () => {
+      energyRate *= 2;
+    });
+
+    document.getElementById("slow").addEventListener("click", () => {
+      flowing = !flowing;
+      document.getElementById("slow").textContent = flowing ? "Slow Time (Freeze)" : "Resume Flow";
+    });
+
+    // Play audio on first user interaction
+    window.addEventListener("click", () => {
+      const audio = document.getElementById("bgAudio");
+      if (audio.paused) {
+        audio.play().catch(() => {});
+      }
+    }, { once: true });
   </script>
 
 </body>
