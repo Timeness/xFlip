@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Features 43-49 Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Signika', sans-serif;
+      background: #000;
+      color: #fff;
+      padding: 2rem;
+    }
+    section {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    button {
+      background: #ffd700;
+      border: none;
+      color: #000;
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #e5c100;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Features 43 to 49 Demo</h1>
+
+  <section>
+    <strong>43. Pointer Lock</strong><br>
+    <button onclick="lockPointer()">Lock Pointer</button>
+    <div id="pointerResult"></div>
+  </section>
+
+  <section>
+    <strong>44. Proximity Sensor</strong><br>
+    <div id="proximityResult">Checking support...</div>
+  </section>
+
+  <section>
+    <strong>45. Presentation API</strong><br>
+    <div id="presentationResult">Checking support...</div>
+  </section>
+
+  <section>
+    <strong>46. Encrypted Media Extensions</strong><br>
+    <div id="emeResult">Checking support...</div>
+  </section>
+
+  <section>
+    <strong>47. Media Session API</strong><br>
+    <button onclick="setMediaSession()">Set Media Metadata</button>
+    <div id="mediaSessionResult"></div>
+  </section>
+
+  <section>
+    <strong>48. Credential Management API</strong><br>
+    <button onclick="checkCredentialSupport()">Check Support</button>
+    <div id="credentialResult"></div>
+  </section>
+
+  <section>
+    <strong>49. EyeDropper API</strong><br>
+    <button onclick="openEyeDropper()">Pick Color</button>
+    <div id="eyedropperResult"></div>
+  </section>
+
+  <script>
+    // 43. Pointer Lock
+    function lockPointer() {
+      document.body.requestPointerLock();
+      document.getElementById('pointerResult').innerText = "Pointer lock requested.";
+    }
+
+    // 44. Proximity Sensor
+    const proxResult = document.getElementById('proximityResult');
+    if ('ProximitySensor' in window) {
+      try {
+        const sensor = new ProximitySensor();
+        sensor.addEventListener('reading', () => {
+          proxResult.innerText = `Distance: ${sensor.distance} cm`;
+        });
+        sensor.start();
+      } catch (e) {
+        proxResult.innerText = "Proximity Sensor error: " + e;
+      }
+    } else {
+      proxResult.innerText = "Proximity Sensor not supported.";
+    }
+
+    // 45. Presentation API
+    const presentationResult = document.getElementById('presentationResult');
+    if ('presentation' in navigator) {
+      presentationResult.innerText = "Presentation API is supported.";
+    } else {
+      presentationResult.innerText = "Presentation API not supported.";
+    }
+
+    // 46. Encrypted Media Extensions
+    const emeResult = document.getElementById('emeResult');
+    if (typeof HTMLMediaElement.prototype.setMediaKeys === 'function') {
+      emeResult.innerText = "Encrypted Media Extensions are supported.";
+    } else {
+      emeResult.innerText = "Encrypted Media Extensions not supported.";
+    }
+
+    // 47. Media Session API
+    function setMediaSession() {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: "Test Track",
+          artist: "AI Artist",
+          album: "AI Beats",
+        });
+        document.getElementById('mediaSessionResult').innerText = "Media metadata set.";
+      } else {
+        document.getElementById('mediaSessionResult').innerText = "Media Session API not supported.";
+      }
+    }
+
+    // 48. Credential Management API
+    function checkCredentialSupport() {
+      if ('credentials' in navigator) {
+        document.getElementById('credentialResult').innerText = "Credential Management API supported.";
+      } else {
+        document.getElementById('credentialResult').innerText = "Credential Management API not supported.";
+      }
+    }
+
+    // 49. EyeDropper API
+    async function openEyeDropper() {
+      if ('EyeDropper' in window) {
+        const eyeDropper = new EyeDropper();
+        try {
+          const result = await eyeDropper.open();
+          document.getElementById('eyedropperResult').innerText = "Color picked: " + result.sRGBHex;
+        } catch (err) {
+          document.getElementById('eyedropperResult').innerText = "Error: " + err;
+        }
+      } else {
+        document.getElementById('eyedropperResult').innerText = "EyeDropper API not supported.";
+      }
+    }
+  </script>
+
+</body>
+</html>
