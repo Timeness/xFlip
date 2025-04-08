@@ -3,26 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Screen Recorder</title>
+  <title>Display Capture Recorder</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Signika', sans-serif;
-      background-color: #000;
-      color: white;
-    }
-    video {
-      border-radius: 1rem;
-      border: 2px solid #4ade80;
+      background-color: #000000;
     }
   </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen px-4">
+<body class="min-h-screen flex flex-col items-center justify-center text-white px-4">
 
-  <h1 class="text-3xl mb-6 text-green-400">Screen Recorder</h1>
+  <h1 class="text-3xl mb-6 text-green-400 font-bold">Screen Capture Recorder</h1>
 
-  <video id="preview" autoplay muted class="w-full max-w-xl mb-6"></video>
+  <video id="preview" autoplay muted class="w-full max-w-3xl rounded-xl border-2 border-green-500 mb-6 hidden"></video>
 
   <div class="flex gap-4">
     <button id="startBtn" class="bg-green-600 hover:bg-green-500 px-6 py-2 rounded-xl text-white text-sm">Start Recording</button>
@@ -34,41 +29,46 @@
     const startBtn = document.getElementById('startBtn');
     const stopBtn = document.getElementById('stopBtn');
     const downloadLink = document.getElementById('downloadLink');
-    const video = document.getElementById('preview');
+    const preview = document.getElementById('preview');
 
     let mediaRecorder;
     let recordedChunks = [];
 
     startBtn.onclick = async () => {
-      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-      video.srcObject = stream;
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        preview.srcObject = stream;
+        preview.classList.remove('hidden');
 
-      recordedChunks = [];
-      mediaRecorder = new MediaRecorder(stream);
+        recordedChunks = [];
 
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) recordedChunks.push(e.data);
-      };
+        mediaRecorder = new MediaRecorder(stream);
 
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.classList.remove('hidden');
-      };
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) recordedChunks.push(e.data);
+        };
 
-      mediaRecorder.start();
-      startBtn.disabled = true;
-      stopBtn.disabled = false;
-      downloadLink.classList.add('hidden');
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          downloadLink.href = url;
+          downloadLink.classList.remove('hidden');
+        };
+
+        mediaRecorder.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        downloadLink.classList.add('hidden');
+      } catch (err) {
+        alert('Screen capture failed: ' + err.message);
+      }
     };
 
     stopBtn.onclick = () => {
       mediaRecorder.stop();
+      preview.srcObject.getTracks().forEach(track => track.stop());
       startBtn.disabled = false;
       stopBtn.disabled = true;
-
-      const tracks = video.srcObject.getTracks();
-      tracks.forEach(track => track.stop());
     };
   </script>
 
