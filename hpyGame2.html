@@ -16,22 +16,27 @@
       text-shadow: 0 0 15px #ffd700;
     }
     .dimensional-ring {
-      width: 300px;
-      height: 300px;
+      width: 180px;
+      height: 180px;
       border-radius: 50%;
       background: conic-gradient(from 0deg, #fff700, #ff6b6b, #7bed9f, #70a1ff, #fff700);
       animation: rotate 4s linear infinite;
-      box-shadow: 0 0 30px #fefefe;
+      box-shadow: 0 0 25px #fefefe;
     }
     @keyframes rotate {
       to { transform: rotate(360deg); }
     }
     .portal {
-      font-size: 3rem;
+      font-size: 2.5rem;
       transition: transform 0.2s;
+      outline: none;
     }
     .portal:active {
       transform: scale(1.2);
+    }
+    .portal:focus {
+      outline: none;
+      box-shadow: none;
     }
     .particle {
       position: absolute;
@@ -44,20 +49,33 @@
     }
   </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4 relative text-white">
+<body class="min-h-screen p-4 relative text-white">
 
-  <h1 class="text-4xl md:text-6xl font-bold glow-text mb-2">Happiness Universe</h1>
-  <p class="text-yellow-300 text-sm mb-6">Tap the Portal. Unlock Happy Realms.</p>
+  <!-- Header -->
+  <header class="w-full text-center py-4">
+    <h1 class="text-4xl md:text-5xl font-bold glow-text">Happiness Universe</h1>
+  </header>
 
-  <div id="ring" class="dimensional-ring flex items-center justify-center">
-    <button id="portal" class="portal">🌀</button>
+  <!-- Main Game Area -->
+  <div class="flex flex-col md:flex-row items-center justify-center gap-6 mt-10 md:mt-20">
+
+    <!-- Portal Area -->
+    <div class="dimensional-ring flex items-center justify-center">
+      <button id="portal" class="portal focus:outline-none">🌀</button>
+    </div>
+
+    <!-- Stats Area -->
+    <div class="text-left mt-6 md:mt-0">
+      <div class="text-lg md:text-xl">Soul Energy: <span id="energy" class="text-yellow-400 font-bold">0</span></div>
+      <div class="text-sm mt-1 text-green-300">Soul Level: <span id="level">Wanderer</span></div>
+    </div>
+
   </div>
 
-  <div class="mt-6 text-xl">Soul Energy: <span id="energy" class="text-yellow-400 font-bold">0</span></div>
-  <div class="mt-1 text-sm text-green-300">Soul Level: <span id="level">Wanderer</span></div>
-
+  <!-- Audio -->
   <audio id="portalSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6539f1f6d6.mp3?filename=magic-sparkle-94321.mp3" preload="auto"></audio>
 
+  <!-- Script -->
   <script>
     const portal = document.getElementById('portal');
     const energyEl = document.getElementById('energy');
@@ -66,12 +84,12 @@
 
     const levels = [
       { points: 0, name: "Wanderer" },
-      { points: 10, name: "Smiler" },
-      { points: 25, name: "Radiant" },
-      { points: 50, name: "Cosmic Joy" },
-      { points: 100, name: "Happiness Monk" },
-      { points: 200, name: "Dimension Bender" },
-      { points: 500, name: "Euphoric Entity" }
+      { points: 100, name: "Smiler" },
+      { points: 250, name: "Radiant" },
+      { points: 500, name: "Cosmic Joy" },
+      { points: 1000, name: "Happiness Monk" },
+      { points: 2000, name: "Dimension Bender" },
+      { points: 5000, name: "Euphoric Entity" }
     ];
 
     let energy = parseInt(localStorage.getItem('soulEnergy')) || 0;
@@ -109,5 +127,6 @@
 
     updateLevel();
   </script>
+
 </body>
 </html>
