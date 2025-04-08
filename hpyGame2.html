@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happiness Universe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle, #0f0f1c, #000000);
+      overflow: hidden;
+    }
+    .glow-text {
+      text-shadow: 0 0 15px #ffd700;
+    }
+    .dimensional-ring {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #fff700, #ff6b6b, #7bed9f, #70a1ff, #fff700);
+      animation: rotate 4s linear infinite;
+      box-shadow: 0 0 30px #fefefe;
+    }
+    @keyframes rotate {
+      to { transform: rotate(360deg); }
+    }
+    .portal {
+      font-size: 3rem;
+      transition: transform 0.2s;
+    }
+    .portal:active {
+      transform: scale(1.2);
+    }
+    .particle {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: float 1s ease-out forwards;
+    }
+    @keyframes float {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 relative text-white">
+
+  <h1 class="text-4xl md:text-6xl font-bold glow-text mb-2">Happiness Universe</h1>
+  <p class="text-yellow-300 text-sm mb-6">Tap the Portal. Unlock Happy Realms.</p>
+
+  <div id="ring" class="dimensional-ring flex items-center justify-center">
+    <button id="portal" class="portal">🌀</button>
+  </div>
+
+  <div class="mt-6 text-xl">Soul Energy: <span id="energy" class="text-yellow-400 font-bold">0</span></div>
+  <div class="mt-1 text-sm text-green-300">Soul Level: <span id="level">Wanderer</span></div>
+
+  <audio id="portalSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6539f1f6d6.mp3?filename=magic-sparkle-94321.mp3" preload="auto"></audio>
+
+  <script>
+    const portal = document.getElementById('portal');
+    const energyEl = document.getElementById('energy');
+    const levelEl = document.getElementById('level');
+    const portalSound = document.getElementById('portalSound');
+
+    const levels = [
+      { points: 0, name: "Wanderer" },
+      { points: 10, name: "Smiler" },
+      { points: 25, name: "Radiant" },
+      { points: 50, name: "Cosmic Joy" },
+      { points: 100, name: "Happiness Monk" },
+      { points: 200, name: "Dimension Bender" },
+      { points: 500, name: "Euphoric Entity" }
+    ];
+
+    let energy = parseInt(localStorage.getItem('soulEnergy')) || 0;
+    energyEl.textContent = energy;
+
+    function updateLevel() {
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (energy >= levels[i].points) {
+          levelEl.textContent = levels[i].name;
+          break;
+        }
+      }
+    }
+
+    function spawnParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.innerText = ["✨","😊","🌈","⭐","💫"][Math.floor(Math.random() * 5)];
+      particle.style.left = `${Math.random() * 80 + 10}%`;
+      particle.style.top = `${Math.random() * 80 + 10}%`;
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 1000);
+    }
+
+    portal.addEventListener('click', () => {
+      energy++;
+      localStorage.setItem('soulEnergy', energy);
+      energyEl.textContent = energy;
+      updateLevel();
+      portalSound.currentTime = 0;
+      portalSound.play();
+      spawnParticle();
+      if (navigator.vibrate) navigator.vibrate(50);
+    });
+
+    updateLevel();
+  </script>
+</body>
+</html>
