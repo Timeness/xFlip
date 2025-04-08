@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happiness Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Signika:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Signika', sans-serif;
+      background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1c 100%);
+      color: white;
+    }
+    .happy-button {
+      font-family: 'Pacifico', cursive;
+      font-size: 3rem;
+      transition: transform 0.2s ease;
+    }
+    .happy-button:hover {
+      transform: scale(1.1);
+    }
+    .glow {
+      box-shadow: 0 0 25px #ffd700;
+    }
+    .quote {
+      animation: floatText 6s infinite;
+    }
+    @keyframes floatText {
+      0% { opacity: 0; transform: translateY(30px); }
+      25% { opacity: 1; transform: translateY(0); }
+      75% { opacity: 1; transform: translateY(-10px); }
+      100% { opacity: 0; transform: translateY(-30px); }
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen text-center p-6">
+  <h1 class="text-4xl md:text-6xl font-bold mb-4 text-yellow-300">Spread Happiness</h1>
+  
+  <div id="scoreBox" class="text-2xl text-white mb-2">Smiles: <span id="score">0</span></div>
+  
+  <button id="happyBtn" class="happy-button glow px-6 py-3 rounded-full bg-yellow-400 text-black mb-6">
+    😊
+  </button>
+
+  <div id="quoteBox" class="quote text-xl text-yellow-200 font-semibold"></div>
+
+  <footer class="mt-10 text-sm text-gray-400">
+    Made with love to spread happiness everywhere.
+  </footer>
+
+  <audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9da7a94b9f.mp3?filename=pop-94319.mp3" preload="auto"></audio>
+
+  <script>
+    const scoreEl = document.getElementById('score');
+    const happyBtn = document.getElementById('happyBtn');
+    const quoteBox = document.getElementById('quoteBox');
+    const clickSound = document.getElementById('clickSound');
+
+    const quotes = [
+      "Happiness is contagious!",
+      "Smile, it's free therapy.",
+      "You're doing amazing!",
+      "Keep spreading joy!",
+      "Small acts, big impact.",
+      "Your smile is powerful.",
+      "Joy grows when shared."
+    ];
+
+    let score = parseInt(localStorage.getItem('happinessScore')) || 0;
+    scoreEl.textContent = score;
+
+    happyBtn.addEventListener('click', () => {
+      score += 1;
+      localStorage.setItem('happinessScore', score);
+      scoreEl.textContent = score;
+      quoteBox.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+      clickSound.currentTime = 0;
+      clickSound.play();
+      happyBtn.classList.add('scale-110');
+      setTimeout(() => happyBtn.classList.remove('scale-110'), 150);
+    });
+  </script>
+</body>
+</html>
