@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Request Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      font-family: 'Signika', sans-serif;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+    button {
+      background-color: #222;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #333;
+    }
+    #result {
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Payment Request API Test</h1>
+  <button id="payBtn">Initiate Payment</button>
+  <div id="result"></div>  <script>
+    document.getElementById('payBtn').addEventListener('click', async () => {
+      if (!window.PaymentRequest) {
+        document.getElementById('result').innerText = 'Payment Request API is not supported in your browser.';
+        return;
+      }
+
+      const supportedInstruments = [
+        {
+          supportedMethods: 'basic-card',
+          data: {
+            supportedNetworks: ['visa', 'mastercard', 'amex'],
+            supportedTypes: ['debit', 'credit']
+          }
+        }
+      ];
+
+      const details = {
+        displayItems: [
+          {
+            label: 'Cool Product',
+            amount: { currency: 'USD', value: '5.00' }
+          },
+          {
+            label: 'Shipping',
+            amount: { currency: 'USD', value: '1.00' }
+          }
+        ],
+        total: {
+          label: 'Total due',
+          amount: { currency: 'USD', value: '6.00' }
+        }
+      };
+
+      const options = {
+        requestPayerName: true,
+        requestPayerEmail: true
+      };
+
+      try {
+        const request = new PaymentRequest(supportedInstruments, details, options);
+
+        const response = await request.show();
+        await response.complete('success');
+
+        document.getElementById('result').innerHTML = `
+          Payment completed!<br>
+          Name: ${response.payerName}<br>
+          Email: ${response.payerEmail}
+        `;
+      } catch (err) {
+        document.getElementById('result').innerText = 'Payment cancelled or failed: ' + err.message;
+      }
+    });
+  </script></body>
+</html>
