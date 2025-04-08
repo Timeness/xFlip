@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Request Logs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Signika', sans-serif;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      background: #111;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #222;
+    }
+    #result {
+      margin-top: 2rem;
+      text-align: left;
+      width: 100%;
+      max-width: 500px;
+      background: #111;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+    p {
+      margin: 0.4rem 0;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #333;
+      padding-bottom: 0.4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 style="margin-bottom: 1rem;">Payment API + Logs</h1>
+  <button id="payNow">Pay $3.00</button>
+
+  <div id="result"></div>
+
+  <script>
+    const payBtn = document.getElementById('payNow');
+    const result = document.getElementById('result');
+
+    function generateTransactionID() {
+      return 'TXN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    }
+
+    payBtn.onclick = async () => {
+      if (!window.PaymentRequest) {
+        result.innerHTML = '<p>Payment Request API not supported.</p>';
+        return;
+      }
+
+      const supportedInstruments = [{
+        supportedMethods: 'https://google.com/pay',
+        data: {
+          environment: 'TEST',
+          apiVersion: 2,
+          apiVersionMinor: 0,
+          allowedPaymentMethods: [{
+            type: 'CARD',
+            parameters: {
+              allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+              allowedCardNetworks: ['VISA', 'MASTERCARD']
+            },
+            tokenizationSpecification: {
+              type: 'PAYMENT_GATEWAY',
+              parameters: {
+                gateway: 'example',
+                gatewayMerchantId: 'demoGateway'
+              }
+            }
+          }],
+          merchantInfo: {
+            merchantName: 'Demo Merchant'
+          },
+          transactionInfo: {
+            totalPriceStatus: 'FINAL',
+            totalPrice: '3.00',
+            currencyCode: 'USD',
+            countryCode: 'US'
+          }
+        }
+      }];
+
+      const details = {
+        total: {
+          label: 'Total',
+          amount: { currency: 'USD', value: '3.00' }
+        }
+      };
+
+      try {
+        const request = new PaymentRequest(supportedInstruments, details);
+        const response = await request.show();
+        await response.complete('success');
+
+        const now = new Date();
+
+        result.innerHTML = `
+          <p><strong>Status:</strong> Payment Successful</p>
+          <p><strong>Transaction ID:</strong> ${generateTransactionID()}</p>
+          <p><strong>Amount:</strong> $3.00 USD</p>
+          <p><strong>Payment Method:</strong> Google Pay (Simulated)</p>
+          <p><strong>Date:</strong> ${now.toLocaleDateString()}</p>
+          <p><strong>Time:</strong> ${now.toLocaleTimeString()}</p>
+        `;
+      } catch (err) {
+        result.innerHTML = `<p><strong>Status:</strong> Failed or Cancelled</p><p>${err.message}</p>`;
+      }
+    };
+  </script>
+
+</body>
+</html>
