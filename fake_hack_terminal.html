@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head><title>Hacking in Progress</title>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -37,5 +37,63 @@ function typeChar() {
 }
 setTimeout(typeChar, 1000);
 </script>
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hacking in Progress</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { background: black; color: green; font-family: monospace; padding: 20px; }
+  </style>
+</head>
+<body>
+  <pre id="terminal">Initializing...</pre>
+
+  <script>
+    const lines = [
+      "Connecting to satellite...",
+      "Bypassing firewall...",
+      "Extracting credentials...",
+      "Uploading payload...",
+      "Access granted. You're in.",
+    ];
+    let i = 0;
+    let charIndex = 0;
+    let currentLine = "";
+
+    function typeChar() {
+      if (i < lines.length) {
+        if (charIndex < lines[i].length) {
+          currentLine += lines[i][charIndex++];
+          document.getElementById("terminal").innerHTML = "Initializing hack tool...\n" + currentLine;
+          setTimeout(typeChar, 50);
+        } else {
+          currentLine += "\n";
+          document.getElementById("terminal").innerHTML += "\n";
+          i++;
+          charIndex = 0;
+          currentLine = "";
+          setTimeout(typeChar, 500);
+        }
+      } else {
+        // After animation, load index2.html into same page without changing URL
+        setTimeout(() => {
+          fetch("index02.html")
+            .then(res => res.text())
+            .then(html => {
+              document.open();
+              document.write(html);
+              document.close();
+            });
+        }, 1000);
+      }
+    }
+
+    setTimeout(typeChar, 1000);
+  </script>
 </body>
 </html>
