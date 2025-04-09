@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Telegram Mini Web App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+
+      const user = tg.initDataUnsafe.user;
+      const startParam = tg.initDataUnsafe.start_param;
+
+      const userInfoDiv = document.getElementById("userInfo");
+      const referralInfoDiv = document.getElementById("referralInfo");
+
+      const currentUserID = user?.id || "Unknown";
+      userInfoDiv.innerHTML = `Your Telegram ID: <span class="font-bold text-green-400">${currentUserID}</span>`;
+
+      if (startParam) {
+        localStorage.setItem("referrer_id", startParam);
+      }
+
+      const referrerID = localStorage.getItem("referrer_id");
+
+      if (referrerID && referrerID !== currentUserID.toString()) {
+        referralInfoDiv.innerHTML = `Referred by ID: <span class="font-semibold text-yellow-300">${referrerID}</span>`;
+      } else {
+        referralInfoDiv.innerHTML = "No referral detected.";
+      }
+    });
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
+</head>
+<body class="text-white flex items-center justify-center min-h-screen">
+  <div class="text-center space-y-4">
+    <h1 class="text-3xl font-bold text-blue-400">Telegram Mini Web App</h1>
+    <div id="userInfo" class="text-lg"></div>
+    <div id="referralInfo" class="text-sm mt-2"></div>
+  </div>
+</body>
+</html>
