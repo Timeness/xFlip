@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unique Speech Synthesis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Signika', sans-serif;
+    }
+    .animated-text {
+      font-weight: bold;
+      animation: speakAnim 0.6s ease-in-out infinite alternate;
+    }
+    @keyframes speakAnim {
+      from { transform: scale(1); opacity: 0.8; }
+      to { transform: scale(1.1); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="p-6">
+  <h1 class="text-2xl font-bold mb-4 text-yellow-400">Unique Speech Synthesis Demo</h1>
+
+  <textarea id="text" class="w-full p-3 text-black rounded mb-4" rows="3" placeholder="Type something to speak...">Hello world! This is a custom voice demo.</textarea>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <select id="voiceSelect" class="p-2 text-black rounded"></select>
+    <div class="flex flex-col">
+      <label>Rate: <span id="rateVal">1</span></label>
+      <input id="rate" type="range" min="0.5" max="2" step="0.1" value="1" class="w-full">
+    </div>
+    <div class="flex flex-col">
+      <label>Pitch: <span id="pitchVal">1</span></label>
+      <input id="pitch" type="range" min="0" max="2" step="0.1" value="1" class="w-full">
+    </div>
+    <div class="flex flex-col">
+      <label>Volume: <span id="volumeVal">1</span></label>
+      <input id="volume" type="range" min="0" max="1" step="0.1" value="1" class="w-full">
+    </div>
+  </div>
+
+  <button onclick="speak()" class="bg-yellow-400 text-black px-4 py-2 rounded">Speak Now</button>
+
+  <div id="displayText" class="text-xl mt-6 text-yellow-300 animated-text hidden"></div>
+
+  <script>
+    const textInput = document.getElementById('text');
+    const displayText = document.getElementById('displayText');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const rate = document.getElementById('rate');
+    const pitch = document.getElementById('pitch');
+    const volume = document.getElementById('volume');
+    const rateVal = document.getElementById('rateVal');
+    const pitchVal = document.getElementById('pitchVal');
+    const volumeVal = document.getElementById('volumeVal');
+
+    let voices = [];
+
+    function loadVoices() {
+      voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.innerText = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    speechSynthesis.onvoiceschanged = loadVoices;
+    window.onload = loadVoices;
+
+    function speak() {
+      const text = textInput.value;
+      const utter = new SpeechSynthesisUtterance(text);
+
+      utter.voice = voices[voiceSelect.value];
+      utter.rate = parseFloat(rate.value);
+      utter.pitch = parseFloat(pitch.value);
+      utter.volume = parseFloat(volume.value);
+
+      displayText.innerText = text;
+      displayText.classList.remove('hidden');
+
+      speechSynthesis.cancel(); // stop previous
+      speechSynthesis.speak(utter);
+
+      utter.onend = () => displayText.classList.add('hidden');
+    }
+
+    rate.oninput = () => rateVal.textContent = rate.value;
+    pitch.oninput = () => pitchVal.textContent = pitch.value;
+    volume.oninput = () => volumeVal.textContent = volume.value;
+  </script>
+</body>
+</html>
