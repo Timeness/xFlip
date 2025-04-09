@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feature Demo 28 to 48</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Signika', sans-serif; background-color: #000; color: white; }
+    .feature-box { border: 1px solid #444; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; }
+  </style>
+</head>
+<body class="p-6">
+  <h1 class="text-2xl font-bold mb-4">Feature Demo: 28 to 48</h1>
+
+  <div id="features" class="space-y-4">
+    <!-- Placeholder for JS to populate results -->
+  </div>
+
+  <script>
+    const features = [
+      { name: "Sensor APIs", test: () => 'DeviceMotionEvent' in window || 'DeviceOrientationEvent' in window },
+      { name: "Share API", test: () => navigator.canShare !== undefined },
+      { name: "Speech Recognition", test: () => 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window },
+      { name: "Speech Synthesis", test: () => 'speechSynthesis' in window },
+      { name: "Storage Estimate", test: () => navigator.storage && navigator.storage.estimate },
+      { name: "Touch Events", test: () => 'ontouchstart' in window },
+      { name: "USB Access", test: () => 'usb' in navigator },
+      { name: "Vibration", test: () => 'vibrate' in navigator },
+      { name: "Wake Lock", test: () => 'wakeLock' in navigator },
+      { name: "Web Bluetooth", test: () => 'bluetooth' in navigator },
+      { name: "Web Share Target", test: () => 'launchQueue' in window },
+      { name: "WebRTC", test: () => 'RTCPeerConnection' in window },
+      { name: "Window Management", test: () => 'getWindowSegments' in window },
+      { name: "Gamepad API", test: () => 'getGamepads' in navigator },
+      { name: "Screen Orientation", test: () => screen.orientation !== undefined },
+      { name: "Pointer Lock", test: () => 'pointerLockElement' in document },
+      { name: "Proximity Sensor", test: () => 'ondeviceproximity' in window },
+      { name: "Presentation API", test: () => 'presentation' in navigator },
+      { name: "Encrypted Media Extensions", test: () => 'MediaKeys' in window },
+      { name: "Media Session API", test: () => 'mediaSession' in navigator },
+      { name: "Credential Management", test: () => 'credentials' in navigator },
+    ];
+
+    const container = document.getElementById('features');
+
+    features.forEach(f => {
+      const div = document.createElement('div');
+      div.className = 'feature-box';
+      div.innerHTML = `<strong>${f.name}</strong>: ${f.test() ? '<span class="text-green-400">Supported</span>' : '<span class="text-red-400">Not Supported</span>'}`;
+      container.appendChild(div);
+    });
+  </script>
+</body>
+</html>
