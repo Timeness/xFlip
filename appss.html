@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>App Detection Demo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feature Test 17–27</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -12,68 +12,144 @@
       background-color: #000;
       color: #fff;
     }
+    .feature-box { background-color: #111827; }
   </style>
 </head>
-<body class="p-6 space-y-8">
+<body class="p-6 space-y-6">
+  <h1 class="text-3xl font-bold text-center mb-6 text-white">Feature Test (17–27)</h1>
 
-  <h1 class="text-2xl font-bold text-center">Installed App Detection & Login Status</h1>
-
-  <!-- Installed Related Apps -->
-  <div class="bg-gray-800 p-4 rounded-xl shadow-xl">
-    <h2 class="text-xl font-semibold mb-4">Installed Related Apps</h2>
-    <button onclick="checkApps()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Check Apps</button>
-    <ul id="appsList" class="mt-4 list-disc pl-5 text-green-400"></ul>
-  </div>
-
-  <!-- Login Detection -->
-  <div class="bg-gray-800 p-4 rounded-xl shadow-xl">
-    <h2 class="text-xl font-semibold mb-4">Login Detection</h2>
-    <button onclick="detectLogin()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">Check Login</button>
-    <p id="loginStatus" class="mt-4 text-yellow-400"></p>
-  </div>
-
-  <!-- Open Installed Apps -->
-  <div class="bg-gray-800 p-4 rounded-xl shadow-xl">
-    <h2 class="text-xl font-semibold mb-4">Open Installed Apps</h2>
-    <button onclick="openApp('whatsapp://')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Open WhatsApp</button>
-    <button onclick="openApp('twitter://')" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded ml-2">Open Twitter</button>
-  </div>
+  <div id="results" class="space-y-4"></div>
 
   <script>
-    function checkApps() {
-      const knownApps = [
-        { name: 'WhatsApp', url: 'whatsapp://' },
-        { name: 'Twitter', url: 'twitter://' },
-        { name: 'Facebook', url: 'fb://' }
-      ];
-      const list = document.getElementById('appsList');
-      list.innerHTML = '';
-      knownApps.forEach(app => {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = app.url;
-        document.body.appendChild(iframe);
+    const results = document.getElementById('results');
 
-        setTimeout(() => {
-          const item = document.createElement('li');
-          item.textContent = `${app.name} possibly installed`;
-          list.appendChild(item);
-          iframe.remove();
-        }, 1000);
+    function addResult(title, value) {
+      const box = document.createElement('div');
+      box.className = 'p-4 rounded-lg feature-box';
+      box.innerHTML = `<h2 class="text-xl font-semibold mb-2 text-blue-300">${title}</h2><p>${value}</p>`;
+      results.appendChild(box);
+    }
+
+    // 17. Idle Detection
+    if ('IdleDetector' in window) {
+      const idleDetector = new IdleDetector();
+      idleDetector.addEventListener('change', () => {
+        addResult('Idle Detection', `State: ${idleDetector.state.user} / Screen: ${idleDetector.state.screen}`);
       });
+      idleDetector.start({ threshold: 60000 });
+    } else {
+      addResult('Idle Detection', 'Not supported in this browser.');
     }
 
-    function detectLogin() {
-      // Simulate login check
-      const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-      document.getElementById('loginStatus').innerText =
-        isLoggedIn ? "User is logged in." : "User is not logged in.";
+    // 18. Local Storage
+    try {
+      localStorage.setItem("test", "working");
+      const testValue = localStorage.getItem("test");
+      addResult("Local Storage", `Stored value: ${testValue}`);
+    } catch (e) {
+      addResult("Local Storage", "Not available or blocked.");
     }
 
-    function openApp(url) {
-      window.location.href = url;
+    // 19. Magnetometer
+    if ('Magnetometer' in window) {
+      try {
+        const sensor = new Magnetometer();
+        sensor.addEventListener('reading', () => {
+          addResult('Magnetometer', `X: ${sensor.x}, Y: ${sensor.y}, Z: ${sensor.z}`);
+          sensor.stop();
+        });
+        sensor.start();
+      } catch (e) {
+        addResult('Magnetometer', 'Permission denied or error occurred.');
+      }
+    } else {
+      addResult('Magnetometer', 'Not supported.');
     }
+
+    // 20. Media Devices
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        addResult('Media Devices', `Found ${devices.length} device(s).`);
+      });
+    } else {
+      addResult('Media Devices', 'Not supported.');
+    }
+
+    // 21. MIDI Access
+    if (navigator.requestMIDIAccess) {
+      navigator.requestMIDIAccess().then(() => {
+        addResult('MIDI Access', 'MIDI access granted.');
+      }).catch(() => {
+        addResult('MIDI Access', 'MIDI access denied.');
+      });
+    } else {
+      addResult('MIDI Access', 'Not supported.');
+    }
+
+    // 22. Network Information
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (connection) {
+      addResult('Network Information', `Type: ${connection.type}, Downlink: ${connection.downlink}Mb/s`);
+    } else {
+      addResult('Network Information', 'Not supported.');
+    }
+
+    // 23. Notifications
+    if ('Notification' in window) {
+      Notification.requestPermission().then(result => {
+        addResult('Notifications', `Permission: ${result}`);
+        if (result === 'granted') {
+          new Notification('Feature Test Notification!');
+        }
+      });
+    } else {
+      addResult('Notifications', 'Not supported.');
+    }
+
+    // 24. Payment Request
+    if (window.PaymentRequest) {
+      const supportedInstruments = [{
+        supportedMethods: 'basic-card'
+      }];
+      const details = {
+        total: {
+          label: 'Test Payment',
+          amount: { currency: 'USD', value: '1.00' }
+        }
+      };
+      const request = new PaymentRequest(supportedInstruments, details);
+      addResult('Payment Request', 'Supported (Click payment won’t actually charge)');
+    } else {
+      addResult('Payment Request', 'Not supported.');
+    }
+
+    // 25. Persistent Storage
+    if (navigator.storage && navigator.storage.persist) {
+      navigator.storage.persist().then(persistent => {
+        addResult('Persistent Storage', `Persistent storage: ${persistent}`);
+      });
+    } else {
+      addResult('Persistent Storage', 'Not supported.');
+    }
+
+    // 26. Push Notifications
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      addResult('Push Notifications', 'Supported (Service Worker needed to test fully)');
+    } else {
+      addResult('Push Notifications', 'Not supported.');
+    }
+
+    // 27. Screen Wake Lock
+    if ('wakeLock' in navigator) {
+      navigator.wakeLock.request('screen').then(lock => {
+        addResult('Screen Wake Lock', 'Wake lock acquired.');
+      }).catch(err => {
+        addResult('Screen Wake Lock', 'Wake lock failed or not allowed.');
+      });
+    } else {
+      addResult('Screen Wake Lock', 'Not supported.');
+    }
+
   </script>
-
 </body>
 </html>
