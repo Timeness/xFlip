@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Galactic Odyssey: Cosmic Carnival</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle, #000010, #010024);
+      overflow: hidden;
+    }
+    .animate-spin {
+      animation: spin 5s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .particle {
+      transition: opacity 1s linear, transform 1s linear;
+    }
+    .wave {
+      animation: flow 3s linear infinite;
+    }
+    @keyframes flow {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+  </style>
+</head>
+<body class="text-white">
+
+  <!-- Header -->
+  <header class="text-center p-4">
+    <h1 class="text-4xl md:text-6xl font-bold text-yellow-400">Galactic Odyssey: Cosmic Carnival</h1>
+  </header>
+
+  <!-- Stats -->
+  <div id="stats" class="flex justify-around text-white p-4">
+    <div id="scoreDisplay" class="text-xl">Score: <span id="score">0</span></div>
+    <div id="timerDisplay" class="text-xl">Time: <span id="timer">0</span>s</div>
+    <div id="highScoreDisplay" class="text-xl">Highscore: <span id="highScore">0</span></div>
+  </div>
+
+  <!-- Orb -->
+  <div class="flex justify-center py-4">
+    <div id="cosmicOrb" class="w-32 h-32 rounded-full bg-gradient-to-r from-purple-500 via-blue-400 to-green-400 shadow-2xl animate-spin"></div>
+  </div>
+
+  <!-- Energy Bar -->
+  <div class="px-4 py-2">
+    <div class="w-full bg-gray-700 rounded-full h-4">
+      <div id="energyBar" class="bg-green-500 h-4 rounded-full" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- Message -->
+  <div id="messageDisplay" class="text-center text-lg text-cyan-300 py-2">
+    Welcome to the Cosmic Carnival!
+  </div>
+
+  <!-- Upgrades -->
+  <div class="flex flex-wrap justify-center gap-4 p-4">
+    <button id="upgradeSoul" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">Upgrade Soul</button>
+    <button id="doublePoints" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Double Points</button>
+    <button id="slowTime" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md">Slow Time</button>
+  </div>
+
+  <!-- Settings -->
+  <div class="flex justify-center gap-4 p-4">
+    <button id="toggleSound" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md">Toggle Sound</button>
+    <button id="toggleVibration" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md">Toggle Vibration</button>
+  </div>
+
+  <!-- Speed Slider -->
+  <div class="flex flex-col items-center p-4">
+    <label for="speedSlider" class="text-white mb-2">Cosmic Speed</label>
+    <input id="speedSlider" type="range" min="0.5" max="3" step="0.1" value="1" class="w-64">
+  </div>
+
+  <!-- Leaderboard -->
+  <div class="p-4">
+    <h2 class="text-center text-2xl text-yellow-300 mb-2">Leaderboard</h2>
+    <table class="w-full text-white text-center">
+      <thead>
+        <tr>
+          <th class="border px-2 py-1">Rank</th>
+          <th class="border px-2 py-1">Player</th>
+          <th class="border px-2 py-1">Score</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard">
+        <tr><td class="border px-2 py-1">1</td><td class="border px-2 py-1">Cosmo</td><td class="border px-2 py-1">5000</td></tr>
+        <tr><td class="border px-2 py-1">2</td><td class="border px-2 py-1">Nova</td><td class="border px-2 py-1">4500</td></tr>
+        <tr><td class="border px-2 py-1">3</td><td class="border px-2 py-1">Stella</td><td class="border px-2 py-1">4000</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Achievements Modal -->
+  <div id="achievementModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden">
+    <div class="bg-gray-800 text-white p-6 rounded-md max-w-md w-full">
+      <h3 class="text-2xl mb-4">Achievements</h3>
+      <ul id="achievementsList" class="list-disc list-inside"></ul>
+      <button id="closeModal" class="mt-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">Close</button>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="flex flex-wrap justify-center gap-4 p-4">
+    <button id="pauseResume" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">Pause</button>
+    <button id="resetGame" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">Reset Game</button>
+    <button id="showAchievements" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md">Achievements</button>
+  </div>
+
+  <!-- Debug -->
+  <div id="debugPanel" class="p-4 text-sm text-green-300 hidden">
+    <p>Debug Info:</p>
+    <p id="debugInfo">No issues.</p>
+  </div>
+  <button id="toggleDebug" class="fixed bottom-4 right-4 bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-md">Toggle Debug</button>
+
+  <!-- Audio -->
+  <audio id="backgroundAudio" loop autoplay class="hidden">
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/01/audio_08b58fcb89.mp3?filename=space-ambient-111661.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Particles -->
+  <div id="particleContainer" class="absolute inset-0 pointer-events-none"></div>
+
+  <!-- Confetti trigger -->
+  <button id="celebrate" class="hidden"></button>
+
+  <!-- Clock -->
+  <div id="digitalClock" class="absolute top-4 right-4 text-white text-lg"></div>
+
+  <!-- Upgrade Log -->
+  <div id="upgradeLog" class="fixed bottom-16 left-4 text-white text-sm"></div>
+
+  <!-- Instructions Overlay -->
+  <div id="instructionsOverlay" class="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center text-center p-4 hidden">
+    <div class="bg-gray-900 p-6 rounded-md text-white">
+      <h2 class="text-2xl font-bold mb-4">How to Play</h2>
+      <p class="mb-4">Use the upgrades and controls to manage your cosmic journey. Increase your score by staying in the flow, adjust the cosmic speed for difficulty, and track your energy. Avoid interruptions and climb the leaderboard!</p>
+      <button id="closeInstructions" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Got It!</button>
+    </div>
+  </div>
+
+  <!-- Placeholder for JavaScript (to be added later) -->
+  <script>
+    document.getElementById('closeInstructions').onclick = () => {
+      document.getElementById('instructionsOverlay').classList.add('hidden');
+    };
+    document.getElementById('showAchievements').onclick = () => {
+      document.getElementById('achievementModal').classList.remove('hidden');
+    };
+    document.getElementById('closeModal').onclick = () => {
+      document.getElementById('achievementModal').classList.add('hidden');
+    };
+    document.getElementById('toggleDebug').onclick = () => {
+      document.getElementById('debugPanel').classList.toggle('hidden');
+    };
+
+    // Digital Clock
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('digitalClock').textContent = now.toLocaleTimeString();
+    }, 1000);
+  </script>
+
+</body>
+  </html>
