@@ -6,33 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const tg = window.Telegram.WebApp;
-      tg.ready();
-
-      const user = tg.initDataUnsafe.user;
-      const startParam = tg.initDataUnsafe.start_param;
-
-      const userInfoDiv = document.getElementById("userInfo");
-      const referralInfoDiv = document.getElementById("referralInfo");
-
-      const currentUserID = user?.id || "Unknown";
-      userInfoDiv.innerHTML = `Your Telegram ID: <span class="font-bold text-green-400">${currentUserID}</span>`;
-
-      if (startParam) {
-        localStorage.setItem("referrer_id", startParam);
-      }
-
-      const referrerID = localStorage.getItem("referrer_id");
-
-      if (referrerID && referrerID !== currentUserID.toString()) {
-        referralInfoDiv.innerHTML = `Referred by ID: <span class="font-semibold text-yellow-300">${referrerID}</span>`;
-      } else {
-        referralInfoDiv.innerHTML = "No referral detected.";
-      }
-    });
-  </script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     body {
@@ -41,11 +14,51 @@
     }
   </style>
 </head>
-<body class="text-white flex items-center justify-center min-h-screen">
-  <div class="text-center space-y-4">
-    <h1 class="text-3xl font-bold text-blue-400">Telegram Mini Web App</h1>
-    <div id="userInfo" class="text-lg"></div>
-    <div id="referralInfo" class="text-sm mt-2"></div>
+<body class="text-white flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
+  <h1 class="text-3xl text-blue-400 font-bold">Telegram Mini Web App</h1>
+
+  <div id="profile" class="flex flex-col items-center space-y-2"></div>
+
+  <div class="w-full max-w-2xl">
+    <h2 class="text-xl font-semibold mb-2 text-green-400">initDataUnsafe Logs</h2>
+    <pre id="log" class="bg-gray-900 text-sm text-white p-4 rounded-lg overflow-auto border border-gray-700 shadow-md"></pre>
   </div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+
+      const data = tg.initDataUnsafe;
+      const logDiv = document.getElementById("log");
+      const profileDiv = document.getElementById("profile");
+
+      // Display initDataUnsafe object
+      logDiv.textContent = JSON.stringify(data, null, 2);
+
+      // User info
+      const user = data?.user;
+      if (user) {
+        const img = document.createElement("img");
+        img.src = `https://t.me/i/userpic/320/${user.id}.jpg`;
+        img.alt = "Profile Photo";
+        img.className = "w-24 h-24 rounded-full border-2 border-white shadow";
+
+        const name = document.createElement("div");
+        name.className = "text-lg font-bold";
+        name.textContent = `${user.first_name || ""} ${user.last_name || ""}`;
+
+        const username = document.createElement("div");
+        username.className = "text-sm text-gray-300";
+        username.textContent = `@${user.username || "N/A"}`;
+
+        profileDiv.appendChild(img);
+        profileDiv.appendChild(name);
+        profileDiv.appendChild(username);
+      } else {
+        profileDiv.innerHTML = "<p class='text-red-400'>No user data available.</p>";
+      }
+    });
+  </script>
 </body>
 </html>
