@@ -24,19 +24,18 @@
   <h1 class="text-2xl mb-3 text-center">ㅤ</h1>
 
   <div class="w-full max-w-2xl mb-5">
-    <div id="logBox" class="bg-lime-999 border-l-4 border-yellow-400 pl-4 pr-3 py-3 rounded-lg text-sm text-gray-200 log-font">
+    <div id="logBox" class="border-l-4 border-yellow-400 bg-transparent px-4 py-3 rounded-lg text-sm text-gray-200 log-font">
       <!-- Logs will appear here -->
     </div>
   </div>
 
-  <button onclick="clearLocalStorage()" class="border border-red-500 text-red-500 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-red-500 hover:text-white transition">
+  <button onclick="clearLocalStorage()" class="border border-red-500 text-red-500 px-3 py-2 rounded-lg hover:bg-red-600/20 transition">
     <img src="https://i.ibb.co/v4LWhgXQ/flat-color-icons-delete-database.png" class="w-5 h-5" />
-    <span>CLEAR</span>
   </button>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white px-4 py-2 rounded-lg shadow-md opacity-0 transition-opacity duration-300">
-    Local storage cleared !
+  <!-- Toast Notification (Icon only) -->
+  <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-transparent border border-white p-2 rounded-lg opacity-0 transition-opacity duration-300">
+    <img src="https://i.ibb.co/v4LWhgXQ/flat-color-icons-delete-database.png" class="w-6 h-6" />
   </div>
 
   <script>
