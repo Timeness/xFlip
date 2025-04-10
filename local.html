@@ -30,14 +30,17 @@
       container.innerHTML = '';
 
       if (localStorage.length === 0) {
-        container.innerHTML = `<div class="border-l-4 border-gray-700 pl-3 italic text-gray-400">No data found in localStorage.</div>`;
+        container.innerHTML = `
+          <div class="bg-green-950 border-l-4 border-yellow-400 pl-4 pr-3 py-2 rounded-lg text-sm text-gray-300 italic">
+            No data found in localStorage.
+          </div>`;
       } else {
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           const value = localStorage.getItem(key);
 
           const block = document.createElement('div');
-          block.className = 'border-l-4 border-yellow-500 pl-3 text-gray-300';
+          block.className = 'bg-green-950 border-l-4 border-yellow-400 pl-4 pr-3 py-2 rounded-lg text-sm text-gray-200';
           block.innerHTML = `<strong>${key}</strong>: ${value}`;
           container.appendChild(block);
         }
