@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base Wallet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background: linear-gradient(145deg, #000000, #1a1a1a);
+      color: white;
+      overflow-x: hidden;
+    }
+    .glow {
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+      }
+      to {
+        text-shadow: 0 0 20px #0ff, 0 0 30px #0ff;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl glow">Base Wallet</h1>
+      <button id="settingsBtn" class="text-white">⚙️</button>
+    </div>
+    <div id="walletSection" class="mb-6">
+      <button id="createWallet" class="bg-blue-500 w-full p-2 rounded text-white">Create New Wallet</button>
+      <div id="walletInfo" class="mt-4 hidden">
+        <p><strong>Address:</strong> <span id="walletAddress"></span></p>
+        <p><strong>Private Key:</strong> <span id="walletPK"></span></p>
+        <p><strong>Secret Phrase:</strong> <span id="walletMnemonic"></span></p>
+      </div>
+    </div>
+    <div class="mb-6">
+      <input id="receiver" type="text" placeholder="Receiver Address" class="w-full mb-2 p-2 rounded text-black" />
+      <input id="amount" type="text" placeholder="Amount (ETH)" class="w-full mb-2 p-2 rounded text-black" />
+      <button id="sendBtn" class="bg-green-600 w-full p-2 rounded text-white">Send</button>
+    </div>
+    <div>
+      <button id="getBalance" class="bg-purple-600 w-full p-2 rounded text-white mb-2">Check Balance</button>
+      <p><strong>Balance:</strong> <span id="balance">0</span> ETH</p>
+    </div>
+  </div>  <script>
+    const provider = new ethers.JsonRpcProvider("https://base-mainnet.infura.io/v3/013c2654639045538cd2e19cc1f72380");
+    let wallet;
+
+    document.getElementById("createWallet").onclick = async () => {
+      wallet = ethers.Wallet.createRandom();
+      wallet = wallet.connect(provider);
+      document.getElementById("walletAddress").textContent = wallet.address;
+      document.getElementById("walletPK").textContent = wallet.privateKey;
+      document.getElementById("walletMnemonic").textContent = wallet.mnemonic.phrase;
+      document.getElementById("walletInfo").classList.remove("hidden");
+    };
+
+    document.getElementById("getBalance").onclick = async () => {
+      if (!wallet) return alert("Create a wallet first");
+      const balance = await provider.getBalance(wallet.address);
+      document.getElementById("balance").textContent = ethers.formatEther(balance);
+    };
+
+    document.getElementById("sendBtn").onclick = async () => {
+      const to = document.getElementById("receiver").value;
+      const amount = document.getElementById("amount").value;
+      if (!wallet || !to || !amount) return alert("Missing fields");
+      const tx = await wallet.sendTransaction({ to, value: ethers.parseEther(amount) });
+      alert("Transaction Sent: " + tx.hash);
+    };
+
+    document.getElementById("settingsBtn").onclick = () => {
+      alert("Secret Phrase and Private Key are already shown after wallet creation.");
+    };
+  </script></body>
+</html>
