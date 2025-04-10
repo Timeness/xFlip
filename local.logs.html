@@ -29,7 +29,6 @@
   </style>
 </head>
 <body class="bg-black text-white min-h-screen flex flex-col items-center p-5 relative" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
-  <!-- <h1 class="text-2xl mb-3 text-center">ᴅɪꜱᴄʟᴀɪᴍᴇʀ: ᴛʜɪꜱ ᴛᴏᴏʟ ʀᴇᴀᴅꜱ ᴀɴᴅ ᴅɪꜱᴘʟᴀʏꜱ ᴅᴀᴛᴀ ꜱᴛᴏʀᴇᴅ ɪɴ ʏᴏᴜʀ ʙʀᴏᴡꜱᴇʀ'ꜱ ʟᴏᴄᴀʟꜱᴛᴏʀᴀɢᴇ. ɴᴏ ᴅᴀᴛᴀ ɪꜱ ᴜᴘʟᴏᴀᴅᴇᴅ ᴏʀ ꜱʜᴀʀᴇᴅ ᴇxᴛᴇʀɴᴀʟʟʏ. ᴄʟᴇᴀʀɪɴɢ ʟᴏᴄᴀʟꜱᴛᴏʀᴀɢᴇ ᴡɪʟʟ ᴘᴇʀᴍᴀɴᴇɴᴛʟʏ ᴅᴇʟᴇᴛᴇ ᴀʟʟ ꜱᴀᴠᴇᴅ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ ᴀɴᴅ ᴇɴꜱᴜʀᴇ ʏᴏᴜ ᴜɴᴅᴇʀꜱᴛᴀɴᴅ ʜᴏᴡ ʟᴏᴄᴀʟꜱᴛᴏʀᴀɢᴇ ᴡᴏʀᴋꜱ ʙᴇꜰᴏʀᴇ ʀᴇʟʏɪɴɢ ᴏɴ ɪᴛ ꜰᴏʀ ᴄʀɪᴛɪᴄᴀʟ ᴅᴀᴛᴀ.ㅤ</h1> -->
   <p class="text-xs text-gray-400 mb-4 text-left leading-relaxed max-w-2xl">
   ɴᴏᴛʜɪɴɢ ɪꜱ ᴜᴘʟᴏᴀᴅᴇᴅ ᴏʀ ꜱʜᴀʀᴇᴅ ʙᴇʏᴏɴᴅ ʏᴏᴜʀ ᴅᴇᴠɪᴄᴇ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ.
   </p>
@@ -37,7 +36,7 @@
     <div id="logBox" class="border border-white bg-transparent px-4 py-3 rounded-lg text-sm text-gray-200 log-font w-full">
     </div>
     <button onclick="clearLocalStorage()" class="ml-2 border border-white text-white p-2 rounded-lg">
-      <img src="https://i.ibb.co/JRLZ358Y/material-symbols-light-check-box-outline-blank.png" class="w-5 h-5" />
+      <img src="/blank.png" class="w-5 h-5" />
     </button>
   </div>
   <script>
@@ -45,7 +44,7 @@
       const logBox = document.getElementById('logBox');
       let logs = '';
       if (localStorage.length === 0) {
-        logs = 'No data found in localStorage.';
+        logs = 'No data found in your localStorage.';
       } else {
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
