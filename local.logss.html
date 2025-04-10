@@ -21,10 +21,10 @@
 </head>
 <body class="bg-black text-white min-h-screen flex flex-col items-center p-5 relative">
 
-  <h1 class="text-2xl mb-3 text-center">ㅤ</h1>
+  <h1 class="text-2xl mb-3 text-center">Local Storage Logs</h1>
 
   <div class="w-full max-w-2xl mb-5">
-    <div id="logBox" class="border-l-4 border-yellow-400 bg-transparent px-4 py-3 rounded-lg text-sm text-gray-200 log-font">
+    <div id="logBox" class="border-l-4 border border-yellow-400 bg-transparent px-4 py-3 rounded-lg text-sm text-gray-200 log-font">
       <!-- Logs will appear here -->
     </div>
   </div>
@@ -32,11 +32,6 @@
   <button onclick="clearLocalStorage()" class="border border-red-500 text-red-500 px-3 py-2 rounded-lg hover:bg-red-600/20 transition">
     <img src="https://i.ibb.co/v4LWhgXQ/flat-color-icons-delete-database.png" class="w-5 h-5" />
   </button>
-
-  <!-- Toast Notification (Icon only) -->
-  <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-transparent border border-white p-2 rounded-lg opacity-0 transition-opacity duration-300">
-    <img src="https://i.ibb.co/v4LWhgXQ/flat-color-icons-delete-database.png" class="w-6 h-6" />
-  </div>
 
   <script>
     function displayLogs() {
@@ -59,18 +54,6 @@
     function clearLocalStorage() {
       localStorage.clear();
       displayLogs();
-      showToast();
-    }
-
-    function showToast() {
-      const toast = document.getElementById('toast');
-      toast.classList.remove('opacity-0');
-      toast.classList.add('opacity-100');
-
-      setTimeout(() => {
-        toast.classList.remove('opacity-100');
-        toast.classList.add('opacity-0');
-      }, 2500);
     }
 
     window.onload = displayLogs;
