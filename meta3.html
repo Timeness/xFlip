@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connect Wallet</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+  <style>
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: 'Viga', sans-serif;
+    }
+    .option-btn img {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center px-4 text-center relative">
+
+  <h1 class="text-4xl mb-8 font-bold">Connect Your Wallet</h1>
+
+  <div class="relative">
+    <button id="connectWallet" class="bg-yellow-500 text-black px-6 py-3 rounded-xl hover:bg-yellow-400 transition-all text-lg relative z-10 flex items-center gap-2">
+      Connect MetaMask
+    </button>
+
+    <div id="walletOptions" class="hidden absolute top-14 left-1/2 transform -translate-x-1/2 bg-white text-black rounded-xl shadow-lg w-44 z-20 text-left">
+      <button id="copyAddress" class="option-btn flex items-center w-full py-2 px-3 hover:bg-gray-200 border-b border-gray-300">
+        <img src="https://i.ibb.co/200p7d24/solar-copy-bold-duotone.png" alt="Copy Icon" />
+        Copy Address
+      </button>
+      <button id="disconnect" class="option-btn flex items-center w-full py-2 px-3 hover:bg-gray-200">
+        <img src="https://i.ibb.co/vCGpgkgp/hugeicons-unlink-04.png" alt="Disconnect Icon" />
+        Disconnect
+      </button>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-white text-black px-5 py-3 rounded-lg shadow-lg text-sm hidden z-50"></div>
+
+  <script>
+    const connectBtn = document.getElementById('connectWallet');
+    const walletOptions = document.getElementById('walletOptions');
+    const toast = document.getElementById('toast');
+    const copyBtn = document.getElementById('copyAddress');
+    const disconnectBtn = document.getElementById('disconnect');
+
+    let walletAddress = '';
+
+    const showToast = (msg) => {
+      toast.innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2500);
+    };
+
+    const updateButtonText = (addr) => {
+      connectBtn.innerHTML = `
+        <img src="https://i.ibb.co/wF5xZ3GY/mingcute-link-fill.png" class="w-5 h-5" alt="Link Icon" />
+        ${addr.slice(0, 6)}...${addr.slice(-4)}
+      `;
+    };
+
+    connectBtn.onclick = async () => {
+      if (walletAddress) {
+        walletOptions.classList.toggle('hidden');
+      } else {
+        if (window.ethereum) {
+          try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            const signer = provider.getSigner();
+            walletAddress = await signer.getAddress();
+            updateButtonText(walletAddress);
+            showToast("Wallet Connected");
+          } catch (err) {
+            console.error(err);
+            showToast("Connection Failed");
+          }
+        } else {
+          showToast("MetaMask not detected!");
+        }
+      }
+    };
+
+    copyBtn.onclick = () => {
+      if (walletAddress) {
+        navigator.clipboard.writeText(walletAddress);
+        showToast("Address Copied");
+        walletOptions.classList.add('hidden');
+      }
+    };
+
+    disconnectBtn.onclick = () => {
+      walletAddress = '';
+      connectBtn.innerText = 'Connect MetaMask';
+      walletOptions.classList.add('hidden');
+      showToast("Disconnected");
+    };
+  </script>
+
+</body>
+</html>
