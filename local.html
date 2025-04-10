@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local Storage Viewer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center p-6">
+
+  <h1 class="text-3xl mb-4 text-center">Local Storage Logs</h1>
+
+  <div class="w-full max-w-3xl bg-gray-900 p-4 rounded-xl shadow-lg mb-6">
+    <pre id="logOutput" class="text-sm whitespace-pre-wrap break-words"></pre>
+  </div>
+
+  <button onclick="clearLocalStorage()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl transition duration-300">
+    Clear Local Storage
+  </button>
+
+  <script>
+    function displayLogs() {
+      const logOutput = document.getElementById('logOutput');
+      let output = '';
+
+      if (localStorage.length === 0) {
+        output = 'No data found in localStorage.';
+      } else {
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          const value = localStorage.getItem(key);
+          output += `**${key}**: ${value}\n\n`;
+        }
+      }
+
+      logOutput.textContent = output;
+    }
+
+    function clearLocalStorage() {
+      localStorage.clear();
+      displayLogs();
+      alert('Local storage cleared!');
+    }
+
+    window.onload = displayLogs;
+  </script>
+</body>
+</html>
