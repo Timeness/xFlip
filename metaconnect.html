@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Token Portal</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Viga&display=swap">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center">
+
+  <h1 class="text-4xl mb-8 font-bold">Welcome to My Token</h1>
+
+  <button id="connectWallet" class="bg-yellow-500 text-black px-5 py-3 rounded-xl hover:bg-yellow-400 transition-all text-lg">
+    Connect Wallet
+  </button>
+
+  <p id="walletAddress" class="mt-4 text-gray-400 text-sm"></p>
+
+  <script>
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          const address = accounts[0];
+          document.getElementById('walletAddress').innerText = `Connected: ${shorten(address)}`;
+        } catch (err) {
+          console.error('Wallet connection failed:', err);
+        }
+      } else {
+        alert('Please install MetaMask!');
+      }
+    }
+
+    function shorten(addr) {
+      return addr.slice(0, 6) + '...' + addr.slice(-4);
+    }
+
+    document.getElementById('connectWallet').addEventListener('click', connectWallet);
+
+    window.addEventListener('load', () => {
+      if (window.ethereum && window.ethereum.selectedAddress) {
+        document.getElementById('walletAddress').innerText = `Connected: ${shorten(window.ethereum.selectedAddress)}`;
+      }
+    });
+  </script>
+
+</body>
+</html>
