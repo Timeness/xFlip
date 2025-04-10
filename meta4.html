@@ -1,122 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wallet Connect</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base Wallet DApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
     body {
-      margin: 0;
-      background-color: #000;
       font-family: 'Viga', sans-serif;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background-color: #000;
+      background: linear-gradient(145deg, #000000, #0c0c0c, #1a1a1a);
+      background-size: 400% 400%;
+      animation: gradientMove 10s ease infinite;
     }
 
-    .main-button {
-      padding: 14px 28px;
-      background: #111;
-      color: white;
-      border: none;
-      font-size: 18px;
-      border-radius: 12px;
-      cursor: pointer;
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
-    .wallet-buttons {
-      margin-top: 20px;
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .wallet-button {
-      display: flex;
-      align-items: center;
-      background: #1a1a1a;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 10px;
-      color: white;
-      text-decoration: none;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .wallet-button:hover {
-      background: #2a2a2a;
-    }
-
-    .wallet-button img {
-      width: 24px;
-      height: 24px;
-      margin-right: 10px;
-      border-radius: 50%;
-    }
-
-    .address-box {
-      margin-top: 30px;
-      background: #111;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 14px;
-      word-break: break-all;
-      display: none;
+    .glass-box {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 1.5rem;
     }
   </style>
 </head>
-<body>
+<body class="text-white p-6 min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-xl space-y-6">
 
-  <button class="main-button" onclick="toggleWalletOptions()">Connect Wallet</button>
+    <div class="glass-box text-center">
+      <h1 class="text-3xl mb-4 text-yellow-400">Base Wallet DApp</h1>
+      <button onclick="connectWallet()" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full">Connect Wallet</button>
+      <p id="walletAddress" class="text-sm text-green-400 mt-2 break-words"></p>
+    </div>
 
-  <div class="wallet-buttons" id="walletOptions">
-    <button class="wallet-button" onclick="connectWallet('trust')">
-      <img src="https://logo.clearbit.com/trustwallet.com" alt="Trust Wallet" />
-      Trust Wallet
-    </button>
-    <button class="wallet-button" onclick="connectWallet('okx')">
-      <img src="https://logo.clearbit.com/okx.com" alt="OKX Wallet" />
-      OKX Wallet
-    </button>
+    <div class="glass-box flex items-center justify-between">
+      <div>
+        <p class="text-lg font-bold">Balance</p>
+        <p id="balance" class="text-2xl text-yellow-300">--</p>
+      </div>
+      <iconify-icon icon="tabler:coin" class="text-yellow-400 text-4xl"></iconify-icon>
+    </div>
+
+    <div class="glass-box space-y-3">
+      <p class="text-xl text-white">Send Base ETH</p>
+      <div class="space-y-2">
+        <input type="text" id="toAddress" placeholder="Recipient Address" class="w-full px-3 py-2 rounded bg-gray-900 text-white" />
+        <input type="text" id="amount" placeholder="Amount in ETH" class="w-full px-3 py-2 rounded bg-gray-900 text-white" />
+      </div>
+      <button onclick="sendBase()" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-full w-full">Send</button>
+      <p id="txStatus" class="text-sm text-blue-300 mt-2"></p>
+    </div>
+
+    <div class="glass-box">
+      <p class="text-xl mb-3">Recent Transactions</p>
+      <ul id="history" class="text-sm space-y-2"></ul>
+    </div>
+
   </div>
-
-  <div class="address-box" id="walletAddress"></div>
 
   <script>
     let provider;
+    let signer;
+    let userAddress = "";
 
-    function toggleWalletOptions() {
-      const options = document.getElementById('walletOptions');
-      options.style.display = options.style.display === 'flex' ? 'none' : 'flex';
+    async function connectWallet() {
+      if (window.ethereum) {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        userAddress = await signer.getAddress();
+        document.getElementById("walletAddress").innerText = userAddress;
+        getBalance();
+        getHistory();
+      } else {
+        alert("Install Metamask");
+      }
     }
 
-    async function connectWallet(wallet) {
-      provider = new WalletConnectProvider.default({
-        rpc: {
-          1: "https://mainnet.infura.io/v3/013c2654639045538cd2e19cc1f72380" // replace with your Infura or RPC
-        },
-        chainId: 1,
-        qrcode: true,
-        connectorOpts: {
-          mobileLinks: wallet === 'trust' ? ['trust'] : ['okx']
-        }
-      });
+    async function getBalance() {
+      const balance = await provider.getBalance(userAddress);
+      const eth = ethers.formatEther(balance);
+      document.getElementById("balance").innerText = `${eth} ETH`;
+    }
 
-      await provider.enable();
-      const web3 = new Web3(provider);
-      const accounts = await web3.eth.getAccounts();
-      const addressBox = document.getElementById('walletAddress');
-      addressBox.innerText = "Connected Wallet: " + accounts[0];
-      addressBox.style.display = 'block';
+    async function sendBase() {
+      const to = document.getElementById("toAddress").value;
+      const amt = document.getElementById("amount").value;
+      try {
+        const tx = await signer.sendTransaction({
+          to,
+          value: ethers.parseEther(amt)
+        });
+        document.getElementById("txStatus").innerText = "Transaction Sent: " + tx.hash;
+        await tx.wait();
+        getBalance();
+        getHistory();
+      } catch (e) {
+        document.getElementById("txStatus").innerText = "Error: " + e.message;
+      }
+    }
+
+    async function getHistory() {
+      const INFURA_KEY = "013c2654639045538cd2e19cc1f72380";
+      const baseProvider = new ethers.providers.JsonRpcProvider(`https://base-mainnet.infura.io/v3/${INFURA_KEY}`);
+      const history = await baseProvider.getHistory(userAddress);
+      const list = document.getElementById("history");
+      list.innerHTML = "";
+      history.slice(-10).reverse().forEach(tx => {
+        const item = document.createElement("li");
+        item.innerHTML = `
+          <div class="flex items-center gap-2 bg-gray-900 p-2 rounded-lg">
+            <iconify-icon icon="tabler:history" class="text-blue-400 text-xl"></iconify-icon>
+            <a href="https://basescan.org/tx/${tx.hash}" target="_blank" class="underline text-blue-300">${tx.hash.slice(0, 30)}...</a>
+          </div>`;
+        list.appendChild(item);
+      });
     }
   </script>
-
 </body>
 </html>
