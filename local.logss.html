@@ -7,36 +7,40 @@
   <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
     body {
       font-family: 'Viga', sans-serif;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
     .log-font {
       font-family: 'Inconsolata', monospace;
       white-space: pre-line;
     }
+    img {
+      pointer-events: none;
+      -webkit-touch-callout: none;
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
   </style>
 </head>
-<body class="bg-black text-white min-h-screen flex flex-col items-center p-5 relative">
-
+<body class="bg-black text-white min-h-screen flex flex-col items-center p-5 relative" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
   <h1 class="text-2xl mb-3 text-center">ㅤ</h1>
-
   <div class="w-full max-w-2xl mb-5 flex">
     <div id="logBox" class="border border-white bg-transparent px-4 py-3 rounded-lg text-sm text-gray-200 log-font w-full">
-      <!-- Logs will appear here -->
     </div>
-
     <button onclick="clearLocalStorage()" class="ml-2 border border-white text-white p-2 rounded-lg">
       <img src="https://i.ibb.co/JRLZ358Y/material-symbols-light-check-box-outline-blank.png" class="w-5 h-5" />
     </button>
   </div>
-
   <script>
     function displayLogs() {
       const logBox = document.getElementById('logBox');
       let logs = '';
-
       if (localStorage.length === 0) {
         logs = 'No data found in localStorage.';
       } else {
@@ -46,15 +50,12 @@
           logs += `${key}: ${value}\n`;
         }
       }
-
       logBox.textContent = logs;
     }
-
     function clearLocalStorage() {
       localStorage.clear();
       displayLogs();
     }
-
     window.onload = displayLogs;
   </script>
 </body>
