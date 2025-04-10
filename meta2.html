@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connect Wallet</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+
+  <style>
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center px-4 text-center">
+
+  <h1 class="text-4xl mb-8 font-bold">Connect Your Wallet</h1>
+
+  <div class="space-y-4">
+    <button id="connectMetamask" class="bg-yellow-500 text-black px-5 py-3 rounded-xl hover:bg-yellow-400 transition-all text-lg">
+      Connect MetaMask
+    </button>
+
+    <button id="connectWalletConnect" class="bg-blue-500 text-white px-5 py-3 rounded-xl hover:bg-blue-400 transition-all text-lg">
+      Connect with WalletConnect
+    </button>
+  </div>
+
+  <p id="walletAddress" class="mt-6 text-gray-400 text-sm"></p>
+
+  <script>
+    const showAddress = (addr) => {
+      document.getElementById('walletAddress').innerText = 'Connected: ' + addr.slice(0,6) + '...' + addr.slice(-4);
+    };
+
+    // MetaMask Connect
+    document.getElementById('connectMetamask').onclick = async () => {
+      if (window.ethereum) {
+        try {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          const signer = provider.getSigner();
+          const address = await signer.getAddress();
+          showAddress(address);
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        alert("MetaMask not detected!");
+      }
+    };
+
+    // WalletConnect for mobile
+    document.getElementById('connectWalletConnect').onclick = async () => {
+      const provider = new WalletConnectProvider.default({
+        rpc: {
+          1: "https://rpc.ankr.com/eth" // Mainnet (use your network RPC if testnet)
+        },
+        qrcode: true,
+      });
+
+      await provider.enable();
+
+      const web3Provider = new ethers.providers.Web3Provider(provider);
+      const signer = web3Provider.getSigner();
+      const address = await signer.getAddress();
+      showAddress(address);
+    };
+  </script>
+
+</body>
+</html>
