@@ -8,7 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
 
   <style>
     body {
@@ -18,59 +17,77 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center px-4 text-center">
+<body class="min-h-screen flex flex-col items-center justify-center px-4 text-center relative">
 
   <h1 class="text-4xl mb-8 font-bold">Connect Your Wallet</h1>
 
-  <div class="space-y-4">
-    <button id="connectMetamask" class="bg-yellow-500 text-black px-5 py-3 rounded-xl hover:bg-yellow-400 transition-all text-lg">
+  <div class="relative">
+    <button id="connectWallet" class="bg-yellow-500 text-black px-6 py-3 rounded-xl hover:bg-yellow-400 transition-all text-lg relative z-10">
       Connect MetaMask
     </button>
 
-    <button id="connectWalletConnect" class="bg-blue-500 text-white px-5 py-3 rounded-xl hover:bg-blue-400 transition-all text-lg">
-      Connect with WalletConnect
-    </button>
+    <div id="walletOptions" class="hidden absolute top-14 left-1/2 transform -translate-x-1/2 bg-white text-black rounded-xl shadow-lg w-40 z-20">
+      <button id="copyAddress" class="w-full py-2 hover:bg-gray-200 border-b border-gray-300">Copy Address</button>
+      <button id="disconnect" class="w-full py-2 hover:bg-gray-200">Disconnect</button>
+    </div>
   </div>
 
-  <p id="walletAddress" class="mt-6 text-gray-400 text-sm"></p>
+  <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-white text-black px-5 py-3 rounded-lg shadow-lg text-sm hidden z-50"></div>
 
   <script>
-    const showAddress = (addr) => {
-      document.getElementById('walletAddress').innerText = 'Connected: ' + addr.slice(0,6) + '...' + addr.slice(-4);
+    const connectBtn = document.getElementById('connectWallet');
+    const walletOptions = document.getElementById('walletOptions');
+    const toast = document.getElementById('toast');
+    const copyBtn = document.getElementById('copyAddress');
+    const disconnectBtn = document.getElementById('disconnect');
+
+    let walletAddress = '';
+
+    const showToast = (msg) => {
+      toast.innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2500);
     };
 
-    // MetaMask Connect
-    document.getElementById('connectMetamask').onclick = async () => {
-      if (window.ethereum) {
-        try {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          await provider.send("eth_requestAccounts", []);
-          const signer = provider.getSigner();
-          const address = await signer.getAddress();
-          showAddress(address);
-        } catch (err) {
-          console.error(err);
-        }
+    const updateButtonText = (addr) => {
+      connectBtn.innerText = addr.slice(0, 6) + '...' + addr.slice(-4);
+    };
+
+    connectBtn.onclick = async () => {
+      if (walletAddress) {
+        walletOptions.classList.toggle('hidden');
       } else {
-        alert("MetaMask not detected!");
+        if (window.ethereum) {
+          try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            const signer = provider.getSigner();
+            walletAddress = await signer.getAddress();
+            updateButtonText(walletAddress);
+            showToast("Wallet Connected");
+          } catch (err) {
+            console.error(err);
+            showToast("Connection Failed");
+          }
+        } else {
+          showToast("MetaMask not detected!");
+        }
       }
     };
 
-    // WalletConnect for mobile
-    document.getElementById('connectWalletConnect').onclick = async () => {
-      const provider = new WalletConnectProvider.default({
-        rpc: {
-          1: "https://rpc.ankr.com/eth" // Mainnet (use your network RPC if testnet)
-        },
-        qrcode: true,
-      });
+    copyBtn.onclick = () => {
+      if (walletAddress) {
+        navigator.clipboard.writeText(walletAddress);
+        showToast("Address Copied");
+        walletOptions.classList.add('hidden');
+      }
+    };
 
-      await provider.enable();
-
-      const web3Provider = new ethers.providers.Web3Provider(provider);
-      const signer = web3Provider.getSigner();
-      const address = await signer.getAddress();
-      showAddress(address);
+    disconnectBtn.onclick = () => {
+      walletAddress = '';
+      connectBtn.innerText = 'Connect MetaMask';
+      walletOptions.classList.add('hidden');
+      showToast("Disconnected");
     };
   </script>
 
