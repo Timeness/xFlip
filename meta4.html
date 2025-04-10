@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wallet Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      font-family: 'Viga', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .main-button {
+      padding: 14px 28px;
+      background: #111;
+      color: white;
+      border: none;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .wallet-buttons {
+      margin-top: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .wallet-button {
+      display: flex;
+      align-items: center;
+      background: #1a1a1a;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .wallet-button:hover {
+      background: #2a2a2a;
+    }
+
+    .wallet-button img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      border-radius: 50%;
+    }
+
+    .address-box {
+      margin-top: 30px;
+      background: #111;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      word-break: break-all;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="main-button" onclick="toggleWalletOptions()">Connect Wallet</button>
+
+  <div class="wallet-buttons" id="walletOptions">
+    <button class="wallet-button" onclick="connectWallet('trust')">
+      <img src="https://logo.clearbit.com/trustwallet.com" alt="Trust Wallet" />
+      Trust Wallet
+    </button>
+    <button class="wallet-button" onclick="connectWallet('okx')">
+      <img src="https://logo.clearbit.com/okx.com" alt="OKX Wallet" />
+      OKX Wallet
+    </button>
+  </div>
+
+  <div class="address-box" id="walletAddress"></div>
+
+  <script>
+    let provider;
+
+    function toggleWalletOptions() {
+      const options = document.getElementById('walletOptions');
+      options.style.display = options.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    async function connectWallet(wallet) {
+      provider = new WalletConnectProvider.default({
+        rpc: {
+          1: "https://mainnet.infura.io/v3/013c2654639045538cd2e19cc1f72380" // replace with your Infura or RPC
+        },
+        chainId: 1,
+        qrcode: true,
+        connectorOpts: {
+          mobileLinks: wallet === 'trust' ? ['trust'] : ['okx']
+        }
+      });
+
+      await provider.enable();
+      const web3 = new Web3(provider);
+      const accounts = await web3.eth.getAccounts();
+      const addressBox = document.getElementById('walletAddress');
+      addressBox.innerText = "Connected Wallet: " + accounts[0];
+      addressBox.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
