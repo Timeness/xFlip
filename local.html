@@ -12,34 +12,36 @@
     }
   </style>
 </head>
-<body class="bg-black text-white min-h-screen flex flex-col items-center p-6">
+<body class="bg-black text-white min-h-screen flex flex-col items-center p-5">
 
-  <h1 class="text-3xl mb-4 text-center">Local Storage Logs</h1>
+  <h1 class="text-2xl mb-3 text-center">Local Storage Logs</h1>
 
-  <div class="w-full max-w-3xl bg-gray-900 p-4 rounded-xl shadow-lg mb-6">
-    <pre id="logOutput" class="text-sm whitespace-pre-wrap break-words"></pre>
+  <div id="logContainer" class="w-full max-w-2xl space-y-3 mb-5">
+    <!-- Logs will be inserted here -->
   </div>
 
-  <button onclick="clearLocalStorage()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl transition duration-300">
+  <button onclick="clearLocalStorage()" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg">
     Clear Local Storage
   </button>
 
   <script>
     function displayLogs() {
-      const logOutput = document.getElementById('logOutput');
-      let output = '';
+      const container = document.getElementById('logContainer');
+      container.innerHTML = '';
 
       if (localStorage.length === 0) {
-        output = 'No data found in localStorage.';
+        container.innerHTML = `<div class="border-l-4 border-gray-700 pl-3 italic text-gray-400">No data found in localStorage.</div>`;
       } else {
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           const value = localStorage.getItem(key);
-          output += `**${key}**: ${value}\n\n`;
+
+          const block = document.createElement('div');
+          block.className = 'border-l-4 border-yellow-500 pl-3 text-gray-300';
+          block.innerHTML = `<strong>${key}</strong>: ${value}`;
+          container.appendChild(block);
         }
       }
-
-      logOutput.textContent = output;
     }
 
     function clearLocalStorage() {
