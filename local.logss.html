@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local Storage Viewer</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+    }
+    .log-font {
+      font-family: 'Inconsolata', monospace;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center p-5 relative">
+
+  <h1 class="text-2xl mb-3 text-center">Local Storage Logs</h1>
+
+  <div class="w-full max-w-2xl mb-5">
+    <div id="logBox" class="bg-lime-700 border-l-4 border-yellow-400 pl-4 pr-3 py-3 rounded-lg text-sm text-gray-200 log-font">
+      <!-- Logs will appear here -->
+    </div>
+  </div>
+
+  <button onclick="clearLocalStorage()" class="border border-red-500 text-red-500 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-red-500 hover:text-white transition">
+    <img src="https://i.ibb.co/v4LWhgXQ/flat-color-icons-delete-database.png" class="w-5 h-5" />
+    <span>ᴄʟᴇᴀʀ</span>
+  </button>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white px-4 py-2 rounded-lg shadow-md opacity-0 transition-opacity duration-300">
+    Local storage cleared!
+  </div>
+
+  <script>
+    function displayLogs() {
+      const logBox = document.getElementById('logBox');
+      let logs = '';
+
+      if (localStorage.length === 0) {
+        logs = 'No data found in localStorage.';
+      } else {
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          const value = localStorage.getItem(key);
+          logs += `${key}: ${value}\n`;
+        }
+      }
+
+      logBox.textContent = logs;
+    }
+
+    function clearLocalStorage() {
+      localStorage.clear();
+      displayLogs();
+      showToast();
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 2500);
+    }
+
+    window.onload = displayLogs;
+  </script>
+</body>
+</html>
