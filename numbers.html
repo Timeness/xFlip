@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phone Number Picker</title>
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <style>
+    body {
+      font-family: 'Signika', sans-serif;
+    }
+  </style>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</head>
+<body class="bg-black text-white flex items-center justify-center h-screen">
+  <div class="text-center space-y-6">
+    <h1 class="text-3xl font-bold">Enter your phone number</h1>
+    <p class="text-sm text-gray-400">We'll send security notifications to this number</p>
+    <button onclick="requestPhoneNumber()" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-500">
+      Choose Phone Number
+    </button>
+    <p id="output" class="mt-4 text-green-400 text-sm"></p>
+  </div>
+
+  <script>
+    async function requestPhoneNumber() {
+      if (!window.getPhoneNumber) {
+        document.getElementById('output').textContent = 'Google picker only works in TWA (installed Android app)';
+        return;
+      }
+      try {
+        const phoneNumber = await window.getPhoneNumber();
+        document.getElementById('output').textContent = `Selected Number: ${phoneNumber}`;
+      } catch (err) {
+        document.getElementById('output').textContent = 'Cancelled or failed to retrieve number';
+      }
+    }
+  </script>
+</body>
+</html>
