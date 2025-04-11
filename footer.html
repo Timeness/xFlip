@@ -14,48 +14,43 @@
             background-color: #000000;
             color: #ffffff;
             font-family: 'VT323', monospace;
+            -webkit-user-select: none; /* Disable text selection */
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            overflow: hidden; /* Disable zooming */
+        }
+        img {
+            -webkit-touch-callout: none; /* Disable image context menu on iOS */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
   </style>
+  <script>
+   document.addEventListener('contextmenu', event => event.preventDefault()); // Disable right-click context menu
+   document.addEventListener('keydown', event => {
+            if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I')) {
+                event.preventDefault(); // Disable F12 and Ctrl+Shift+I for DevTools
+            }
+        });
+  </script>
  </head>
  <body class="flex flex-col min-h-screen justify-end">
   <div class="p-4">
-   <div class="text-center text-white mb-4">
+   <div class="text-center text-white mb-2">
     PARTNERS
    </div>
    <div class="flex justify-center space-x-4">
-    <img alt="Partner 1 logo" src="https://i.ibb.co/Qv0WvQ2z/token-branded-optimism.png"/>
-    <img alt="Partner 2 logo" src="https://i.ibb.co/9knk4xy9/cryptocurrency-color-eth.png"/>
-    <img alt="Partner 3 logo" src="https://i.ibb.co/rGvv0LTD/token-branded-arbitrum-one.png"/>
-    <img alt="Partner 4 logo" src="https://i.ibb.co/7NJzYVd8/token-branded-bnb.png"/>
-    <img alt="Partner 5 logo" src="https://i.ibb.co/8WX3rPd/token-branded-sol.png"/>
-   </div>
-   <hr class="border-t border-gray-600 mt-4"/>
-  </div>
-  <div class="flex justify-between items-center p-4 bg-black">
-   <div class="flex space-x-4">
-    <button class="text-white">
-     MANING
-    </button>
-    <button class="text-white">
-     UPGRADE
-    </button>
-    <button class="text-white">
-     TASKS
-    </button>
-    <button class="text-white">
-     STATS
-    </button>
-   </div>
-   <div class="flex items-center space-x-2">
-    <div class="text-white">
-     FAQ
-    </div>
-    <button class="text-white px-2 py-1 rounded bg-transparent">
-     FEST
-    </button>
+    <img alt="Partner 1 logo" class="h-12 w-12" src="https://i.ibb.co/Qv0WvQ2z/token-branded-optimism.png"/>
+    <img alt="Partner 2 logo" class="h-12 w-12" src="https://i.ibb.co/9knk4xy9/cryptocurrency-color-eth.png"/>
+    <img alt="Partner 3 logo" class="h-12 w-12" src="https://i.ibb.co/rGvv0LTD/token-branded-arbitrum-one.png"/>
+    <img alt="Partner 4 logo" class="h-12 w-12" src="https://i.ibb.co/7NJzYVd8/token-branded-bnb.png"/>
+    <img alt="Partner 5 logo" class="h-12 w-12" src="https://i.ibb.co/8WX3rPd/token-branded-sol.png"/>
    </div>
   </div>
-  <div class="flex justify-between items-center p-4 bg-black">
+  <div class="flex justify-between items-center p-2 bg-black">
    <div class="text-white">
     UID 7066432559
    </div>
