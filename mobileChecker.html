@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobile Human Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background-color: #000;
+    }
+    .glow {
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+    .draggable {
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white flex items-center justify-center px-4">
+
+  <div class="max-w-md w-full p-6 rounded-xl glow bg-neutral-900 space-y-6 text-center">
+    <h1 class="text-2xl">Are You Human? (Mobile)</h1>
+
+    <!-- Shake Detection -->
+    <div id="shakeStep">
+      <p class="text-lg mb-2">Shake your phone gently!</p>
+      <p id="shakeResult" class="text-yellow-400 text-sm"></p>
+    </div>
+
+    <!-- Tilt Detection -->
+    <div id="tiltStep" class="hidden">
+      <p class="text-lg mb-2">Tilt your phone to the left...</p>
+      <p id="tiltResult" class="text-yellow-400 text-sm"></p>
+    </div>
+
+    <!-- Tap Pattern -->
+    <div id="tapStep" class="hidden">
+      <p class="text-lg mb-2">Tap 3 times randomly on screen</p>
+      <p id="tapResult" class="text-yellow-400 text-sm"></p>
+    </div>
+
+    <!-- Swipe Box -->
+    <div id="swipeStep" class="hidden">
+      <p class="text-lg mb-2">Swipe the box into the target</p>
+      <div class="relative w-full h-32 bg-black border border-white rounded-lg overflow-hidden mt-4">
+        <div id="target" class="absolute bottom-2 right-2 w-20 h-20 border-2 border-green-400"></div>
+        <div id="drag" class="absolute top-2 left-2 w-16 h-16 bg-yellow-400 rounded-md draggable touch-none"></div>
+      </div>
+      <p id="swipeResult" class="text-yellow-400 text-sm mt-2"></p>
+    </div>
+
+    <!-- Final -->
+    <div id="final" class="hidden text-green-400 text-xl">
+      You're 100% human! Welcome.
+    </div>
+  </div>
+
+  <script>
+    // Step 1: Shake detection
+    let shakeCount = 0;
+    window.addEventListener("devicemotion", (e) => {
+      let acc = e.accelerationIncludingGravity;
+      if (acc && Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z) > 25) {
+        shakeCount++;
+        if (shakeCount > 2) {
+          document.getElementById("shakeResult").innerText = "Shake detected!";
+          document.getElementById("shakeStep").classList.add("hidden");
+          document.getElementById("tiltStep").classList.remove("hidden");
+        }
+      }
+    });
+
+    // Step 2: Tilt detection
+    window.addEventListener("deviceorientation", (e) => {
+      if (document.getElementById("tiltStep").classList.contains("hidden")) return;
+      if (e.gamma < -20) {
+        document.getElementById("tiltResult").innerText = "Phone tilted left!";
+        setTimeout(() => {
+          document.getElementById("tiltStep").classList.add("hidden");
+          document.getElementById("tapStep").classList.remove("hidden");
+        }, 1000);
+      }
+    });
+
+    // Step 3: Tap Pattern
+    let tapCount = 0;
+    document.body.addEventListener("touchstart", () => {
+      if (!document.getElementById("tapStep").classList.contains("hidden")) {
+        tapCount++;
+        if (tapCount >= 3) {
+          document.getElementById("tapResult").innerText = "Random taps verified!";
+          setTimeout(() => {
+            document.getElementById("tapStep").classList.add("hidden");
+            document.getElementById("swipeStep").classList.remove("hidden");
+          }, 1000);
+        }
+      }
+    });
+
+    // Step 4: Swipe Detection
+    const drag = document.getElementById("drag");
+    const target = document.getElementById("target");
+    let isDragging = false;
+
+    drag.addEventListener("touchstart", (e) => {
+      isDragging = true;
+    });
+
+    drag.addEventListener("touchmove", (e) => {
+      if (!isDragging) return;
+      let touch = e.touches[0];
+      let parentRect = drag.parentElement.getBoundingClientRect();
+      let newX = touch.clientX - parentRect.left - 32;
+      let newY = touch.clientY - parentRect.top - 32;
+      drag.style.left = `${newX}px`;
+      drag.style.top = `${newY}px`;
+    });
+
+    drag.addEventListener("touchend", () => {
+      isDragging = false;
+      let dragRect = drag.getBoundingClientRect();
+      let targetRect = target.getBoundingClientRect();
+      if (
+        dragRect.left > targetRect.left - 20 &&
+        dragRect.top > targetRect.top - 20 &&
+        dragRect.right < targetRect.right + 20 &&
+        dragRect.bottom < targetRect.bottom + 20
+      ) {
+        document.getElementById("swipeResult").innerText = "Perfect swipe!";
+        setTimeout(() => {
+          document.getElementById("swipeStep").classList.add("hidden");
+          document.getElementById("final").classList.remove("hidden");
+        }, 1000);
+      } else {
+        document.getElementById("swipeResult").innerText = "Try swiping into the target.";
+      }
+    });
+  </script>
+</body>
+</html>
