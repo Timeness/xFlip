@@ -2,109 +2,207 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Human Verification Wall</title>
+  <title>Human Voice Detector</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Viga', sans-serif;
+      zoom: reset !important;
+      overflow: hidden;
+    }
+    .toast {
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    button:hover {
+      background-color: transparent !important;
     }
   </style>
 </head>
-<body class="bg-black text-white min-h-screen p-4">
-  <div class="max-w-xl mx-auto space-y-10">
-    <h1 class="text-3xl text-center">Human-Only Verification</h1><!-- Voice Emotion Check -->
-<div class="space-y-2">
-  <h2 class="text-xl">1. Voice Emotion Check</h2>
-  <p>Say this line <span class="text-yellow-400">happily</span>: “I am not a robot”</p>
-  <button class="bg-yellow-500 px-4 py-2 rounded" onclick="recordAudio()">Record Voice</button>
-  <p id="voice-status" class="text-sm text-gray-400"></p>
-</div>
+<body class="bg-black text-white flex flex-col items-center justify-center min-h-screen px-4 relative" oncontextmenu="return false" onselectstart="return false" onkeydown="return disableKeys(event)">
+  
+  <div id="cooldownTimer" class="absolute top-4 text-red-400 font-semibold hidden"></div>
 
-<!-- Mirror Camera Check -->
-<div class="space-y-2">
-  <h2 class="text-xl">2. Mirror Camera Check</h2>
-  <p>Raise your <span class="text-yellow-400">left hand</span></p>
-  <video id="mirrorCam" autoplay playsinline class="w-full rounded"></video>
-</div>
+  <div class="w-full max-w-md p-6 bg-zinc-900 rounded-2xl shadow-2xl text-center space-y-4 border border-gray-700">
+    <h1 class="text-2xl font-bold text-yellow-400">Human Voice Detector</h1>
+    <p class="text-sm text-gray-400">Say: "I am not a robot"</p>
 
-<!-- Personal Memory Prompt -->
-<div class="space-y-2">
-  <h2 class="text-xl">3. Personal Memory Prompt</h2>
-  <p>What did you eat in breakfast today?</p>
-  <input id="memoryInput" type="text" class="w-full p-2 bg-gray-800 rounded" oninput="captureTyping(event)" />
-  <p class="text-sm text-gray-400">Typing behavior being analyzed...</p>
-</div>
+    <button id="startBtn" class="border border-blue-400 text-white py-2 px-4 rounded-xl transition-all bg-transparent">Start Recording</button>
 
-<!-- Touch Pressure + Rhythm -->
-<div class="space-y-2">
-  <h2 class="text-xl">4. Tap Rhythm Check</h2>
-  <p>Tap this button: <span class="text-yellow-400">short-short-long-short</span></p>
-  <button id="tapBtn" class="bg-yellow-500 px-4 py-2 rounded">Tap</button>
-  <div id="tapTimes" class="text-sm text-gray-400"></div>
-</div>
+    <div id="listenTimer" class="mt-1 text-sm text-cyan-400"></div>
 
-<!-- Distraction Reaction -->
-<div class="space-y-2">
-  <h2 class="text-xl">5. Distraction Reaction</h2>
-  <p>Tap only if <span class="text-yellow-400">no cat</span> appears:</p>
-  <div id="emojiArea" class="text-3xl space-x-2"></div>
-  <button class="bg-yellow-500 px-4 py-2 mt-2 rounded" onclick="checkDistraction()">Tap</button>
-</div>
+    <div id="emotion" class="text-lg font-semibold mt-4 text-green-400"></div>
+    <div id="result" class="text-sm mt-2 text-white"></div>
+  </div>
 
-<!-- Live Face Matching to Emoji -->
-<div class="space-y-2">
-  <h2 class="text-xl">6. Make a Sad Face</h2>
-  <p>Show a <span class="text-yellow-400">sad expression</span> to the camera.</p>
-  <video id="faceCam" autoplay playsinline class="w-full rounded"></video>
-</div>
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed top-5 right-5 bg-red-600 text-white px-4 py-2 rounded-xl shadow-lg toast z-50"></div>
 
-  </div>  <script>
-    async function recordAudio() {
-      document.getElementById('voice-status').textContent = 'Recording...';
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        document.getElementById('voice-status').textContent = 'Recording captured (analysis not implemented).';
-      } catch (e) {
-        document.getElementById('voice-status').textContent = 'Mic access denied or error.';
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const result = document.getElementById("result");
+    const emotion = document.getElementById("emotion");
+    const toast = document.getElementById("toast");
+    const cooldownTimer = document.getElementById("cooldownTimer");
+    const listenTimer = document.getElementById("listenTimer");
+
+    let recognition;
+    let attempts = parseInt(localStorage.getItem("attempts") || "0");
+    const cooldownKey = "voiceCooldown";
+    const maxAttempts = 3;
+    const cooldownMinutes = 10;
+    let listenCountdown;
+    let listenDuration = 10;
+    let listenStopped = false;
+
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new webkitSpeechRecognition();
+    } else {
+      showToast("Speech recognition not supported.");
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 3000);
+    }
+
+    function updateCooldownTimer() {
+      const stored = localStorage.getItem(cooldownKey);
+      if (!stored) return cooldownTimer.classList.add("hidden");
+
+      const expires = new Date(stored);
+      const now = new Date();
+      const diff = Math.floor((expires - now) / 1000);
+
+      if (diff <= 0) {
+        localStorage.removeItem(cooldownKey);
+        localStorage.setItem("attempts", "0");
+        cooldownTimer.classList.add("hidden");
+        startBtn.disabled = false;
+        startBtn.textContent = "Start Recording";
+        return;
+      }
+
+      const minutes = Math.floor(diff / 60);
+      const seconds = diff % 60;
+      cooldownTimer.classList.remove("hidden");
+      cooldownTimer.textContent = `Cooldown: Try again in ${minutes}m ${seconds}s`;
+
+      setTimeout(updateCooldownTimer, 1000);
+    }
+
+    function startRecording() {
+      if (attempts >= maxAttempts) {
+        showToast("Limit reached. Try again after cooldown.");
+        return;
+      }
+
+      result.textContent = "";
+      emotion.textContent = "";
+      listenTimer.textContent = "";
+      listenStopped = false;
+
+      startBtn.disabled = true;
+      startBtn.textContent = `Listening... (10s)`;
+
+      let remaining = listenDuration;
+      listenCountdown = setInterval(() => {
+        remaining--;
+        if (!listenStopped) {
+          startBtn.textContent = `Listening... (${remaining}s)`;
+        }
+        if (remaining <= 0 && !listenStopped) {
+          clearInterval(listenCountdown);
+          recognition.stop();
+          listenStopped = true;
+        }
+      }, 1000);
+
+      recognition.lang = "en-US";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.start();
+
+      recognition.onresult = (e) => {
+        clearInterval(listenCountdown);
+        listenStopped = true;
+
+        const spoken = e.results[0][0].transcript.trim();
+        const confidence = e.results[0][0].confidence;
+        result.textContent = `"${spoken}"`;
+
+        if (spoken.toLowerCase() === "i am not a robot" && confidence > 0.6) {
+          emotion.textContent = `✅ Human Verified (Confidence: ${Math.round(confidence * 100)}%)`;
+          startBtn.style.display = "none";
+        } else {
+          emotion.textContent = "❌ Verification Failed";
+          result.textContent = `"${spoken}"`;
+          startBtn.textContent = "Try Again";
+          startBtn.disabled = false;
+          listenStopped = true;
+          clearInterval(listenCountdown);
+          attempts++;
+          localStorage.setItem("attempts", attempts);
+
+          if (attempts >= maxAttempts) {
+            const cooldownEnd = new Date();
+            cooldownEnd.setMinutes(cooldownEnd.getMinutes() + cooldownMinutes);
+            localStorage.setItem(cooldownKey, cooldownEnd.toISOString());
+            updateCooldownTimer();
+            startBtn.disabled = true;
+          }
+        }
+      };
+
+      recognition.onerror = () => {
+        clearInterval(listenCountdown);
+        result.textContent = "No speech detected.";
+        emotion.textContent = "❌ Detection failed.";
+        listenStopped = true;
+        startBtn.textContent = "Try Again";
+        startBtn.disabled = false;
+
+        attempts++;
+        localStorage.setItem("attempts", attempts);
+        if (attempts >= maxAttempts) {
+          const cooldownEnd = new Date();
+          cooldownEnd.setMinutes(cooldownEnd.getMinutes() + cooldownMinutes);
+          localStorage.setItem(cooldownKey, cooldownEnd.toISOString());
+          updateCooldownTimer();
+          startBtn.disabled = true;
+        }
+      };
+    }
+
+    startBtn.onclick = () => {
+      const cooldown = localStorage.getItem(cooldownKey);
+      if (cooldown && new Date(cooldown) > new Date()) {
+        updateCooldownTimer();
+        showToast("Cooldown active. Wait before trying again.");
+        return;
+      }
+
+      startRecording();
+    };
+
+    function disableKeys(e) {
+      if (
+        e.key === "F12" || 
+        (e.ctrlKey && e.shiftKey && e.key === "I") || 
+        (e.ctrlKey && e.shiftKey && e.key === "J") || 
+        (e.ctrlKey && e.key === "U")
+      ) {
+        return false;
       }
     }
 
-    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-      document.getElementById('mirrorCam').srcObject = stream;
-      document.getElementById('faceCam').srcObject = stream;
-    });
-
-    let typingData = [];
-    let lastTypeTime = null;
-    function captureTyping(event) {
-      const now = Date.now();
-      if (lastTypeTime) {
-        typingData.push(now - lastTypeTime);
-      }
-      lastTypeTime = now;
-    }
-
-    let tapTimes = [];
-    document.getElementById('tapBtn').addEventListener('click', () => {
-      const now = Date.now();
-      tapTimes.push(now);
-      if (tapTimes.length > 1) {
-        const deltas = tapTimes.slice(1).map((t, i) => t - tapTimes[i]);
-        document.getElementById('tapTimes').textContent = 'Tap intervals: ' + deltas.join(', ') + ' ms';
-      }
-    });
-
-    const emojis = ['🐶', '🦊', '🐱', '🐭', '🐰', '🐻'];
-    function checkDistraction() {
-      const chosen = [];
-      for (let i = 0; i < 5; i++) {
-        const random = emojis[Math.floor(Math.random() * emojis.length)];
-        chosen.push(random);
-      }
-      document.getElementById('emojiArea').textContent = chosen.join(' ');
-      if (chosen.includes('🐱')) alert('Fail: Cat appeared!');
-      else alert('Success: No cat.');
-    }
-  </script></body>
+    updateCooldownTimer();
+  </script>
+</body>
 </html>
