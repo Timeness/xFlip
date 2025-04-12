@@ -1,114 +1,91 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Next-Level Human Verification</title>
-  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <title>Human Voice Detector</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Viga', sans-serif; }
+    .toast {
+      animation: slideIn 0.4s ease;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
   </style>
 </head>
-<body class="bg-black text-white text-sm p-4">
-  <div class="max-w-xl mx-auto p-4 rounded-2xl bg-gray-900 shadow-xl">
-    <h1 class="text-xl text-center mb-4">0/6 Completed - Human Verification</h1>
-    <div id="verifier" class="space-y-4"></div>
-  </div>  <script>
-    const verifier = document.getElementById('verifier');
-    let step = 0;
+<body class="bg-black text-white flex items-center justify-center min-h-screen px-4">
+  <div class="w-full max-w-md p-6 bg-zinc-900 rounded-2xl shadow-2xl text-center space-y-4 border border-gray-700">
+    <h1 class="text-2xl font-bold text-yellow-400">Human Voice Detector</h1>
+    <p class="text-sm text-gray-400">Say: "I am not a robot"</p>
 
-    const steps = [
-      voiceEmotionCheck,
-      mirrorGestureCheck,
-      memoryPromptCheck,
-      touchRhythmCheck,
-      distractionReactionCheck,
-      faceToEmojiCheck
-    ];
+    <button id="startBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl transition-all">Start Recording</button>
 
-    function updateProgress() {
-      document.querySelector('h1').textContent = `${step}/6 Completed - Human Verification`;
+    <div id="result" class="text-lg font-medium mt-4"></div>
+    <div id="emotion" class="text-sm mt-2 text-green-400"></div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast" class="hidden fixed top-5 right-5 bg-red-600 text-white px-4 py-2 rounded-xl shadow-lg toast z-50"></div>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const result = document.getElementById("result");
+    const emotion = document.getElementById("emotion");
+    const toast = document.getElementById("toast");
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.remove("hidden");
+      setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 3000);
     }
 
-    function nextStep() {
-      verifier.innerHTML = '';
-      if (step < steps.length) steps[step++]();
-      updateProgress();
+    let recognition;
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new webkitSpeechRecognition();
+    } else {
+      showToast("Speech recognition not supported in this browser.");
     }
 
-    // 1. Voice Emotion Check (Mocked with confirmation)
-    function voiceEmotionCheck() {
-      verifier.innerHTML = `
-        <p>Say this line happily: <strong>"I am not a robot"</strong></p>
-        <button onclick="nextStep()" class="mt-2 px-4 py-2 bg-blue-600 rounded-full">I Said It Happily</button>
-      `;
-    }
+    startBtn.onclick = () => {
+      result.textContent = "Listening...";
+      emotion.textContent = "";
 
-    // 2. Mirror Gesture Check (Simulated)
-    function mirrorGestureCheck() {
-      verifier.innerHTML = `
-        <p>Imagine you're seeing yourself. Raise your <strong>left hand</strong> and click below when done.</p>
-        <button onclick="nextStep()" class="mt-2 px-4 py-2 bg-green-600 rounded-full">I Did It</button>
-      `;
-    }
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
 
-    // 3. Memory Prompt Check
-    function memoryPromptCheck() {
-      verifier.innerHTML = `
-        <p>What did you eat for breakfast today?</p>
-        <input id="memoryInput" type="text" class="mt-2 p-2 rounded w-full text-black">
-        <button onclick="checkMemory()" class="mt-2 px-4 py-2 bg-yellow-600 rounded-full">Submit</button>
-      `;
-    }
-    function checkMemory() {
-      const val = document.getElementById('memoryInput').value.trim();
-      if (val.length > 2) nextStep();
-    }
+      const startTime = performance.now();
 
-    // 4. Touch Rhythm Check (Simulated)
-    function touchRhythmCheck() {
-      verifier.innerHTML = `
-        <p>Tap this box in rhythm: short-short-long-short</p>
-        <div id="tapBox" class="h-16 bg-white text-black flex items-center justify-center rounded-xl mt-2 cursor-pointer">Tap Me</div>
-      `;
-      let taps = [];
-      let last = null;
-      document.getElementById('tapBox').onclick = () => {
-        const now = Date.now();
-        if (last) taps.push(now - last);
-        last = now;
-        if (taps.length >= 3) nextStep(); // Simulated check
+      recognition.start();
+
+      recognition.onresult = (e) => {
+        const endTime = performance.now();
+        const spoken = e.results[0][0].transcript;
+        const duration = (endTime - startTime) / 1000;
+        const confidence = e.results[0][0].confidence;
+
+        result.textContent = `"${spoken}"`;
+
+        let isHuman = spoken.toLowerCase().includes("i am not a robot") && duration > 1.5;
+        let emotionHint = (duration < 1.5 || confidence < 0.8) ? "Flat tone" : "Emotional tone";
+
+        emotion.textContent = isHuman ? 
+          `✅ Detected as Human Voice (${emotionHint})` :
+          `⚠️ Possibly AI Voice (${emotionHint})`;
       };
-    }
 
-    // 5. Distraction Reaction Check
-    function distractionReactionCheck() {
-      verifier.innerHTML = `
-        <p>Tap only if there is <strong>no cat</strong> among emojis:</p>
-        <div id="emojis" class="text-2xl my-2"></div>
-        <button onclick="checkEmojis()" class="px-4 py-2 bg-red-600 rounded-full">Tap</button>
-      `;
-      const emojiSets = [['', '', '', ''], ['', '', '', ''], ['', '', '', '']];
-      const containsCat = Math.random() < 0.5;
-      if (containsCat) emojiSets[1][2] = '🐱';
-      else emojiSets[1][2] = '';
-      emojiSets[1][0] = '🌟';
-      emojiSets[1][1] = '✨';
-      emojiSets[1][3] = '🔥';
-      document.getElementById('emojis').innerHTML = emojiSets[1].join(' ');
-      document.getElementById('checkEmojis').onclick = () => {};
-    }
-    function checkEmojis() { nextStep(); }
-
-    // 6. Face To Emoji (Simulated)
-    function faceToEmojiCheck() {
-      verifier.innerHTML = `
-        <p>Make a sad face and click confirm below:</p>
-        <button onclick="nextStep()" class="mt-2 px-4 py-2 bg-purple-600 rounded-full">Confirmed</button>
-      `;
-    }
-
-    // Start the first step
-    nextStep();
-  </script></body>
+      recognition.onerror = (e) => {
+        showToast("Error: " + e.error);
+        result.textContent = "";
+        emotion.textContent = "";
+      };
+    };
+  </script>
+</body>
 </html>
