@@ -1,229 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Human Verification Wall</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Viga -->
-    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Viga', sans-serif;
-            background-color: #000;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-        #container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
-        button {
-            background: linear-gradient(45deg, #00ffcc, #ff00cc);
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        button:hover {
-            transform: scale(1.05);
-        }
-        video, canvas {
-            border-radius: 0.5rem;
-            margin: 1rem 0;
-        }
-        #tap-area {
-            width: 100%;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 1rem 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Human Voice Detector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      font-family: 'Viga', sans-serif;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      zoom: reset !important;
+    }
+
+    body {
+      position: relative;
+      background: black;
+      color: white;
+      user-select: none;
+    }
+
+    .floating-bg {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      z-index: 0;
+      background: radial-gradient(circle, rgba(0,255,255,0.15) 10%, transparent 70%),
+                  radial-gradient(circle, rgba(0,128,255,0.1) 10%, transparent 60%);
+      animation: slowFloat 60s linear infinite;
+    }
+
+    @keyframes slowFloat {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(10%, 10%) rotate(360deg); }
+    }
+
+    .toast {
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    button:hover {
+      background-color: transparent !important;
+    }
+  </style>
 </head>
-<body>
-    <div id="container">
-        <h1 class="text-3xl mb-4">Human Verification Wall</h1>
-        <p id="status" class="mb-4">Click "I am not a robot" to start</p>
-        <button id="start-btn" onclick="startVerification()">I am not a robot</button>
-        <div id="verification-step" class="hidden">
-            <p id="instruction" class="text-lg mb-4"></p>
-            <div id="input-area"></div>
-            <button id="submit-btn" class="hidden">Submit</button>
-        </div>
-        <video id="video" width="320" height="240" class="hidden" autoplay></video>
-        <canvas id="canvas" width="320" height="240" class="hidden"></canvas>
+<body oncontextmenu="return false" onkeydown="return disableKeys(event)">
+
+  <!-- Floating Background -->
+  <div class="floating-bg"></div>
+
+  <!-- Centered Content -->
+  <div class="fixed inset-0 flex items-center justify-center z-10">
+    <div class="w-full max-w-md p-6 bg-zinc-900 rounded-2xl shadow-2xl text-center space-y-4 border border-gray-700 relative">
+      <h1 class="text-2xl font-bold text-yellow-400">Human Voice Detector</h1>
+      <p class="text-sm text-gray-400">Say: "I am not a robot"</p>
+
+      <button id="startBtn" class="border border-blue-400 text-white py-2 px-4 rounded-xl transition-all bg-transparent">Start Recording</button>
+
+      <div id="listenTimer" class="mt-1 text-sm text-cyan-400"></div>
+      <div id="emotion" class="text-lg font-semibold mt-4 text-green-400"></div>
+      <div id="result" class="text-sm mt-2 text-white"></div>
     </div>
+  </div>
 
-    <script>
-        const steps = [
-            {
-                name: "Voice Emotion Check",
-                instruction: "Say this line happily: 'I am not a robot'",
-                validate: async () => {
-                    // Placeholder for voice emotion detection
-                    return new Promise((resolve) => {
-                        const audioInput = document.createElement("input");
-                        audioInput.type = "file";
-                        audioInput.accept = "audio/*";
-                        audioInput.className = "text-sm";
-                        document.getElementById("input-area").appendChild(audioInput);
-                        audioInput.onchange = () => {
-                            // Simulate happy tone detection
-                            setTimeout(() => resolve(true), 1000);
-                        };
-                    });
-                }
-            },
-            {
-                name: "Mirror Camera Check",
-                instruction: "Raise your left hand in front of the webcam",
-                validate: async () => {
-                    const video = document.getElementById("video");
-                    video.classList.remove("hidden");
-                    await navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(stream => video.srcObject = stream)
-                        .catch(() => alert("Webcam access needed"));
-                    // Placeholder for gesture detection
-                    return new Promise((resolve) => {
-                        setTimeout(() => {
-                            video.srcObject.getTracks().forEach(track => track.stop());
-                            video.classList.add("hidden");
-                            resolve(true);
-                        }, 3000);
-                    });
-                }
-            },
-            {
-                name: "Personal Memory Prompt",
-                instruction: "What did you eat for breakfast today?",
-                validate: async () => {
-                    return new Promise((resolve) => {
-                        const input = document.createElement("input");
-                        input.type = "text";
-                        input.placeholder = "Type your answer";
-                        input.className = "w-full p-2 rounded bg-gray-800 text-white";
-                        document.getElementById("input-area").appendChild(input);
-                        document.getElementById("submit-btn").classList.remove("hidden");
-                        document.getElementById("submit-btn").onclick = () => {
-                            if (input.value.trim()) resolve(true);
-                        };
-                    });
-                }
-            },
-            {
-                name: "Touch Pressure + Rhythm",
-                instruction: "Tap in this pattern: short-short-long-short",
-                validate: async () => {
-                    return new Promise((resolve) => {
-                        const tapArea = document.createElement("div");
-                        tapArea.id = "tap-area";
-                        tapArea.innerText = "Tap here";
-                        document.getElementById("input-area").appendChild(tapArea);
-                        let taps = [];
-                        tapArea.ontouchstart = (e) => {
-                            taps.push(Date.now());
-                        };
-                        tapArea.ontouchend = () => {
-                            if (taps.length >= 4) {
-                                // Simulate rhythm check
-                                resolve(true);
-                            }
-                        };
-                    });
-                }
-            },
-            {
-                name: "Distraction Reaction",
-                instruction: "Tap only if no cat emoji appears",
-                validate: async () => {
-                    return new Promise((resolve) => {
-                        const emojis = ["😊", "🐶", "🌟", "🍎", "😎"];
-                        const display = document.createElement("div");
-                        display.innerHTML = emojis.join(" ");
-                        display.className = "text-4xl";
-                        document.getElementById("input-area").appendChild(display);
-                        const tapArea = document.createElement("div");
-                        tapArea.id = "tap-area";
-                        tapArea.innerText = "Tap here";
-                        document.getElementById("input-area").appendChild(tapArea);
-                        tapArea.onclick = () => {
-                            // No cat, so tap is correct
-                            resolve(true);
-                        };
-                        setTimeout(() => resolve(false), 5000); // Fail if no tap
-                    });
-                }
-            },
-            {
-                name: "Live Face Matching to Emoji",
-                instruction: "Make a sad face in front of the webcam",
-                validate: async () => {
-                    const video = document.getElementById("video");
-                    video.classList.remove("hidden");
-                    await navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(stream => video.srcObject = stream)
-                        .catch(() => alert("Webcam access needed"));
-                    // Placeholder for emotion detection
-                    return new Promise((resolve) => {
-                        setTimeout(() => {
-                            video.srcObject.getTracks().forEach(track => track.stop());
-                            video.classList.add("hidden");
-                            resolve(true);
-                        }, 3000);
-                    });
-                }
-            }
-        ];
+  <!-- Cooldown Timer -->
+  <div id="cooldownTimer" class="absolute top-4 text-red-400 font-semibold hidden z-50"></div>
 
-        let currentStep = 0;
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed top-5 right-5 bg-red-600 text-white px-4 py-2 rounded-xl shadow-lg toast z-50"></div>
 
-        async function startVerification() {
-            document.getElementById("start-btn").classList.add("hidden");
-            document.getElementById("verification-step").classList.remove("hidden");
-            await runStep();
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const result = document.getElementById("result");
+    const emotion = document.getElementById("emotion");
+    const toast = document.getElementById("toast");
+    const cooldownTimer = document.getElementById("cooldownTimer");
+    const listenTimer = document.getElementById("listenTimer");
+
+    let recognition;
+    let attempts = parseInt(localStorage.getItem("attempts") || "0");
+    const cooldownKey = "voiceCooldown";
+    const maxAttempts = 3;
+    const cooldownMinutes = 10;
+    let listenCountdown;
+    let listenDuration = 10;
+    let spokenOnce = false;
+
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new webkitSpeechRecognition();
+    } else {
+      showToast("Speech recognition not supported.");
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 3000);
+    }
+
+    function updateCooldownTimer() {
+      const stored = localStorage.getItem(cooldownKey);
+      if (!stored) return cooldownTimer.classList.add("hidden");
+
+      const expires = new Date(stored);
+      const now = new Date();
+      const diff = Math.floor((expires - now) / 1000);
+
+      if (diff <= 0) {
+        localStorage.removeItem(cooldownKey);
+        localStorage.setItem("attempts", "0");
+        cooldownTimer.classList.add("hidden");
+        startBtn.disabled = false;
+        startBtn.textContent = "Start Recording";
+        return;
+      }
+
+      const minutes = Math.floor(diff / 60);
+      const seconds = diff % 60;
+      cooldownTimer.classList.remove("hidden");
+      cooldownTimer.textContent = `Cooldown: Try again in ${minutes}m ${seconds}s`;
+
+      setTimeout(updateCooldownTimer, 1000);
+    }
+
+    function handleFailure(msg = "Verification Failed") {
+      emotion.textContent = `❌ ${msg}`;
+      startBtn.textContent = "Try Again";
+      startBtn.disabled = false;
+      spokenOnce = false;
+
+      attempts++;
+      localStorage.setItem("attempts", attempts);
+
+      if (attempts >= maxAttempts) {
+        const cooldownEnd = new Date();
+        cooldownEnd.setMinutes(cooldownEnd.getMinutes() + cooldownMinutes);
+        localStorage.setItem(cooldownKey, cooldownEnd.toISOString());
+        updateCooldownTimer();
+        startBtn.disabled = true;
+      }
+    }
+
+    function startRecording() {
+      if (attempts >= maxAttempts) {
+        showToast("Limit reached. Try again after cooldown.");
+        return;
+      }
+
+      result.textContent = "";
+      emotion.textContent = "";
+      spokenOnce = false;
+
+      startBtn.disabled = true;
+      startBtn.textContent = `Listening... (10s)`;
+
+      let remaining = listenDuration;
+      listenCountdown = setInterval(() => {
+        remaining--;
+        if (!spokenOnce) {
+          startBtn.textContent = `Listening... (${remaining}s)`;
         }
+        listenTimer.textContent = `Listening... ${remaining}s`;
 
-        async function runStep() {
-            if (currentStep >= steps.length) {
-                document.getElementById("status").innerText = "Verification Complete! You're human 🎉";
-                document.getElementById("verification-step").classList.add("hidden");
-                return;
-            }
-
-            const step = steps[currentStep];
-            document.getElementById("status").innerText = `Step ${currentStep + 1}: ${step.name}`;
-            document.getElementById("instruction").innerText = step.instruction;
-            document.getElementById("input-area").innerHTML = "";
-            document.getElementById("submit-btn").classList.add("hidden");
-
-            const result = await step.validate();
-            if (result) {
-                currentStep++;
-                await runStep();
-            } else {
-                document.getElementById("status").innerText = "Verification failed. Try again.";
-                document.getElementById("start-btn").classList.remove("hidden");
-                document.getElementById("verification-step").classList.add("hidden");
-                currentStep = 0;
-            }
+        if (remaining <= 0) {
+          clearInterval(listenCountdown);
+          recognition.stop();
+          if (!spokenOnce) {
+            handleFailure("No voice detected");
+          }
         }
-    </script>
+      }, 1000);
+
+      recognition.lang = "en-US";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.start();
+
+      recognition.onresult = (e) => {
+        clearInterval(listenCountdown);
+        spokenOnce = true;
+
+        const spoken = e.results[0][0].transcript.trim();
+        const confidence = e.results[0][0].confidence;
+        result.textContent = `"${spoken}"`;
+
+        if (spoken.toLowerCase() === "i am not a robot" && confidence > 0.6) {
+          emotion.textContent = `✅ Human Verified (Confidence: ${Math.round(confidence * 100)}%)`;
+          startBtn.style.display = "none";
+        } else {
+          handleFailure(`Spoken: "${spoken}"`);
+        }
+      };
+
+      recognition.onerror = () => {
+        clearInterval(listenCountdown);
+        if (!spokenOnce) {
+          handleFailure("No voice detected");
+        }
+      };
+    }
+
+    startBtn.onclick = () => {
+      const cooldown = localStorage.getItem(cooldownKey);
+      if (cooldown && new Date(cooldown) > new Date()) {
+        updateCooldownTimer();
+        showToast("Cooldown active. Wait before trying again.");
+        return;
+      }
+
+      startRecording();
+    };
+
+    function disableKeys(e) {
+      if (
+        e.key === "F12" || 
+        (e.ctrlKey && e.shiftKey && e.key === "I") || 
+        (e.ctrlKey && e.shiftKey && e.key === "J") || 
+        (e.ctrlKey && e.key === "U")
+      ) {
+        return false;
+      }
+    }
+
+    updateCooldownTimer();
+  </script>
 </body>
 </html>
