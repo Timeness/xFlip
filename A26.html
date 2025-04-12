@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Verification Wall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Viga', sans-serif;
+            background-color: black;
+            color: white;
+            overflow-y: scroll;
+        }
+        .step {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 2px solid #4B5EAA;
+            border-radius: 8px;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="container mx-auto p-6 max-w-2xl">
+        <h1 class="text-4xl font-bold text-center mb-10 text-blue-400">Human Verification Wall</h1>
+
+        <!-- Step 1: Voice Emotion Check -->
+        <div id="step1" class="step">
+            <h2 class="text-2xl mb-4 text-yellow-300">Step 1: Voice Emotion Check</h2>
+            <p class="mb-4">Say happily: "I am not a robot" into your microphone.</p>
+            <button id="record" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">Start Recording</button>
+            <p id="voiceStatus" class="mt-2 text-sm"></p>
+            <button id="next1" class="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600" disabled>Next</button>
+        </div>
+
+        <!-- Step 2: Mirror Camera Check -->
+        <div id="step2" class="step hidden">
+            <h2 class="text-2xl mb-4 text-yellow-300">Step 2: Mirror Camera Check</h2>
+            <p class="mb-4">Raise your left hand when you see the video feed.</p>
+            <video id="video" width="320" height="240" autoplay class="mb-4 rounded"></video>
+            <button id="next2" class="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600" disabled>Next</button>
+        </div>
+
+        <!-- Step 3: Personal Memory Prompt -->
+        <div id="step3" class="step hidden">
+            <h2 class="text-2xl mb-4 text-yellow-300">Step 3: Personal Memory Prompt</h2>
+            <p class="mb-4">What did you eat for breakfast today?</p>
+            <input type="text" id="breakfast" class="w-full p-2 text-black rounded" placeholder="Type your answer here">
+            <button id="next3" class="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600" disabled>Next</button>
+        </div>
+
+        <!-- Step 4: Touch Pressure + Rhythm -->
+        <div id="step4" class="step hidden">
+            <h2 class="text-2xl mb-4 text-yellow-300">Step 4: Touch Rhythm</h2>
+            <p class="mb-4">Tap four times: short pause, short pause, long pause (e.g., tap-tap-tap---tap).</p>
+            <button id="rhythm" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-600">Tap Here</button>
+            <p id="rhythmStatus" class="mt-2 text-sm"></p>
+            <button id="next4" class="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600" disabled>Next</button>
+        </div>
+
+        <!-- Step 5: Distraction Reaction -->
+        <div id="step5" class="step hidden">
+            <h2 class="text-2xl mb-4 text-yellow-300">Step 5: Distraction Reaction</h2>
+            <p class="mb-4">Tap the button only if no cat emoji (😺) appears.</p>
+            <div id="emojis" class="flex justify-center space-x-4 mb-4 text-4xl"></div>
+            <button id="tap" class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Tap if No Cat</button>
+            <button id="next5" class="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600" disabled>Next</button>
+        </div>
+
+        <!-- Step 6: Live Face Matching to Emoji -->
+        <div id="step6" class="step hidden">
+            <h2 class="text-2xl mb-4 text-yellow-300">Step 6: Live Face Matching</h2>
+            <p class="mb-4">Make a sad face in front of the camera.</p>
+            <video id="faceVideo" width="320" height="240" autoplay class="mb-4 rounded"></video>
+            <button id="next6" class="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600" disabled>Next</button>
+        </div>
+
+        <!-- Success Message -->
+        <div id="success" class="hidden text-center">
+            <h2 class="text-3xl mb-4 text-green-400">Verification Successful!</h2>
+            <p class="text-lg">You are confirmed as a human. Welcome aboard!</p>
+        </div>
+    </div>
+
+    <script>
+        // Utility to show/hide steps
+        function showStep(currentId, nextId) {
+            document.getElementById(currentId).classList.add('hidden');
+            document.getElementById(nextId).classList.remove('hidden');
+        }
+
+        // Step 1: Voice Emotion Check
+        const recordButton = document.getElementById('record');
+        const voiceStatus = document.getElementById('voiceStatus');
+        const next1Button = document.getElementById('next1');
+        recordButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const mediaRecorder = new MediaRecorder(stream);
+                const audioChunks = [];
+                mediaRecorder.start();
+                voiceStatus.textContent = 'Recording... Say "I am not a robot" happily!';
+                recordButton.disabled = true;
+
+                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    stream.getTracks().forEach(track => track.stop());
+                    voiceStatus.textContent = 'Processing...';
+                    // Simulate emotion check (real implementation needs an API)
+                    setTimeout(() => {
+                        voiceStatus.textContent = 'Voice detected! Assuming happiness.';
+                        next1Button.disabled = false;
+                    }, 2000);
+                };
+                setTimeout(() => mediaRecorder.stop(), 3000);
+            } catch (err) {
+                voiceStatus.textContent = 'Microphone access denied. Please allow it.';
+            }
+        });
+        next1Button.addEventListener('click', () => showStep('step1', 'step2'));
+
+        // Step 2: Mirror Camera Check
+        const video = document.getElementById('video');
+        const next2Button = document.getElementById('next2');
+        (async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                // Simulate gesture check (e.g., assume user raises hand after 5s)
+                setTimeout(() => {
+                    next2Button.disabled = false;
+                }, 5000);
+            } catch (err) {
+                video.insertAdjacentHTML('afterend', '<p class="text-red-400">Camera access denied.</p>');
+            }
+        })();
+        next2Button.addEventListener('click', () => {
+            video.srcObject.getTracks().forEach(track => track.stop());
+            showStep('step2', 'step3');
+        });
+
+        // Step 3: Personal Memory Prompt
+        const breakfastInput = document.getElementById('breakfast');
+        const next3Button = document.getElementById('next3');
+        breakfastInput.addEventListener('input', () => {
+            next3Button.disabled = breakfastInput.value.trim() === '';
+        });
+        next3Button.addEventListener('click', () => showStep('step3', 'step4'));
+
+        // Step 4: Touch Pressure + Rhythm
+        const rhythmButton = document.getElementById('rhythm');
+        const rhythmStatus = document.getElementById('rhythmStatus');
+        const next4Button = document.getElementById('next4');
+        const tapTimes = [];
+        rhythmButton.addEventListener('click', () => {
+            tapTimes.push(Date.now());
+            rhythmStatus.textContent = `Taps recorded: ${tapTimes.length}`;
+            if (tapTimes.length === 4) {
+                const intervals = [];
+                for (let i = 1; i < tapTimes.length; i++) {
+                    intervals.push((tapTimes[i] - tapTimes[i-1]) / 1000);
+                }
+                const short = 1; // < 1s
+                const long = 1.5; // > 1.5s
+                if (intervals[0] < short && intervals[1] < short && intervals[2] > long) {
+                    rhythmStatus.textContent = 'Rhythm correct!';
+                    next4Button.disabled = false;
+                } else {
+                    rhythmStatus.textContent = 'Incorrect rhythm. Try again.';
+                    tapTimes.length = 0;
+                }
+            }
+        });
+        next4Button.addEventListener('click', () => showStep('step4', 'step5'));
+
+        // Step 5: Distraction Reaction
+        const emojisDiv = document.getElementById('emojis');
+        const tapButton = document.getElementById('tap');
+        const next5Button = document.getElementById('next5');
+        const emojis = ['😀', '😃', '😄', '😁', '😆', '😂', '😊', '😋', '😎', '🤩'];
+        const catEmoji = '😺';
+        const includeCat = Math.random() < 0.5;
+        const displayedEmojis = [];
+        for (let i = 0; i < 5; i++) {
+            displayedEmojis.push(emojis[Math.floor(Math.random() * emojis.length)]);
+        }
+        if (includeCat) displayedEmojis[Math.floor(Math.random() * 5)] = catEmoji;
+        displayedEmojis.forEach(emoji => {
+            const span = document.createElement('span');
+            span.textContent = emoji;
+            emojisDiv.appendChild(span);
+        });
+        let tapped = false;
+        tapButton.addEventListener('click', () => {
+            tapped = true;
+            tapButton.disabled = true;
+        });
+        setTimeout(() => {
+            const correct = (!includeCat && tapped) || (includeCat && !tapped);
+            if (correct) next5Button.disabled = false;
+            else alert('Incorrect reaction. Refresh to retry.');
+        }, 5000);
+        next5Button.addEventListener('click', () => showStep('step5', 'step6'));
+
+        // Step 6: Live Face Matching to Emoji
+        const faceVideo = document.getElementById('faceVideo');
+        const next6Button = document.getElementById('next6');
+        (async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                faceVideo.srcObject = stream;
+                // Simulate face emotion check (e.g., assume sad face after 5s)
+                setTimeout(() => {
+                    next6Button.disabled = false;
+                }, 5000);
+            } catch (err) {
+                faceVideo.insertAdjacentHTML('afterend', '<p class="text-red-400">Camera access denied.</p>');
+            }
+        })();
+        next6Button.addEventListener('click', () => {
+            faceVideo.srcObject.getTracks().forEach(track => track.stop());
+            showStep('step6', 'success');
+        });
+    </script>
+</body>
+</html>
