@@ -1,0 +1,137 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Human Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-black text-white text-sm">
+  <div class="flex justify-center items-center min-h-screen px-4">
+    <div class="w-full max-w-md p-4 bg-gray-900 rounded-2xl shadow-lg">
+      <div class="text-center mb-4">
+        <span id="progress" class="bg-gray-800 text-yellow-300 px-3 py-1 rounded-full text-xs">0/8 Completed</span>
+      </div>
+      <div id="steps" class="space-y-6">
+        <!-- Step Containers Injected Here -->
+      </div>
+    </div>
+  </div>  <script>
+    const steps = [
+      {
+        name: "Tap to Begin",
+        fn: (el, next) => {
+          el.innerHTML = `<button class='w-full bg-green-700 hover:bg-green-800 p-2 rounded-lg'>Tap to Verify</button>`;
+          el.querySelector('button').onclick = () => next();
+        }
+      },
+      {
+        name: "Pattern Taps",
+        fn: (el, next) => {
+          let sequence = [];
+          el.innerHTML = `<p class='mb-2 text-center'>Tap 3 unique dots</p>
+          <div class='grid grid-cols-3 gap-2'>${[...Array(9)].map((_,i)=>`<div data-id="${i}" class='h-10 bg-gray-700 rounded-full'></div>`).join('')}</div>`;
+          el.querySelectorAll('div[data-id]').forEach(dot => {
+            dot.onclick = () => {
+              const id = dot.dataset.id;
+              if (!sequence.includes(id)) sequence.push(id);
+              dot.classList.add('bg-green-500');
+              if (sequence.length === 3) next();
+            };
+          });
+        }
+      },
+      {
+        name: "Tilt Device",
+        fn: (el, next) => {
+          el.innerHTML = `<p class='text-center'>Tilt your phone left or right</p>`;
+          window.addEventListener('deviceorientation', function handler(e) {
+            if (Math.abs(e.gamma) > 15) {
+              window.removeEventListener('deviceorientation', handler);
+              next();
+            }
+          });
+        }
+      },
+      {
+        name: "Color Memory Test",
+        fn: (el, next) => {
+          const colors = ['red', 'green', 'blue', 'yellow'];
+          const target = colors[Math.floor(Math.random() * colors.length)];
+          el.innerHTML = `<p class='mb-2'>Tap the <strong>${target}</strong> color</p>
+          <div class='grid grid-cols-4 gap-2'>${colors.map(c=>`<div data-color="${c}" class='h-10 rounded-lg' style='background-color:${c}'></div>`).join('')}</div>`;
+          el.querySelectorAll('div[data-color]').forEach(box => {
+            box.onclick = () => {
+              if (box.dataset.color === target) next();
+            };
+          });
+        }
+      },
+      {
+        name: "Reflex Tap",
+        fn: (el, next) => {
+          el.innerHTML = `<p class='mb-2 text-center'>Tap when it turns <strong>green</strong></p>
+          <button class='w-full bg-gray-700 p-2 rounded-lg' disabled>Wait...</button>`;
+          const btn = el.querySelector('button');
+          setTimeout(() => {
+            btn.textContent = "TAP NOW!";
+            btn.classList.replace('bg-gray-700', 'bg-green-600');
+            btn.disabled = false;
+            btn.onclick = () => next();
+          }, 2000 + Math.random() * 2000);
+        }
+      },
+      {
+        name: "Volume Button Test (Android)",
+        fn: (el, next) => {
+          el.innerHTML = `<p class='text-center'>Press a volume button on your phone</p>`;
+          window.addEventListener('volumechange', function detect() {
+            window.removeEventListener('volumechange', detect);
+            next();
+          });
+        }
+      },
+      {
+        name: "Brightness Check",
+        fn: (el, next) => {
+          el.innerHTML = `<p class='text-center'>Increase your screen brightness</p>`;
+          let base = window.screen.brightness || 0.5;
+          setTimeout(() => next(), 4000); // simulate check
+        }
+      },
+      {
+        name: "Camera Light Test",
+        fn: (el, next) => {
+          el.innerHTML = `<p class='text-center'>Allow camera access and point to a bright light</p>`;
+          navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+            next();
+            stream.getTracks().forEach(track => track.stop());
+          });
+        }
+      }
+    ];
+
+    let current = 0;
+    const container = document.getElementById('steps');
+    const progress = document.getElementById('progress');
+
+    const loadStep = () => {
+      const stepBox = document.createElement('div');
+      stepBox.className = "bg-gray-800 p-4 rounded-2xl";
+      container.appendChild(stepBox);
+      steps[current].fn(stepBox, () => {
+        current++;
+        progress.textContent = `${current}/8 Completed`;
+        if (current < steps.length) loadStep();
+        else stepBox.innerHTML = `<p class='text-center text-green-400'>All checks completed successfully!</p>`;
+      });
+    };
+
+    loadStep();
+  </script></body>
+</html>
