@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Human Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background-color: #000000;
+    }
+    .glow {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white p-4">
+
+  <div class="w-full max-w-xl p-6 rounded-2xl glow bg-neutral-900 space-y-6 text-center">
+    <h1 class="text-3xl mb-2">Are You Human?</h1>
+
+    <!-- Step 1: Cursor Movement -->
+    <div id="step1" class="space-y-2">
+      <p class="text-lg">Move your mouse naturally around the screen...</p>
+      <p id="cursorResult" class="text-sm text-yellow-400"></p>
+    </div>
+
+    <!-- Step 2: Typing Rhythm -->
+    <div id="step2" class="space-y-2 hidden">
+      <p class="text-lg">Type your name (slowly, like a human):</p>
+      <input id="nameInput" type="text" class="w-full p-2 rounded bg-black border border-gray-600 text-white">
+      <p id="typingResult" class="text-sm text-yellow-400"></p>
+    </div>
+
+    <!-- Step 3: Weird Question -->
+    <div id="step3" class="space-y-2 hidden">
+      <p class="text-lg">What’s the weirdest thing you've eaten?</p>
+      <input id="weirdInput" type="text" class="w-full p-2 rounded bg-black border border-gray-600 text-white">
+      <button onclick="checkWeird()" class="bg-white text-black rounded px-4 py-1 mt-2 hover:bg-yellow-300">Submit</button>
+      <p id="weirdResult" class="text-sm text-yellow-400"></p>
+    </div>
+
+    <!-- Step 4: Reaction Time -->
+    <div id="step4" class="space-y-2 hidden">
+      <p class="text-lg">When this text turns green, click the button!</p>
+      <div id="reactionBox" class="h-16 flex items-center justify-center bg-red-500 rounded-lg transition-all duration-300">
+        <button id="reactBtn" onclick="reactionClick()" class="text-white text-xl font-bold">Wait...</button>
+      </div>
+      <p id="reactionResult" class="text-sm text-yellow-400 mt-2"></p>
+    </div>
+
+    <!-- Final Result -->
+    <div id="finalResult" class="hidden text-green-400 text-xl font-semibold">
+      You are definitely human. Robots don't stand a chance!
+    </div>
+  </div>
+
+  <script>
+    let movementCount = 0;
+    let typingTimes = [];
+    let typingStart = null;
+    let step = 1;
+    let reacted = false;
+    let startTime = 0;
+
+    document.addEventListener("mousemove", () => {
+      if (step === 1) {
+        movementCount++;
+        if (movementCount > 30) {
+          document.getElementById("cursorResult").innerText = "Nice! That was some real human movement.";
+          setTimeout(() => {
+            document.getElementById("step1").classList.add("hidden");
+            document.getElementById("step2").classList.remove("hidden");
+            step = 2;
+          }, 1000);
+        }
+      }
+    });
+
+    document.getElementById("nameInput").addEventListener("keydown", () => {
+      if (step === 2) {
+        let now = Date.now();
+        if (typingStart) {
+          typingTimes.push(now - typingStart);
+        }
+        typingStart = now;
+      }
+    });
+
+    document.getElementById("nameInput").addEventListener("blur", () => {
+      if (typingTimes.length >= 3) {
+        let avg = typingTimes.reduce((a, b) => a + b) / typingTimes.length;
+        if (avg > 100) {
+          document.getElementById("typingResult").innerText = "Typing speed looks human.";
+          setTimeout(() => {
+            document.getElementById("step2").classList.add("hidden");
+            document.getElementById("step3").classList.remove("hidden");
+            step = 3;
+          }, 1000);
+        } else {
+          document.getElementById("typingResult").innerText = "Too fast. Try typing slower.";
+        }
+      }
+    });
+
+    function checkWeird() {
+      const val = document.getElementById("weirdInput").value;
+      if (val.length >= 4) {
+        document.getElementById("weirdResult").innerText = "Hmm... interesting!";
+        setTimeout(() => {
+          document.getElementById("step3").classList.add("hidden");
+          document.getElementById("step4").classList.remove("hidden");
+          startReactionTest();
+          step = 4;
+        }, 1000);
+      } else {
+        document.getElementById("weirdResult").innerText = "Type something weirder...";
+      }
+    }
+
+    function startReactionTest() {
+      setTimeout(() => {
+        document.getElementById("reactionBox").classList.replace("bg-red-500", "bg-green-500");
+        document.getElementById("reactBtn").innerText = "CLICK!";
+        startTime = Date.now();
+      }, Math.random() * 3000 + 2000);
+    }
+
+    function reactionClick() {
+      if (step === 4 && !reacted && startTime) {
+        let reaction = Date.now() - startTime;
+        document.getElementById("reactionResult").innerText = `Reaction time: ${reaction} ms`;
+        if (reaction > 100 && reaction < 700) {
+          document.getElementById("step4").classList.add("hidden");
+          document.getElementById("finalResult").classList.remove("hidden");
+        } else {
+          document.getElementById("reactionResult").innerText += " (Too slow or too fast)";
+        }
+        reacted = true;
+      }
+    }
+  </script>
+</body>
+</html>
