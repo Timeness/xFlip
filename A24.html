@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human-Only Verification</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Must Viga -->
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Viga', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-lg p-6 rounded-lg shadow-lg">
+        <h1 class="text-3xl text-center mb-6">Human-Only Verification</h1>
+
+        <!-- Step 1: Voice Emotion Check -->
+        <div id="step1" class="step">
+            <p class="mb-4">Step 1: Say "I am not a robot" happily into your microphone.</p>
+            <button id="recordVoice" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full">Start Recording</button>
+            <p id="voiceStatus" class="mt-2 text-sm"></p>
+        </div>
+
+        <!-- Step 2: Mirror Camera Check -->
+        <div id="step2" class="step hidden">
+            <p class="mb-4">Step 2: Raise your left hand in front of your webcam.</p>
+            <video id="webcam" autoplay playsinline class="w-full h-64 bg-gray-800 rounded mb-4"></video>
+            <button id="checkGesture" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full">Verify Gesture</button>
+            <p id="gestureStatus" class="mt-2 text-sm"></p>
+        </div>
+
+        <!-- Step 3: Personal Memory Prompt -->
+        <div id="step3" class="step hidden">
+            <p class="mb-4">Step 3: What did you eat for breakfast today?</p>
+            <textarea id="breakfastInput" class="w-full p-2 bg-gray-800 rounded text-white" rows="4" placeholder="Type your answer here..."></textarea>
+            <button id="submitBreakfast" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full mt-4">Submit</button>
+            <p id="breakfastStatus" class="mt-2 text-sm"></p>
+        </div>
+
+        <!-- Step 4: Touch Pressure + Rhythm -->
+        <div id="step4" class="step hidden">
+            <p class="mb-4">Step 4: Tap the button in this pattern: short-short-long-short.</p>
+            <button id="tapButton" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full">Tap Here</button>
+            <p id="tapStatus" class="mt-2 text-sm"></p>
+        </div>
+
+        <!-- Step 5: Distraction Reaction -->
+        <div id="step5" class="step hidden">
+            <p class="mb-4">Step 5: Tap only if no cat emoji appears.</p>
+            <div id="emojiDisplay" class="text-4xl text-center mb-4"></div>
+            <button id="emojiTap" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full">Tap</button>
+            <p id="emojiStatus" class="mt-2 text-sm"></p>
+        </div>
+
+        <!-- Step 6: Live Face Matching to Emoji -->
+        <div id="step6" class="step hidden">
+            <p class="mb-4">Step 6: Make a sad face in front of your webcam.</p>
+            <video id="webcamFace" autoplay playsinline class="w-full h-64 bg-gray-800 rounded mb-4"></video>
+            <button id="checkFace" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full">Verify Face</button>
+            <p id="faceStatus" class="mt-2 text-sm"></p>
+        </div>
+
+        <!-- Completion Message -->
+        <div id="completion" class="hidden text-center">
+            <h2 class="text-2xl mb-4">Verification Complete!</h2>
+            <p>You've passed all human-only verification steps.</p>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+
+        // Helper to show next step
+        function showNextStep() {
+            document.getElementById(`step${currentStep}`).classList.add('hidden');
+            currentStep++;
+            if (currentStep <= totalSteps) {
+                document.getElementById(`step${currentStep}`).classList.remove('hidden');
+            } else {
+                document.getElementById('completion').classList.remove('hidden');
+            }
+        }
+
+        // Step 1: Voice Emotion Check
+        const recordVoiceBtn = document.getElementById('recordVoice');
+        const voiceStatus = document.getElementById('voiceStatus');
+        recordVoiceBtn.addEventListener('click', async () => {
+            voiceStatus.textContent = 'Recording...';
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const recorder = new MediaRecorder(stream);
+                recorder.start();
+                setTimeout(() => {
+                    recorder.stop();
+                    stream.getTracks().forEach(track => track.stop());
+                }, 3000);
+                recorder.ondataavailable = () => {
+                    voiceStatus.textContent = 'Voice recorded! Assuming happy tone for demo.';
+                    showNextStep();
+                };
+            } catch (err) {
+                voiceStatus.textContent = 'Error accessing microphone.';
+            }
+        });
+
+        // Step 2: Mirror Camera Check
+        const webcam = document.getElementById('webcam');
+        const checkGestureBtn = document.getElementById('checkGesture');
+        const gestureStatus = document.getElementById('gestureStatus');
+        async function startWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                webcam.srcObject = stream;
+            } catch (err) {
+                gestureStatus.textContent = 'Error accessing webcam.';
+            }
+        }
+        checkGestureBtn.addEventListener('click', () => {
+            gestureStatus.textContent = 'Gesture verified for demo (left hand raised).';
+            webcam.srcObject.getTracks().forEach(track => track.stop());
+            showNextStep();
+        });
+        if (currentStep === 2) startWebcam();
+
+        // Step 3: Personal Memory Prompt
+        const submitBreakfastBtn = document.getElementById('submitBreakfast');
+        const breakfastInput = document.getElementById('breakfastInput');
+        const breakfastStatus = document.getElementById('breakfastStatus');
+        submitBreakfastBtn.addEventListener('click', () => {
+            if (breakfastInput.value.trim().length > 5) {
+                breakfastStatus.textContent = 'Answer accepted for demo.';
+                showNextStep();
+            } else {
+                breakfastStatus.textContent = 'Please provide a valid answer.';
+            }
+        });
+
+        // Step 4: Touch Pressure + Rhythm
+        const tapButton = document.getElementById('tapButton');
+        const tapStatus = document.getElementById('tapStatus');
+        let taps = [];
+        tapButton.addEventListener('click', () => {
+            taps.push(Date.now());
+            if (taps.length === 4) {
+                const intervals = [
+                    taps[1] - taps[0],
+                    taps[2] - taps[1],
+                    taps[3] - taps[2]
+                ];
+                // Short-short-long-short: assuming <300ms, <300ms, >500ms, <300ms
+                if (intervals[0] < 300 && intervals[1] < 300 && intervals[2] > 500 && intervals[3] < 300) {
+                    tapStatus.textContent = 'Pattern correct!';
+                    showNextStep();
+                } else {
+                    tapStatus.textContent = 'Incorrect pattern. Try again.';
+                    taps = [];
+                }
+            }
+        });
+
+        // Step 5: Distraction Reaction
+        const emojiTapBtn = document.getElementById('emojiTap');
+        const emojiDisplay = document.getElementById('emojiDisplay');
+        const emojiStatus = document.getElementById('emojiStatus');
+        const emojis = ['😊', '🐶', '🌟', '🍎', '😺'];
+        let hasCat = false;
+        function showEmojis() {
+            emojiDisplay.innerHTML = '';
+            hasCat = Math.random() > 0.5;
+            const displayEmojis = hasCat
+                ? ['😺', ...emojis.slice(0, 4)]
+                : emojis.slice(0, 5);
+            displayEmojis.sort(() => Math.random() - 0.5);
+            emojiDisplay.innerHTML = displayEmojis.join(' ');
+        }
+        showEmojis();
+        emojiTapBtn.addEventListener('click', () => {
+            if (!hasCat) {
+                emojiStatus.textContent = 'Correct! No cat detected.';
+                showNextStep();
+            } else {
+                emojiStatus.textContent = 'Incorrect! Cat was present.';
+                showEmojis();
+            }
+        });
+
+        // Step 6: Live Face Matching to Emoji
+        const webcamFace = document.getElementById('webcamFace');
+        const checkFaceBtn = document.getElementById('checkFace');
+        const faceStatus = document.getElementById('faceStatus');
+        async function startWebcamFace() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                webcamFace.srcObject = stream;
+            } catch (err) {
+                faceStatus.textContent = 'Error accessing webcam.';
+            }
+        }
+        checkFaceBtn.addEventListener('click', () => {
+            faceStatus.textContent = 'Sad face verified for demo.';
+            webcamFace.srcObject.getTracks().forEach(track => track.stop());
+            showNextStep();
+        });
+        if (currentStep === 6) startWebcamFace();
+    </script>
+</body>
+</html>
