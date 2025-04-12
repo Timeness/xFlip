@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Human Verification Wall</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen p-4">
+  <div class="max-w-xl mx-auto space-y-10">
+    <h1 class="text-3xl text-center">Human-Only Verification</h1><!-- Voice Emotion Check -->
+<div class="space-y-2">
+  <h2 class="text-xl">1. Voice Emotion Check</h2>
+  <p>Say this line <span class="text-yellow-400">happily</span>: “I am not a robot”</p>
+  <button class="bg-yellow-500 px-4 py-2 rounded" onclick="recordAudio()">Record Voice</button>
+  <p id="voice-status" class="text-sm text-gray-400"></p>
+</div>
+
+<!-- Mirror Camera Check -->
+<div class="space-y-2">
+  <h2 class="text-xl">2. Mirror Camera Check</h2>
+  <p>Raise your <span class="text-yellow-400">left hand</span></p>
+  <video id="mirrorCam" autoplay playsinline class="w-full rounded"></video>
+</div>
+
+<!-- Personal Memory Prompt -->
+<div class="space-y-2">
+  <h2 class="text-xl">3. Personal Memory Prompt</h2>
+  <p>What did you eat in breakfast today?</p>
+  <input id="memoryInput" type="text" class="w-full p-2 bg-gray-800 rounded" oninput="captureTyping(event)" />
+  <p class="text-sm text-gray-400">Typing behavior being analyzed...</p>
+</div>
+
+<!-- Touch Pressure + Rhythm -->
+<div class="space-y-2">
+  <h2 class="text-xl">4. Tap Rhythm Check</h2>
+  <p>Tap this button: <span class="text-yellow-400">short-short-long-short</span></p>
+  <button id="tapBtn" class="bg-yellow-500 px-4 py-2 rounded">Tap</button>
+  <div id="tapTimes" class="text-sm text-gray-400"></div>
+</div>
+
+<!-- Distraction Reaction -->
+<div class="space-y-2">
+  <h2 class="text-xl">5. Distraction Reaction</h2>
+  <p>Tap only if <span class="text-yellow-400">no cat</span> appears:</p>
+  <div id="emojiArea" class="text-3xl space-x-2"></div>
+  <button class="bg-yellow-500 px-4 py-2 mt-2 rounded" onclick="checkDistraction()">Tap</button>
+</div>
+
+<!-- Live Face Matching to Emoji -->
+<div class="space-y-2">
+  <h2 class="text-xl">6. Make a Sad Face</h2>
+  <p>Show a <span class="text-yellow-400">sad expression</span> to the camera.</p>
+  <video id="faceCam" autoplay playsinline class="w-full rounded"></video>
+</div>
+
+  </div>  <script>
+    async function recordAudio() {
+      document.getElementById('voice-status').textContent = 'Recording...';
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        document.getElementById('voice-status').textContent = 'Recording captured (analysis not implemented).';
+      } catch (e) {
+        document.getElementById('voice-status').textContent = 'Mic access denied or error.';
+      }
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+      document.getElementById('mirrorCam').srcObject = stream;
+      document.getElementById('faceCam').srcObject = stream;
+    });
+
+    let typingData = [];
+    let lastTypeTime = null;
+    function captureTyping(event) {
+      const now = Date.now();
+      if (lastTypeTime) {
+        typingData.push(now - lastTypeTime);
+      }
+      lastTypeTime = now;
+    }
+
+    let tapTimes = [];
+    document.getElementById('tapBtn').addEventListener('click', () => {
+      const now = Date.now();
+      tapTimes.push(now);
+      if (tapTimes.length > 1) {
+        const deltas = tapTimes.slice(1).map((t, i) => t - tapTimes[i]);
+        document.getElementById('tapTimes').textContent = 'Tap intervals: ' + deltas.join(', ') + ' ms';
+      }
+    });
+
+    const emojis = ['🐶', '🦊', '🐱', '🐭', '🐰', '🐻'];
+    function checkDistraction() {
+      const chosen = [];
+      for (let i = 0; i < 5; i++) {
+        const random = emojis[Math.floor(Math.random() * emojis.length)];
+        chosen.push(random);
+      }
+      document.getElementById('emojiArea').textContent = chosen.join(' ');
+      if (chosen.includes('🐱')) alert('Fail: Cat appeared!');
+      else alert('Success: No cat.');
+    }
+  </script></body>
+</html>
