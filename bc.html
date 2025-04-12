@@ -11,9 +11,10 @@
       font-family: 'Viga', sans-serif;
       background: #000;
       color: white;
+      overflow-x: hidden;
     }
     #bg-canvas {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
@@ -22,19 +23,19 @@
     }
   </style>
 </head>
-<body class="relative overflow-hidden"><canvas id="bg-canvas"></canvas>
+<body class="relative"><canvas id="bg-canvas"></canvas>
 
-<header class="p-6 flex justify-between items-center bg-black bg-opacity-70">
+<header class="p-6 flex justify-between items-center bg-black bg-opacity-70 z-10 relative">
   <h1 class="text-3xl text-yellow-400">GiftMap Education</h1>
   <a href="#claim" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300 transition">Claim Now</a>
-</header><section class="text-center pt-32 pb-20 px-6">
+</header><section class="text-center pt-32 pb-20 px-6 z-10 relative">
   <h2 class="text-5xl text-yellow-400 mb-6">World's Largest Free Education Platform</h2>
   <p class="text-lg text-gray-300 mb-8">Empowering Every Human with Knowledge. Globally. Freely.</p>
   <a href="#claim" class="bg-yellow-400 text-black px-6 py-3 rounded-full text-lg hover:bg-yellow-300 transition">Claim Free Access</a>
-</section><section class="text-center py-12">
+</section><section class="text-center py-12 z-10 relative">
   <h3 class="text-3xl text-yellow-400 mb-4">Total Students Impacted</h3>
   <p class="text-5xl font-bold" id="counter">0</p>
-</section><section id="claim" class="text-center py-20 px-6 bg-gray-900">
+</section><section id="claim" class="text-center py-20 px-6 bg-gray-900 z-10 relative">
   <h3 class="text-3xl text-yellow-400 mb-4">Claim Your Free Access</h3>
   <p class="text-gray-300 mb-6">No cost. No limits. Just learning.</p>
   <form class="max-w-md mx-auto flex flex-col gap-4">
@@ -42,12 +43,12 @@
     <input type="email" placeholder="Email Address" class="p-3 rounded text-black" required />
     <button class="bg-yellow-400 text-black px-6 py-3 rounded hover:bg-yellow-300 transition">Join Now</button>
   </form>
-</section><section class="bg-black py-16 text-center">
+</section><section class="bg-black py-16 text-center z-10 relative">
   <h3 class="text-2xl text-yellow-400 mb-4">Stay Informed</h3>
   <p class="text-gray-400 mb-4">Join our global newsletter for impact updates.</p>
   <input type="email" placeholder="Enter email" class="p-3 rounded text-black w-72" />
   <button class="ml-2 bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300 transition">Subscribe</button>
-</section><footer class="bg-black text-center py-6 text-sm text-gray-500">
+</section><footer class="bg-black text-center py-6 text-sm text-gray-500 z-10 relative">
   &copy; <span id="year"></span> GiftMap Education. Changing the World, One Mind at a Time.
 </footer><script>
   document.getElementById("year").textContent = new Date().getFullYear();
@@ -63,10 +64,26 @@
   const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const geometry = new THREE.IcosahedronGeometry(4, 1);
-  const material = new THREE.MeshStandardMaterial({ color: 0xfacc15, wireframe: true });
-  const sphere = new THREE.Mesh(geometry, material);
-  scene.add(sphere);
+  const globeGeo = new THREE.IcosahedronGeometry(4, 1);
+  const globeMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, wireframe: true });
+  const globe = new THREE.Mesh(globeGeo, globeMat);
+  globe.position.set(0, 0, 0);
+  scene.add(globe);
+
+  const bookGeo = new THREE.TorusGeometry(1, 0.3, 16, 100);
+  const bookMat = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true });
+  const book1 = new THREE.Mesh(bookGeo, bookMat);
+  const book2 = new THREE.Mesh(bookGeo, bookMat);
+  book1.position.set(-6, 3, -5);
+  book2.position.set(6, -3, -4);
+  scene.add(book1);
+  scene.add(book2);
+
+  const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+  const cubeMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc, wireframe: true });
+  const cube = new THREE.Mesh(cubeGeo, cubeMat);
+  cube.position.set(0, 5, -6);
+  scene.add(cube);
 
   const light = new THREE.PointLight(0xffffff, 1, 100);
   light.position.set(10, 10, 10);
@@ -76,10 +93,20 @@
 
   function animate() {
     requestAnimationFrame(animate);
-    sphere.rotation.x += 0.005;
-    sphere.rotation.y += 0.01;
+    globe.rotation.x += 0.002;
+    globe.rotation.y += 0.004;
+    book1.rotation.y += 0.01;
+    book2.rotation.x += 0.008;
+    cube.rotation.x += 0.005;
+    cube.rotation.y += 0.007;
     renderer.render(scene, camera);
   }
   animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
 </script></body>
 </html>
