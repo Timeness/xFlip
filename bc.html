@@ -64,41 +64,38 @@
   const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const globeGeo = new THREE.IcosahedronGeometry(4, 1);
-  const globeMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, wireframe: true });
-  const globe = new THREE.Mesh(globeGeo, globeMat);
-  globe.position.set(0, 0, 0);
-  scene.add(globe);
-
-  const bookGeo = new THREE.TorusGeometry(1, 0.3, 16, 100);
-  const bookMat = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true });
-  const book1 = new THREE.Mesh(bookGeo, bookMat);
-  const book2 = new THREE.Mesh(bookGeo, bookMat);
-  book1.position.set(-6, 3, -5);
-  book2.position.set(6, -3, -4);
-  scene.add(book1);
-  scene.add(book2);
-
-  const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
-  const cubeMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc, wireframe: true });
-  const cube = new THREE.Mesh(cubeGeo, cubeMat);
-  cube.position.set(0, 5, -6);
-  scene.add(cube);
-
   const light = new THREE.PointLight(0xffffff, 1, 100);
   light.position.set(10, 10, 10);
   scene.add(light);
+
+  const objects = [];
+  const addShape = (geo, mat, x, y, z) => {
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(x, y, z);
+    scene.add(mesh);
+    objects.push(mesh);
+  }
+
+  const globe = new THREE.Mesh(new THREE.IcosahedronGeometry(4, 1), new THREE.MeshStandardMaterial({ color: 0xfacc15, wireframe: true }));
+  addShape(globe.geometry, globe.material, 0, 0, 0);
+
+  addShape(new THREE.TorusGeometry(1, 0.3, 16, 100), new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true }), -6, 3, -5);
+  addShape(new THREE.TorusGeometry(1, 0.3, 16, 100), new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true }), 6, -3, -4);
+  addShape(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x00ffcc, wireframe: true }), 0, 5, -6);
+  addShape(new THREE.SphereGeometry(1.2, 32, 32), new THREE.MeshStandardMaterial({ color: 0xff00ff, wireframe: true }), -5, -4, -6);
+  addShape(new THREE.ConeGeometry(1, 2, 32), new THREE.MeshStandardMaterial({ color: 0x00ffff, wireframe: true }), 5, 5, -4);
+  addShape(new THREE.TorusKnotGeometry(1, 0.3, 100, 16), new THREE.MeshStandardMaterial({ color: 0xffaa00, wireframe: true }), -3, -6, -7);
+  addShape(new THREE.OctahedronGeometry(1), new THREE.MeshStandardMaterial({ color: 0x00ff99, wireframe: true }), 3, 6, -8);
+  addShape(new THREE.DodecahedronGeometry(1), new THREE.MeshStandardMaterial({ color: 0xffff00, wireframe: true }), 7, 2, -9);
 
   camera.position.z = 10;
 
   function animate() {
     requestAnimationFrame(animate);
-    globe.rotation.x += 0.002;
-    globe.rotation.y += 0.004;
-    book1.rotation.y += 0.01;
-    book2.rotation.x += 0.008;
-    cube.rotation.x += 0.005;
-    cube.rotation.y += 0.007;
+    objects.forEach((obj, i) => {
+      obj.rotation.x += 0.001 + i * 0.0005;
+      obj.rotation.y += 0.002 + i * 0.0007;
+    });
     renderer.render(scene, camera);
   }
   animate();
