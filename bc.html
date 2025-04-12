@@ -7,11 +7,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <style>
-    body {
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       font-family: 'Viga', sans-serif;
       background: #000;
       color: white;
-      overflow-x: hidden;
     }
     #bg-canvas {
       position: fixed;
@@ -19,46 +23,24 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: -1;
+      z-index: 0;
+    }
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
     }
   </style>
 </head>
-<body class="relative"><canvas id="bg-canvas"></canvas>
+<body><canvas id="bg-canvas"></canvas>
 
-<header class="p-6 flex justify-between items-center bg-black bg-opacity-70 z-10 relative">
-  <h1 class="text-3xl text-yellow-400">GiftMap Education</h1>
-  <a href="#claim" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300 transition">Claim Now</a>
-</header><section class="text-center pt-32 pb-20 px-6 z-10 relative">
-  <h2 class="text-5xl text-yellow-400 mb-6">World's Largest Free Education Platform</h2>
-  <p class="text-lg text-gray-300 mb-8">Empowering Every Human with Knowledge. Globally. Freely.</p>
-  <a href="#claim" class="bg-yellow-400 text-black px-6 py-3 rounded-full text-lg hover:bg-yellow-300 transition">Claim Free Access</a>
-</section><section class="text-center py-12 z-10 relative">
-  <h3 class="text-3xl text-yellow-400 mb-4">Total Students Impacted</h3>
-  <p class="text-5xl font-bold" id="counter">0</p>
-</section><section id="claim" class="text-center py-20 px-6 bg-gray-900 z-10 relative">
-  <h3 class="text-3xl text-yellow-400 mb-4">Claim Your Free Access</h3>
-  <p class="text-gray-300 mb-6">No cost. No limits. Just learning.</p>
-  <form class="max-w-md mx-auto flex flex-col gap-4">
-    <input type="text" placeholder="Full Name" class="p-3 rounded text-black" required />
-    <input type="email" placeholder="Email Address" class="p-3 rounded text-black" required />
-    <button class="bg-yellow-400 text-black px-6 py-3 rounded hover:bg-yellow-300 transition">Join Now</button>
-  </form>
-</section><section class="bg-black py-16 text-center z-10 relative">
-  <h3 class="text-2xl text-yellow-400 mb-4">Stay Informed</h3>
-  <p class="text-gray-400 mb-4">Join our global newsletter for impact updates.</p>
-  <input type="email" placeholder="Enter email" class="p-3 rounded text-black w-72" />
-  <button class="ml-2 bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300 transition">Subscribe</button>
-</section><footer class="bg-black text-center py-6 text-sm text-gray-500 z-10 relative">
-  &copy; <span id="year"></span> GiftMap Education. Changing the World, One Mind at a Time.
-</footer><script>
-  document.getElementById("year").textContent = new Date().getFullYear();
-  let count = 0;
-  const counter = document.getElementById("counter");
-  setInterval(() => {
-    count += Math.floor(Math.random() * 1000 + 50);
-    counter.textContent = count.toLocaleString();
-  }, 1800);
-</script><script>
+<div class="overlay">
+  <h1 class="text-4xl md:text-6xl text-yellow-400 mb-4">GiftMap Education</h1>
+  <p class="text-xl md:text-2xl text-gray-300">World's Largest Free Education Platform</p>
+</div><script>
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
@@ -69,32 +51,20 @@
   scene.add(light);
 
   const objects = [];
-  const addShape = (geo, mat, x, y, z) => {
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(x, y, z);
-    scene.add(mesh);
-    objects.push(mesh);
-  }
-
-  const globe = new THREE.Mesh(new THREE.IcosahedronGeometry(4, 1), new THREE.MeshStandardMaterial({ color: 0xfacc15, wireframe: true }));
-  addShape(globe.geometry, globe.material, 0, 0, 0);
-
-  addShape(new THREE.TorusGeometry(1, 0.3, 16, 100), new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true }), -6, 3, -5);
-  addShape(new THREE.TorusGeometry(1, 0.3, 16, 100), new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true }), 6, -3, -4);
-  addShape(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x00ffcc, wireframe: true }), 0, 5, -6);
-  addShape(new THREE.SphereGeometry(1.2, 32, 32), new THREE.MeshStandardMaterial({ color: 0xff00ff, wireframe: true }), -5, -4, -6);
-  addShape(new THREE.ConeGeometry(1, 2, 32), new THREE.MeshStandardMaterial({ color: 0x00ffff, wireframe: true }), 5, 5, -4);
-  addShape(new THREE.TorusKnotGeometry(1, 0.3, 100, 16), new THREE.MeshStandardMaterial({ color: 0xffaa00, wireframe: true }), -3, -6, -7);
-  addShape(new THREE.OctahedronGeometry(1), new THREE.MeshStandardMaterial({ color: 0x00ff99, wireframe: true }), 3, 6, -8);
-  addShape(new THREE.DodecahedronGeometry(1), new THREE.MeshStandardMaterial({ color: 0xffff00, wireframe: true }), 7, 2, -9);
+  const globe = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(4, 1),
+    new THREE.MeshStandardMaterial({ color: 0xfacc15, wireframe: true })
+  );
+  scene.add(globe);
+  objects.push(globe);
 
   camera.position.z = 10;
 
   function animate() {
     requestAnimationFrame(animate);
-    objects.forEach((obj, i) => {
-      obj.rotation.x += 0.001 + i * 0.0005;
-      obj.rotation.y += 0.002 + i * 0.0007;
+    objects.forEach(obj => {
+      obj.rotation.x += 0.002;
+      obj.rotation.y += 0.003;
     });
     renderer.render(scene, camera);
   }
