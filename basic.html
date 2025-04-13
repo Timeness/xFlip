@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sybil Detector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white font-sans p-6">
+  <div class="max-w-md mx-auto bg-gray-800 rounded-xl p-6 space-y-4">
+    <h1 class="text-2xl font-bold text-yellow-400">Sybil Check</h1>
+    <button onclick="detectSybil()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded">Run Check</button>
+    <pre id="result" class="bg-black border border-gray-600 p-3 text-sm mt-3 overflow-auto"></pre>
+  </div>
+
+  <script>
+    async function detectSybil() {
+      const fingerprint = await getFingerprint();
+      const ip = await getIP();
+
+      const data = {
+        ip,
+        fingerprint,
+        userAgent: navigator.userAgent,
+        wallet: localStorage.getItem("wallet") || "Not Connected",
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        language: navigator.language,
+        platform: navigator.platform,
+        screen: `${screen.width}x${screen.height}`,
+      };
+
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+
+      // You can also POST this to your backend to track duplicate behavior
+      // fetch("/api/sybil-check", { method: "POST", body: JSON.stringify(data) });
+    }
+
+    async function getIP() {
+      try {
+        const res = await fetch("https://api64.ipify.org?format=json");
+        const json = await res.json();
+        return json.ip;
+      } catch {
+        return "Unknown";
+      }
+    }
+
+    async function getFingerprint() {
+      const raw = [
+        navigator.userAgent,
+        navigator.language,
+        screen.height,
+        screen.width,
+        navigator.platform,
+        new Date().getTimezoneOffset(),
+      ].join('::');
+      return btoa(raw); // basic fingerprint
+    }
+  </script>
+</body>
+</html>
