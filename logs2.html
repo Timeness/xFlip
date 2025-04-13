@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ㅤlogs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    .log-font {
+      font-family: 'Inconsolata', monospace;
+      white-space: pre-line;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    img {
+      pointer-events: none;
+      -webkit-touch-callout: none;
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center p-5 relative" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+  <p class="text-xs text-gray-400 mb-4 text-left leading-relaxed max-w-2xl">
+    ɴᴏᴛʜɪɴɢ ɪꜱ ᴜᴘʟᴏᴀᴅᴇᴅ ᴏʀ ꜱʜᴀʀᴇᴅ ʙᴇʏᴏɴᴅ ʏᴏᴜʀ ᴅᴇᴠɪᴄᴇ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ.
+  </p>
+  <div class="w-full max-w-2xl mb-5 flex">
+    <div id="logBox" class="border border-white bg-transparent px-4 py-3 rounded-lg text-sm text-gray-200 log-font w-full">
+    </div>
+    <button onclick="clearLocalStorage()" class="ml-2 border border-white text-white p-2 rounded-lg">
+      <img src="./blank.png" class="w-5 h-5" />
+    </button>
+  </div>
+  <script>
+    function displayLogs() {
+      const logBox = document.getElementById('logBox');
+      let logs = '';
+      if (localStorage.length === 0) {
+        logs = 'No data found in your localStorage.';
+      } else {
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          const value = localStorage.getItem(key);
+          logs += `${key}: ${value}\n`;
+        }
+      }
+      logBox.textContent = logs;
+    }
+    function clearLocalStorage() {
+      localStorage.clear();
+      displayLogs();
+    }
+    window.onload = displayLogs;
+  </script>
+</body>
+</html>
