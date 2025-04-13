@@ -1,78 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sybil Detection + IP Ban</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="author" content="xFlip Team" />
+  <meta name="description" content="xFlip Testnet | Secure Sybil Detection & IP Ban System" />
+  <meta property="og:title" content="xFlip Testnet Security" />
+  <meta property="og:description" content="Sybil Protection System with IP Ban Panel for Admins" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://timeness.github.io/xFlip/banner.png" />
+  <meta property="og:url" content="https://timeness.github.io/xFlip/" />
+  <title>xFlip Sybil Detection</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Doto&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Doto', sans-serif; }
+    body { font-family: 'Fira Code', monospace; }
   </style>
 </head>
-<body class="bg-black text-white p-6">
+<body class="bg-black text-white min-h-screen flex items-center justify-center p-6">
 
-  <div id="mainContent" class="hidden">
-    <h1 class="text-3xl font-bold text-yellow-400">WELCOME TO THE CYRIVS TESTNET S1</h1>
-    <p class="text-gray-300 mt-4">Coming Soon !</p>
+  <div id="main" class="hidden text-center space-y-4">
+    <h1 class="text-4xl text-yellow-400 font-bold">xFlip Testnet</h1>
+    <p class="text-gray-300">Welcome to the Testnet platform. Your access is valid.</p>
   </div>
 
-  <div id="error404" class="hidden text-center">
+  <div id="banned" class="hidden text-center">
     <h1 class="text-5xl text-red-500 font-bold">404</h1>
-    <p class="text-gray-500">Page not found or access blocked for your IP.</p>
+    <p class="text-gray-400 mt-2">Access denied. You are blocked from this site.</p>
   </div>
 
   <script>
-    const adminURL = 'adminPass=basic';
+    const adminPath = "/xFlip/c4eck";
+    const queryParams = new URLSearchParams(window.location.search);
+    const isAdmin = window.location.pathname === adminPath && queryParams.get("adminPass") === "basic";
 
     async function getIP() {
       try {
         const res = await fetch("https://api64.ipify.org?format=json");
-        const json = await res.json();
-        return json.ip;
+        const data = await res.json();
+        return data.ip || "0.0.0.0";
       } catch {
         return "0.0.0.0";
       }
     }
 
-    async function init() {
-      const ip = await getIP();
-      const bannedIPs = JSON.parse(localStorage.getItem("bannedIPs") || "[]");
-
-      if (window.location.pathname + window.location.search === adminURL) {
-        document.body.innerHTML = `
-          <div class="p-6 max-w-md mx-auto bg-[#1a1a1a] rounded-xl border border-yellow-500 text-white">
-            <h1 class="text-xl font-bold text-yellow-400 mb-4">Admin Panel</h1>
-            <p class="mb-2">Your IP: <span class="text-green-400">${ip}</span></p>
-            <button onclick="banIP('${ip}')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mb-2">Ban This IP</button>
-            <button onclick="unbanIP('${ip}')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Unban This IP</button>
-            <p class="text-xs text-gray-400 mt-4">Refresh page after banning/unbanning.</p>
-          </div>`;
-        return;
-      }
-
-      if (bannedIPs.includes(ip)) {
-        document.getElementById("error404").classList.remove("hidden");
-      } else {
-        document.getElementById("mainContent").classList.remove("hidden");
-      }
+    function getBannedIPs() {
+      return JSON.parse(localStorage.getItem("xflipBanned") || "[]");
     }
 
     function banIP(ip) {
-      let banned = JSON.parse(localStorage.getItem("bannedIPs") || "[]");
-      if (!banned.includes(ip)) banned.push(ip);
-      localStorage.setItem("bannedIPs", JSON.stringify(banned));
-      alert("IP Banned: " + ip);
+      const banned = getBannedIPs();
+      if (!banned.includes(ip)) {
+        banned.push(ip);
+        localStorage.setItem("xflipBanned", JSON.stringify(banned));
+        alert("IP Banned: " + ip);
+      } else {
+        alert("IP is already banned.");
+      }
     }
 
     function unbanIP(ip) {
-      let banned = JSON.parse(localStorage.getItem("bannedIPs") || "[]");
-      banned = banned.filter(item => item !== ip);
-      localStorage.setItem("bannedIPs", JSON.stringify(banned));
+      const banned = getBannedIPs().filter(item => item !== ip);
+      localStorage.setItem("xflipBanned", JSON.stringify(banned));
       alert("IP Unbanned: " + ip);
     }
 
-    init();
+    async function initSite() {
+      const ip = await getIP();
+      const banned = getBannedIPs();
+
+      if (isAdmin) {
+        document.body.innerHTML = `
+          <div class="max-w-md w-full p-6 bg-[#1b1b1b] rounded-xl border border-yellow-500 text-white text-center">
+            <h2 class="text-xl font-bold mb-4 text-yellow-300">Admin Panel</h2>
+            <p class="mb-3">Your IP: <span class="text-green-400">${ip}</span></p>
+            <button onclick="banIP('${ip}')" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded mb-2">Ban This IP</button><br/>
+            <button onclick="unbanIP('${ip}')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Unban This IP</button>
+            <p class="mt-4 text-xs text-gray-400">Changes apply on refresh.</p>
+          </div>`;
+      } else {
+        if (banned.includes(ip)) {
+          document.getElementById("banned").classList.remove("hidden");
+        } else {
+          document.getElementById("main").classList.remove("hidden");
+        }
+      }
+    }
+
+    initSite();
   </script>
 </body>
 </html>
