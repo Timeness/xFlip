@@ -3,74 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Edit LocalStorage</title>
+  <title>Storage Editor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inconsolata', monospace;
-      background-color: #000;
-      color: #fff;
+      background: #000;
+      color: white;
       user-select: none;
     }
     input, textarea {
-      background-color: #111;
-      color: white;
-      border: 1px solid #444;
-      border-radius: 0.5rem;
+      background: transparent;
+      border: 1px solid #555;
       padding: 0.5rem;
+      border-radius: 0.5rem;
       width: 100%;
+      color: white;
+    }
+    .btn {
+      background: transparent;
+      border: 1px solid #777;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      border-color: white;
+    }
+    .toast {
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeout {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(10px); }
     }
   </style>
 </head>
-<body class="p-5">
-  <h1 class="text-2xl mb-4 font-bold">Edit LocalStorage</h1>
-  <div id="storageEditor" class="space-y-4"></div>
+<body class="min-h-screen flex items-center justify-center p-6">
+  <div class="w-full max-w-xl space-y-4">
+    <h1 class="text-2xl font-bold mb-4 text-white">LocalStorage Editor</h1>
+    
+    <div>
+      <label class="text-gray-400 text-sm">Enter Key</label>
+      <input type="text" id="keyInput" placeholder="myKey" oninput="checkKey()" />
+    </div>
+
+    <div>
+      <label class="text-gray-400 text-sm">Value</label>
+      <textarea id="valueInput" rows="4" placeholder="Edit value here..."></textarea>
+    </div>
+
+    <div id="status" class="text-xs text-gray-500"></div>
+
+    <div class="flex gap-3">
+      <button onclick="saveData()" class="btn">Save</button>
+      <button onclick="deleteData()" class="btn">Delete</button>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
 
   <script>
-    function loadStorage() {
-      const container = document.getElementById('storageEditor');
-      container.innerHTML = '';
+    function showToast(message, type = 'default') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
 
-      if (localStorage.length === 0) {
-        container.innerHTML = '<p class="text-gray-400">No data found in localStorage.</p>';
+      toast.className = `toast px-4 py-2 rounded-lg text-sm ${
+        type === 'error' ? 'bg-red-600' : 'bg-white text-black'
+      } shadow-lg`;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    function checkKey() {
+      const key = document.getElementById('keyInput').value;
+      const valueBox = document.getElementById('valueInput');
+      const status = document.getElementById('status');
+
+      if (!key) {
+        valueBox.value = '';
+        status.textContent = '';
         return;
       }
 
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const value = localStorage.getItem(key);
-
-        const wrapper = document.createElement('div');
-        wrapper.className = 'bg-gray-900 p-4 rounded';
-
-        wrapper.innerHTML = `
-          <p class="text-sm text-gray-300 mb-1">Key: <span class="font-bold">${key}</span></p>
-          <textarea rows="3" class="mb-2" id="value-${i}">${value}</textarea>
-          <div class="flex gap-2">
-            <button onclick="saveItem('${key}', ${i})" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded">Save</button>
-            <button onclick="deleteItem('${key}')" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded">Delete</button>
-          </div>
-        `;
-
-        container.appendChild(wrapper);
+      if (localStorage.getItem(key) !== null) {
+        valueBox.value = localStorage.getItem(key);
+        status.textContent = 'Key exists.';
+      } else {
+        valueBox.value = '';
+        status.textContent = 'Key does not exist. New key will be created on save.';
       }
     }
 
-    function saveItem(key, index) {
-      const newValue = document.getElementById(`value-${index}`).value;
-      localStorage.setItem(key, newValue);
-      alert(`Updated key "${key}"`);
+    function saveData() {
+      const key = document.getElementById('keyInput').value;
+      const value = document.getElementById('valueInput').value;
+      if (!key) return showToast('Key is required.', 'error');
+      localStorage.setItem(key, value);
+      checkKey();
+      showToast('Saved successfully.');
     }
 
-    function deleteItem(key) {
-      if (confirm(`Delete key "${key}"?`)) {
+    function deleteData() {
+      const key = document.getElementById('keyInput').value;
+      if (!key) return showToast('Enter a key to delete.', 'error');
+      if (localStorage.getItem(key) !== null) {
         localStorage.removeItem(key);
-        loadStorage();
+        document.getElementById('valueInput').value = '';
+        checkKey();
+        showToast('Deleted successfully.');
+      } else {
+        showToast('Key does not exist.', 'error');
       }
     }
 
-    window.onload = loadStorage;
+    window.onload = () => {
+      document.getElementById('keyInput').focus();
+    };
   </script>
 </body>
 </html>
