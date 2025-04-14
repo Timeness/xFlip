@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zui Protocol</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Viga Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <!-- Material Icons CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Viga', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .neon-glow {
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        .nav-tab:hover {
+            background-color: rgba(0, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+    <!-- Three.js Canvas -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Header -->
+    <header class="flex justify-between items-center p-4 md:p-6 bg-black bg-opacity-80 fixed w-full top-0 z-10">
+        <div class="text-2xl md:text-3xl font-bold text-cyan-400">Zui Protocol</div>
+        <button id="hamburger" class="text-white md:hidden focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex space-x-6">
+            <a href="#" class="text-cyan-300 hover:text-cyan-100">Home</a>
+            <a href="#" class="text-cyan-300 hover:text-cyan-100">Referrals</a>
+            <a href="#" class="text-cyan-300 hover:text-cyan-100">Board</a>
+            <a href="#" class="text-cyan-300 hover:text-cyan-100">Profile</a>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <nav id="mobile-menu" class="hidden flex-col space-y-4 bg-black bg-opacity-90 p-6 absolute top-16 left-0 w-full md:hidden">
+        <a href="#" class="text-cyan-300 hover:text-cyan-100">Home</a>
+        <a href="#" class="text-cyan-300 hover:text-cyan-100">Referrals</a>
+        <a href="#" class="text-cyan-300 hover:text-cyan-100">Board</a>
+        <a href="#" class="text-cyan-300 hover:text-cyan-100">Profile</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen flex flex-col justify-center items-center text-center px-4">
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 animate-pulse">
+            Welcome to Zui Protocol
+        </h1>
+        <p class="text-lg md:text-xl text-cyan-300 max-w-2xl">
+            A decentralized Testnet powering the future of Web3 innovation.
+        </p>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 w-full bg-black bg-opacity-80 border-t border-cyan-500 flex justify-around py-2 z-10">
+        <a href="#" class="nav-tab flex flex-col items-center text-cyan-300 p-2 rounded-lg neon-glow">
+            <span class="material-icons">home</span>
+            <span class="text-sm">Home</span>
+        </a>
+        <a href="#" class="nav-tab flex flex-col items-center text-cyan-300 p-2 rounded-lg neon-glow">
+            <span class="material-icons">group</span>
+            <span class="text-sm">Referrals</span>
+        </a>
+        <a href="#" class="nav-tab flex flex-col items-center text-cyan-300 p-2 rounded-lg neon-glow">
+            <span class="material-icons">dashboard</span>
+            <span class="text-sm">Board</span>
+        </a>
+        <a href="#" class="nav-tab flex flex-col items-center text-cyan-300 p-2 rounded-lg neon-glow">
+            <span class="material-icons">person</span>
+            <span class="text-sm">Profile</span>
+        </a>
+    </nav>
+
+    <!-- JavaScript -->
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        });
+
+        // Three.js Animation
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Particle System
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particleCount = 1000;
+        const posArray = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 100;
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particleMaterial = new THREE.PointsMaterial({
+            size: 0.5,
+            color: 0x00FFFF,
+            transparent: true,
+            opacity: 0.6
+        });
+        const particles = new THREE.Points(particlesGeometry, particleMaterial);
+        scene.add(particles);
+
+        camera.position.z = 50;
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.y += 0.002;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
