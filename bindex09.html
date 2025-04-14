@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zui Protocol</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Viga Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background-color: #000;
+      margin: 0;
+      overflow: hidden;
+    }
+    /* Ensure the canvas for Three.js fills the background */
+    #three-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body class="relative text-white">
+  <!-- Three.js canvas background -->
+  <canvas id="three-canvas"></canvas>
+
+  <!-- Responsive Header -->
+  <header class="absolute top-0 left-0 w-full flex justify-between items-center p-4 z-10">
+    <div class="text-2xl font-bold">Zui Protocol</div>
+    <!-- Hamburger Menu Icon -->
+    <div id="hamburger" class="cursor-pointer space-y-1.5">
+      <div class="w-8 h-0.5 bg-white"></div>
+      <div class="w-8 h-0.5 bg-white"></div>
+      <div class="w-8 h-0.5 bg-white"></div>
+    </div>
+  </header>
+
+  <!-- Centered Welcome Message -->
+  <main class="absolute inset-0 flex flex-col justify-center items-center text-center px-4 z-10">
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-4">Welcome to Zui Protocol</h1>
+    <p class="text-lg md:text-2xl">Your gateway to the decentralized future.</p>
+  </main>
+
+  <!-- Fixed Bottom Navigation Bar -->
+  <nav class="fixed bottom-0 left-0 w-full bg-gray-900 bg-opacity-80 backdrop-blur-md border-t border-gray-700 z-10">
+    <ul class="flex justify-around items-center py-3">
+      <li class="flex flex-col items-center">
+        <span class="material-icons">home</span>
+        <span class="text-xs">Home</span>
+      </li>
+      <li class="flex flex-col items-center">
+        <span class="material-icons">group_add</span>
+        <span class="text-xs">Referrals</span>
+      </li>
+      <li class="flex flex-col items-center">
+        <span class="material-icons">dashboard</span>
+        <span class="text-xs">Board</span>
+      </li>
+      <li class="flex flex-col items-center">
+        <span class="material-icons">person</span>
+        <span class="text-xs">Profile</span>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Three.js Animation Script -->
+  <script>
+    // Set up scene, camera, and renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75, 
+      window.innerWidth / window.innerHeight, 
+      0.1, 
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    // Create a group of rotating cubes for a futuristic animated background
+    const group = new THREE.Group();
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshStandardMaterial({ color: 0x00ffcc, wireframe: true });
+    for (let i = 0; i < 20; i++) {
+      const cube = new THREE.Mesh(geometry, material);
+      cube.position.x = (Math.random() - 0.5) * 50;
+      cube.position.y = (Math.random() - 0.5) * 50;
+      cube.position.z = (Math.random() - 0.5) * 50;
+      cube.rotation.x = Math.random() * Math.PI;
+      cube.rotation.y = Math.random() * Math.PI;
+      group.add(cube);
+    }
+    scene.add(group);
+
+    // Lighting to enhance the 3D effect
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(25, 50, 25);
+    scene.add(pointLight);
+
+    camera.position.z = 30;
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      group.rotation.x += 0.002;
+      group.rotation.y += 0.003;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+</body>
+</html>
