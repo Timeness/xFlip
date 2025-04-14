@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zui Protocol</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Viga -->
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <!-- Material Icons CDN -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    #three-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .glow-effect {
+      transition: all 0.3s ease;
+    }
+    .glow-effect:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+    .gradient-text {
+      background: linear-gradient(45deg, #00f6ff, #ff00ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen">
+  <!-- Three.js Canvas -->
+  <canvas id="three-canvas"></canvas>
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 w-full bg-black bg-opacity-80 z-20">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl md:text-3xl gradient-text">Zui Protocol</h1>
+      <button id="hamburger" class="text-white md:hidden focus:outline-none">
+        <span class="material-icons">menu</span>
+      </button>
+      <nav class="hidden md:flex space-x-6">
+        <a href="#" class="text-white hover:text-cyan-300 glow-effect">Home</a>
+        <a href="#" class="text-white hover:text-cyan-300 glow-effect">Referrals</a>
+        <a href="#" class="text-white hover:text-cyan-300 glow-effect">Board</a>
+        <a href="#" class="text-white hover:text-cyan-300 glow-effect">Profile</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Sidebar for Mobile -->
+  <div id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-black bg-opacity-95 transform -translate-x-full transition-transform duration-300 z-30 md:hidden">
+    <div class="flex justify-between items-center p-4">
+      <h2 class="text-xl gradient-text">Zui Protocol</h2>
+      <button id="close-sidebar" class="text-white">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <nav class="flex flex-col space-y-4 p-4">
+      <a href="#" class="text-white hover:text-cyan-300 glow-effect">Home</a>
+      <a href="#" class="text-white hover:text-cyan-300 glow-effect">Referrals</a>
+      <a href="#" class="text-white hover:text-cyan-300 glow-effect">Board</a>
+      <a href="#" class="text-white hover:text-cyan-300 glow-effect">Profile</a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 pt-20 pb-24 flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <h2 class="text-4xl md:text-6xl gradient-text mb-4 animate-pulse">Welcome to Zui Protocol</h2>
+      <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
+        Empowering the decentralized future with cutting-edge Web3 technology. Join the Testnet revolution.
+      </p>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 w-full bg-black bg-opacity-80 z-20 flex justify-around py-2 md:py-3">
+    <a href="#" class="flex flex-col items-center text-white glow-effect tab active" data-tab="home">
+      <span class="material-icons">home</span>
+      <span class="text-sm">Home</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-white glow-effect tab" data-tab="referrals">
+      <span class="material-icons">share</span>
+      <span class="text-sm">Referrals</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-white glow-effect tab" data-tab="board">
+      <span class="material-icons">dashboard</span>
+      <span class="text-sm">Board</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-white glow-effect tab" data-tab="profile">
+      <span class="material-icons">person</span>
+      <span class="text-sm">Profile</span>
+    </a>
+  </nav>
+
+  <!-- Three.js and JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Three.js Scene
+    const canvas = document.getElementById('three-canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    // Particles
+    const particleCount = 200;
+    const particlesGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 100;
+      positions[i + 1] = (Math.random() - 0.5) * 100;
+      positions[i + 2] = (Math.random() - 0.5) * 100;
+      colors[i] = 0.0;
+      colors[i + 1] = Math.random();
+      colors[i + 2] = 1.0;
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const particleMaterial = new THREE.PointsMaterial({
+      size: 0.5,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.6,
+    });
+
+    const particles = new THREE.Points(particlesGeometry, particleMaterial);
+    scene.add(particles);
+
+    camera.position.z = 50;
+
+    // Animation
+    function animate() {
+      requestAnimationFrame(animate);
+      particles.rotation.y += 0.001;
+      particlesGeometry.attributes.position.array.forEach((_, i) => {
+        particlesGeometry.attributes.position.array[i] += Math.sin(Date.now() * 0.001 + i) * 0.01;
+      });
+      particlesGeometry.attributes.position.needsUpdate = true;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Hamburger Menu
+    const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+    const closeSidebar = document.getElementById('close-sidebar');
+
+    hamburger.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    closeSidebar.addEventListener('click', () => {
+      sidebar.classList.add('-translate-x-full');
+    });
+
+    // Tab Navigation
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
