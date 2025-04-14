@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zui Protocol</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts - Viga -->
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet" />
+
+  <!-- Material Icons CDN -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.159.0/three.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background-color: #000;
+      overflow: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen text-white">
+
+  <!-- 3D Background Canvas -->
+  <canvas id="bg"></canvas>
+
+  <!-- Header -->
+  <header class="z-10 w-full px-6 py-4 flex justify-between items-center fixed top-0 bg-black bg-opacity-50">
+    <h1 class="text-xl">Zui Protocol</h1>
+    <button class="text-white focus:outline-none">
+      <span class="material-icons text-3xl">menu</span>
+    </button>
+  </header>
+
+  <!-- Centered Welcome Message -->
+  <main class="z-10 flex items-center justify-center h-screen relative">
+    <div class="text-center px-6">
+      <h2 class="text-4xl md:text-5xl tracking-wide mb-4">Welcome to Zui Protocol</h2>
+      <p class="text-lg text-gray-300">Next-gen decentralized power.</p>
+    </div>
+  </main>
+
+  <!-- Fixed Bottom Navigation -->
+  <nav class="z-10 fixed bottom-0 left-0 right-0 bg-black bg-opacity-80 border-t border-gray-700 flex justify-around items-center py-3">
+    <button class="flex flex-col items-center text-sm">
+      <span class="material-icons text-xl">home</span>
+      <span>Home</span>
+    </button>
+    <button class="flex flex-col items-center text-sm">
+      <span class="material-icons text-xl">group_add</span>
+      <span>Referrals</span>
+    </button>
+    <button class="flex flex-col items-center text-sm">
+      <span class="material-icons text-xl">dashboard</span>
+      <span>Board</span>
+    </button>
+    <button class="flex flex-col items-center text-sm">
+      <span class="material-icons text-xl">person</span>
+      <span>Profile</span>
+    </button>
+  </nav>
+
+  <!-- Three.js Animation Script -->
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg'), alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+    const material = new THREE.MeshStandardMaterial({ color: 0x00ffff, wireframe: true });
+    const torusKnot = new THREE.Mesh(geometry, material);
+    scene.add(torusKnot);
+
+    const light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(20, 20, 20);
+    scene.add(light);
+
+    camera.position.z = 30;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      torusKnot.rotation.x += 0.005;
+      torusKnot.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+
+</body>
+</html>
