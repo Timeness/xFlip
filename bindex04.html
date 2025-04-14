@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black text-white font-viga">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zui Protocol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              viga: ['Viga', 'sans-serif']
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      #bgCanvas {
+        position: fixed;
+        top: 0; left: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body class="relative min-h-screen flex flex-col justify-between">
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Header -->
+    <header class="flex justify-between items-center p-4 border-b border-gray-700">
+      <h1 class="text-xl">Zui Protocol</h1>
+      <button id="menuBtn" class="text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-1 p-6 text-center">
+      <h2 class="text-2xl mb-4">Welcome to Zui Protocol</h2>
+      <p class="text-gray-400">A Web3-native platform built for the future.</p>
+    </main>
+
+    <!-- Footer tab navigation -->
+    <footer class="fixed bottom-0 left-0 w-full bg-gray-900 border-t border-gray-800 text-white">
+      <div class="flex justify-around items-center text-sm py-3">
+        <div class="flex flex-col items-center">
+          <span class="material-icons">home</span>
+          <span>Home</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="material-icons">group</span>
+          <span>Referrals</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="material-icons">leaderboard</span>
+          <span>Board</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="material-icons">person</span>
+          <span>Profile</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Material Icons CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+    <!-- Background Animation -->
+    <script>
+      const canvas = document.getElementById('bgCanvas');
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+      const material = new THREE.MeshStandardMaterial({ color: 0xff00ff, wireframe: true });
+      const torusKnot = new THREE.Mesh(geometry, material);
+      scene.add(torusKnot);
+
+      const pointLight = new THREE.PointLight(0xffffff);
+      pointLight.position.set(25, 50, 25);
+      scene.add(pointLight);
+
+      camera.position.z = 40;
+      function animate() {
+        requestAnimationFrame(animate);
+        torusKnot.rotation.x += 0.005;
+        torusKnot.rotation.y += 0.007;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    </script>
+  </body>
+</html>
