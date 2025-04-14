@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zui Protocol</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Viga -->
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Viga', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #ffffff;
+            margin: 5px 0;
+        }
+        .tab-item:hover, .tab-item.active {
+            background-color: #3b82f6;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Canvas -->
+    <canvas id="bg"></canvas>
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-black bg-opacity-80 backdrop-blur-md z-10">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <h1 class="text-3xl font-bold text-white">Zui Protocol</h1>
+            <div class="hamburger cursor-pointer">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto mt-20 px-6">
+        <section class="text-center">
+            <h2 class="text-5xl font-bold mb-4 animate-pulse">Welcome to Zui Protocol</h2>
+            <p class="text-lg text-gray-300 mb-8">A next-level decentralized platform for the future.</p>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition duration-300">
+                Get Started
+            </button>
+        </section>
+    </main>
+
+    <!-- Footer with Tab Navigation -->
+    <footer class="fixed bottom-0 w-full bg-black bg-opacity-80 backdrop-blur-md z-10">
+        <div class="container mx-auto flex justify-around py-4">
+            <a href="#home" class="tab-item text-white text-center px-4 py-2 rounded-full transition duration-300 active">Home</a>
+            <a href="#referrals" class="tab-item text-white text-center px-4 py-2 rounded-full transition duration-300">Referrals</a>
+            <a href="#board" class="tab-item text-white text-center px-4 py-2 rounded-full transition duration-300">Board</a>
+            <a href="#profile" class="tab-item text-white text-center px-4 py-2 rounded-full transition duration-300">Profile</a>
+        </div>
+    </footer>
+
+    <!-- Three.js Background Animation -->
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 5000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 2000;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 2,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 500;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+
+    <!-- Hamburger Menu Toggle (Basic) -->
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        hamburger.addEventListener('click', () => {
+            alert('Menu clicked! Add your menu logic here.');
+            // You can add a sliding menu or dropdown here
+        });
+    </script>
+</body>
+</html>
