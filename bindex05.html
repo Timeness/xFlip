@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zui Protocol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Viga', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <header class="flex justify-between items-center p-4 fixed top-0 left-0 right-0 bg-black bg-opacity-70 z-10">
+        <div class="text-xl">Zui Protocol</div>
+        <div class="hamburger cursor-pointer" id="hamburger">
+            <div class="w-6 h-1 bg-white mb-1"></div>
+            <div class="w-6 h-1 bg-white mb-1"></div>
+            <div class="w-6 h-1 bg-white"></div>
+        </div>
+    </header>
+
+    <main class="flex flex-col items-center justify-center h-screen">
+        <h1 class="text-4xl md:text-6xl text-center">Welcome to Zui Protocol</h1>
+        <p class="mt-4 text-lg md:text-xl">Empowering the decentralized future.</p>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-70 p-4 flex justify-around z-10">
+        <button class="flex flex-col items-center">
+            <span class="material-icons">home</span>
+            <span>Home</span>
+        </button>
+        <button class="flex flex-col items-center">
+            <span class="material-icons">people</span>
+            <span>Referrals</span>
+        </button>
+        <button class="flex flex-col items-center">
+            <span class="material-icons">dashboard</span>
+            <span>Board</span>
+        </button>
+        <button class="flex flex-col items-center">
+            <span class="material-icons">person</span>
+            <span>Profile</span>
+        </button>
+    </nav>
+
+    <script>
+        // Three.js scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Add a 3D object (e.g., a rotating cube)
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive design adjustments
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        // Hamburger menu toggle (for future implementation)
+        document.getElementById('hamburger').addEventListener('click', () => {
+            alert('Hamburger menu clicked! Implement menu functionality here.');
+        });
+    </script>
+</body>
+</html>
