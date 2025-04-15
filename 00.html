@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>100 Days Giveaway</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@400;600&family=Fira+Code&family=Doto&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <style>
+    body {
+      font-family: 'Doto', sans-serif;
+    }
+  </style>
+</head><body class="bg-black text-white min-h-screen flex flex-col items-center p-6">
+  <header class="text-center my-10">
+    <h1 class="text-4xl font-bold text-yellow-400 tracking-wider">$100 x 100 Users x 100 Days</h1>
+    <p class="text-lg text-gray-400 mt-2">A total of $1,000,000 in rewards</p>
+  </header>  <section id="countdown" class="text-center mb-6 text-yellow-400 text-xl font-semibold"></section>  <section class="bg-zinc-900 rounded-2xl shadow-xl p-8 w-full max-w-4xl">
+    <h2 class="text-2xl font-semibold mb-4 text-yellow-300">Today's Winners</h2>
+    <div id="winnerList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto">
+      <!-- Winner Entries will be inserted here -->
+    </div>
+    <button onclick="generateWinners()" class="mt-6 px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-xl transition">Generate Random Winners</button>
+  </section>  <section class="mt-10 text-center">
+    <p class="text-sm text-gray-400">Total Paid So Far: <span id="totalPaid" class="text-white font-semibold">$0</span></p>
+    <p class="text-sm text-gray-500">Day <span id="dayCount">1</span> of 100</p>
+    <button onclick="connectWallet()" class="mt-4 px-6 py-2 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl transition">Connect Wallet</button>
+  </section>  <footer class="mt-16 text-gray-500 text-sm">
+    &copy; 2025 MegaDrop | All rights reserved
+  </footer>  <script>
+    const totalDays = 100;
+    let currentDay = 1;
+    let totalPaid = 0;
+    const winnerListEl = document.getElementById("winnerList");
+    const totalPaidEl = document.getElementById("totalPaid");
+    const dayCountEl = document.getElementById("dayCount");
+
+    function generateRandomWallet() {
+      const hex = "0123456789abcdef";
+      let address = "0x";
+      for (let i = 0; i < 40; i++) address += hex[Math.floor(Math.random() * 16)];
+      return address;
+    }
+
+    function generateWinners() {
+      winnerListEl.innerHTML = "";
+      for (let i = 1; i <= 100; i++) {
+        const username = `@user${Math.floor(Math.random() * 10000)}`;
+        const wallet = generateRandomWallet();
+        const card = `
+        <div class='bg-zinc-800 p-4 rounded-xl shadow text-sm'>
+          <p><span class='text-yellow-400'>Username:</span> ${username}</p>
+          <p><span class='text-yellow-400'>Wallet:</span> ${wallet.slice(0, 6)}...${wallet.slice(-4)}</p>
+          <p><span class='text-yellow-400'>Reward:</span> $100</p>
+        </div>`;
+        winnerListEl.innerHTML += card;
+      }
+      totalPaid += 100 * 100;
+      totalPaidEl.textContent = `$${totalPaid.toLocaleString()}`;
+      currentDay++;
+      dayCountEl.textContent = currentDay;
+    }
+
+    function countdownTimer() {
+      const now = new Date();
+      const nextDrop = new Date();
+      nextDrop.setHours(24, 0, 0, 0);
+      const distance = nextDrop - now;
+      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((distance / (1000 * 60)) % 60);
+      const seconds = Math.floor((distance / 1000) % 60);
+      document.getElementById("countdown").textContent = `Next Giveaway in: ${hours}h ${minutes}m ${seconds}s`;
+    }
+    setInterval(countdownTimer, 1000);
+
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          alert("Wallet Connected: " + accounts[0]);
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        alert("Please install MetaMask!");
+      }
+    }
+  </script></body></html>
