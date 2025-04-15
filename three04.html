@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Digital Rain</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body class="bg-black">
+    <div id="info" class="absolute top-4 left-4 text-green-500 font-mono text-sm">
+        3D Digital Rain - Matrix Style
+    </div>
+    <script>
+        // Three.js setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Camera position
+        camera.position.z = 50;
+        camera.position.y = 20;
+
+        // Symbols array and parameters
+        const symbols = [];
+        const symbolCount = 300;
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*+-=/';
+        const fontSize = 1.5;
+        const fallSpeed = 0.5;
+        const depth = 100;
+
+        // Create symbol object
+        class Symbol {
+            constructor(x, y, z) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.text = characters.charAt(Math.floor(Math.random() * characters.length));
+                
+                // Create 2D canvas for text
+                const canvas = document.createElement('canvas');
+                canvas.width = 64;
+                canvas.height = 64;
+                const ctx = canvas.getContext('2d');
+                ctx.font = '48px monospace';
+                ctx.fillStyle = '#0F0';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.text, 32, 32);
+                
+                // Create texture and material
+                const texture = new THREE.CanvasTexture(canvas);
+                const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+                this.sprite = new THREE.Sprite(material);
+                this.sprite.position.set(x, y, z);
+                this.sprite.scale.set(fontSize, fontSize, fontSize);
+                scene.add(this.sprite);
+                
+                // Random rotation speed
+                this.rotationSpeed = (Math.random() - 0.5) * 0.05;
+            }
+
+            update() {
+                this.y -= fallSpeed;
+                this.sprite.position.y = this.y;
+                this.sprite.rotation.z += this.rotationSpeed;
+
+                // Reset when falling out of view
+                if (this.y < -50) {
+                    this.y = 50;
+                    this.x = (Math.random() - 0.5) * 100;
+                    this.z = (Math.random() - 0.5) * depth;
+                    this.sprite.position.set(this.x, this.y, this.z);
+                    // Update character
+                    this.text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    const canvas = this.sprite.material.map.image;
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillText(this.text, 32, 32);
+                    this.sprite.material.map.needsUpdate = true;
+                }
+            }
+        }
+
+        // Initialize symbols
+        for (let i = 0; i < symbolCount; i++) {
+            const x = (Math.random() - 0.5) * 100;
+            const y = Math.random() * 100 - 50;
+            const z = (Math.random() - 0.5) * depth;
+            symbols.push(new Symbol(x, y, z));
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            symbols.forEach(symbol => symbol.update());
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
