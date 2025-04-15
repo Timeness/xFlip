@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcticX | Freeze the Future</title>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Signika', sans-serif;
+            background: linear-gradient(135deg, #0a0a23 0%, #1e3a8a 100%);
+            color: #e0f7fa;
+            overflow-x: hidden;
+        }
+        .frosted-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .snow {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100vh); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Snowfall Effect -->
+    <div id="snowfall" class="fixed inset-0 pointer-events-none"></div>
+
+    <!-- Navbar -->
+    <nav class="frosted-glass fixed top-0 left-0 right-0 z-10 py-4">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <div class="text-2xl font-bold text-cyan-200">ArcticX 🐻‍❄️</div>
+            <div class="space-x-4 hidden md:flex">
+                <a href="#home" class="hover:text-cyan-400">Home</a>
+                <a href="#tokenomics" class="hover:text-cyan-400">Tokenomics</a>
+                <a href="#airdrop" class="hover:text-cyan-400">Airdrop</a>
+                <a href="#vault" class="hover:text-cyan-400">Vault</a>
+                <a href="#dao" class="hover:text-cyan-400">FreezeVote</a>
+                <a href="#bridge" class="hover:text-cyan-400">IceBridge</a>
+                <a href="#whitepaper" class="hover:text-cyan-400">Whitepaper</a>
+            </div>
+            <button id="connect-wallet" class="bg-cyan-500 text-black px-4 py-2 rounded-lg hover:bg-cyan-400">
+                Connect Wallet
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Three.js -->
+    <section id="home" class="h-screen flex items-center justify-center relative">
+        <div class="text-center z-10">
+            <h1 class="text-5xl md:text-7xl font-bold text-cyan-100 mb-4">Freeze the Future.</h1>
+            <p class="text-2xl md:text-3xl text-cyan-200 mb-6">Melt the Limits.</p>
+            <button class="bg-cyan-500 text-black px-6 py-3 rounded-lg hover:bg-cyan-400">
+                Explore ArcticX
+            </button>
+        </div>
+        <canvas id="three-canvas" class="absolute inset-0"></canvas>
+    </section>
+
+    <!-- Tokenomics Section -->
+    <section id="tokenomics" class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Tokenomics</h2>
+            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto">
+                <p class="text-lg"><strong>Token:</strong> $FROZE</p>
+                <p class="text-lg"><strong>Total Supply:</strong> 1,000,000,000</p>
+                <p class="text-lg"><strong>Allocation:</strong> 40% Community, 20% Staking, 20% Team (Locked), 10% Airdrop, 10% Development</p>
+                <p class="text-lg"><strong>Use:</strong> Staking, Governance, Bridge Fees</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Airdrop Section -->
+    <section id="airdrop" class="py-16 bg-cyan-900/30">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Claim Your Airdrop</h2>
+            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto text-center">
+                <p class="text-lg mb-4">Join the ArcticX Testnet and claim $FROZE!</p>
+                <p class="text-sm mb-4">Eligible: Early Supporters, PolarPunks NFT Holders, Galxe/Zealy Winners</p>
+                <button class="bg-cyan-500 text-black px-6 py-3 rounded-lg hover:bg-cyan-400">
+                    Unfreeze My Airdrop
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vault Section -->
+    <section id="vault" class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Arctic Vault</h2>
+            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto">
+                <p class="text-lg">Stake $FROZE in Cold Lock Vaults for high APY.</p>
+                <p class="text-lg">Choose your freeze period: 30, 60, or 90 days.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FreezeVote DAO Section -->
+    <section id="dao" class="py-16 bg-cyan-900/30">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">FreezeVote DAO</h2>
+            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto">
+                <p class="text-lg">Vote on protocol decisions with $FROZE.</p>
+                <p class="text-lg">Freeze your vote to unlock major proposals.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- IceBridge Section -->
+    <section id="bridge" class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">IceBridge</h2>
+            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto">
+                <p class="text-lg">Bridge assets across Ethereum, Solana, and BSC.</p>
+                <p class="text-lg">Powered by LayerZero for seamless transfers.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Whitepaper Section -->
+    <section id="whitepaper" class="py-16 bg-cyan-900/30">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-8">Whitepaper</h2>
+            <p class="text-lg mb-4">Learn more about ArcticX’s vision and tech.</p>
+            <button class="bg-cyan-500 text-black px-6 py-3 rounded-lg hover:bg-cyan-400">
+                Read Whitepaper
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-black/50 text-center">
+        <p>&copy; 2025 ArcticX. All rights reserved.</p>
+        <div class="mt-4 space-x-4">
+            <a href="#" class="text-cyan-200 hover:text-cyan-400">Twitter</a>
+            <a href="#" class="text-cyan-200 hover:text-cyan-400">Discord</a>
+            <a href="#" class="text-cyan-200 hover:text-cyan-400">Telegram</a>
+        </div>
+    </footer>
+
+    <script>
+        // Snowfall Animation
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snow');
+            snowflake.style.left = Math.random() * window.innerWidth + 'px';
+            snowflake.style.animationDuration = Math.random() * 5 + 5 + 's';
+            document.getElementById('snowfall').appendChild(snowflake);
+            setTimeout(() => snowflake.remove(), 10000);
+        }
+        setInterval(createSnowflake, 200);
+
+        // Three.js 3D Cube (Icy Vault)
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const geometry = new THREE.BoxGeometry(2, 2, 2);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00f7ff, wireframe: true });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Wallet Connect Placeholder
+        document.getElementById('connect-wallet').addEventListener('click', () => {
+            alert('Connect Wallet: MetaMask, Phantom, or TrustWallet (Testnet)');
+        });
+    </script>
+</body>
+</html>
