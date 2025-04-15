@@ -2,66 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ArcticX | Freeze the Future</title>
-    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <style>
         body {
             font-family: 'Signika', sans-serif;
             background: linear-gradient(135deg, #0a0a23 0%, #1e3a8a 100%);
             color: #e0f7fa;
             overflow-x: hidden;
+            margin: 0;
+            overscroll-behavior: none;
+            -webkit-text-size-adjust: 100%;
         }
         .frosted-glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
-        .snow {
+        .btn-glow {
+            transition: all 0.3s ease;
+        }
+        .btn-glow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-size: cover;
+        }
+        canvas {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-            animation: fall linear infinite;
+            top: 0;
+            left: 0;
+            z-index: 0;
         }
-        @keyframes fall {
-            0% { transform: translateY(-100vh); opacity: 1; }
-            100% { transform: translateY(100vh); opacity: 0.5; }
+        /* Disable zoom */
+        html, body {
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
         }
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- Snowfall Effect -->
-    <div id="snowfall" class="fixed inset-0 pointer-events-none"></div>
-
     <!-- Navbar -->
-    <nav class="frosted-glass fixed top-0 left-0 right-0 z-10 py-4">
-        <div class="container mx-auto flex justify-between items-center px-4">
-            <div class="text-2xl font-bold text-cyan-200">ArcticX 🐻‍❄️</div>
-            <div class="space-x-4 hidden md:flex">
-                <a href="#home" class="hover:text-cyan-400">Home</a>
-                <a href="#tokenomics" class="hover:text-cyan-400">Tokenomics</a>
-                <a href="#airdrop" class="hover:text-cyan-400">Airdrop</a>
-                <a href="#vault" class="hover:text-cyan-400">Vault</a>
-                <a href="#dao" class="hover:text-cyan-400">FreezeVote</a>
-                <a href="#bridge" class="hover:text-cyan-400">IceBridge</a>
-                <a href="#whitepaper" class="hover:text-cyan-400">Whitepaper</a>
+    <nav class="frosted-glass fixed top-0 left-0 right-0 z-20 py-4">
+        <div class="container mx-auto flex justify-between items-center px-6">
+            <div class="text-3xl font-bold text-cyan-100">ArcticX 🐻‍❄️</div>
+            <div class="space-x-6 hidden md:flex text-lg">
+                <a href="#home" class="hover:text-cyan-300 transition">Home</a>
+                <a href="#tokenomics" class="hover:text-cyan-300 transition">Tokenomics</a>
+                <a href="#airdrop" class="hover:text-cyan-300 transition">Airdrop</a>
+                <a href="#vault" class="hover:text-cyan-300 transition">Vault</a>
+                <a href="#dao" class="hover:text-cyan-300 transition">FreezeVote</a>
+                <a href="#bridge" class="hover:text-cyan-300 transition">IceBridge</a>
+                <a href="#whitepaper" class="hover:text-cyan-300 transition">Whitepaper</a>
             </div>
-            <button id="connect-wallet" class="bg-cyan-500 text-black px-4 py-2 rounded-lg hover:bg-cyan-400">
+            <button id="connect-wallet" class="bg-cyan-500 text-black px-5 py-2 rounded-full font-semibold btn-glow">
                 Connect Wallet
             </button>
         </div>
     </nav>
 
-    <!-- Hero Section with Three.js -->
+    <!-- Hero Section with 3D Polar Bear & Snowfall -->
     <section id="home" class="h-screen flex items-center justify-center relative">
         <div class="text-center z-10">
-            <h1 class="text-5xl md:text-7xl font-bold text-cyan-100 mb-4">Freeze the Future.</h1>
-            <p class="text-2xl md:text-3xl text-cyan-200 mb-6">Melt the Limits.</p>
-            <button class="bg-cyan-500 text-black px-6 py-3 rounded-lg hover:bg-cyan-400">
+            <h1 class="text-5xl md:text-7xl font-bold text-cyan-50 mb-4 tracking-tight">Freeze the Future.</h1>
+            <p class="text-xl md:text-2xl text-cyan-200 mb-8">Melt the Limits.</p>
+            <button class="bg-cyan-500 text-black px-8 py-3 rounded-full font-semibold btn-glow">
                 Explore ArcticX
             </button>
         </div>
@@ -69,26 +83,26 @@
     </section>
 
     <!-- Tokenomics Section -->
-    <section id="tokenomics" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-8">Tokenomics</h2>
-            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto">
-                <p class="text-lg"><strong>Token:</strong> $FROZE</p>
-                <p class="text-lg"><strong>Total Supply:</strong> 1,000,000,000</p>
-                <p class="text-lg"><strong>Allocation:</strong> 40% Community, 20% Staking, 20% Team (Locked), 10% Airdrop, 10% Development</p>
+    <section id="tokenomics" class="py-20 parallax" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1519681393784-d120267933ba')">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50">Tokenomics</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto">
+                <p class="text-lg mb-2"><strong>Token:</strong> $FROZE</p>
+                <p class="text-lg mb-2"><strong>Total Supply:</strong> 1,000,000,000</p>
+                <p class="text-lg mb-2"><strong>Allocation:</strong> 40% Community, 20% Staking, 20% Team (Locked), 10% Airdrop, 10% Development</p>
                 <p class="text-lg"><strong>Use:</strong> Staking, Governance, Bridge Fees</p>
             </div>
         </div>
     </section>
 
     <!-- Airdrop Section -->
-    <section id="airdrop" class="py-16 bg-cyan-900/30">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-8">Claim Your Airdrop</h2>
-            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto text-center">
+    <section id="airdrop" class="py-20 bg-cyan-900/20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50">Claim Your Airdrop</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto text-center">
                 <p class="text-lg mb-4">Join the ArcticX Testnet and claim $FROZE!</p>
-                <p class="text-sm mb-4">Eligible: Early Supporters, PolarPunks NFT Holders, Galxe/Zealy Winners</p>
-                <button class="bg-cyan-500 text-black px-6 py-3 rounded-lg hover:bg-cyan-400">
+                <p class="text-sm mb-6 text-cyan-200">Eligible: Early Supporters, PolarPunks NFT Holders, Galxe/Zealy Winners</p>
+                <button class="bg-cyan-500 text-black px-8 py-3 rounded-full font-semibold btn-glow">
                     Unfreeze My Airdrop
                 </button>
             </div>
@@ -96,88 +110,201 @@
     </section>
 
     <!-- Vault Section -->
-    <section id="vault" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-8">Arctic Vault</h2>
-            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto">
-                <p class="text-lg">Stake $FROZE in Cold Lock Vaults for high APY.</p>
+    <section id="vault" class="py-20 parallax" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1542601098-8fc114e148e2')">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50">Arctic Vault</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto">
+                <p class="text-lg mb-2">Stake $FROZE in Cold Lock Vaults for high APY.</p>
                 <p class="text-lg">Choose your freeze period: 30, 60, or 90 days.</p>
             </div>
         </div>
     </section>
 
     <!-- FreezeVote DAO Section -->
-    <section id="dao" class="py-16 bg-cyan-900/30">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-8">FreezeVote DAO</h2>
-            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto">
-                <p class="text-lg">Vote on protocol decisions with $FROZE.</p>
+    <section id="dao" class="py-20 bg-cyan-900/20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50">FreezeVote DAO</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto">
+                <p class="text-lg mb-2">Vote on protocol decisions with $FROZE.</p>
                 <p class="text-lg">Freeze your vote to unlock major proposals.</p>
             </div>
         </div>
     </section>
 
     <!-- IceBridge Section -->
-    <section id="bridge" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-8">IceBridge</h2>
-            <div class="frosted-glass p-6 rounded-lg max-w-2xl mx-auto">
-                <p class="text-lg">Bridge assets across Ethereum, Solana, and BSC.</p>
+    <section id="bridge" class="py-20 parallax" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50">IceBridge</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto">
+                <p class="text-lg mb-2">Bridge assets across Ethereum, Solana, and BSC.</p>
                 <p class="text-lg">Powered by LayerZero for seamless transfers.</p>
             </div>
         </div>
     </section>
 
     <!-- Whitepaper Section -->
-    <section id="whitepaper" class="py-16 bg-cyan-900/30">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-4xl font-bold mb-8">Whitepaper</h2>
-            <p class="text-lg mb-4">Learn more about ArcticX’s vision and tech.</p>
-            <button class="bg-cyan-500 text-black px-6 py-3 rounded-lg hover:bg-cyan-400">
+    <section id="whitepaper" class="py-20 bg-cyan-900/20">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-10 text-cyan-50">Whitepaper</h2>
+            <p class="text-lg mb-6 text-cyan-200">Learn more about ArcticX’s vision and tech.</p>
+            <button class="bg-cyan-500 text-black px-8 py-3 rounded-full font-semibold btn-glow">
                 Read Whitepaper
             </button>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-8 bg-black/50 text-center">
-        <p>&copy; 2025 ArcticX. All rights reserved.</p>
-        <div class="mt-4 space-x-4">
-            <a href="#" class="text-cyan-200 hover:text-cyan-400">Twitter</a>
-            <a href="#" class="text-cyan-200 hover:text-cyan-400">Discord</a>
-            <a href="#" class="text-cyan-200 hover:text-cyan-400">Telegram</a>
+    <footer class="py-10 bg-black/60 text-center">
+        <p class="text-cyan-200">© 2025 ArcticX. All rights reserved.</p>
+        <div class="mt-4 space-x-6">
+            <a href="#" class="text-cyan-200 hover:text-cyan-300">Twitter</a>
+            <a href="#" class="text-cyan-200 hover:text-cyan-300">Discord</a>
+            <a href="#" class="text-cyan-200 hover:text-cyan-300">Telegram</a>
         </div>
     </footer>
 
     <script>
-        // Snowfall Animation
-        function createSnowflake() {
-            const snowflake = document.createElement('div');
-            snowflake.classList.add('snow');
-            snowflake.style.left = Math.random() * window.innerWidth + 'px';
-            snowflake.style.animationDuration = Math.random() * 5 + 5 + 's';
-            document.getElementById('snowfall').appendChild(snowflake);
-            setTimeout(() => snowflake.remove(), 10000);
-        }
-        setInterval(createSnowflake, 200);
-
-        // Three.js 3D Cube (Icy Vault)
+        // Three.js Scene Setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        const geometry = new THREE.BoxGeometry(2, 2, 2);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00f7ff, wireframe: true });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 0.8);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        // 3D Snowfall Particle System
+        const snowflakes = [];
+        const snowGeometry = new THREE.BufferGeometry();
+        const snowCount = 1000;
+        const positions = new Float32Array(snowCount * 3);
+        const sizes = new Float32Array(snowCount);
+        const opacities = new Float32Array(snowCount);
+
+        for (let i = 0; i < snowCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 20;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+            sizes[i] = Math.random() * 0.05 + 0.02;
+            opacities[i] = Math.random() * 0.5 + 0.5;
+        }
+
+        snowGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        snowGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        snowGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+
+        const snowMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                color: { value: new THREE.Color(0xe0f7fa) },
+            },
+            vertexShader: `
+                attribute float size;
+                attribute float opacity;
+                varying float vOpacity;
+                void main() {
+                    vOpacity = opacity;
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_PointSize = size * (300.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 color;
+                varying float vOpacity;
+                void main() {
+                    if (length(gl_PointCoord - vec2(0.5, 0.5)) > 0.5) discard;
+                    gl_FragColor = vec4(color, vOpacity * 0.8);
+                }
+            `,
+            transparent: true,
+        });
+
+        const snowSystem = new THREE.Points(snowGeometry, snowMaterial);
+        scene.add(snowSystem);
+
+        // Polar Bear Mesh (Placeholder)
+        const bearGroup = new THREE.Group();
+        const bearMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+
+        // Body
+        const bodyGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const body = new THREE.Mesh(bodyGeometry, bearMaterial);
+        bearGroup.add(body);
+
+        // Head
+        const headGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const head = new THREE.Mesh(headGeometry, bearMaterial);
+        head.position.set(0, 1.2, 0.8);
+        bearGroup.add(head);
+
+        // Ears
+        const earGeometry = new THREE.SphereGeometry(0.15, 32, 32);
+        const leftEar = new THREE.Mesh(earGeometry, bearMaterial);
+        leftEar.position.set(-0.3, 1.6, 0.6);
+        bearGroup.add(leftEar);
+        const rightEar = new THREE.Mesh(earGeometry, bearMaterial);
+        rightEar.position.set(0.3, 1.6, 0.6);
+        bearGroup.add(rightEar);
+
+        // Legs
+        const legGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+        const frontLeftLeg = new THREE.Mesh(legGeometry, bearMaterial);
+        frontLeftLeg.position.set(-0.5, -0.5, 0.5);
+        bearGroup.add(frontLeftLeg);
+        const frontRightLeg = new THREE.Mesh(legGeometry, bearMaterial);
+        frontRightLeg.position.set(0.5, -0.5, 0.5);
+        bearGroup.add(frontRightLeg);
+        const backLeftLeg = new THREE.Mesh(legGeometry, bearMaterial);
+        backLeftLeg.position.set(-0.5, -0.5, -0.5);
+        bearGroup.add(backLeftLeg);
+        const backRightLeg = new THREE.Mesh(legGeometry, bearMaterial);
+        backRightLeg.position.set(0.5, -0.5, -0.5);
+        bearGroup.add(backRightLeg);
+
+        scene.add(bearGroup);
+
+        // Optional: Load real .gltf polar bear model
+        /*
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            'path/to/polar_bear.gltf',
+            (gltf) => {
+                scene.add(gltf.scene);
+                gltf.scene.scale.set(2, 2, 2);
+                gltf.scene.position.set(0, 0, 0);
+            },
+            (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
+            (error) => console.error('Error loading model:', error)
+        );
+        */
 
         camera.position.z = 5;
 
+        // Animation
+        let time = 0;
         function animate() {
             requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
+
+            // Animate snowflakes
+            const positions = snowGeometry.attributes.position.array;
+            for (let i = 0; i < snowCount; i++) {
+                positions[i * 3 + 1] -= 0.02; // Fall
+                positions[i * 3] += Math.sin(time + i) * 0.005; // Wind effect
+                if (positions[i * 3 + 1] < -10) {
+                    positions[i * 3 + 1] += 20; // Reset to top
+                }
+            }
+            snowGeometry.attributes.position.needsUpdate = true;
+
+            // Animate bear
+            bearGroup.rotation.y += 0.01;
+            bearGroup.position.y = Math.sin(time) * 0.2;
+
+            time += 0.05;
             renderer.render(scene, camera);
         }
         animate();
@@ -185,6 +312,13 @@
         // Wallet Connect Placeholder
         document.getElementById('connect-wallet').addEventListener('click', () => {
             alert('Connect Wallet: MetaMask, Phantom, or TrustWallet (Testnet)');
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>
