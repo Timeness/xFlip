@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ArcticX | Freeze the Future</title>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        body {
+            font-family: 'Signika', sans-serif;
+            background: radial-gradient(circle at center, #0a0a23 0%, #000000 100%);
+            color: #e0f7fa;
+            overflow-x: hidden;
+            margin: 0;
+            overscroll-behavior: none;
+            -webkit-text-size-adjust: 100%;
+        }
+        .frosted-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 255, 255, 0.2);
+        }
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4);
+        }
+        .btn-glow {
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+        .btn-glow:hover::before {
+            left: 100%;
+        }
+        .btn-glow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+        }
+        .section-card {
+            transition: transform 0.3s ease;
+        }
+        .section-card:hover {
+            transform: scale(1.02);
+        }
+        .current-line {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        html, body {
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navbar -->
+    <nav class="frosted-glass fixed top-0 left-0 right-0 z-30 py-4">
+        <div class="container mx-auto flex justify-between items-center px-6">
+            <div class="text-3xl font-bold text-cyan-100 neon-glow">ArcticX 🐻‍❄️</div>
+            <div class="space-x-8 hidden md:flex text-lg">
+                <a href="#home" class="hover:text-cyan-300 transition neon-glow">Home</a>
+                <a href="#tokenomics" class="hover:text-cyan-300 transition neon-glow">Tokenomics</a>
+                <a href="#airdrop" class="hover:text-cyan-300 transition neon-glow">Airdrop</a>
+                <a href="#vault" class="hover:text-cyan-300 transition neon-glow">Vault</a>
+                <a href="#dao" class="hover:text-cyan-300 transition neon-glow">FreezeVote</a>
+                <a href="#bridge" class="hover:text-cyan-300 transition neon-glow">IceBridge</a>
+                <a href="#whitepaper" class="hover:text-cyan-300 transition neon-glow">Whitepaper</a>
+            </div>
+            <button id="connect-wallet" class="bg-cyan-500 text-black px-6 py-2 rounded-full font-semibold btn-glow">
+                Connect Wallet
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section with 3D Polar Bear, Snowfall & Currents -->
+    <section id="home" class="h-screen flex items-center justify-center relative">
+        <div class="text-center z-10">
+            <h1 class="text-5xl md:text-7xl font-bold text-cyan-50 mb-4 tracking-tight neon-glow">Freeze the Future.</h1>
+            <p class="text-xl md:text-2xl text-cyan-200 mb-8 neon-glow">Melt the Limits.</p>
+            <button class="bg-cyan-500 text-black px-8 py-3 rounded-full font-semibold btn-glow">
+                Explore ArcticX
+            </button>
+        </div>
+        <canvas id="three-canvas" class="absolute inset-0"></canvas>
+    </section>
+
+    <!-- Tokenomics Section -->
+    <section id="tokenomics" class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50 neon-glow">Tokenomics</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto section-card">
+                <p class="text-lg mb-2"><strong>Token:</strong> $FROZE</p>
+                <p class="text-lg mb-2"><strong>Total Supply:</strong> 1,000,000,000</p>
+                <p class="text-lg mb-2"><strong>Allocation:</strong> 40% Communityдами, 20% Staking, 20% Team (Locked), 10% Airdrop, 10% Development</p>
+                <p class="text-lg"><strong>Use:</strong> Staking, Governance, Bridge Fees</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Airdrop Section -->
+    <section id="airdrop" class="py-20 relative">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50 neon-glow">Claim Your Airdrop</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto text-center section-card">
+                <p class="text-lg mb-4">Join the ArcticX Testnet and claim $FROZE!</p>
+                <p class="text-sm mb-6 text-cyan-200">Eligible: Early Supporters, PolarPunks NFT Holders, Galxe/Zealy Winners</p>
+                <button class="bg-cyan-500 text-black px-8 py-3 rounded-full font-semibold btn-glow">
+                    Unfreeze My Airdrop
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vault Section -->
+    <section id="vault" class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50 neon-glow">Arctic Vault</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto section-card">
+                <p class="text-lg mb-2">Stake $FROZE in Cold Lock Vaults for high APY.</p>
+                <p class="text-lg">Choose your freeze period: 30, 60, or 90 days.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FreezeVote DAO Section -->
+    <section id="dao" class="py-20 relative">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50 neon-glow">FreezeVote DAO</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto section-card">
+                <p class="text-lg mb-2">Vote on protocol decisions with $FROZE.</p>
+                <p class="text-lg">Freeze your vote to unlock major proposals.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- IceBridge Section -->
+    <section id="bridge" class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-10 text-cyan-50 neon-glow">IceBridge</h2>
+            <div class="frosted-glass p-8 rounded-xl max-w-3xl mx-auto section-card">
+                <p class="text-lg mb-2">Bridge assets across Ethereum, Solana, and BSC.</p>
+                <p class="text-lg">Powered by LayerZero for seamless transfers.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Whitepaper Section -->
+    <section id="whitepaper" class="py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-10 text-cyan-50 neon-glow">Whitepaper</h2>
+            <p class="text-lg mb-6 text-cyan-200">Learn more about ArcticX’s vision and tech.</p>
+            <button class="bg-cyan-500 text-black px-8 py-3 rounded-full font-semibold btn-glow">
+                Read Whitepaper
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 bg-black/80 text-center">
+        <p class="text-cyan-200">© 2025 ArcticX. All rights reserved.</p>
+        <div class="mt-4 space-x-6">
+            <a href="#" class="text-cyan-200 hover:text-cyan-300 neon-glow">Twitter</a>
+            <a href="#" class="text-cyan-200 hover:text-cyan-300 neon-glow">Discord</a>
+            <a href="#" class="text-cyan-200 hover:text-cyan-300 neon-glow">Telegram</a>
+        </div>
+    </footer>
+
+    <script>
+        // Three.js Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 0.8);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        // 3D Snowfall Particle System
+        const snowflakes = [];
+        const snowGeometry = new THREE.BufferGeometry();
+        const snowCount = 800;
+        const positions = new Float32Array(snowCount * 3);
+        const sizes = new Float32Array(snowCount);
+        const opacities = new Float32Array(snowCount);
+
+        for (let i = 0; i < snowCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 20;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+            sizes[i] = Math.random() * 0.05 + 0.02;
+            opacities[i] = Math.random() * 0.5 + 0.5;
+        }
+
+        snowGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        snowGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        snowGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+
+        const snowMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                color: { value: new THREE.Color(0xb0ffff) },
+            },
+            vertexShader: `
+                attribute float size;
+                attribute float opacity;
+                varying float vOpacity;
+                void main() {
+                    vOpacity = opacity;
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_PointSize = size * (300.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 color;
+                varying float vOpacity;
+                void main() {
+                    if (length(gl_PointCoord - vec2(0.5, 0.5)) > 0.5) discard;
+                    gl_FragColor = vec4(color, vOpacity * 0.7);
+                }
+            `,
+            transparent: true,
+        });
+
+        const snowSystem = new THREE.Points(snowGeometry, snowMaterial);
+        scene.add(snowSystem);
+
+        // Flashing Currents (Wire-like Lines)
+        const lineGeometry = new THREE.BufferGeometry();
+        const lineCount = 10;
+        const linePositions = new Float32Array(lineCount * 6); // 2 points per line (x,y,z)
+        const lineColors = new Float32Array(lineCount * 6); // RGB for each vertex
+
+        for (let i = 0; i < lineCount; i++) {
+            const x1 = (Math.random() - 0.5) * 20;
+            const x2 = (Math.random() - 0.5) * 20;
+            const y1 = (Math.random() - 0.5) * 10;
+            const y2 = (Math.random() - 0.5) * 10;
+            const z = (Math.random() - 0.5) * 10;
+            linePositions[i * 6] = x1;
+            linePositions[i * 6 + 1] = y1;
+            linePositions[i * 6 + 2] = z;
+            linePositions[i * 6 + 3] = x2;
+            linePositions[i * 6 + 4] = y2;
+            linePositions[i * 6 + 5] = z;
+            lineColors[i * 6] = 0;
+            lineColors[i * 6 + 1] = 1;
+            lineColors[i * 6 + 2] = 1;
+            lineColors[i * 6 + 3] = 0;
+            lineColors[i * 6 + 4] = 1;
+            lineColors[i * 6 + 5] = 1;
+        }
+
+        lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+        lineGeometry.setAttribute('color', new THREE.BufferAttribute(lineColors, 3));
+        const lineMaterial = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.8 });
+        const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+        scene.add(lines);
+
+        // Polar Bear Mesh (Placeholder)
+        const bearGroup = new THREE.Group();
+        const bearMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+
+        // Body
+        const bodyGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const body = new THREE.Mesh(bodyGeometry, bearMaterial);
+        bearGroup.add(body);
+
+        // Head
+        const headGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const head = new THREE.Mesh(headGeometry, bearMaterial);
+        head.position.set(0, 1.2, 0.8);
+        bearGroup.add(head);
+
+        // Ears
+        const earGeometry = new THREE.SphereGeometry(0.15, 32, 32);
+        const leftEar = new THREE.Mesh(earGeometry, bearMaterial);
+        leftEar.position.set(-0.3, 1.6, 0.6);
+        bearGroup.add(leftEar);
+        const rightEar = new THREE.Mesh(earGeometry, bearMaterial);
+        rightEar.position.set(0.3, 1.6, 0.6);
+        bearGroup.add(rightEar);
+
+        // Legs
+        const legGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+        const frontLeftLeg = new THREE.Mesh(legGeometry, bearMaterial);
+        frontLeftLeg.position.set(-0.5, -0.5, 0.5);
+        bearGroup.add(frontLeftLeg);
+        const frontRightLeg = new THREE.Mesh(legGeometry, bearMaterial);
+        frontRightLeg.position.set(0.5, -0.5, 0.5);
+        bearGroup.add(frontRightLeg);
+        const backLeftLeg = new THREE.Mesh(legGeometry, bearMaterial);
+        backLeftLeg.position.set(-0.5, -0.5, -0.5);
+        bearGroup.add(backLeftLeg);
+        const backRightLeg = new THREE.Mesh(legGeometry, bearMaterial);
+        backRightLeg.position.set(0.5, -0.5, -0.5);
+        bearGroup.add(backRightLeg);
+
+        scene.add(bearGroup);
+
+        // Optional: Load real .gltf polar bear model
+        /*
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            'path/to/polar_bear.gltf',
+            (gltf) => {
+                scene.add(gltf.scene);
+                gltf.scene.scale.set(2, 2, 2);
+                gltf.scene.position.set(0, 0, 0);
+            },
+            (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
+            (error) => console.error('Error loading model:', error)
+        );
+        */
+
+        // Background Starry Particles
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 200;
+        const starPositions = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            starPositions[i * 3] = (Math.random() - 0.5) * 100;
+            starPositions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+            starPositions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+        }
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xb0ffff, size: 0.1, transparent: true, opacity: 0.6 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        camera.position.z = 5;
+
+        // Animation
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animate snowflakes
+            const snowPositions = snowGeometry.attributes.position.array;
+            for (let i = 0; i < snowCount; i++) {
+                snowPositions[i * 3 + 1] -= 0.02;
+                snowPositions[i * 3] += Math.sin(time + i) * 0.005;
+                if (snowPositions[i * 3 + 1] < -10) {
+                    snowPositions[i * 3 + 1] += 20;
+                }
+            }
+            snowGeometry.attributes.position.needsUpdate = true;
+
+            // Animate currents
+            lineMaterial.opacity = 0.5 + Math.sin(time) * 0.3;
+            const linePos = lineGeometry.attributes.position.array;
+            for (let i = 0; i < lineCount; i++) {
+                linePos[i * 6 + 1] += Math.sin(time + i) * 0.01;
+                linePos[i * 6 + 4] += Math.sin(time + i) * 0.01;
+            }
+            lineGeometry.attributes.position.needsUpdate = true;
+
+            // Animate bear
+            bearGroup.rotation.y += 0.01;
+            bearGroup.position.y = Math.sin(time) * 0.2;
+
+            // Animate stars
+            stars.rotation.y += 0.001;
+
+            time += 0.05;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Wallet Connect Placeholder
+        document.getElementById('connect-wallet').addEventListener('click', () => {
+            alert('Connect Wallet: MetaMask, Phantom, or TrustWallet (Testnet)');
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
