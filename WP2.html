@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcticX Protocol Whitepaper</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Viga -->
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Viga', sans-serif;
+            background-color: #1a1a1a;
+            color: #e5e7eb;
+        }
+        .section-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-cyan-900 to-blue-900 py-6 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white flex items-center justify-center">
+            ArcticX Protocol 🐻‍❄️
+        </h1>
+        <p class="mt-2 text-lg text-cyan-300">"Freeze the Future. Melt the Limits."</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 py-12 space-y-12">
+        <!-- Overview -->
+        <section class="section-card bg-gray-900 p-8 rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4">Overview</h2>
+            <p class="text-gray-300">
+                ArcticX is a next-generation Layer-1 Web3 protocol designed for cold-secured DeFi ecosystems, cross-chain "freeze-safe" staking, and decentralized governance through FreezeVote DAO. ArcticX introduces a new standard for long-term, trustless asset management by combining cold-storage inspired smart contracts, zk-ID identity, and LayerZero bridge tech.
+            </p>
+        </section>
+
+        <!-- Vision -->
+        <section class="section-card bg-gray-900 p-8 rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4">Vision</h2>
+            <p class="text-gray-300">
+                To build a secure, decentralized, and community-governed financial layer where trust is frozen, not forced — empowering users to stake, vote, and grow with confidence across chains.
+            </p>
+        </section>
+
+        <!-- Core Features -->
+        <section class="section-card bg-gray-900 p-8 rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4">Core Features</h2>
+            <ul class="space-y-4 text-gray-300">
+                <li><strong>Cold Lock Vaults:</strong> Stake tokens with custom freezing periods for boosted APY.</li>
+                <li><strong>FreezeVote DAO:</strong> Community governance with ‘Freeze’ & ‘Thaw’ options for each proposal.</li>
+                <li><strong>IceBridge (LayerZero powered):</strong> Native bridge for multi-chain token and NFT transfer.</li>
+                <li><strong>ArcticID (zkID):</strong> Zero-knowledge-based on-chain identity for anonymous voting and rewards.</li>
+                <li><strong>Mini-Chill Quests:</strong> Earn $FROZE by completing quizzes, on-chain puzzles, and referrals.</li>
+            </ul>
+        </section>
+
+        <!-- Token: $FROZE -->
+        <section class="section-card bg-gray-900 p-8 rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4">Token: $FROZE</h2>
+            <ul class="space-y-2 text-gray-300">
+                <li><strong>Symbol:</strong> $FROZE</li>
+                <li><strong>Max Supply:</strong> 800,000,000 FROZE</li>
+                <li><strong>Decimals:</strong> 18</li>
+                <li><strong>Chain:</strong> EVM-compatible (ETH + LayerZero bridge to BSC, Solana, etc.)</li>
+            </ul>
+        </section>
+
+        <!-- Airdrop Details -->
+        <section class="section-card bg-gray-900 p-8 rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4">Airdrop Details</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Session 0: OG Arctic Explorers</h3>
+                    <p class="text-gray-300">For earliest testers, Discord boosters, and community contributors. Snapshot complete. Claim live.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Session 1: Testnet Champions</h3>
+                    <p class="text-gray-300">Completed quests, Twitter tasks, on-chain actions. Claim via ChillQuest dashboard.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Session 2: Final Frostdrop</h3>
+                    <p class="text-gray-300">Everyone can participate. Tasks: Wallet connect + vote + tweet + refer.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Mini-Airdrops (2%)</h3>
+                    <p class="text-gray-300">Weekly quiz games (on-chain), lucky snowbox spin, random drops for active users.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Token Sale Phases -->
+        <section class="section-card bg-gray-900 p-8 rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4">Token Sale Phases</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Private Sale</h3>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>Invite-only</li>
+                        <li>Price: $0.008</li>
+                        <li>Vesting: 20% TGE, rest over 6 months</li>
+                        <li>Max cap: $640,000</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Public Sale</h3>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>Open to all whitelisted wallets</li>
+                        <li>Price: $0.012</li>
+                        <li>Vesting: 40% TGE, rest over 3 months</li>
+                        <li>Max cap: $960,000</li>
+                    </ul>
+                </div>
+                <p class="text-gray-300"><strong>Hard Cap:</strong> $1.6M</p>
+                <p class="text-gray-300"><strong>Total Tokens for Sale:</strong> 20% = 160,000,000 FROZE</p>
+            </div>
+        </section>
+
+        <!-- Utilities of $FROZE -->
+        <section class="section-card bg-gray-900 p-8 rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4">Utilities of $FROZE</h2>
+            <ul class="space-y-2 text-gray-300">
+                <li>Governance voting (Freeze/Thaw Proposals)</li>
+                <li>Fee reduction for IceBridge</li>
+                <li>Stake in ColdVaults for APY rewards</li>
+                <li>Boost ArcticID trust scores</li>
+                <li>Use in ecosystem dApps</li>
+                <li>Claim limited-edition NFTs</li>
+                <li>Access Mini-Chill quests</li>
+            </ul>
+        </section>
+
+        <!-- Roadmap -->
+        <section class="section-card bg-gray-900 p-8 rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl md:text-3xl font-bold text-cyan-400 mb-4">Roadmap</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Q2 2025</h3>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>ArcticX Testnet Launch</li>
+                        <li>Airdrop Session 0 & 1</li>
+                        <li>ColdVaults Live</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Q3 2025</h3>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>DAO Launch</li>
+                        <li>Airdrop Session 2</li>
+                        <li>IceBridge Beta</li>
+                        <li>NFT Drop: PolarID Bears</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-300">Q4 2025</h3>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>Public Sale</li>
+                        <li>Mainnet Launch</li>
+                        <li>ArcticID + zkSync Integration</li>
+                        <li>Listings: DEX + CEX</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-6 text-center text-gray-400">
+        <p>&copy; 2025 ArcticX Protocol. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Fade-In Animation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            elements.forEach(element => observer.observe(element));
+        });
+    </script>
+</body>
+</html>
