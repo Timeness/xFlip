@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Core Reactor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background: #0a0a0a; }
+        canvas { display: block; }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #00f7ff;
+            font-family: 'Arial', sans-serif;
+            text-shadow: 0 0 5px #00f7ff;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">Energy Core Reactor</div>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Camera position
+        camera.position.z = 5;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0x00f7ff, 1, 100);
+        pointLight.position.set(0, 0, 5);
+        scene.add(pointLight);
+
+        // Core
+        const coreGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+        const coreMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00f7ff,
+            transparent: true,
+            opacity: 0.8
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        scene.add(core);
+
+        // Glowing core effect
+        const glowGeometry = new THREE.SphereGeometry(0.35, 32, 32);
+        const glowMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00f7ff,
+            transparent: true,
+            opacity: 0.2
+        });
+        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+        scene.add(glow);
+
+        // Rings
+        const rings = [];
+        const ringCount = 3;
+        for (let i = 0; i < ringCount; i++) {
+            const radius = 0.5 + i * 0.3;
+            const ringGeometry = new THREE.TorusGeometry(radius, 0.05, 16, 100);
+            const ringMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00f7ff,
+                transparent: true,
+                opacity: 0.6,
+                side: THREE.DoubleSide
+            });
+            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+            ring.rotation.x = Math.PI / 2;
+            ring.rotation.y = Math.random() * Math.PI;
+            scene.add(ring);
+            rings.push({ mesh: ring, speed: 0.5 + i * 0.2 });
+        }
+
+        // Particle system for sparks
+        const particleCount = 100;
+        const particlesGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = [];
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 2;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 2;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+            velocities.push({
+                x: (Math.random() - 0.5) * 0.01,
+                y: (Math.random() - 0.5) * 0.01,
+                z: (Math.random() - 0.5) * 0.01
+            });
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleMaterial = new THREE.PointsMaterial({
+            color: 0x00f7ff,
+            size: 0.02,
+            transparent: true,
+            opacity: 0.8
+        });
+        const particles = new THREE.Points(particlesGeometry, particleMaterial);
+        scene.add(particles);
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate rings
+            rings.forEach(ring => {
+                ring.mesh.rotation.z += ring.speed * 0.01;
+            });
+
+            // Pulse core
+            const time = Date.now() * 0.002;
+            core.scale.setScalar(1 + 0.1 * Math.sin(time));
+            glow.scale.setScalar(1 + 0.15 * Math.sin(time));
+
+            // Animate particles
+            const positions = particlesGeometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] += velocities[i].x;
+                positions[i * 3 + 1] += velocities[i].y;
+                positions[i * 3 + 2] += velocities[i].z;
+                // Reset particles if too far
+                if (Math.abs(positions[i * 3]) > 2 || Math.abs(positions[i * 3 + 1]) > 2 || Math.abs(positions[i * 3 + 2]) > 2) {
+                    positions[i * 3] = (Math.random() - 0.5) * 0.1;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 0.1;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.1;
+                }
+            }
+            particlesGeometry.attributes.position.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
