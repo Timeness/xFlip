@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Spinning Heart with Three.js</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="A stunning 3D spinning heart animation using Tailwind CSS and Three.js.">
+  <meta name="keywords" content="3D Heart, Animation, Tailwind CSS, Three.js, JavaScript">
+  <meta name="author" content="YourName">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      overflow: hidden;
+    }
+    #scene-container {
+      width: 100vw;
+      height: 100vh;
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+    }
+  </style>
+</head>
+<body class="bg-black flex items-center justify-center min-h-screen">
+  <div id="scene-container"></div>
+  <div class="overlay"></div>
+  <div class="absolute bottom-4 text-white text-center font-sans text-sm opacity-75">
+    3D Spinning Heart | Powered by Three.js & Tailwind CSS
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    // Three.js Scene Setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    document.getElementById('scene-container').appendChild(renderer.domElement);
+
+    // Camera Position
+    camera.position.set(0, 0, 5);
+
+    // Orbit Controls for interactivity
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = true;
+    controls.minDistance = 2;
+    controls.maxDistance = 10;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0xff1a4b, 1, 100);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    // Heart Geometry
+    function createHeartShape() {
+      const shape = new THREE.Shape();
+      const x = -2.5;
+      const y = -5;
+      shape.moveTo(x + 2.5, y + 2.5);
+      shape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
+      shape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
+      shape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
+      shape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 4.5, x + 8, y + 3.5);
+      shape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
+      shape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
+      return shape;
+    }
+
+    const heartShape = createHeartShape();
+    const extrudeSettings = {
+      depth: 2,
+      bevelEnabled: true,
+      bevelSegments: 2,
+      steps: 2,
+      bevelSize: 0.5,
+      bevelThickness: 0.5
+    };
+    const geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+    const material = new THREE.MeshPhongMaterial({
+      color: 0xff1a4b,
+      shininess: 100,
+      side: THREE.DoubleSide,
+      emissive: 0x550022,
+      emissiveIntensity: 0.3
+    });
+    const heart = new THREE.Mesh(geometry, material);
+    scene.add(heart);
+
+    // Animation
+    function animate() {
+      requestAnimationFrame(animate);
+      heart.rotation.y += 0.02;
+      heart.rotation.x += 0.01;
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Handle Window Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Disable zoom on mobile
+    document.addEventListener('gesturestart', e => e.preventDefault());
+
+    // Block developer tools (optional, for production)
+    document.onkeydown = function (e) {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        (e.ctrlKey && e.key === "U") ||
+        (e.ctrlKey && e.shiftKey && e.key === "J")
+      ) {
+        document.body.innerHTML = '<div class="text-red-500 text-4xl text-center">404 | Not Found</div>';
+        return false;
+      }
+    };
+  </script>
+</body>
+</html>
