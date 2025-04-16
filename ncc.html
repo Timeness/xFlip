@@ -1,131 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Modern Ecosystem Pie Chart</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: 'Viga', sans-serif;
-            background: #1a202c;
-            color: #fff;
-        }
-        #info {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 18px;
-            opacity: 0.9;
-            text-shadow: 0 0 10px #00ffcc;
-        }
-        canvas {
-            display: block;
-        }
-        .holo-effect {
-            filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.5));
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArcticX | Token Sale</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
 </head>
-<body>
-    <div id="info" class="holo-effect">The Backbone of Our Ecosystem - xAI Grok 3</div>
-    <div id="chart-container" class="w-full h-screen flex items-center justify-center"></div>
+<body class="bg-black text-white">
+  <section class="max-w-5xl mx-auto px-4 py-16">
+    <h1 class="text-4xl font-bold text-center mb-12">ArcticX Token Sale Rounds</h1><div class="grid gap-10">
+  <!-- Seed Round -->
+  <div class="bg-[#111] p-6 rounded-2xl shadow-xl">
+    <h2 class="text-2xl mb-4">1. Seed Round (Strategic Early Access)</h2>
+    <img src="https://dummyimage.com/600x200/0d0d0d/ffffff&text=Seed+Round+Diagram" class="w-full rounded mb-4">
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>Allocation:</strong> 10% (80,000,000 $ARX)</li>
+      <li><strong>Price:</strong> $0.005 per $ARX</li>
+      <li><strong>Access:</strong> Invite-only</li>
+      <li><strong>Vesting:</strong> 10% at TGE, 3m cliff, 12m linear</li>
+      <li><strong>Use:</strong> Core dev, legal, audits</li>
+    </ul>
+  </div>
 
-    <script>
-        // Scene Setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('chart-container').appendChild(renderer.domElement);
+  <!-- Private Round -->
+  <div class="bg-[#111] p-6 rounded-2xl shadow-xl">
+    <h2 class="text-2xl mb-4">2. Private Round (Community + Partner Boost)</h2>
+    <img src="https://dummyimage.com/600x200/1a1a1a/ffffff&text=Private+Round+Chart" class="w-full rounded mb-4">
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>Allocation:</strong> 12% (96,000,000 $ARX)</li>
+      <li><strong>Price:</strong> $0.01 per $ARX</li>
+      <li><strong>Access:</strong> Whitelisted</li>
+      <li><strong>Vesting:</strong> 15% at TGE, 1m cliff, 10m linear</li>
+      <li><strong>Use:</strong> Infra, ecosystem, partnerships</li>
+    </ul>
+  </div>
 
-        // Data for Pie Chart
-        const data = [
-            { label: "PAWS App & Future Airdrops", value: 62.5, color: 0x4bc0c0 },
-            { label: "Ecosystem", value: 12, color: 0xff4d4d },
-            { label: "Team", value: 10, color: 0xffcd56 },
-            { label: "Liquidity", value: 8, color: 0x2ecc71 },
-            { label: "Solana OG Communities", value: 7.5, color: 0x9966ff }
-        ];
+  <!-- Public Round -->
+  <div class="bg-[#111] p-6 rounded-2xl shadow-xl">
+    <h2 class="text-2xl mb-4">3. Public Round (IDO / TGE Launch)</h2>
+    <img src="https://dummyimage.com/600x200/262626/ffffff&text=Public+Round+Stats" class="w-full rounded mb-4">
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>Allocation:</strong> 8% (64,000,000 $ARX)</li>
+      <li><strong>Price:</strong> $0.015 per $ARX</li>
+      <li><strong>Access:</strong> Public</li>
+      <li><strong>Vesting:</strong> 100% unlock or 20% + 4m linear</li>
+      <li><strong>Use:</strong> Marketing, liquidity, PR</li>
+    </ul>
+  </div>
 
-        // Pie Chart Geometry
-        const group = new THREE.Group();
-        let startAngle = 0;
-        const radius = 5;
-        const height = 0.3;
+  <!-- Summary Table -->
+  <div class="bg-[#111] p-6 rounded-2xl shadow-xl overflow-x-auto">
+    <h2 class="text-2xl mb-4">Token Sale Summary</h2>
+    <table class="min-w-full table-auto text-sm text-left">
+      <thead class="bg-[#222] text-white">
+        <tr>
+          <th class="px-4 py-2">Round</th>
+          <th class="px-4 py-2">Price</th>
+          <th class="px-4 py-2">Allocation</th>
+          <th class="px-4 py-2">Access</th>
+          <th class="px-4 py-2">Vesting</th>
+          <th class="px-4 py-2">Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-t border-gray-600">
+          <td class="px-4 py-2">Seed</td>
+          <td class="px-4 py-2">$0.005</td>
+          <td class="px-4 py-2">10%</td>
+          <td class="px-4 py-2">Strategic</td>
+          <td class="px-4 py-2">3m cliff, 12m vesting</td>
+          <td class="px-4 py-2">Core Dev</td>
+        </tr>
+        <tr class="border-t border-gray-600">
+          <td class="px-4 py-2">Private</td>
+          <td class="px-4 py-2">$0.01</td>
+          <td class="px-4 py-2">12%</td>
+          <td class="px-4 py-2">Whitelisted</td>
+          <td class="px-4 py-2">1m cliff, 10m vesting</td>
+          <td class="px-4 py-2">Growth</td>
+        </tr>
+        <tr class="border-t border-gray-600">
+          <td class="px-4 py-2">Public</td>
+          <td class="px-4 py-2">$0.015</td>
+          <td class="px-4 py-2">8%</td>
+          <td class="px-4 py-2">Public</td>
+          <td class="px-4 py-2">Instant or 4m</td>
+          <td class="px-4 py-2">Liquidity</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-        data.forEach(item => {
-            const angle = (item.value / 100) * Math.PI * 2;
-            const geometry = new THREE.CylinderGeometry(radius, radius, height, 32, 1, false, startAngle, angle);
-            const material = new THREE.MeshPhongMaterial({ color: item.color, transparent: true, opacity: 0.9, shininess: 100 });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.z = 0;
-            group.add(mesh);
-            startAngle += angle;
-
-            // Holo Outline
-            const outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.3 });
-            const outlineMesh = new THREE.Mesh(geometry, outlineMaterial);
-            outlineMesh.scale.set(1.1, 1.1, 1.1);
-            group.add(outlineMesh);
-        });
-
-        // Paw Icon in Center
-        const pawGeometry = new THREE.PlaneGeometry(1.5, 1.5);
-        const pawTexture = new THREE.TextureLoader().load('https://img.icons8.com/ios-filled/50/ffffff/pawprint.png');
-        const pawMaterial = new THREE.MeshBasicMaterial({ map: pawTexture, transparent: true });
-        const pawMesh = new THREE.Mesh(pawGeometry, pawMaterial);
-        pawMesh.position.z = 0.1;
-        group.add(pawMesh);
-
-        // Particle Trail
-        const particles = new THREE.Group();
-        for (let i = 0; i < 50; i++) {
-            const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-            const particleMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.6 });
-            const particle = new THREE.Mesh(particleGeometry, particleMaterial);
-            particle.position.set(
-                (Math.random() - 0.5) * 6,
-                (Math.random() - 0.5) * 6,
-                (Math.random() - 0.5) * 2
-            );
-            particles.add(particle);
-        }
-        scene.add(particles);
-
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0x404040);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0x00ffcc, 1, 100);
-        pointLight.position.set(10, 10, 10);
-        scene.add(pointLight);
-
-        scene.add(group);
-        camera.position.z = 10;
-
-        // Animation
-        function animate() {
-            requestAnimationFrame(animate);
-            group.rotation.y += 0.003;
-            particles.children.forEach(p => {
-                p.position.x += (Math.random() - 0.5) * 0.02;
-                p.position.y += (Math.random() - 0.5) * 0.02;
-                p.material.opacity = Math.max(0.3, Math.sin(Date.now() * 0.001 + p.id) * 0.3);
-            });
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // Responsive
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-        });
-    </script>
+  </section>
 </body>
 </html>
