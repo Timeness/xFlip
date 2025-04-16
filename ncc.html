@@ -3,32 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Modern Pie Chart</title>
+    <title>Modern Ecosystem Pie Chart</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Viga', sans-serif;
             background: #1a202c;
             color: #fff;
         }
         #info {
             position: absolute;
-            bottom: 20px;
+            top: 20px;
             left: 20px;
-            font-size: 14px;
-            opacity: 0.8;
+            font-size: 18px;
+            opacity: 0.9;
+            text-shadow: 0 0 10px #00ffcc;
         }
         canvas {
             display: block;
         }
+        .holo-effect {
+            filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.5));
+        }
     </style>
 </head>
 <body>
-    <div id="info">xAI Grok 3 - Modern Pie Chart (April 16, 2025)</div>
+    <div id="info" class="holo-effect">The Backbone of Our Ecosystem - xAI Grok 3</div>
     <div id="chart-container" class="w-full h-screen flex items-center justify-center"></div>
 
     <script>
@@ -41,33 +45,64 @@
 
         // Data for Pie Chart
         const data = [
-            { label: "Seed Round", value: 5, color: 0xff6384 },
-            { label: "Private Round", value: 3, color: 0x36a2eb },
-            { label: "Public Round", value: 15, color: 0xffcd56 },
-            { label: "KOLs", value: 2, color: 0x4bc0c0 },
-            { label: "Team", value: 14, color: 0x9966ff },
-            { label: "Advisory", value: 7, color: 0xff9f40 },
-            { label: "Marketing", value: 10, color: 0xff4d4d },
-            { label: "Airdrop", value: 5, color: 0xc9cbcf },
-            { label: "Ecosystem", value: 14, color: 0x2ecc71 },
-            { label: "Liquidity", value: 25, color: 0xe74c3c }
+            { label: "PAWS App & Future Airdrops", value: 62.5, color: 0x4bc0c0 },
+            { label: "Ecosystem", value: 12, color: 0xff4d4d },
+            { label: "Team", value: 10, color: 0xffcd56 },
+            { label: "Liquidity", value: 8, color: 0x2ecc71 },
+            { label: "Solana OG Communities", value: 7.5, color: 0x9966ff }
         ];
 
-        // Geometry and Material
+        // Pie Chart Geometry
         const group = new THREE.Group();
         let startAngle = 0;
         const radius = 5;
-        const height = 0.2;
+        const height = 0.3;
 
         data.forEach(item => {
             const angle = (item.value / 100) * Math.PI * 2;
             const geometry = new THREE.CylinderGeometry(radius, radius, height, 32, 1, false, startAngle, angle);
-            const material = new THREE.MeshBasicMaterial({ color: item.color });
+            const material = new THREE.MeshPhongMaterial({ color: item.color, transparent: true, opacity: 0.9, shininess: 100 });
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.z = 0;
             group.add(mesh);
             startAngle += angle;
+
+            // Holo Outline
+            const outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.3 });
+            const outlineMesh = new THREE.Mesh(geometry, outlineMaterial);
+            outlineMesh.scale.set(1.1, 1.1, 1.1);
+            group.add(outlineMesh);
         });
+
+        // Paw Icon in Center
+        const pawGeometry = new THREE.PlaneGeometry(1.5, 1.5);
+        const pawTexture = new THREE.TextureLoader().load('https://img.icons8.com/ios-filled/50/ffffff/pawprint.png');
+        const pawMaterial = new THREE.MeshBasicMaterial({ map: pawTexture, transparent: true });
+        const pawMesh = new THREE.Mesh(pawGeometry, pawMaterial);
+        pawMesh.position.z = 0.1;
+        group.add(pawMesh);
+
+        // Particle Trail
+        const particles = new THREE.Group();
+        for (let i = 0; i < 50; i++) {
+            const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+            const particleMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.6 });
+            const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+            particle.position.set(
+                (Math.random() - 0.5) * 6,
+                (Math.random() - 0.5) * 6,
+                (Math.random() - 0.5) * 2
+            );
+            particles.add(particle);
+        }
+        scene.add(particles);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0x00ffcc, 1, 100);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
 
         scene.add(group);
         camera.position.z = 10;
@@ -75,7 +110,12 @@
         // Animation
         function animate() {
             requestAnimationFrame(animate);
-            group.rotation.y += 0.005; // Subtle rotation for modern effect
+            group.rotation.y += 0.003;
+            particles.children.forEach(p => {
+                p.position.x += (Math.random() - 0.5) * 0.02;
+                p.position.y += (Math.random() - 0.5) * 0.02;
+                p.material.opacity = Math.max(0.3, Math.sin(Date.now() * 0.001 + p.id) * 0.3);
+            });
             renderer.render(scene, camera);
         }
         animate();
