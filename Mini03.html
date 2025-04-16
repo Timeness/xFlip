@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini Browser</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Signika', sans-serif;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    iframe {
+      width: 100%;
+      height: calc(100% - 60px);
+      border: none;
+    }
+  </style>
+</head>
+<body class="bg-black text-white">
+
+  <div class="w-full p-3 bg-black flex items-center justify-between gap-2 z-10">
+    <div class="flex items-center gap-2 w-full">
+      <span class="iconify text-white text-xl" data-icon="mdi:web"></span>
+      <input
+        id="urlInput"
+        type="text"
+        placeholder="Enter URL or search..."
+        class="flex-1 px-3 py-2 rounded-lg bg-neutral-800 text-sm focus:outline-none"
+      />
+      <button
+        onclick="goToSite()"
+        class="px-3 py-2 bg-yellow-400 text-black rounded-lg text-sm hover:bg-yellow-500"
+      >
+        Go
+      </button>
+    </div>
+  </div>
+
+  <iframe id="browserFrame" src="https://example.com"></iframe>
+
+  <script>
+    function goToSite() {
+      let input = document.getElementById("urlInput").value.trim();
+      const isUrl = input.startsWith("http://") || input.startsWith("https://");
+
+      if (!isUrl && input.includes(".")) {
+        input = "https://" + input;
+      } else if (!isUrl) {
+        input = "https://www.google.com/search?q=" + encodeURIComponent(input);
+      }
+
+      document.getElementById("browserFrame").src = input;
+    }
+  </script>
+
+  <script>
+    // Basic animated background using Three.js
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    let particles = [];
+    let particleMaterial = new THREE.PointsMaterial({ color: 0xffff00, size: 0.6 });
+
+    let geometry = new THREE.BufferGeometry();
+    let positions = [];
+    for (let i = 0; i < 1000; i++) {
+      positions.push((Math.random() - 0.5) * 100);
+      positions.push((Math.random() - 0.5) * 100);
+      positions.push((Math.random() - 0.5) * 100);
+    }
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    let particleSystem = new THREE.Points(geometry, particleMaterial);
+    scene.add(particleSystem);
+
+    camera.position.z = 50;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      particleSystem.rotation.y += 0.001;
+      particleSystem.rotation.x += 0.0005;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
