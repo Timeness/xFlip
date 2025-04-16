@@ -1,148 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Browser</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        /* Optional custom styles */
-        #threejs-container canvas {
-            width: 100% !important;
-            height: 100% !important;
-            display: block; /* Prevent extra space below canvas */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoBrowser</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Signika', sans-serif;
+      background: black;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    #browserFrame {
+      width: 100%;
+      height: calc(100% - 70px);
+      border: none;
+      display: none;
+    }
+    #loader {
+      display: none;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 h-screen flex flex-col">
-    <div class="bg-white shadow-md p-4 flex items-center">
-        <input type="text" id="urlInput" class="flex-grow mr-2 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter URL">
-        <button id="loadButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 inline-block mr-1">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9" />
-            </svg>
-            Go
-        </button>
-        <button id="backButton" class="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 inline-block">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-        </button>
-        <button id="forwardButton" class="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 inline-block">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-        </button>
+<body>
+
+  <!-- Top bar -->
+  <div class="w-full p-4 bg-black/70 backdrop-blur-md flex items-center justify-between gap-2 z-10 shadow-md">
+    <div class="flex items-center gap-2 w-full">
+      <span class="iconify text-white text-2xl" data-icon="mdi:web"></span>
+      <input
+        id="urlInput"
+        type="text"
+        placeholder="Enter site or search..."
+        class="flex-1 px-4 py-2 rounded-lg bg-white/10 text-sm text-white focus:outline-none placeholder:text-gray-400"
+      />
+      <button
+        onclick="goToSite()"
+        class="px-4 py-2 bg-yellow-400 text-black rounded-xl text-sm hover:bg-yellow-500 transition-all"
+      >
+        Go
+      </button>
     </div>
+  </div>
 
-    <div id="threejs-container" class="relative w-full h-32 overflow-hidden">
-        <!-- Three.js canvas will be inserted here -->
-    </div>
+  <!-- Loading spinner -->
+  <div id="loader" class="absolute inset-0 flex items-center justify-center z-20">
+    <div class="w-12 h-12 border-4 border-yellow-400 border-dashed rounded-full animate-spin"></div>
+  </div>
 
-    <div class="flex-grow overflow-hidden">
-        <iframe id="browserFrame" class="w-full h-full border-none"></iframe>
-    </div>
+  <!-- iFrame -->
+  <iframe id="browserFrame"></iframe>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlInput = document.getElementById('urlInput');
-            const loadButton = document.getElementById('loadButton');
-            const browserFrame = document.getElementById('browserFrame');
-            const backButton = document.getElementById('backButton');
-            const forwardButton = document.getElementById('forwardButton');
-            const threejsContainer = document.getElementById('threejs-container');
+  <!-- Scripts -->
+  <script>
+    const frame = document.getElementById("browserFrame");
+    const loader = document.getElementById("loader");
 
-            // Function to load URL
-            const loadURL = (url) => {
-                if (url.startsWith('http://') || url.startsWith('https://')) {
-                    browserFrame.src = url;
-                } else if (url !== '') {
-                    browserFrame.src = `http://${url}`; // Default to http if no protocol
-                }
-            };
+    function goToSite() {
+      let input = document.getElementById("urlInput").value.trim();
+      if (!input) return;
 
-            // Event listener for load button
-            loadButton.addEventListener('click', () => {
-                const url = urlInput.value;
-                loadURL(url);
-            });
+      // Handle URL or search
+      const isUrl = input.startsWith("http://") || input.startsWith("https://");
+      if (!isUrl && input.includes(".")) {
+        input = "https://" + input;
+      } else if (!isUrl) {
+        input = "https://www.google.com/search?q=" + encodeURIComponent(input);
+      }
 
-            // Event listener for input enter key
-            urlInput.addEventListener('keypress', (event) => {
-                if (event.key === 'Enter') {
-                    loadButton.click();
-                }
-            });
+      loader.style.display = "flex";
+      frame.style.display = "none";
 
-            // Navigation history (basic implementation)
-            const history = [];
-            let historyIndex = -1;
+      frame.src = input;
 
-            browserFrame.onload = () => {
-                const currentURL = browserFrame.contentWindow.location.href;
-                if (currentURL !== 'about:blank' && historyIndex < history.length - 1) {
-                    history.splice(historyIndex + 1); // Remove forward history
-                }
-                if (currentURL !== history.at(historyIndex)) {
-                    history.push(currentURL);
-                    historyIndex = history.length - 1;
-                }
-                backButton.disabled = historyIndex <= 0;
-                forwardButton.disabled = historyIndex >= history.length - 1;
-            };
+      frame.onload = () => {
+        loader.style.display = "none";
+        frame.style.display = "block";
+      };
 
-            backButton.addEventListener('click', () => {
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    browserFrame.src = history.at(historyIndex);
-                    backButton.disabled = historyIndex <= 0;
-                    forwardButton.disabled = historyIndex >= history.length - 1;
-                }
-            });
+      frame.onerror = () => {
+        loader.style.display = "none";
+        alert("Failed to load site.");
+      };
+    }
+  </script>
 
-            forwardButton.addEventListener('click', () => {
-                if (historyIndex < history.length - 1) {
-                    historyIndex++;
-                    browserFrame.src = history.at(historyIndex);
-                    backButton.disabled = historyIndex <= 0;
-                    forwardButton.disabled = historyIndex >= history.length - 1;
-                }
-            });
+  <!-- Three.js Background -->
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-            // --- Three.js Integration ---
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, threejsContainer.offsetWidth / threejsContainer.offsetHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); // Enable transparency and antialiasing
-            renderer.setSize(threejsContainer.offsetWidth, threejsContainer.offsetHeight);
-            threejsContainer.appendChild(renderer.domElement);
-            renderer.setClearColor(0xffffff, 0); // Transparent background
+    const particles = [];
+    const material = new THREE.PointsMaterial({ color: 0xffffaa, size: 0.5 });
 
-            // Example: Create a rotating globe (requires more Three.js knowledge and assets if you want detailed textures)
-            const geometry = new THREE.SphereGeometry(1, 32, 32);
-            const material = new THREE.MeshBasicMaterial({ color: 0x00bfff, wireframe: true });
-            const globe = new THREE.Mesh(geometry, material);
-            scene.add(globe);
+    const geometry = new THREE.BufferGeometry();
+    const positions = [];
 
-            camera.position.z = 2;
+    for (let i = 0; i < 800; i++) {
+      positions.push((Math.random() - 0.5) * 150);
+      positions.push((Math.random() - 0.5) * 150);
+      positions.push((Math.random() - 0.5) * 150);
+    }
 
-            const animate = () => {
-                requestAnimationFrame(animate);
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    const particleSystem = new THREE.Points(geometry, material);
+    scene.add(particleSystem);
 
-                globe.rotation.y += 0.005;
+    camera.position.z = 50;
 
-                renderer.render(scene, camera);
-            };
+    function animate() {
+      requestAnimationFrame(animate);
+      particleSystem.rotation.y += 0.0015;
+      particleSystem.rotation.x += 0.001;
+      renderer.render(scene, camera);
+    }
 
-            animate();
+    animate();
 
-            // Handle resizing
-            window.addEventListener('resize', () => {
-                camera.aspect = threejsContainer.offsetWidth / threejsContainer.offsetHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(threejsContainer.offsetWidth, threejsContainer.offsetHeight);
-            });
-        });
-    </script>
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+
 </body>
 </html>
