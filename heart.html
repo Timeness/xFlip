@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Spinning Heart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="A beautiful 3D spinning heart animation made with pure HTML, CSS, and JS.">
+  <meta name="keywords" content="3D Heart, Animation, HTML, CSS, JavaScript">
+  <meta name="author" content="YourName">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: radial-gradient(ellipse at center, #1a1a1a 0%, #000 100%);
+      overflow: hidden;
+      font-family: 'Signika', sans-serif;
+    }
+
+    .heart3d {
+      position: relative;
+      width: 200px;
+      height: 325px;
+      transform-style: preserve-3d;
+      animation: spin 15s infinite linear;
+    }
+
+    .heart3d div {
+      position: absolute;
+      opacity: 0;
+      width: 200px;
+      height: 325px;
+      border: solid #ff1a4b;
+      border-radius: 50% 50% 0 / 40% 50% 0;
+      border-width: 1px 1px 0 0;
+      box-shadow: 1px 0 3px rgba(255, 26, 75, 0.4);
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotateY(360deg) rotateX(360deg);
+      }
+    }
+
+    @keyframes appear {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .blocked {
+      display: none;
+    }
+
+    .not-found {
+      font-size: 3em;
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+  <div class="heart3d"></div>
+  <div class="not-found blocked">404 | Not Found</div>
+
+  <script>
+    const heart = document.querySelector(".heart3d");
+    for (let i = 1; i <= 36; i++) {
+      let rib = document.createElement("div");
+      rib.style.animation = `appear 1s ${i * 0.1}s infinite alternate linear`;
+      rib.style.transform = `rotateY(${i * 10}deg) rotateZ(45deg) translateX(62px)`;
+      heart.appendChild(rib);
+    }
+
+    // Disable zoom (on mobile)
+    document.addEventListener('gesturestart', e => e.preventDefault());
+
+    // Block F12, Ctrl+Shift+I, Ctrl+U, right-click etc.
+    document.onkeydown = function (e) {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        (e.ctrlKey && e.key === "U") ||
+        (e.ctrlKey && e.shiftKey && e.key === "J")
+      ) {
+        document.body.innerHTML = '<div class="not-found">404 | Not Found</div>';
+        return false;
+      }
+    };
+  </script>
+</body>
+</html>
