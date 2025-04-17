@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="IPQualityScore Multi Tool for Proxy/VPN, Email, Phone, Breach, URL, and Device Checks">
+  <meta name="theme-color" content="#000000">
+  <title>IPQS Multi Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Signika', sans-serif; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-black text-white font-sans p-6">
+  <h1 class="text-3xl font-bold mb-8 text-center text-white">IPQualityScore Multi-Tool Dashboard</h1>  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Proxy/VPN Detection -->
+    <div class="bg-gray-900 p-5 rounded-xl border border-white/10">
+      <h2 class="text-xl font-semibold mb-3">Proxy/VPN Detection</h2>
+      <input id="ip" type="text" placeholder="Enter IP Address or click 'Use My IP'" class="w-full p-2 rounded bg-gray-800 text-white border border-white/10">
+      <div class="flex gap-2 mt-2">
+        <button onclick="checkIP()" class="px-4 py-2 bg-blue-600/70 hover:bg-blue-600 rounded border border-white/10">Check IP</button>
+        <button onclick="useMyIP()" class="px-4 py-2 bg-gray-700/70 hover:bg-gray-700 rounded border border-white/10">Use My IP</button>
+      </div>
+      <pre id="ipResult" class="text-sm mt-3 bg-black p-3 rounded border border-white/10"></pre>
+    </div><!-- Email Validation -->
+<div class="bg-gray-900 p-5 rounded-xl border border-white/10">
+  <h2 class="text-xl font-semibold mb-3">Email Validation</h2>
+  <input id="email" type="email" placeholder="Enter Email" class="w-full p-2 rounded bg-gray-800 text-white border border-white/10">
+  <button onclick="checkEmail()" class="mt-2 px-4 py-2 bg-green-600/70 hover:bg-green-600 rounded border border-white/10">Validate Email</button>
+  <pre id="emailResult" class="text-sm mt-3 bg-black p-3 rounded border border-white/10"></pre>
+</div>
+
+<!-- Phone Validation -->
+<div class="bg-gray-900 p-5 rounded-xl border border-white/10">
+  <h2 class="text-xl font-semibold mb-3">Phone Validation</h2>
+  <input id="phone" type="text" placeholder="Enter Phone with Country Code" class="w-full p-2 rounded bg-gray-800 text-white border border-white/10">
+  <button onclick="checkPhone()" class="mt-2 px-4 py-2 bg-yellow-600/70 hover:bg-yellow-600 rounded border border-white/10">Validate Phone</button>
+  <pre id="phoneResult" class="text-sm mt-3 bg-black p-3 rounded border border-white/10"></pre>
+</div>
+
+<!-- Leaked Data Check -->
+<div class="bg-gray-900 p-5 rounded-xl border border-white/10">
+  <h2 class="text-xl font-semibold mb-3">Leaked Data Check</h2>
+  <input id="leakEmail" type="email" placeholder="Enter Email for Breach Check" class="w-full p-2 rounded bg-gray-800 text-white border border-white/10">
+  <button onclick="checkLeak()" class="mt-2 px-4 py-2 bg-red-600/70 hover:bg-red-600 rounded border border-white/10">Check Breach</button>
+  <pre id="leakResult" class="text-sm mt-3 bg-black p-3 rounded border border-white/10"></pre>
+</div>
+
+<!-- Malicious URL Scanner -->
+<div class="bg-gray-900 p-5 rounded-xl border border-white/10">
+  <h2 class="text-xl font-semibold mb-3">Malicious URL Scanner</h2>
+  <input id="urlscan" type="text" placeholder="Enter URL to Scan" class="w-full p-2 rounded bg-gray-800 text-white border border-white/10">
+  <button onclick="scanURL()" class="mt-2 px-4 py-2 bg-pink-600/70 hover:bg-pink-600 rounded border border-white/10">Scan URL</button>
+  <pre id="urlResult" class="text-sm mt-3 bg-black p-3 rounded border border-white/10"></pre>
+</div>
+
+<!-- Device Fingerprinting -->
+<div class="bg-gray-900 p-5 rounded-xl border border-white/10">
+  <h2 class="text-xl font-semibold mb-3">Device Fingerprinting</h2>
+  <button onclick="getFingerprint()" class="px-4 py-2 bg-indigo-600/70 hover:bg-indigo-600 rounded border border-white/10">Get Device Info</button>
+  <pre id="fingerResult" class="text-sm mt-3 bg-black p-3 rounded border border-white/10"></pre>
+</div>
+
+  </div>  <script>
+    const key = "8RgSonhMg3omUjgxZ5EMPiyfq9Ek4d4G";
+
+    async function checkIP() {
+      const ip = document.getElementById('ip').value;
+      if (!ip) return alert("Please enter or use current IP");
+      const res = await fetch(`https://ipqualityscore.com/api/json/ip/${key}/${ip}`);
+      const data = await res.json();
+      document.getElementById('ipResult').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function useMyIP() {
+      const res = await fetch("https://api64.ipify.org?format=json");
+      const data = await res.json();
+      document.getElementById("ip").value = data.ip;
+      checkIP();
+    }
+
+    async function checkEmail() {
+      const email = document.getElementById('email').value;
+      const res = await fetch(`https://ipqualityscore.com/api/json/email/${key}/${email}`);
+      const data = await res.json();
+      document.getElementById('emailResult').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function checkPhone() {
+      const phone = document.getElementById('phone').value;
+      const res = await fetch(`https://ipqualityscore.com/api/json/phone/${key}/${phone}`);
+      const data = await res.json();
+      document.getElementById('phoneResult').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function checkLeak() {
+      const email = document.getElementById('leakEmail').value;
+      const res = await fetch(`https://ipqualityscore.com/api/json/breach/${key}/${email}`);
+      const data = await res.json();
+      document.getElementById('leakResult').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function scanURL() {
+      const url = encodeURIComponent(document.getElementById('urlscan').value);
+      const res = await fetch(`https://ipqualityscore.com/api/json/url/${key}/?url=${url}`);
+      const data = await res.json();
+      document.getElementById('urlResult').textContent = JSON.stringify(data, null, 2);
+    }
+
+    function getFingerprint() {
+      const info = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        screen: {
+          width: screen.width,
+          height: screen.height,
+        },
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      };
+      document.getElementById('fingerResult').textContent = JSON.stringify(info, null, 2);
+    }
+  </script></body>
+</html>
