@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tokenomics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: 'Viga', sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-black text-white min-h-screen py-10 px-4">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-4xl mb-10 text-center text-yellow-400">Tokenomics Breakdown (200M Supply)</h1>
+      <div class="overflow-x-auto">
+        <table class="w-full table-auto border border-yellow-400">
+          <thead class="bg-yellow-700 text-white">
+            <tr>
+              <th class="px-4 py-2 border">#</th>
+              <th class="px-4 py-2 border">Category</th>
+              <th class="px-4 py-2 border">Allocation</th>
+              <th class="px-4 py-2 border">%</th>
+            </tr>
+          </thead>
+          <tbody class="bg-black text-white">
+            <!-- Rows Start -->
+            <!-- Each part = 5,000,000 (2.5%) to make 200M in 40 parts -->
+            <script>
+              const categories = [
+                "Binance Launchpool", "Team", "Advisors", "Private Sale", "Public Sale",
+                "Liquidity", "Staking", "Ecosystem Fund", "Partnerships", "Airdrops",
+                "Marketing", "Community Incentives", "DAO Treasury", "Cross-chain Liquidity", "Reserve Fund",
+                "Builders Grant", "Bug Bounties", "Strategic Round", "Influencer Marketing", "Testnet Rewards",
+                "Beta Incentives", "CEX Reserve", "DEX Liquidity", "Education Program", "Hackathons",
+                "Mobile Growth", "User Rewards", "Ambassador Program", "Content Creation", "Legal & Compliance",
+                "Security Audit Fund", "Governance Development", "Multi-chain Expansion", "Bridge Fund", "Platform Dev",
+                "Innovation Lab", "Metaverse Integration", "Gaming Integration", "Oracle Development", "Analytics & AI"
+              ];
+              categories.forEach((name, i) => {
+                document.write(`
+                  <tr class="border-t border-yellow-600">
+                    <td class="px-4 py-2 text-center">${i + 1}</td>
+                    <td class="px-4 py-2">${name}</td>
+                    <td class="px-4 py-2 text-center">5,000,000</td>
+                    <td class="px-4 py-2 text-center">2.5%</td>
+                  </tr>
+                `);
+              });
+            </script>
+            <!-- Rows End -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
