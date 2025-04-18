@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,9 +14,9 @@
   </head>
   <body class="bg-black text-white min-h-screen py-10 px-4">
     <div class="max-w-7xl mx-auto">
-      <h1 class="text-4xl mb-10 text-center text-yellow-400">Tokenomics Breakdown (200M Supply)</h1>
-      <div class="overflow-x-auto">
-        <table class="w-full table-auto border border-yellow-400">
+      <h1 class="text-4xl mb-10 text-center text-yellow-400">Tokenomics Breakdown (250M Supply)</h1>
+      <div class="overflow-x-auto rounded-2xl shadow-lg">
+        <table class="w-full table-auto border border-yellow-400 rounded-2xl overflow-hidden">
           <thead class="bg-yellow-700 text-white">
             <tr>
               <th class="px-4 py-2 border">#</th>
@@ -25,31 +26,62 @@
             </tr>
           </thead>
           <tbody class="bg-black text-white">
-            <!-- Rows Start -->
-            <!-- Each part = 5,000,000 (2.5%) to make 200M in 40 parts -->
             <script>
               const categories = [
-                "Binance Launchpool", "Team", "Advisors", "Private Sale", "Public Sale",
-                "Liquidity", "Staking", "Ecosystem Fund", "Partnerships", "Airdrops",
-                "Marketing", "Community Incentives", "DAO Treasury", "Cross-chain Liquidity", "Reserve Fund",
-                "Builders Grant", "Bug Bounties", "Strategic Round", "Influencer Marketing", "Testnet Rewards",
-                "Beta Incentives", "CEX Reserve", "DEX Liquidity", "Education Program", "Hackathons",
-                "Mobile Growth", "User Rewards", "Ambassador Program", "Content Creation", "Legal & Compliance",
-                "Security Audit Fund", "Governance Development", "Multi-chain Expansion", "Bridge Fund", "Platform Dev",
-                "Innovation Lab", "Metaverse Integration", "Gaming Integration", "Oracle Development", "Analytics & AI"
+                ["Binance Launchpool", 15000000],
+                ["Team", 30000000],
+                ["Advisors", 5000000],
+                ["Private Sale", 20000000],
+                ["Public Sale", 15000000],
+                ["Liquidity", 20000000],
+                ["Staking", 30000000],
+                ["Ecosystem Fund", 15000000],
+                ["Partnerships", 10000000],
+                ["Airdrops", 8000000],
+                ["Marketing", 10000000],
+                ["Community Incentives", 10000000],
+                ["DAO Treasury", 8000000],
+                ["Cross-chain Liquidity", 6000000],
+                ["Reserve Fund", 6000000],
+                ["Builders Grant", 7000000],
+                ["Bug Bounties", 4000000],
+                ["Strategic Round", 8000000],
+                ["Influencer Marketing", 6000000],
+                ["Testnet Rewards", 5000000],
+                ["Beta Incentives", 4000000],
+                ["CEX Reserve", 6000000],
+                ["DEX Liquidity", 6000000],
+                ["Education Program", 3000000],
+                ["Hackathons", 4000000],
+                ["Mobile Growth", 3000000],
+                ["User Rewards", 5000000],
+                ["Ambassador Program", 4000000],
+                ["Content Creation", 4000000],
+                ["Legal & Compliance", 3000000],
+                ["Security Audit Fund", 3000000],
+                ["Governance Development", 3000000],
+                ["Multi-chain Expansion", 4000000],
+                ["Bridge Fund", 3000000],
+                ["Platform Dev", 4000000],
+                ["Innovation Lab", 3000000],
+                ["Metaverse Integration", 4000000],
+                ["Gaming Integration", 3000000],
+                ["Oracle Development", 3000000],
+                ["Analytics & AI", 3000000]
               ];
-              categories.forEach((name, i) => {
+              const total = 250000000;
+              categories.forEach(([name, amount], i) => {
+                const percent = ((amount / total) * 100).toFixed(2);
                 document.write(`
-                  <tr class="border-t border-yellow-600">
+                  <tr class="border-t border-yellow-600 hover:bg-yellow-900 transition-all">
                     <td class="px-4 py-2 text-center">${i + 1}</td>
                     <td class="px-4 py-2">${name}</td>
-                    <td class="px-4 py-2 text-center">5,000,000</td>
-                    <td class="px-4 py-2 text-center">2.5%</td>
+                    <td class="px-4 py-2 text-center">${amount.toLocaleString()}</td>
+                    <td class="px-4 py-2 text-center">${percent}%</td>
                   </tr>
                 `);
               });
             </script>
-            <!-- Rows End -->
           </tbody>
         </table>
       </div>
