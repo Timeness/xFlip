@@ -1,14 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tokenomics</title>
     <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <style>
       body {
         font-family: 'Viga', sans-serif;
+      }
+      canvas {
+        display: block;
+        margin: auto;
       }
     </style>
   </head>
@@ -19,10 +23,10 @@
         <table class="w-full table-auto border border-yellow-400 rounded-2xl overflow-hidden">
           <thead class="bg-yellow-700 text-white">
             <tr>
-              <th class="px-4 py-2 border">#</th>
-              <th class="px-4 py-2 border">Category</th>
-              <th class="px-4 py-2 border">Allocation</th>
-              <th class="px-4 py-2 border">%</th>
+              <th class="px-4 py-2 border">ㅤ</th>
+              <th class="px-4 py-2 border">ㅤ</th>
+              <th class="px-4 py-2 border">ㅤ</th>
+              <th class="px-4 py-2 border">ㅤ</th>
             </tr>
           </thead>
           <tbody class="bg-black text-white">
@@ -84,7 +88,42 @@
             </script>
           </tbody>
         </table>
-      </div>
-    </div>
+      </div><!-- DAO Explanation Section -->
+  <div class="mt-20 text-center">
+    <h2 class="text-3xl text-yellow-400 mb-4">What is DAO?</h2>
+    <p class="text-lg max-w-2xl mx-auto text-gray-300">
+      DAO ka matlab hai <span class="text-white font-bold">Decentralized Autonomous Organization</span> – ek aisi sanstha jo bina kisi boss ke blockchain ke smart contracts se chalti hai. Har decision community voting se hota hai, pura system transparent aur automatic hota hai.
+    </p>
+    <div class="mt-10 h-[400px]" id="three-container"></div>
+  </div>
+</div>
+
+<script>
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 400, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth * 0.9, 400);
+  document.getElementById('three-container').appendChild(renderer.domElement);
+
+  const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+  const material = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3 });
+  const knot = new THREE.Mesh(geometry, material);
+  scene.add(knot);
+
+  const light = new THREE.PointLight(0xffffff, 1);
+  light.position.set(25, 50, 25);
+  scene.add(light);
+
+  camera.position.z = 40;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    knot.rotation.x += 0.01;
+    knot.rotation.y += 0.01;
+    renderer.render(scene, camera);
+  }
+  animate();
+</script>
+
   </body>
 </html>
