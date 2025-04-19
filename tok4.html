@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaDrop Testnet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background: #000;
+      color: white;
+    }
+    .bg-animate {
+      background: radial-gradient(circle at 10% 20%, #3a3a3a, #000);
+      animation: gradient 15s ease infinite;
+    }
+    @keyframes gradient {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+  </style>
+</head><body class="bg-animate min-h-screen">
+  <nav class="p-4 flex justify-between items-center bg-gray-900 text-white shadow-lg">
+    <h1 class="text-2xl">NovaDrop Testnet</h1>
+    <div class="space-x-4">
+      <a href="#home" class="hover:text-yellow-400">Home</a>
+      <a href="#whitelist" class="hover:text-yellow-400">Whitelist</a>
+      <a href="#tokenomics" class="hover:text-yellow-400">Tokenomics</a>
+    </div>
+  </nav>  <header class="text-center py-16 px-4">
+    <h2 class="text-4xl mb-4">Welcome to NovaDrop</h2>
+    <p class="text-lg text-gray-300 max-w-xl mx-auto">A revolutionary testnet airdrop built for speed, decentralization, and transparency. Join our whitelist to participate in the airdrop and shape the ecosystem.</p>
+  </header>  <section id="whitelist" class="px-4 py-12">
+    <div class="max-w-2xl mx-auto bg-gray-800 p-6 rounded-2xl shadow-lg">
+      <h3 class="text-2xl mb-4">Join the Whitelist</h3>
+      <form class="space-y-4">
+        <input type="text" placeholder="Name" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-none">
+        <input type="email" placeholder="Email" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-none">
+        <input type="text" placeholder="Wallet Address" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-none">
+        <button class="bg-yellow-500 hover:bg-yellow-400 px-6 py-3 rounded-xl text-black font-bold transition">Submit</button>
+      </form>
+    </div>
+  </section>  <section id="tokenomics" class="py-12 px-4">
+    <div class="max-w-4xl mx-auto bg-gray-900 rounded-2xl p-6 shadow-xl">
+      <h3 class="text-3xl mb-6 text-center">Token Distribution</h3>
+      <canvas id="tokenChart" class="max-w-full mx-auto"></canvas>
+    </div>
+  </section>  <footer class="bg-gray-900 text-center py-6 mt-12">
+    <p>&copy; 2025 NovaDrop. All rights reserved.</p>
+    <div class="mt-2 space-x-4">
+      <i class="text-yellow-400">Discord</i>
+      <i class="text-yellow-400">Twitter</i>
+      <i class="text-yellow-400">Telegram</i>
+    </div>
+  </footer>  <script>
+    const ctx = document.getElementById('tokenChart');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [
+          'Seed Round', 'Public Round', 'Private Round', 'KOLs', 'Team', 'Advisory',
+          'Marketing', 'Airdrop', 'Ecosystem', 'Liquidity', 'Mining',
+          'Treasury', 'Launchpool', 'Future airdrops', 'OG Users', 'Foundation'
+        ],
+        datasets: [{
+          label: 'Distribution',
+          data: [15, 10, 12, 6, 8, 3, 6, 5, 10, 5, 4, 5, 4, 3, 3, 15],
+          backgroundColor: [
+            '#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#2ecc71', '#f1c40f',
+            '#e67e22', '#1abc9c', '#3498db', '#e74c3c', '#9b59b6',
+            '#34495e', '#f39c12', '#d35400', '#95a5a6', '#16a085'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white',
+              font: {
+                family: 'Viga'
+              }
+            }
+          }
+        }
+      }
+    });
+  </script></body></html>
