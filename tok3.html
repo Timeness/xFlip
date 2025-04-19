@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokenomics | 250M Supply</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background: black;
+      overflow-x: hidden;
+    }
+    .bg-animated {
+      background: linear-gradient(270deg, #111, #222, #111);
+      background-size: 600% 600%;
+      animation: bgMove 16s ease infinite;
+    }
+    @keyframes bgMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
+</head><body class="bg-animated text-white min-h-screen">
+  <!-- Navbar -->
+  <nav class="w-full px-6 py-4 bg-gray-900 shadow-md flex justify-between items-center">
+    <h1 class="text-2xl text-yellow-400">xTokenomics</h1>
+    <div class="space-x-4 text-sm">
+      <a href="#" class="hover:text-yellow-300">Home</a>
+      <a href="#" class="hover:text-yellow-300">Token</a>
+      <a href="#" class="hover:text-yellow-300">Ecosystem</a>
+      <a href="#" class="hover:text-yellow-300">Docs</a>
+    </div>
+  </nav>  <section class="max-w-screen-xl mx-auto p-6">
+    <div class="text-center mb-12">
+      <h1 class="text-5xl mb-3 text-yellow-400">Tokenomics</h1>
+      <p class="text-md">Total Supply: <span class="text-green-400 font-bold">250,000,000</span> Tokens</p>
+    </div><div class="flex flex-col lg:flex-row justify-center items-start gap-10">
+  <div class="bg-gray-900 rounded-3xl p-10 w-full lg:w-2/3 shadow-2xl border border-gray-700">
+    <canvas id="tokenChart" class="mx-auto" width="500" height="500"></canvas>
+  </div>
+
+  <div class="text-left space-y-3 text-sm lg:text-base w-full lg:w-1/3">
+    <h2 class="text-yellow-300 text-xl mb-4 border-b pb-2 border-yellow-400">Distribution Breakdown</h2>
+    <div class="space-y-2">
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-yellow-300 mr-2"></span> Seed Round - 10%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-green-400 mr-2"></span> Public Round - 5%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-blue-400 mr-2"></span> Private Round - 8%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-pink-400 mr-2"></span> KOLs - 3%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-orange-400 mr-2"></span> Team - 10%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-emerald-400 mr-2"></span> Advisory - 4%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-purple-400 mr-2"></span> Marketing - 7%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-red-400 mr-2"></span> Airdrop - 3%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-cyan-400 mr-2"></span> Ecosystem - 12%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-indigo-300 mr-2"></span> Liquidity - 5%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-amber-400 mr-2"></span> Mining - 6%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-teal-500 mr-2"></span> Treasury - 4%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-indigo-500 mr-2"></span> Launchpool - 2%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-rose-500 mr-2"></span> Future Airdrops - 2%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-teal-300 mr-2"></span> OG Users - 4%</div>
+      <div class="flex items-center"><span class="w-4 h-4 rounded-sm bg-yellow-100 mr-2"></span> Foundation - 15%</div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+  <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+    <h3 class="text-yellow-400 text-xl mb-2">Deflationary Mechanism</h3>
+    <p class="text-sm">Regular token burns will help reduce circulating supply over time.</p>
+  </div>
+  <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+    <h3 class="text-yellow-400 text-xl mb-2">Utility Driven</h3>
+    <p class="text-sm">Token will be used across staking, governance, and platform access.</p>
+  </div>
+  <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+    <h3 class="text-yellow-400 text-xl mb-2">Transparent Economics</h3>
+    <p class="text-sm">Every wallet and transaction will be verifiable via our explorer.</p>
+  </div>
+</div>
+
+<div class="mt-20 text-center">
+  <h2 class="text-2xl text-white mb-2">Join the Revolution</h2>
+  <p class="text-sm text-gray-400">Experience the power of decentralized token distribution today.</p>
+  <button class="mt-4 px-6 py-2 bg-yellow-400 hover:bg-yellow-300 text-black rounded-full transition-all">Get Started</button>
+</div>
+
+  </section>  <!-- Footer -->  <footer class="mt-28 py-6 bg-gray-900 text-center text-xs text-gray-400">
+    <p>&copy; <span id="year"></span> xToken. All Rights Reserved.</p>
+  </footer>  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const ctx = document.getElementById('tokenChart').getContext('2d');
+    const tokenChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [
+          'Seed Round', 'Public Round', 'Private Round', 'KOLs', 'Team',
+          'Advisory', 'Marketing', 'Airdrop', 'Ecosystem', 'Liquidity',
+          'Mining', 'Treasury', 'Launchpool', 'Future Airdrops', 'OG Users', 'Foundation'
+        ],
+        datasets: [{
+          data: [10, 5, 8, 3, 10, 4, 7, 3, 12, 5, 6, 4, 2, 2, 4, 15],
+          backgroundColor: [
+            '#facc15', '#4ade80', '#60a5fa', '#f472b6', '#fb923c',
+            '#34d399', '#c084fc', '#f87171', '#22d3ee', '#a78bfa',
+            '#fbbf24', '#10b981', '#818cf8', '#f43f5e', '#2dd4bf', '#fde68a'
+          ],
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white',
+              font: {
+                family: 'Viga'
+              }
+            }
+          }
+        }
+      }
+    });
+  </script></body></html>
