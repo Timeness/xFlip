@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaDrop | Testnet Launchpad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.7.4/build/player/lottie.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uuid@9.0.0/dist/umd/uuidv4.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background-color: #000;
+      color: white;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+    canvas {
+      max-height: 400px;
+    }
+  </style>
+</head><body class="overflow-x-hidden">
+  <!-- Navbar -->
+  <nav class="w-full p-4 flex justify-between items-center glass border-b border-white/10">
+    <h1 class="text-2xl font-bold text-white">NovaDrop</h1>
+    <button onclick="connectWallet()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl">Connect Wallet</button>
+  </nav>  <!-- Hero Section -->  <section class="text-center py-16">
+    <h2 class="text-4xl mb-4">Welcome to NovaDrop Testnet</h2>
+    <p class="text-gray-400 mb-6">Claim airdrops, check eligibility, verify smart contracts, and participate in governance proposals.</p>
+  </section>  <!-- Animated Background -->  <div id="animated-bg" class="absolute w-full h-full -z-10 opacity-10"></div>
+  <script>
+    lottie.loadAnimation({
+      container: document.getElementById('animated-bg'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json'
+    });
+  </script>  <!-- Tokenomics Chart -->  <section class="max-w-4xl mx-auto p-6">
+    <h3 class="text-2xl mb-4">Token Distribution</h3>
+    <canvas id="tokenChart"></canvas>
+  </section>
+  <script>
+    const ctx = document.getElementById('tokenChart');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Foundation', 'Seed Round', 'Public Round', 'Private Round', 'KOLs', 'Team', 'Advisory', 'Marketing', 'Airdrop', 'Ecosystem', 'Liquidity', 'Mining', 'Treasury', 'Launchpool', 'Future Airdrops', 'OG Users'],
+        datasets: [{
+          data: [15, 10, 5, 10, 3, 8, 4, 6, 5, 10, 4, 5, 5, 4, 3, 3],
+          backgroundColor: ['#6366f1', '#3b82f6', '#06b6d4', '#10b981', '#84cc16', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#22d3ee', '#14b8a6', '#f97316', '#eab308', '#7c3aed', '#6d28d9', '#f43f5e']
+        }]
+      }
+    });
+  </script>  <!-- Whitelist Section -->  <section class="max-w-xl mx-auto p-6 glass rounded-2xl mt-10">
+    <h3 class="text-xl mb-3">Whitelist for Airdrop</h3>
+    <input type="text" id="walletInput" placeholder="Enter your Ethereum address" class="w-full px-4 py-2 text-black rounded-xl">
+    <button onclick="registerAddress()" class="mt-4 bg-green-500 hover:bg-green-600 px-4 py-2 rounded-xl text-white">Register</button>
+    <p id="registerMsg" class="mt-2 text-sm"></p>
+  </section>
+  <script>
+    function registerAddress() {
+      const addr = document.getElementById('walletInput').value;
+      document.getElementById('registerMsg').textContent = `Address ${addr} registered for airdrop!`;
+    }
+  </script>  <!-- Airdrop Eligibility -->  <section class="max-w-xl mx-auto p-6 mt-10">
+    <h3 class="text-xl mb-3">Check Airdrop Eligibility</h3>
+    <input type="text" id="checkInput" placeholder="Enter your wallet address" class="w-full px-4 py-2 text-black rounded-xl">
+    <button onclick="checkEligibility()" class="mt-4 bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-xl text-black">Check</button>
+    <p id="eligibilityMsg" class="mt-2 text-sm"></p>
+  </section>
+  <script>
+    function checkEligibility() {
+      const addr = document.getElementById('checkInput').value;
+      document.getElementById('eligibilityMsg').textContent = `${addr} is eligible for 250 NovaDrop tokens!`;
+    }
+  </script>  <!-- Smart Contract Preview -->  <section class="max-w-4xl mx-auto p-6 mt-10 glass rounded-xl">
+    <h3 class="text-xl mb-3">Smart Contract Preview</h3>
+    <pre class="bg-black text-green-400 p-4 rounded-xl text-sm overflow-x-auto">
+pragma solidity ^0.8.0;contract NovaToken { string public name = "NovaDrop Token"; string public symbol = "NOVA"; uint256 public totalSupply = 250000000 * 10 ** 18; mapping(address => uint256) public balanceOf; constructor() { balanceOf[msg.sender] = totalSupply; } } </pre>
+
+  </section>  <!-- DAO Proposal System -->  <section class="max-w-4xl mx-auto p-6 mt-10">
+    <h3 class="text-xl mb-3">DAO Proposals</h3>
+    <input type="text" id="proposalInput" placeholder="Your proposal" class="w-full px-4 py-2 text-black rounded-xl">
+    <button onclick="submitProposal()" class="mt-4 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-xl text-white">Submit</button>
+    <ul id="proposalList" class="mt-4 space-y-2"></ul>
+  </section>
+  <script>
+    function submitProposal() {
+      const prop = document.getElementById('proposalInput').value;
+      const li = document.createElement('li');
+      li.textContent = `Proposal: ${prop}`;
+      li.className = "bg-white/10 p-3 rounded-xl";
+      document.getElementById('proposalList').appendChild(li);
+    }
+  </script>  <!-- Footer -->  <footer class="w-full p-6 mt-20 glass text-center text-gray-400 text-sm">
+    &copy; 2025 NovaDrop | Built for the next-gen decentralized testnet experience.
+    <div class="flex justify-center space-x-4 mt-2">
+      <i data-lucide="github" class="w-5 h-5"></i>
+      <i data-lucide="twitter" class="w-5 h-5"></i>
+      <i data-lucide="globe" class="w-5 h-5"></i>
+    </div>
+  </footer>
+  <script>lucide.createIcons();</script>  <!-- Wallet Connect -->  <script>
+    async function connectWallet() {
+      if (window.ethereum) {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        alert("Connected: " + accounts[0]);
+      } else {
+        alert("Please install MetaMask.");
+      }
+    }
+  </script></body></html>
