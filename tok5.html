@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaDrop Testnet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background: #000;
+      color: white;
+    }
+    .bg-animate {
+      background: radial-gradient(circle at 10% 20%, #3a3a3a, #000);
+      animation: gradient 15s ease infinite;
+    }
+    @keyframes gradient {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+  </style>
+</head><body class="bg-animate min-h-screen">
+  <nav class="p-4 flex justify-between items-center bg-gray-900 text-white shadow-lg">
+    <h1 class="text-2xl">NovaDrop Testnet</h1>
+    <div class="space-x-4">
+      <a href="#home" class="hover:text-yellow-400">Home</a>
+      <a href="#whitelist" class="hover:text-yellow-400">Whitelist</a>
+      <a href="#tokenomics" class="hover:text-yellow-400">Tokenomics</a>
+      <a href="#vision" class="hover:text-yellow-400">Vision</a>
+      <a href="#roadmap" class="hover:text-yellow-400">Roadmap</a>
+    </div>
+  </nav>  <header id="home" class="text-center py-16 px-4">
+    <h2 class="text-5xl mb-6">NovaDrop: The Next-Gen Airdrop Infrastructure</h2>
+    <p class="text-lg text-gray-300 max-w-3xl mx-auto">Built on the foundation of decentralization and community-first values, NovaDrop reimagines the traditional airdrop model. With real testnet utility, analytics integration, and cross-chain planning, this is not just an airdrop — it’s a movement.</p>
+  </header>  <section id="whitelist" class="px-4 py-12">
+    <div class="max-w-2xl mx-auto bg-gray-800 p-8 rounded-2xl shadow-lg">
+      <h3 class="text-3xl mb-4 text-center">Whitelist Registration</h3>
+      <form class="space-y-4">
+        <input type="text" placeholder="Name" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-none">
+        <input type="email" placeholder="Email" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-none">
+        <input type="text" placeholder="Wallet Address" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-none">
+        <button class="bg-yellow-500 hover:bg-yellow-400 px-6 py-3 rounded-xl text-black font-bold transition w-full">Submit</button>
+      </form>
+    </div>
+  </section>  <section id="tokenomics" class="py-12 px-4">
+    <div class="max-w-4xl mx-auto bg-gray-900 rounded-2xl p-6 shadow-xl">
+      <h3 class="text-3xl mb-6 text-center">Token Distribution</h3>
+      <canvas id="tokenChart" class="max-w-full mx-auto"></canvas>
+    </div>
+  </section>  <section id="vision" class="py-16 px-6 bg-gray-950">
+    <div class="max-w-5xl mx-auto">
+      <h3 class="text-4xl mb-8 text-center">Project Vision</h3>
+      <p class="text-lg text-gray-300 leading-7">NovaDrop aims to disrupt the conventional airdrop meta by introducing fair launch mechanics, whitelist-based participation, and utility-oriented token design. Our vision includes:
+        <ul class="list-disc list-inside mt-4 space-y-2 text-gray-300">
+          <li>Verifiable testnet participant rewards through on-chain snapshots</li>
+          <li>Multi-wallet registration prevention via Sybil-resistant tools</li>
+          <li>On-chain referral bonuses and gamified claim system</li>
+          <li>DAO-based decisions on future drops and token utility</li>
+          <li>Cross-chain compatibility with LayerZero and Wormhole</li>
+        </ul>
+      </p>
+    </div>
+  </section>  <section id="roadmap" class="py-16 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h3 class="text-4xl mb-8 text-center">Roadmap</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-md">
+          <h4 class="text-2xl mb-2 text-yellow-400">Q2 2025</h4>
+          <ul class="list-disc list-inside text-gray-300 space-y-2">
+            <li>Launch whitelist registration portal</li>
+            <li>Tokenomics transparency dashboard</li>
+            <li>Public announcement campaigns</li>
+            <li>Initial testnet rollout</li>
+          </ul>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-xl shadow-md">
+          <h4 class="text-2xl mb-2 text-yellow-400">Q3 2025</h4>
+          <ul class="list-disc list-inside text-gray-300 space-y-2">
+            <li>Airdrop distribution via smart contract</li>
+            <li>Testnet performance rewards</li>
+            <li>DAO proposal voting opens</li>
+            <li>Launchpool integration</li>
+          </ul>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-xl shadow-md">
+          <h4 class="text-2xl mb-2 text-yellow-400">Q4 2025</h4>
+          <ul class="list-disc list-inside text-gray-300 space-y-2">
+            <li>DEX liquidity event for NovaDrop</li>
+            <li>Multichain bridge deployment</li>
+            <li>Explorer integration for airdrop history</li>
+            <li>Phase 2 token distribution for OGs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>  <footer class="bg-gray-900 text-center py-8 mt-12">
+    <h4 class="text-xl mb-2">Follow Us</h4>
+    <div class="flex justify-center space-x-6 text-yellow-400">
+      <span class="cursor-pointer">Discord</span>
+      <span class="cursor-pointer">Twitter</span>
+      <span class="cursor-pointer">Telegram</span>
+    </div>
+    <p class="mt-4 text-gray-400">&copy; 2025 NovaDrop. Empowering decentralized future.</p>
+  </footer>  <script>
+    const ctx = document.getElementById('tokenChart');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [
+          'Seed Round', 'Public Round', 'Private Round', 'KOLs', 'Team', 'Advisory',
+          'Marketing', 'Airdrop', 'Ecosystem', 'Liquidity', 'Mining',
+          'Treasury', 'Launchpool', 'Future airdrops', 'OG Users', 'Foundation'
+        ],
+        datasets: [{
+          label: 'Distribution',
+          data: [15, 10, 12, 6, 8, 3, 6, 5, 10, 5, 4, 5, 4, 3, 3, 15],
+          backgroundColor: [
+            '#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#2ecc71', '#f1c40f',
+            '#e67e22', '#1abc9c', '#3498db', '#e74c3c', '#9b59b6',
+            '#34495e', '#f39c12', '#d35400', '#95a5a6', '#16a085'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white',
+              font: {
+                family: 'Viga'
+              }
+            }
+          }
+        }
+      }
+    });
+  </script></body></html>
