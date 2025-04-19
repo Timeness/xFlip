@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeoX Protocol - Testnet Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <style>
+      body {
+        font-family: 'Viga', sans-serif;
+        background-color: black;
+      }
+      .glow {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      }
+    </style>
+  </head>
+  <body class="text-white">
+    <!-- Navbar -->
+    <nav class="flex items-center justify-between px-4 py-4 bg-gray-900 shadow-lg sticky top-0 z-50">
+      <div class="text-xl font-bold text-white">NeoX Testnet</div>
+      <div class="flex items-center space-x-4">
+        <button id="toggleMenu" class="md:hidden">
+          <span class="iconify" data-icon="mdi:menu"></span>
+        </button>
+        <div class="hidden md:flex space-x-4" id="navLinks">
+          <a href="#dashboard" class="hover:text-yellow-400">Dashboard</a>
+          <a href="#airdrop" class="hover:text-yellow-400">Airdrop</a>
+          <a href="#bridge" class="hover:text-yellow-400">Bridge</a>
+          <a href="#dao" class="hover:text-yellow-400">DAO</a>
+          <a href="#referral" class="hover:text-yellow-400">Referral</a>
+        </div>
+      </div>
+    </nav><!-- Hero / Header -->
+<header class="text-center py-12 bg-gradient-to-r from-purple-900 via-black to-gray-900">
+  <h1 class="text-4xl md:text-6xl font-bold">Welcome to NeoX Testnet</h1>
+  <p class="mt-4 text-lg">Innovating Decentralized Finance | Secure • Scalable • Future-Ready</p>
+</header>
+
+<!-- Dashboard -->
+<section id="dashboard" class="max-w-6xl mx-auto py-12 px-4">
+  <h2 class="text-3xl font-bold mb-6 text-yellow-400">User Dashboard</h2>
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="bg-gray-800 p-4 rounded-xl glow">
+      <p class="text-gray-400">Wallet Address:</p>
+      <p id="walletAddress" class="truncate"></p>
+    </div>
+    <div class="bg-gray-800 p-4 rounded-xl glow">
+      <p class="text-gray-400">NXT Balance:</p>
+      <p id="nxtBalance">0</p>
+    </div>
+    <div class="bg-gray-800 p-4 rounded-xl glow">
+      <p class="text-gray-400">NXZ Balance:</p>
+      <p id="nxzBalance">0</p>
+    </div>
+  </div>
+</section>
+
+<!-- Airdrop -->
+<section id="airdrop" class="max-w-6xl mx-auto py-12 px-4">
+  <h2 class="text-3xl font-bold mb-6 text-green-400">Airdrop Eligibility</h2>
+  <div class="bg-gray-800 p-6 rounded-xl glow">
+    <p class="mb-4">Check if you're eligible to claim 5000 NXT tokens.</p>
+    <button class="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-xl" onclick="checkAirdrop()">Check Airdrop</button>
+    <p id="airdropResult" class="mt-4"></p>
+  </div>
+</section>
+
+<!-- Bridge -->
+<section id="bridge" class="max-w-6xl mx-auto py-12 px-4">
+  <h2 class="text-3xl font-bold mb-6 text-blue-400">Bridge NXT & NXZ</h2>
+  <div class="bg-gray-800 p-6 rounded-xl glow">
+    <div class="mb-4">
+      <label for="bridgeAmount">Amount:</label>
+      <input id="bridgeAmount" type="number" class="w-full px-4 py-2 text-black rounded-xl" />
+    </div>
+    <button onclick="bridgeTokens()" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-xl">Bridge</button>
+    <p id="bridgeResult" class="mt-4"></p>
+  </div>
+</section>
+
+<!-- DAO Proposal -->
+<section id="dao" class="max-w-6xl mx-auto py-12 px-4">
+  <h2 class="text-3xl font-bold mb-6 text-pink-400">DAO Proposals</h2>
+  <div class="bg-gray-800 p-6 rounded-xl glow">
+    <input id="proposalText" placeholder="Your Proposal" class="w-full px-4 py-2 text-black rounded-xl mb-4">
+    <button onclick="submitProposal()" class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-xl">Submit Proposal</button>
+    <div id="proposalList" class="mt-4"></div>
+  </div>
+</section>
+
+<!-- Referral -->
+<section id="referral" class="max-w-6xl mx-auto py-12 px-4">
+  <h2 class="text-3xl font-bold mb-6 text-yellow-300">Referral System</h2>
+  <div class="bg-gray-800 p-6 rounded-xl glow">
+    <p>Your unique referral link:</p>
+    <input id="referralLink" readonly class="w-full px-4 py-2 text-black rounded-xl" />
+    <button onclick="copyReferral()" class="mt-4 bg-yellow-400 text-black px-4 py-2 rounded-xl">Copy</button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-center py-4 mt-12 text-sm text-gray-400">
+  &copy; 2025 NeoX Protocol. All rights reserved.
+</footer>
+
+<script>
+  document.getElementById("toggleMenu").addEventListener("click", () => {
+    document.getElementById("navLinks").classList.toggle("hidden");
+  });
+
+  async function connectWallet() {
+    if (window.ethereum) {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      document.getElementById("walletAddress").textContent = accounts[0];
+      document.getElementById("referralLink").value = `${location.origin}/?ref=${accounts[0]}`;
+    }
+  }
+  connectWallet();
+
+  function checkAirdrop() {
+    document.getElementById("airdropResult").textContent = "You are eligible! 5000 NXT claimed.";
+    document.getElementById("nxtBalance").textContent = "5000";
+  }
+
+  function bridgeTokens() {
+    const amt = document.getElementById("bridgeAmount").value;
+    if (amt > 0) {
+      document.getElementById("bridgeResult").textContent = `Successfully bridged ${amt} NXT ↔ NXZ.`;
+      document.getElementById("nxzBalance").textContent = amt;
+    }
+  }
+
+  function submitProposal() {
+    const text = document.getElementById("proposalText").value;
+    if (text.trim() !== "") {
+      const div = document.createElement("div");
+      div.className = "bg-gray-700 p-2 my-2 rounded-xl";
+      div.textContent = text;
+      document.getElementById("proposalList").appendChild(div);
+      document.getElementById("proposalText").value = "";
+    }
+  }
+
+  function copyReferral() {
+    const input = document.getElementById("referralLink");
+    input.select();
+    document.execCommand("copy");
+  }
+</script>
+
+  </body>
+  </html>
