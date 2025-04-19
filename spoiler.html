@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spoiler Reveal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-900">
+
+  <div class="relative w-64 h-64">
+    <!-- Actual content below -->
+    <img src="https://picsum.photos/256" alt="Secret Content" class="w-full h-full object-cover rounded-lg" />
+
+    <!-- Spoiler Overlay -->
+    <div id="spoiler" class="absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover bg-center rounded-lg cursor-pointer"
+      style="background-image: url('/mnt/data/file-8FfSoznVmT3nBAUAiJGVg8');">
+    </div>
+  </div>
+
+  <script>
+    const spoiler = document.getElementById('spoiler');
+    spoiler.addEventListener('click', () => {
+      spoiler.style.display = 'none';
+    });
+  </script>
+
+</body>
+</html>
