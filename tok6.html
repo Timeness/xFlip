@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaDrop | Testnet Airdrop Launch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.8/dist/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uuid@9.0.0/dist/umd/uuidv4.min.js"></script>
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background-color: #000;
+      color: #fff;
+      overflow-x: hidden;
+    }
+    .bg-animated {
+      background: radial-gradient(circle at 50% 50%, #1f1f1f, #000);
+      animation: bgPulse 8s infinite alternate;
+    }
+    @keyframes bgPulse {
+      0% { background: radial-gradient(circle at 50% 50%, #1f1f1f, #000); }
+      100% { background: radial-gradient(circle at 60% 40%, #000, #1f1f1f); }
+    }
+    .glass {
+      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head><body class="bg-animated">  <!-- Navbar -->  <nav class="flex items-center justify-between px-6 py-4 bg-black bg-opacity-80 fixed w-full z-50">
+    <h1 class="text-xl text-yellow-300">NovaDrop</h1>
+    <ul class="flex gap-6 text-white text-sm">
+      <li><a href="#airdrop">Airdrop</a></li>
+      <li><a href="#whitelist">Whitelist</a></li>
+      <li><a href="#dao">DAO</a></li>
+      <li><a href="#wallet">Connect</a></li>
+      <li><a href="#verify">Verify</a></li>
+    </ul>
+  </nav>  <section class="pt-24 text-center px-4">
+    <h2 class="text-4xl text-yellow-300 mb-4">Next-Level Airdrop Distribution</h2>
+    <p class="text-gray-300 max-w-xl mx-auto">Empowering users with fair, transparent, and decentralized distribution through our Testnet project — NovaDrop.</p>
+  </section>  <!-- Tokenomics Chart -->  <section class="py-12" id="tokenomics">
+    <div class="max-w-2xl mx-auto text-center">
+      <h3 class="text-2xl mb-4">Tokenomics (Total Supply: 250M)</h3>
+      <canvas id="tokenChart"></canvas>
+    </div>
+  </section>  <!-- Whitelist Section -->  <section class="py-16 px-6 bg-gray-900" id="whitelist">
+    <div class="max-w-xl mx-auto text-center glass p-6 rounded-2xl">
+      <h3 class="text-2xl mb-4">Whitelist for Airdrop</h3>
+      <input type="text" id="walletInput" placeholder="Enter your Ethereum wallet" class="w-full p-3 rounded bg-black text-white">
+      <button onclick="addWhitelist()" class="mt-4 bg-yellow-300 px-6 py-2 rounded text-black hover:bg-yellow-200">Register</button>
+      <p id="whitelistStatus" class="mt-4"></p>
+    </div>
+  </section>  <!-- Wallet Connect -->  <section class="py-16 text-center" id="wallet">
+    <h3 class="text-2xl mb-4">Wallet Connection</h3>
+    <button onclick="connectWallet()" class="bg-blue-500 px-6 py-2 rounded text-white hover:bg-blue-400">Connect Wallet</button>
+    <p id="walletAddress" class="mt-4"></p>
+  </section>  <!-- Smart Contract Verification Preview -->  <section class="py-16 bg-gray-900 text-center" id="verify">
+    <h3 class="text-2xl mb-4">Smart Contract Verification Preview</h3>
+    <p class="text-gray-400">Contract Name: <strong>NovaToken.sol</strong></p>
+    <p class="text-gray-400">Status: <span class="text-green-400">Verified</span></p>
+    <p class="text-sm mt-2 text-yellow-300">Deployed on Ethereum Testnet with source verified and contract ABI published.</p>
+  </section>  <!-- Airdrop Eligibility Check -->  <section class="py-16 px-4 text-center">
+    <h3 class="text-2xl mb-4">Airdrop Eligibility</h3>
+    <button onclick="checkEligibility()" class="bg-green-500 px-6 py-2 rounded text-white hover:bg-green-400">Check Eligibility</button>
+    <p id="eligibilityStatus" class="mt-4"></p>
+  </section>  <!-- DAO Proposal Section -->  <section class="py-20 px-6 bg-gray-800" id="dao">
+    <div class="max-w-xl mx-auto text-center glass p-6 rounded-2xl">
+      <h3 class="text-2xl mb-4">DAO Proposal System</h3>
+      <input type="text" id="proposalTitle" placeholder="Proposal Title" class="w-full p-3 mb-4 rounded bg-black text-white">
+      <textarea id="proposalDesc" placeholder="Proposal Description" class="w-full p-3 rounded bg-black text-white"></textarea>
+      <button onclick="submitProposal()" class="mt-4 bg-purple-500 px-6 py-2 rounded text-white hover:bg-purple-400">Submit Proposal</button>
+      <p id="proposalStatus" class="mt-4"></p>
+    </div>
+  </section>  <!-- Footer -->  <footer class="py-8 text-center text-gray-500 text-sm">
+    <p>&copy; 2025 NovaDrop. Powered by Testnet Blockchain.</p>
+    <div class="flex justify-center gap-4 mt-2">
+      <a href="#" class="hover:text-yellow-300">Discord</a>
+      <a href="#" class="hover:text-yellow-300">Telegram</a>
+      <a href="#" class="hover:text-yellow-300">GitHub</a>
+    </div>
+  </footer>  <script>
+    const tokenData = {
+      labels: ["Seed Round", "Public Round", "Private Round", "KOLs", "Team", "Advisory", "Marketing", "Airdrop", "Ecosystem", "Liquidity", "Mining", "Treasury", "Launchpool", "Future Airdrops", "OG Users", "Foundation"],
+      datasets: [{
+        data: [10, 5, 8, 3, 10, 2, 8, 5, 10, 5, 5, 4, 4, 6, 5, 15],
+        backgroundColor: ["#facc15", "#fbbf24", "#f59e0b", "#d97706", "#92400e", "#7c3aed", "#6366f1", "#3b82f6", "#0ea5e9", "#06b6d4", "#14b8a6", "#10b981", "#22c55e", "#84cc16", "#a3e635", "#bef264"]
+      }]
+    };
+    new Chart(document.getElementById("tokenChart"), {
+      type: "pie",
+      data: tokenData
+    });
+
+    async function connectWallet() {
+      if (window.ethereum) {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        document.getElementById("walletAddress").innerText = `Connected: ${accounts[0]}`;
+      } else {
+        alert("Install MetaMask to connect.");
+      }
+    }
+
+    function addWhitelist() {
+      const address = document.getElementById("walletInput").value;
+      if (address) {
+        localStorage.setItem(`whitelist-${address}`, "true");
+        document.getElementById("whitelistStatus").innerText = "Wallet whitelisted!";
+      }
+    }
+
+    function checkEligibility() {
+      const address = document.getElementById("walletInput").value;
+      const eligible = localStorage.getItem(`whitelist-${address}`);
+      document.getElementById("eligibilityStatus").innerText = eligible ? "Eligible for Airdrop!" : "Not found in whitelist.";
+    }
+
+    function submitProposal() {
+      const title = document.getElementById("proposalTitle").value;
+      const desc = document.getElementById("proposalDesc").value;
+      if (title && desc) {
+        document.getElementById("proposalStatus").innerText = `Proposal submitted: ${title}`;
+      } else {
+        document.getElementById("proposalStatus").innerText = "Please enter title and description.";
+      }
+    }
+  </script></body></html>
