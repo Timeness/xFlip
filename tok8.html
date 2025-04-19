@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeoX Protocol | Testnet Launch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Viga', sans-serif; background-color: #000; color: #fff; }
+    .bg-animate {
+      background: linear-gradient(270deg, #1f2937, #111827, #1f2937);
+      background-size: 600% 600%;
+      animation: animateBg 12s ease infinite;
+    }
+    @keyframes animateBg {
+      0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}
+    }
+  </style>
+</head>
+<body class="bg-animate min-h-screen">
+  <header class="p-5 flex justify-between items-center border-b border-gray-700">
+    <h1 class="text-2xl text-white">NeoX Protocol</h1>
+    <button id="connectWallet" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded text-black">Connect Wallet</button>
+  </header>  <main class="max-w-5xl mx-auto px-4 py-10">
+    <section class="text-center mb-10">
+      <h2 class="text-3xl font-bold mb-4">Testnet Airdrop: 5000 NXT</h2>
+      <p>Claim your free testnet coins and explore the NeoX ecosystem.</p>
+    </section><section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+  <div class="bg-gray-900 p-6 rounded-2xl shadow-lg">
+    <h3 class="text-xl mb-2">Tokenomics</h3>
+    <canvas id="tokenChart"></canvas>
+  </div>
+  <div class="bg-gray-900 p-6 rounded-2xl shadow-lg">
+    <h3 class="text-xl mb-2">Whitelist Check</h3>
+    <input id="whitelistAddress" type="text" placeholder="Enter your address" class="w-full p-2 mb-2 bg-black border border-gray-700 rounded">
+    <button onclick="checkWhitelist()" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded">Check Eligibility</button>
+    <p id="whitelistResult" class="mt-2"></p>
+  </div>
+</section>
+
+<section class="bg-gray-900 p-6 rounded-2xl shadow-lg mb-10">
+  <h3 class="text-xl mb-4">Bridge: NXT ↔ NXZ</h3>
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <div>
+      <label class="block mb-1">From</label>
+      <select id="fromToken" class="w-full p-2 bg-black border border-gray-700 rounded">
+        <option value="NXT">NXT</option>
+        <option value="NXZ">NXZ</option>
+      </select>
+    </div>
+    <div>
+      <label class="block mb-1">To</label>
+      <select id="toToken" class="w-full p-2 bg-black border border-gray-700 rounded">
+        <option value="NXZ">NXZ</option>
+        <option value="NXT">NXT</option>
+      </select>
+    </div>
+  </div>
+  <input id="bridgeAmount" type="number" placeholder="Amount" class="w-full p-2 mb-3 bg-black border border-gray-700 rounded">
+  <button onclick="bridgeTokens()" class="bg-green-500 hover:bg-green-600 w-full py-2 rounded">Bridge Now</button>
+  <p id="bridgeResult" class="mt-2"></p>
+</section>
+
+<section class="bg-gray-900 p-6 rounded-2xl shadow-lg mb-10">
+  <h3 class="text-xl mb-4">DAO Proposal System</h3>
+  <input type="text" id="proposalInput" placeholder="Enter your proposal..." class="w-full p-2 mb-2 bg-black border border-gray-700 rounded">
+  <button onclick="submitProposal()" class="bg-purple-500 hover:bg-purple-600 w-full py-2 rounded">Submit Proposal</button>
+  <ul id="proposalList" class="mt-4 space-y-2"></ul>
+</section>
+
+<section class="bg-gray-900 p-6 rounded-2xl shadow-lg">
+  <h3 class="text-xl mb-2">Smart Contract Preview</h3>
+  <pre class="text-sm bg-black p-4 rounded overflow-auto">
+
+contract NXTToken { string public name = "NeoX Token"; uint public totalSupply = 100000000; address public owner; constructor() { owner = msg.sender; } } </pre> </section>
+
+  </main>  <footer class="p-5 text-center border-t border-gray-700">
+    <p class="text-gray-400">© 2025 NeoX Protocol — All Rights Reserved</p>
+  </footer>  <script>
+    const tokenData = {
+      labels: ["Foundation", "Marketing", "Airdrop", "Liquidity", "Team", "DAO"],
+      datasets: [{
+        data: [15, 10, 15, 10, 20, 30],
+        backgroundColor: ["#facc15", "#3b82f6", "#10b981", "#ef4444", "#a855f7", "#f97316"]
+      }]
+    };
+    new Chart(document.getElementById('tokenChart'), {
+      type: 'pie',
+      data: tokenData,
+      options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } }
+    });
+
+    function checkWhitelist() {
+      const address = document.getElementById('whitelistAddress').value;
+      const result = document.getElementById('whitelistResult');
+      if (address.toLowerCase().startsWith('0x')) {
+        result.textContent = "✅ You are eligible for the airdrop.";
+      } else {
+        result.textContent = "❌ Address not found in whitelist.";
+      }
+    }
+
+    function bridgeTokens() {
+      const from = document.getElementById('fromToken').value;
+      const to = document.getElementById('toToken').value;
+      const amount = parseFloat(document.getElementById('bridgeAmount').value);
+      const result = document.getElementById('bridgeResult');
+      if (amount > 0) {
+        result.textContent = `✅ Successfully bridged ${amount} ${from} to ${to}.`;
+      } else {
+        result.textContent = "❌ Enter a valid amount.";
+      }
+    }
+
+    function submitProposal() {
+      const proposal = document.getElementById('proposalInput').value;
+      if (proposal) {
+        const li = document.createElement('li');
+        li.textContent = proposal;
+        document.getElementById('proposalList').appendChild(li);
+        document.getElementById('proposalInput').value = '';
+      }
+    }
+
+    document.getElementById('connectWallet').addEventListener('click', async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          document.getElementById('connectWallet').textContent = accounts[0].slice(0, 6) + '...' + accounts[0].slice(-4);
+        } catch (error) {
+          alert('Wallet connection failed.');
+        }
+      } else {
+        alert('MetaMask not found!');
+      }
+    });
+  </script></body>
+</html>
