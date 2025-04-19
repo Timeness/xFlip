@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokenomics | 250M Supply</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
+</head><body class="bg-black text-white min-h-screen">
+  <div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-4xl text-center mb-6 text-yellow-400">Tokenomics</h1>
+    <p class="text-center text-sm mb-10">Total Supply: <span class="text-green-400 font-bold">250,000,000</span> Tokens</p><div class="grid md:grid-cols-2 gap-6">
+  <div>
+    <table class="w-full text-sm text-left text-white">
+      <thead class="text-xs uppercase bg-gray-800 text-yellow-300">
+        <tr>
+          <th scope="col" class="px-4 py-3">Distribution Channel</th>
+          <th scope="col" class="px-4 py-3">Share</th>
+        </tr>
+      </thead>
+      <tbody class="bg-gray-900 divide-y divide-gray-700">
+        <tr><td class="px-4 py-2">Seed Round</td><td class="px-4 py-2">10%</td></tr>
+        <tr><td class="px-4 py-2">Public Round</td><td class="px-4 py-2">5%</td></tr>
+        <tr><td class="px-4 py-2">Private Round</td><td class="px-4 py-2">8%</td></tr>
+        <tr><td class="px-4 py-2">KOLs</td><td class="px-4 py-2">3%</td></tr>
+        <tr><td class="px-4 py-2">Team</td><td class="px-4 py-2">10%</td></tr>
+        <tr><td class="px-4 py-2">Advisory</td><td class="px-4 py-2">4%</td></tr>
+        <tr><td class="px-4 py-2">Marketing</td><td class="px-4 py-2">7%</td></tr>
+        <tr><td class="px-4 py-2">Airdrop</td><td class="px-4 py-2">3%</td></tr>
+        <tr><td class="px-4 py-2">Ecosystem</td><td class="px-4 py-2">12%</td></tr>
+        <tr><td class="px-4 py-2">Liquidity</td><td class="px-4 py-2">5%</td></tr>
+        <tr><td class="px-4 py-2">Mining</td><td class="px-4 py-2">6%</td></tr>
+        <tr><td class="px-4 py-2">Treasury</td><td class="px-4 py-2">4%</td></tr>
+        <tr><td class="px-4 py-2">Launchpool</td><td class="px-4 py-2">2%</td></tr>
+        <tr><td class="px-4 py-2">Future Airdrops</td><td class="px-4 py-2">2%</td></tr>
+        <tr><td class="px-4 py-2">OG Users</td><td class="px-4 py-2">4%</td></tr>
+        <tr class="bg-yellow-900 text-yellow-200 font-bold"><td class="px-4 py-2">Foundation</td><td class="px-4 py-2">15%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex justify-center">
+    <canvas id="tokenChart" width="400" height="400"></canvas>
+  </div>
+</div>
+
+  </div>  <script>
+    const ctx = document.getElementById('tokenChart').getContext('2d');
+    const tokenChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [
+          'Seed Round', 'Public Round', 'Private Round', 'KOLs', 'Team',
+          'Advisory', 'Marketing', 'Airdrop', 'Ecosystem', 'Liquidity',
+          'Mining', 'Treasury', 'Launchpool', 'Future Airdrops', 'OG Users', 'Foundation'
+        ],
+        datasets: [{
+          data: [10, 5, 8, 3, 10, 4, 7, 3, 12, 5, 6, 4, 2, 2, 4, 15],
+          backgroundColor: [
+            '#facc15', '#4ade80', '#60a5fa', '#f472b6', '#fb923c',
+            '#34d399', '#c084fc', '#f87171', '#22d3ee', '#a78bfa',
+            '#fbbf24', '#10b981', '#818cf8', '#f43f5e', '#2dd4bf', '#fde68a'
+          ],
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white',
+              font: {
+                family: 'Viga'
+              }
+            }
+          }
+        }
+      }
+    });
+  </script></body></html>
