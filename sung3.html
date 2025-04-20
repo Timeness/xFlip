@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SungFi - Bright DeFi. Bold Moves.</title>
+  <!-- Favicon (Simple SVG Sun) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F59E0B' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83'/%3E%3C/svg%3E">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- GSAP CDN for Animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #000;
+      color: #fff;
+    }
+    .gradient-text {
+      background: linear-gradient(to right, #F59E0B, #F97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .glow-effect {
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <!-- Logo (SVG Sun with S Flame) -->
+        <svg class="w-10 h-10 mr-2" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          <path d="M10 9s1 1.5 2 3 2 3 2 3" stroke="#F97316" stroke-width="1.5"/>
+        </svg>
+        <span class="text-2xl font-bold gradient-text">SungFi</span>
+      </div>
+      <div class="space-x-4">
+        <a href="#features" class="text-white hover:text-orange-500">Features</a>
+        <a href="#about" class="text-white hover:text-orange-500">About</a>
+        <a href="#connect" class="text-white hover:text-orange-500">Connect</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="min-h-screen flex items-center justify-center text-center px-4">
+    <div>
+      <h1 class="text-5xl md:text-7xl font-bold gradient-text mb-4">SungFi</h1>
+      <p class="text-xl md:text-2xl text-white/80 mb-6">Bright DeFi. Bold Moves.</p>
+      <button id="cta-button" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-full font-semibold glow-effect hover:from-amber-600 hover:to-orange-600 transition">Launch App</button>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-4xl font-bold gradient-text text-center mb-12">What SungFi Offers</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Testnet Airdrop Hub -->
+        <div class="bg-gray-900 p-6 rounded-lg glow-effect">
+          <h3 class="text-2xl font-semibold gradient-text mb-4">Testnet Airdrop Hub</h3>
+          <p class="text-white/80 mb-4">Join our testnet and earn exclusive airdrops. Test, build, and shine with SungFi.</p>
+          <button onclick="startAirdrop()" class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600">Claim Airdrop</button>
+        </div>
+        <!-- Solar/Energy-backed DeFi -->
+        <div class="bg-gray-900 p-6 rounded-lg glow-effect">
+          <h3 class="text-2xl font-semibold gradient-text mb-4">Solar DeFi Chain</h3>
+          <p class="text-white/80 mb-4">Eco-positive DeFi powered by solar energy. Stake, earn, and grow sustainably.</p>
+          <button onclick="stakeSolar()" class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600">Stake Now</button>
+        </div>
+        <!-- Gamified Points System -->
+        <div class="bg-gray-900 p-6 rounded-lg glow-effect">
+          <h3 class="text-2xl font-semibold gradient-text mb-4">Gamified Points</h3>
+          <p class="text-white/80 mb-4">Complete missions, earn points, and unlock rewards in our gamified ecosystem.</p>
+          <button onclick="startMission()" class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600">Start Mission</button>
+        </div>
+        <!-- Token Launch Platform -->
+        <div class="bg-gray-900 p-6 rounded-lg glow-effect">
+          <h3 class="text-2xl font-semibold gradient-text mb-4">Token Launch Platform</h3>
+          <p class="text-white/80 mb-4">Launch your token with ease. Secure, scalable, and community-driven.</p>
+          <button onclick="launchToken()" class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600">Launch Token</button>
+        </div>
+        <!-- Cross-chain dApp Playground -->
+        <div class="bg-gray-900 p-6 rounded-lg glow-effect">
+          <h3 class="text-2xl font-semibold gradient-text mb-4">Cross-chain dApp Playground</h3>
+          <p class="text-white/80 mb-4">Build and test dApps across chains in our seamless playground.</p>
+          <button onclick="buildDapp()" class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600">Build dApp</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 px-4 bg-gray-900">
+    <div class="max-w-7xl mx-auto text-center">
+      <h2 class="text-4xl font-bold gradient-text mb-6">About SungFi</h2>
+      <p class="text-xl text-white/80 max-w-3xl mx-auto">SungFi is a modern, eco-positive DeFi platform that empowers users to test, build, and shine in the Web3 space. Fueled by energy and innovation, we’re here to light up the future of finance.</p>
+    </div>
+  </section>
+
+  <!-- Connect Section -->
+  <section id="connect" class="py-16 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+      <h2 class="text-4xl font-bold gradient-text mb-6">Connect with SungFi</h2>
+      <p class="text-xl text-white/80 mb-8">Join our community and stay updated with the latest from SungFi.</p>
+      <div class="flex justify-center space-x-4">
+        <a href="#" class="text-white hover:text-orange-500">Twitter</a>
+        <a href="#" class="text-white hover:text-orange-500">Discord</a>
+        <a href="#" class="text-white hover:text-orange-500">Telegram</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-black py-8 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+      <p class="text-white/80">© 2025 SungFi. The Sun Never Sets on DeFi.</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript for Features and Animations -->
+  <script>
+    // GSAP Animations for Hero Section
+    gsap.from("h1", { opacity: 0, y: 50, duration: 1, delay: 0.5 });
+    gsap.from("p", { opacity: 0, y: 30, duration: 1, delay: 0.7 });
+    gsap.from("#cta-button", { opacity: 0, scale: 0.8, duration: 1, delay: 0.9 });
+
+    // Feature Functions
+    function startAirdrop() {
+      alert("Claiming SungFi Testnet Airdrop! Check your wallet for tokens.");
+      // Simulate airdrop logic (e.g., API call to blockchain)
+      console.log("Airdrop claimed!");
+    }
+
+    function stakeSolar() {
+      alert("Staking in Solar DeFi Chain! Earn eco-positive rewards.");
+      // Simulate staking logic
+      console.log("Staked in Solar DeFi!");
+    }
+
+    function startMission() {
+      alert("Starting a Gamified Mission! Complete tasks to earn points.");
+      // Simulate mission logic
+      console.log("Mission started!");
+    }
+
+    function launchToken() {
+      alert("Launching your token on SungFi! Prepare for liftoff.");
+      // Simulate token launch logic
+      console.log("Token launched!");
+    }
+
+    function buildDapp() {
+      alert("Building a cross-chain dApp in SungFi Playground!");
+      // Simulate dApp build logic
+      console.log("dApp build started!");
+    }
+
+    // Smooth Scroll for Navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>
