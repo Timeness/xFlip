@@ -1,0 +1,128 @@
+<!DOCTYPE html><html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SungFi — Fuel the Future</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.umd.min.js"></script>
+    <script src="https://unpkg.com/@iconify/iconify@2.0.0/dist/iconify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #000;
+        color: white;
+      }
+      .sun-glow {
+        background: radial-gradient(circle at center, #facc15, #f97316);
+        box-shadow: 0 0 40px #facc15;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="p-4 flex justify-between items-center bg-black border-b border-yellow-500">
+      <div class="flex items-center space-x-2">
+        <div class="w-10 h-10 rounded-full sun-glow flex items-center justify-center">
+          <span class="text-black font-bold text-lg">S</span>
+        </div>
+        <h1 class="text-2xl font-semibold">Sung<span class="font-light">Fi</span></h1>
+      </div>
+      <nav class="space-x-4 hidden md:block">
+        <a href="#usecases" class="hover:text-yellow-400">Use Cases</a>
+        <a href="#testnet" class="hover:text-yellow-400">Testnet</a>
+        <a href="#airdrop" class="hover:text-yellow-400">Airdrop</a>
+        <a href="#missions" class="hover:text-yellow-400">Missions</a>
+        <a href="#launchpad" class="hover:text-yellow-400">Launch</a>
+        <a href="#explorer" class="hover:text-yellow-400">Explorer</a>
+      </nav>
+    </header><section class="text-center py-20 bg-gradient-to-b from-black to-gray-900">
+  <h2 class="text-4xl font-bold mb-4">Fuel the Future with SungFi.</h2>
+  <p class="text-lg text-yellow-200">Bright DeFi. Bold Moves. The Sun Never Sets on SungFi.</p>
+  <div class="mt-10">
+    <button class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2 rounded-xl shadow-xl">Join the Testnet</button>
+  </div>
+</section>
+
+<section id="usecases" class="py-16 px-4 md:px-20">
+  <h3 class="text-3xl font-semibold text-center mb-10">Use Cases</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+    <div class="p-6 bg-gray-900 rounded-2xl border border-yellow-500">
+      <h4 class="text-xl font-bold mb-2">Testnet Airdrop Hub</h4>
+      <p>Claim tokens, test dApps and earn rewards by testing the future of DeFi.</p>
+    </div>
+    <div class="p-6 bg-gray-900 rounded-2xl border border-yellow-500">
+      <h4 class="text-xl font-bold mb-2">Energy-Backed Chain</h4>
+      <p>Powered by solar logic. A DeFi network with clean energy integration.</p>
+    </div>
+    <div class="p-6 bg-gray-900 rounded-2xl border border-yellow-500">
+      <h4 class="text-xl font-bold mb-2">Token Launch Platform</h4>
+      <p>Launch your token with built-in liquidity and community support.</p>
+    </div>
+    <div class="p-6 bg-gray-900 rounded-2xl border border-yellow-500">
+      <h4 class="text-xl font-bold mb-2">Cross-chain Playground</h4>
+      <p>Test cross-chain deployments in a gamified environment.</p>
+    </div>
+    <div class="p-6 bg-gray-900 rounded-2xl border border-yellow-500">
+      <h4 class="text-xl font-bold mb-2">Gamified Points & Missions</h4>
+      <p>Earn XP through on-chain challenges and DeFi exploration.</p>
+    </div>
+  </div>
+</section>
+
+<section id="airdrop" class="py-16 px-4 md:px-20 bg-black">
+  <h3 class="text-3xl font-semibold text-center mb-10">Airdrop Form</h3>
+  <form class="max-w-lg mx-auto bg-gray-800 p-6 rounded-xl space-y-4">
+    <input type="text" placeholder="Wallet Address" class="w-full p-3 rounded bg-gray-700 text-white" />
+    <input type="email" placeholder="Email (optional)" class="w-full p-3 rounded bg-gray-700 text-white" />
+    <button type="submit" class="bg-yellow-500 text-black px-6 py-2 rounded-xl w-full">Claim Airdrop</button>
+  </form>
+</section>
+
+<section id="missions" class="py-16 px-4 md:px-20 bg-gray-900">
+  <h3 class="text-3xl font-semibold text-center mb-10">Mission Dashboard</h3>
+  <div class="max-w-3xl mx-auto grid gap-6">
+    <div class="bg-black border border-yellow-400 p-4 rounded-xl flex justify-between">
+      <span>Connect Wallet</span>
+      <button class="text-black bg-yellow-400 px-3 py-1 rounded">+10 XP</button>
+    </div>
+    <div class="bg-black border border-yellow-400 p-4 rounded-xl flex justify-between">
+      <span>Complete First Transaction</span>
+      <button class="text-black bg-yellow-400 px-3 py-1 rounded">+25 XP</button>
+    </div>
+  </div>
+</section>
+
+<section id="launchpad" class="py-16 px-4 md:px-20">
+  <h3 class="text-3xl font-semibold text-center mb-10">Token Launch Form</h3>
+  <form class="max-w-3xl mx-auto bg-gray-800 p-6 rounded-xl space-y-4">
+    <input type="text" placeholder="Token Name" class="w-full p-3 rounded bg-gray-700 text-white" />
+    <input type="text" placeholder="Symbol" class="w-full p-3 rounded bg-gray-700 text-white" />
+    <input type="number" placeholder="Supply" class="w-full p-3 rounded bg-gray-700 text-white" />
+    <button type="submit" class="bg-yellow-500 text-black px-6 py-2 rounded-xl w-full">Launch Token</button>
+  </form>
+</section>
+
+<section id="explorer" class="py-16 px-4 md:px-20 bg-gray-900">
+  <h3 class="text-3xl font-semibold text-center mb-10">Live dApp Explorer</h3>
+  <div class="bg-black p-6 rounded-xl text-center">
+    <p class="mb-4">Search your wallet or tx ID</p>
+    <input type="text" placeholder="0x..." class="w-full p-3 rounded bg-gray-700 text-white mb-4" />
+    <button class="bg-yellow-500 text-black px-6 py-2 rounded">Search</button>
+  </div>
+</section>
+
+<footer class="mt-20 p-6 border-t border-yellow-500 text-center text-sm text-gray-400">
+  © <span id="year"></span> SungFi — Bright DeFi. Built to Shine.
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+  </body>
+</html>
