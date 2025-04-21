@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeoX Protocol | Testnet Launch</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>NeoX Protocol | Testnet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
@@ -12,13 +12,16 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.css">
   <script src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(270deg, #1e3a8a, #1e1e1e, #1e3a8a);
+      background: linear-gradient(270deg, #0f172a, #1e293b, #0f172a);
       background-size: 600% 600%;
-      animation: gradientAnimation 15s ease infinite;
+      animation: gradientAnimation 20s ease infinite;
       color: #fff;
+      font-size: 14px;
+      overflow-x: hidden;
     }
     @keyframes gradientAnimation {
       0% { background-position: 0% 50%; }
@@ -26,139 +29,181 @@
       100% { background-position: 0% 50%; }
     }
     .page { display: none; }
-    .page.active { display: block; }
-    .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-    .hover-scale { transition: transform 0.2s; }
-    .hover-scale:hover { transform: scale(1.05); }
+    .page.active { display: block; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .btn-premium {
+      background: linear-gradient(45deg, #3b82f6, #10b981);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-premium:hover, .btn-premium:active { transform: scale(1.05); box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+    canvas#threeCanvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
   </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen relative">
+  <!-- Three.js Background -->
+  <canvas id="threeCanvas"></canvas>
+
   <!-- Header -->
-  <header class="p-5 flex justify-between items-center border-b border-gray-700 glass">
-    <div class="flex items-center space-x-3">
-      <iconify-icon icon="ph:rocket-launch-fill" class="text-3xl text-yellow-400"></iconify-icon>
-      <h1 class="text-2xl font-bold">NeoX Protocol</h1>
+  <header class="p-4 flex justify-between items-center border-b border-gray-700 glass sticky top-0 z-10">
+    <div class="flex items-center space-x-2">
+      <iconify-icon icon="tabler:rocket" class="text-2xl text-blue-400"></iconify-icon>
+      <h1 class="text-lg font-semibold">NeoX Protocol</h1>
     </div>
-    <div class="flex items-center space-x-4">
-      <nav class="hidden md:flex space-x-6">
+    <div class="flex items-center space-x-2">
+      <nav class="flex space-x-3 text-sm">
         <a href="#" data-page="dashboard" class="nav-link text-gray-300 hover:text-white">Dashboard</a>
         <a href="#" data-page="bridge" class="nav-link text-gray-300 hover:text-white">Bridge</a>
         <a href="#" data-page="proposals" class="nav-link text-gray-300 hover:text-white">Proposals</a>
         <a href="#" data-page="tokenomics" class="nav-link text-gray-300 hover:text-white">Tokenomics</a>
+        <a href="#" data-page="testnet" class="nav-link text-gray-300 hover:text-white">Testnet</a>
       </nav>
-      <button id="connectWallet" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded text-black flex items-center space-x-2 hover-scale">
-        <iconify-icon icon="ph:wallet-fill"></iconify-icon>
-        <span>Connect Wallet</span>
+      <button id="connectWallet" class="btn-premium px-3 py-1.5 rounded text-black text-sm flex items-center space-x-1">
+        <iconify-icon icon="tabler:wallet"></iconify-icon>
+        <span>Connect</span>
       </button>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="max-w-6xl mx-auto px-4 py-10">
+  <main class="px-4 py-6">
     <!-- Dashboard Page -->
     <section id="dashboard" class="page active">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div class="glass p-6 rounded-2xl shadow-lg">
-          <h3 class="text-xl font-semibold mb-4 flex items-center">
-            <iconify-icon icon="ph:currency-eth-fill" class="mr-2"></iconify-icon>
-            Wallet Balance
-          </h3>
-          <p id="walletBalance" class="text-2xl font-bold">0.00 ETH</p>
-          <p id="tokenBalance" class="text-lg text-gray-300">0.00 NXT</p>
-          <p id="balanceStatus" class="text-red-500 mt-2 hidden">❌ Insufficient Balance</p>
-          <button id="refreshBalance" class="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded flex items-center hover-scale">
-            <iconify-icon icon="ph:arrows-clockwise-fill" class="mr-2"></iconify-icon>
-            Refresh
-          </button>
-        </div>
-        <div class="glass p-6 rounded-2xl shadow-lg relative">
-          <h3 class="text-xl font-semibold mb-4">Settings</h3>
-          <button id="settingsToggle" class="absolute top-4 right-4 text-gray-300 hover:text-white">
-            <iconify-icon icon="ph:gear-six-fill" class="text-2xl"></iconify-icon>
-          </button>
-          <div id="settingsPanel" class="hidden">
-            <p class="text-sm text-gray-400 mb-2">Seed Phrase (Mocked for Testnet)</p>
-            <input id="seedPhrase" type="text" value="word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12" class="w-full p-2 bg-gray-800 border border-gray-700 rounded" readonly>
-            <button id="copySeed" class="mt-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded flex items-center hover-scale">
-              <iconify-icon icon="ph:copy-fill" class="mr-2"></iconify-icon>
-              Copy Seed
-            </button>
-          </div>
-        </div>
+      <div class="glass p-5විලාසම්බල් p-6 rounded-2xl shadow-lg mb-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+          <iconify-icon icon="tabler:coin" class="mr-2"></iconify-icon>
+          Wallet Balance
+        </h3>
+        <p id="walletBalance" class="text-lg font-bold">0.00 ETH</p>
+        <p id="nxtBalance" class="text-sm text-gray-300">1000.00 NXT</p>
+        <p id="nxzBalance" class="text-sm text-gray-300">0.00 NXZ</p>
+        <button id="refreshBalance" class="mt-4 btn-premium px-3 py-1.5 rounded flex items-center text-sm">
+          <iconify-icon icon="tabler:refresh" class="mr-1"></iconify-icon>
+          Refresh
+        </button>
+      </div>
+      <div class="glass p-6 rounded-2xl shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">Settings</h3>
+        <p class="text-sm text-gray-400">Manage your wallet settings here.</p>
       </div>
     </section>
 
     <!-- Bridge Page -->
     <section id="bridge" class="page">
-      <div class="glass p-8 rounded-2xl shadow-lg">
-        <h3 class="text-2xl font-semibold mb-6 flex items-center">
-          <iconify-icon icon="ph:bridge-fill" class="mr-2"></iconify-icon>
+      <div class="glass p-6 rounded-2xl shadow-lg">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+          <iconify-icon icon="tabler:arrows-left-right" class="mr-2"></iconify-icon>
           Bridge: NXT ↔ NXZ
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label class="block mb-2 text-sm font-medium">From</label>
-            <select id="fromToken" class="w-full p-3 bg-gray-800 border border-gray-700 rounded focus:ring-2 focus:ring-blue-500">
-              <option value="NXT">NXT</option>
-              <option value="NXZ">NXZ</option>
-            </select>
-          </div>
-          <div>
-            <label class="block mb-2 text-sm font-medium">To</label>
-            <select id="toToken" class="w-full p-3 bg-gray-800 border border-gray-700 rounded focus:ring-2 focus:ring-blue-500">
-              <option value="NXZ">NXZ</option>
-              <option value="NXT">NXT</option>
-            </select>
-          </div>
+        <div class="mb-4">
+          <label class="block mb-1 text-sm font-medium">From</label>
+          <select id="fromToken" class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
+            <option value="NXT">NXT</option>
+            <option value="NXZ">NXZ</option>
+          </select>
         </div>
-        <div class="mb-6">
-          <label class="block mb-2 text-sm font-medium">Amount</label>
-          <input id="bridgeAmount" type="number" placeholder="Enter amount" class="w-full p-3 bg-gray-800 border border-gray-700 rounded focus:ring-2 focus:ring-blue-500">
-          <p id="bridgeBalance" class="text-sm text-gray-400 mt-2">Available: <span id="availableBalance">0.00 NXT</span></p>
+        <div class="mb-4">
+          <label class="block mb-1 text-sm font-medium">To</label>
+          <select id="toToken" class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
+            <option value="NXZ">NXZ</option>
+            <option value="NXT">NXT</option>
+          </select>
         </div>
-        <button onclick="bridgeTokens()" class="w-full bg-green-500 hover:bg-green-600 py-3 rounded flex items-center justify-center hover-scale">
-          <iconify-icon icon="ph:arrows-left-right-fill" class="mr-2"></iconify-icon>
+        <div class="mb-4">
+          <label class="block mb-1 text-sm font-medium">Amount</label>
+          <input id="bridgeAmount" type="number" placeholder="Enter amount" class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
+          <p id="bridgeBalance" class="text-sm text-gray-400 mt-1">Available: <span id="availableBalance">1000.00 NXT</span></p>
+        </div>
+        <button onclick="bridgeTokens()" class="w-full btn-premium py-2 rounded flex items-center justify-center text-sm">
+          <iconify-icon icon="tabler:arrows-left-right" class="mr-1"></iconify-icon>
           Bridge Now
         </button>
-        <p id="bridgeResult" class="mt-4 text-center"></p>
+        <p id="bridgeResult" class="mt-4 text-center text-sm"></p>
       </div>
     </section>
 
     <!-- Proposals Page -->
     <section id="proposals" class="page">
-      <div class="glass p-8 rounded-2xl shadow-lg">
-        <h3 class="text-2xl font-semibold mb-6 flex items-center">
-          <iconify-icon icon="ph:vote-fill" class="mr-2"></iconify-icon>
+      <div class="glass p-6 rounded-2xl shadow-lg">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+          <iconify-icon icon="tabler:vote" class="mr-2"></iconify-icon>
           DAO Proposal System
         </h3>
-        <input type="text" id="proposalInput" placeholder="Enter your proposal..." class="w-full p-3 mb-4 bg-gray-800 border border-gray-700 rounded focus:ring-2 focus:ring-blue-500">
-        <button onclick="submitProposal()" class="w-full bg-purple-500 hover:bg-purple-600 py-3 rounded flex items-center justify-center hover-scale">
-          <iconify-icon icon="ph:paper-plane-tilt-fill" class="mr-2"></iconify-icon>
+        <input type="text" id="proposalInput" placeholder="Enter your proposal..." class="w-full p-2 mb-4 bg-gray-800 border border-gray-700 rounded">
+        <button onclick="submitProposal()" class="w-full btn-premium py-2 rounded flex items-center justify-center text-sm">
+          <iconify-icon icon="tabler:send" class="mr-1"></iconify-icon>
           Submit Proposal
         </button>
-        <ul id="proposalList" class="mt-6 space-y-3"></ul>
+        <ul id="proposalList" class="mt-4 space-y-2"></ul>
       </div>
     </section>
 
     <!-- Tokenomics Page -->
     <section id="tokenomics" class="page">
-      <div class="glass p-8 rounded-2xl shadow-lg">
-        <h3 class="text-2xl font-semibold mb-6 flex items-center">
-          <iconify-icon icon="ph:chart-pie-fill" class="mr-2"></iconify-icon>
+      <div class="glass p-6 rounded-2xl shadow-lg">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+          <iconify-icon icon="tabler:chart-pie" class="mr-2"></iconify-icon>
           Tokenomics
         </h3>
-        <canvas id="tokenChart" class="max-w-md mx-auto"></canvas>
+        <canvas id="tokenChart" class="max-w-full"></canvas>
+      </div>
+    </section>
+
+    <!-- Testnet Page -->
+    <section id="testnet" class="page">
+      <div class="glass p-6 rounded-2xl shadow-lg">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+          <iconify-icon icon="tabler:rocket" class="mr-2"></iconify-icon>
+          NeoX Testnet
+        </h3>
+        <p class="text-sm text-gray-300 mb-4">
+          Welcome to the NeoX Protocol Testnet! This is a decentralized platform designed for scalable, secure, and user-friendly blockchain interactions. Test key features like token bridging (NXT ↔ NXZ), DAO proposals, and more. Get 1000 NXT tokens to start exploring!
+        </p>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>🚀 <strong>Fast Transactions:</strong> Near-instant bridging and low fees.</li>
+          <li>🗳️ <strong>DAO Governance:</strong> Submit and vote on proposals.</li>
+          <li>💧 <strong>Liquidity Pools:</strong> Coming soon to the mainnet.</li>
+        </ul>
+        <button class="mt-4 btn-premium px-3 py-1.5 rounded flex items-center text-sm mx-auto">
+          <iconify-icon icon="tabler:info-circle" class="mr-1"></iconify-icon>
+          Learn More
+        </button>
       </div>
     </section>
   </main>
 
   <!-- Footer -->
-  <footer class="p-5 text-center border-t border-gray-700 glass">
-    <p class="text-gray-400">© 2025 NeoX Protocol — All Rights Reserved</p>
+  <footer class="p-4 text-center border-t border-gray-700 glass">
+    <p class="text-sm text-gray-400">© 2025 NeoX Protocol Testnet — Built for the Future</p>
   </footer>
 
   <!-- JavaScript -->
   <script>
+    // Three.js Background
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threeCanvas'), alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.position.z = 5;
+
+    const particles = new THREE.BufferGeometry();
+    const particleCount = 500;
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 10;
+    }
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleMaterial = new THREE.PointsMaterial({ color: 0x3b82f6, size: 0.05 });
+    const particleSystem = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      particleSystem.rotation.y += 0.001;
+      renderer.render(scene, camera);
+    }
+    animate();
+
     // Navigation
     const navLinks = document.querySelectorAll('.nav-link');
     const pages = document.querySelectorAll('.page');
@@ -185,11 +230,12 @@
     new Chart(document.getElementById('tokenChart'), {
       type: 'pie',
       data: tokenData,
-      options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } }
+      options: { responsive: true, plugins: { legend: { labels: { color: '#fff', font: { size: 12 } } } } }
     });
 
     // Wallet Connection
     let web3, account;
+    let balances = { NXT: 1000, NXZ: 0 }; // Initial balances
     document.getElementById('connectWallet').addEventListener('click', async () => {
       if (window.ethereum) {
         try {
@@ -197,16 +243,16 @@
           const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
           account = accounts[0];
           document.getElementById('connectWallet').innerHTML = `
-            <iconify-icon icon="ph:wallet-fill"></iconify-icon>
+            <iconify-icon icon="tabler:wallet"></iconify-icon>
             <span>${account.slice(0, 6)}...${account.slice(-4)}</span>
           `;
           updateBalance();
-          showToast('Wallet connected successfully!', 'success');
+          showToast('Wallet connected!', 'success');
         } catch (error) {
-          showToast('Wallet connection failed.', 'error');
+          showToast('Connection failed.', 'error');
         }
       } else {
-        showToast('MetaMask not found! Please install MetaMask.', 'error');
+        showToast('Install MetaMask!', 'error');
       }
     });
 
@@ -217,11 +263,9 @@
         const ethBalance = await web3.eth.getBalance(account);
         const eth = web3.utils.fromWei(ethBalance, 'ether');
         document.getElementById('walletBalance').textContent = `${parseFloat(eth).toFixed(4)} ETH`;
-        // Mock NXT balance for testnet
-        const nxtBalance = Math.random() * 1000;
-        document.getElementById('tokenBalance').textContent = `${nxtBalance.toFixed(2)} NXT`;
-        document.getElementById('availableBalance').textContent = `${nxtBalance.toFixed(2)} NXT`;
-        document.getElementById('balanceStatus').classList.toggle('hidden', nxtBalance > 0);
+        document.getElementById('nxtBalance').textContent = `${balances.NXT.toFixed(2)} NXT`;
+        document.getElementById('nxzBalance').textContent = `${balances.NXZ.toFixed(2)} NXZ`;
+        document.getElementById('availableBalance').textContent = `${balances.NXT.toFixed(2)} NXT`;
       } catch (error) {
         showToast('Failed to fetch balance.', 'error');
       }
@@ -229,41 +273,29 @@
 
     document.getElementById('refreshBalance').addEventListener('click', updateBalance);
 
-    // Settings Toggle
-    document.getElementById('settingsToggle').addEventListener('click', () => {
-      const panel = document.getElementById('settingsPanel');
-      panel.classList.toggle('hidden');
-    });
-
-    // Copy Seed Phrase
-    document.getElementById('copySeed').addEventListener('click', () => {
-      const seed = document.getElementById('seedPhrase').value;
-      navigator.clipboard.writeText(seed);
-      showToast('Seed phrase copied to clipboard!', 'success');
-    });
-
     // Bridge Tokens
     async function bridgeTokens() {
       const from = document.getElementById('fromToken').value;
       const to = document.getElementById('toToken').value;
       const amount = parseFloat(document.getElementById('bridgeAmount').value);
       const result = document.getElementById('bridgeResult');
-      const available = parseFloat(document.getElementById('availableBalance').textContent);
 
       if (!account) {
-        showToast('Please connect your wallet first.', 'error');
+        showToast('Connect wallet first.', 'error');
         return;
       }
       if (amount <= 0 || isNaN(amount)) {
-        showToast('Enter a valid amount.', 'error');
+        showToast('Enter valid amount.', 'error');
         return;
       }
-      if (amount > available) {
-        showToast('Insufficient balance for bridging.', 'error');
+      if (amount > balances[from]) {
+        showToast(`Insufficient ${from} balance.`, 'error');
         return;
       }
 
-      result.textContent = `✅ Successfully bridged ${amount} ${from} to ${to}.`;
+      balances[from] -= amount;
+      balances[to] += amount;
+      result.textContent = `✅ Bridged ${amount} ${from} to ${to}.`;
       showToast(`Bridged ${amount} ${from} to ${to}!`, 'success');
       updateBalance();
     }
@@ -272,21 +304,21 @@
     function submitProposal() {
       const proposal = document.getElementById('proposalInput').value;
       if (!account) {
-        showToast('Please connect your wallet first.', 'error');
+        showToast('Connect wallet first.', 'error');
         return;
       }
       if (proposal) {
         const li = document.createElement('li');
-        li.className = 'p-3 bg-gray-800 rounded flex items-center';
+        li.className = 'p-2 bg-gray-800 rounded flex items-center text-sm';
         li.innerHTML = `
-          <iconify-icon icon="ph:paper-plane-tilt-fill" class="mr-2"></iconify-icon>
+          <iconify-icon icon="tabler:send" class="mr-2"></iconify-icon>
           ${proposal}
         `;
         document.getElementById('proposalList').appendChild(li);
         document.getElementById('proposalInput').value = '';
-        showToast('Proposal submitted successfully!', 'success');
+        showToast('Proposal submitted!', 'success');
       } else {
-        showToast('Please enter a proposal.', 'error');
+        showToast('Enter a proposal.', 'error');
       }
     }
 
@@ -298,7 +330,7 @@
         gravity: 'top',
         position: 'right',
         backgroundColor: type === 'success' ? '#10b981' : '#ef4444',
-        className: 'rounded-lg',
+        className: 'rounded-lg text-sm',
       }).showToast();
     }
   </script>
