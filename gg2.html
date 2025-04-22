@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zynthetix Testnet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <style>
+        body {
+            font-family: 'Signika', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-btn {
+            @apply border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-lg shadow-blue-500/50;
+        }
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full glass-card z-50 py-4 px-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span class="iconify text-3xl text-blue-400" data-icon="mdi:rocket-launch"></span>
+            <h1 class="text-xl font-semibold">Zynthetix Testnet</h1>
+        </div>
+        <div class="hidden md:flex gap-6">
+            <a href="#home" class="hover:text-blue-400">Home</a>
+            <a href="#faucet" class="hover:text-blue-400">Faucet</a>
+            <a href="#swap" class="hover:text-blue-400">Swap</a>
+            <a href="#bridge" class="hover:text-blue-400">Bridge</a>
+            <a href="#tasks" class="hover:text-blue-400">Tasks</a>
+            <a href="#profile" class="hover:text-blue-400">Profile</a>
+        </div>
+        <button id="connect-wallet" class="neon-btn px-4 py-2 rounded-lg">Connect Wallet</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 px-6 max-w-6xl mx-auto">
+        <!-- Hero Section -->
+        <section id="home" class="py-20 text-center">
+            <h2 class="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
+                Welcome to Zynthetix Testnet
+            </h2>
+            <p class="text-xl mb-8">Next-gen Web3 testing ecosystem for developers and airdrop hunters</p>
+            <div class="grid grid-cols-3 gap-4 max-w-md mx-auto">
+                <div class="glass-card p-4">
+                    <p class="text-2xl font-bold text-blue-400">1,234</p>
+                    <p>Active Users</p>
+                </div>
+                <div class="glass-card p-4">
+                    <p class="text-2xl font-bold text-green-400">5,678</p>
+                    <p>Transactions</p>
+                </div>
+                <div class="glass-card p-4">
+                    <p class="text-2xl font-bold text-purple-400">987</p>
+                    <p>Bridges</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Faucet -->
+        <section id="faucet" class="py-20">
+            <h2 class="text-3xl font-bold mb-6">Faucet</h2>
+            <div class="glass-card p-6 max-w-md mx-auto">
+                <p>Your Address: <span id="zyn-address">Not Connected</span></p>
+                <select id="faucet-coin" class="w-full p-2 mt-4 bg-gray-800 rounded">
+                    <option value="ETH">ETH</option>
+                    <option value="ZYN">ZYN</option>
+                    <option value="SOL">SOL</option>
+                    <option value="SUI">SUI</option>
+                </select>
+                <button id="claim-faucet" class="neon-btn w-full mt-4 py-2">Claim Faucet</button>
+            </div>
+        </section>
+
+        <!-- Swap -->
+        <section id="swap" class="py-20">
+            <h2 class="text-3xl font-bold mb-6">Swap</h2>
+            <div class="glass-card p-6 max-w-md mx-auto">
+                <select class="w-full p-2 mb-4 bg-gray-800 rounded">
+                    <option>ETH</option>
+                    <option>ZYN</option>
+                    <option>SOL</option>
+                    <option>SUI</option>
+                </select>
+                <input type="number" placeholder="Amount" class="w-full p-2 mb-4 bg-gray-800 rounded">
+                <select class="w-full p-2 mb-4 bg-gray-800 rounded">
+                    <option>ZYN</option>
+                    <option>ETH</option>
+                    <option>SOL</option>
+                    <option>SUI</option>
+                </select>
+                <button id="swap-btn" class="neon-btn w-full py-2">Swap</button>
+            </div>
+        </section>
+
+        <!-- Bridge -->
+        <section id="bridge" class="py-20">
+            <h2 class="text-3xl font-bold mb-6">Bridge</h2>
+            <div class="glass-card p-6 max-w-md mx-auto">
+                <select class="w-full p-2 mb-4 bg-gray-800 rounded">
+                    <option>Source: Zynthetix</option>
+                </select>
+                <select class="w-full p-2 mb-4 bg-gray-800 rounded">
+                    <option>Destination: Solana</option>
+                </select>
+                <input type="number" placeholder="Amount" class="w-full p-2 mb-4 bg-gray-800 rounded">
+                <button id="bridge-btn" class="neon-btn w-full py-2">Bridge</button>
+            </div>
+        </section>
+
+        <!-- Tasks -->
+        <section id="tasks" class="py-20">
+            <h2 class="text-3xl font-bold mb-6">Tasks</h2>
+            <div class="glass-card p-6">
+                <div class="space-y-4">
+                    <div class="flex justify-between"><span>Connect Wallet</span><button class="neon-btn px-4 py-1">0.1 ZYN</button></div>
+                    <div class="flex justify-between"><span>Follow Twitter</span><button class="neon-btn px-4 py-1">0.2 ZYN</button></div>
+                    <div class="flex justify-between"><span>Join Discord</span><button class="neon-btn px-4 py-1">0.2 ZYN</button></div>
+                    <div class="flex justify-between"><span>Share Referral</span><button class="neon-btn px-4 py-1">0.2 ZYN</button></div>
+                    <div class="flex justify-between"><span>Daily Login</span><button class="neon-btn px-4 py-1">0.1 ZYN</button></div>
+                    <div class="flex justify-between"><span>Invite Friend</span><button class="neon-btn px-4 py-1">0.3 ZYN</button></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile -->
+        <section id="profile" class="py-20">
+            <h2 class="text-3xl font-bold mb-6">Profile</h2>
+            <div class="glass-card p-6 max-w-md mx-auto">
+                <p>Wallet: <span id="profile-address">Not Connected</span></p>
+                <p>Joined: <span id="joined-date"></span></p>
+                <p>Login Streak: <span id="login-streak">0</span> days</p>
+                <p>XP Level: <span id="xp-level">0</span></p>
+                <div class="w-full bg-gray-700 h-2 rounded mt-2">
+                    <div id="xp-bar" class="bg-blue-500 h-2 rounded" style="width: 0%"></div>
+                </div>
+                <button id="copy-address" class="neon-btn mt-4 px-4 py-2">Copy Address</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-card py-6 px-6 text-center">
+        <div class="flex justify-center gap-6 mb-4">
+            <a href="#" class="text-blue-400"><span class="iconify" data-icon="mdi:twitter"></span></a>
+            <a href="#" class="text-blue-400"><span class="iconify" data-icon="mdi:discord"></span></a>
+            <a href="#" class="text-blue-400"><span class="iconify" data-icon="mdi:telegram"></span></a>
+            <a href="#" class="text-blue-400"><span class="iconify" data-icon="mdi:github"></span></a>
+        </div>
+        <p>&copy; <span id="year"></span> Zynthetix. All rights reserved.</p>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 space-y-2"></div>
+
+    <!-- JavaScript -->
+    <script>
+        // Utility Functions
+        const generateZynAddress = () => `0xZYN${Math.random().toString(16).slice(2, 8).toUpperCase()}`;
+        const showToast = (message) => {
+            const toast = document.createElement('div');
+            toast.className = 'glass-card p-4 animate-slide-in';
+            toast.textContent = message;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        };
+
+        // State Management
+        let user = JSON.parse(localStorage.getItem('zynUser')) || null;
+        if (!user) {
+            user = { address: generateZynAddress(), balance: 0, xp: 0, streak: 0, joined: new Date().toISOString() };
+            localStorage.setItem('zynUser', JSON.stringify(user));
+        }
+
+        // UI Updates
+        document.getElementById('zyn-address').textContent = user.address;
+        document.getElementById('profile-address').textContent = user.address;
+        document.getElementById('joined-date').textContent = new Date(user.joined).toLocaleDateString();
+        document.getElementById('login-streak').textContent = user.streak;
+        document.getElementById('xp-level').textContent = Math.floor(user.xp / 100);
+        document.getElementById('xp-bar').style.width = `${(user.xp % 100)}%`;
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Wallet Connection
+        document.getElementById('connect-wallet').addEventListener('click', () => {
+            if (!user.connected) {
+                user.connected = true;
+                user.balance += 0.1;
+                user.xp += 10;
+                localStorage.setItem('zynUser', JSON.stringify(user));
+                showToast('Wallet Connected! +0.1 ZYN');
+            }
+        });
+
+        // Faucet
+        document.getElementById('claim-faucet').addEventListener('click', () => {
+            user.balance += 1;
+            user.xp += 20;
+            localStorage.setItem('zynUser', JSON.stringify(user));
+            showToast(`Faucet Claimed! TX: 0x${Math.random().toString(16).slice(2, 10)}`);
+        });
+
+        // Swap
+        document.getElementById('swap-btn').addEventListener('click', () => {
+            user.xp += 15;
+            localStorage.setItem('zynUser', JSON.stringify(user));
+            showToast('Swap Successful!');
+        });
+
+        // Bridge
+        document.getElementById('bridge-btn').addEventListener('click', () => {
+            user.xp += 25;
+            localStorage.setItem('zynUser', JSON.stringify(user));
+            showToast('Bridge Successful!');
+        });
+
+        // Copy Address
+        document.getElementById('copy-address').addEventListener('click', () => {
+            navigator.clipboard.writeText(user.address);
+            showToast('Address Copied!');
+        });
+    </script>
+</body>
+                      </html>
