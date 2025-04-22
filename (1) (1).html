@@ -1,0 +1,1363 @@
+<html class="scroll-smooth" lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Zynthetix Testnet
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js">
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Signika&amp;family=Space+Grotesk&amp;display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <script src="https://code.iconify.design/2/2.2.1/iconify.min.js">
+  </script>
+  <style>
+   html, body {
+    font-family: 'Orbitron', 'Space Grotesk', 'Signika', sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+  }
+  /* Glassmorphism base */
+  .glass {
+    background: rgba(10, 10, 10, 0.4);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  /* Neon border */
+  .border-neon {
+    border-color: #00fff7 !important;
+    box-shadow: 0 0 8px #00fff7;
+  }
+  /* Neon text glow */
+  .text-neon {
+    color: #00fff7;
+    text-shadow:
+      0 0 5px #00fff7,
+      0 0 10px #00fff7,
+      0 0 20px #00fff7,
+      0 0 40px #00fff7;
+  }
+  /* Pulse shadow for buttons */
+  @keyframes pulseShadow {
+    0%, 100% {
+      box-shadow: 0 0 8px #00fff7, 0 0 20px #00fff7;
+    }
+    50% {
+      box-shadow: 0 0 12px #00fff7, 0 0 30px #00fff7;
+    }
+  }
+  .pulse-shadow {
+    animation: pulseShadow 2.5s infinite;
+  }
+  /* Scrollbar for dropdown */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #00fff7;
+    border-radius: 3px;
+  }
+  /* Toast animation */
+  @keyframes slideInRight {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slideOutRight {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  .toast-enter {
+    animation: slideInRight 0.4s forwards;
+  }
+  .toast-exit {
+    animation: slideOutRight 0.4s forwards;
+  }
+  /* Custom dropdown arrow */
+  .dropdown-arrow {
+    border: solid #00fff7;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+  }
+  /* Scrollbar for activity chart container */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #00fff7 transparent;
+  }
+  /* Hide default number input arrows */
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+  }
+  input[type=number] {
+    -moz-appearance:textfield;
+  }
+  </style>
+ </head>
+ <body class="relative min-h-screen flex flex-col bg-black overflow-x-hidden">
+  <!-- Sticky Navigation -->
+  <nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-md border-b border-neon flex items-center justify-between px-4 md:px-8 py-3 text-sm text-neon select-none" id="nav">
+   <a class="font-extrabold text-xl md:text-2xl tracking-widest hover:text-white transition-colors" href="#home">
+    Zynthetix
+   </a>
+   <ul class="hidden md:flex space-x-6 font-semibold">
+    <li>
+     <a class="hover:text-white transition-colors" href="#home">
+      Home
+     </a>
+    </li>
+    <li>
+     <a class="hover:text-white transition-colors" href="#tasks">
+      Tasks
+     </a>
+    </li>
+    <li>
+     <a class="hover:text-white transition-colors" href="#bridge">
+      Bridge
+     </a>
+    </li>
+    <li>
+     <a class="hover:text-white transition-colors" href="#faucet">
+      Faucet
+     </a>
+    </li>
+    <li>
+     <a class="hover:text-white transition-colors" href="#swap">
+      Swap
+     </a>
+    </li>
+    <li>
+     <a class="hover:text-white transition-colors" href="#profile">
+      Profile
+     </a>
+    </li>
+   </ul>
+   <!-- Mobile menu toggle -->
+   <div aria-label="Toggle menu" class="md:hidden cursor-pointer p-2 rounded-md hover:bg-cyan-900/30 transition-colors" id="mobile-menu-toggle" tabindex="0">
+    <span class="block w-6 h-0.5 bg-neon mb-1">
+    </span>
+    <span class="block w-6 h-0.5 bg-neon mb-1">
+    </span>
+    <span class="block w-6 h-0.5 bg-neon">
+    </span>
+   </div>
+   <!-- Mobile menu -->
+   <ul class="absolute top-full right-4 mt-1 w-40 bg-black/80 backdrop-blur-md border border-neon rounded-md py-2 text-sm font-semibold text-neon hidden flex-col space-y-2 z-50" id="mobile-menu">
+    <li>
+     <a class="block px-4 py-1 hover:bg-cyan-900/40 rounded transition-colors" href="#home">
+      Home
+     </a>
+    </li>
+    <li>
+     <a class="block px-4 py-1 hover:bg-cyan-900/40 rounded transition-colors" href="#tasks">
+      Tasks
+     </a>
+    </li>
+    <li>
+     <a class="block px-4 py-1 hover:bg-cyan-900/40 rounded transition-colors" href="#bridge">
+      Bridge
+     </a>
+    </li>
+    <li>
+     <a class="block px-4 py-1 hover:bg-cyan-900/40 rounded transition-colors" href="#faucet">
+      Faucet
+     </a>
+    </li>
+    <li>
+     <a class="block px-4 py-1 hover:bg-cyan-900/40 rounded transition-colors" href="#swap">
+      Swap
+     </a>
+    </li>
+    <li>
+     <a class="block px-4 py-1 hover:bg-cyan-900/40 rounded transition-colors" href="#profile">
+      Profile
+     </a>
+    </li>
+   </ul>
+  </nav>
+  <!-- Three.js Canvas Background -->
+  <canvas class="fixed top-0 left-0 w-full h-full -z-10" id="bg-canvas">
+  </canvas>
+  <!-- Floating ZYN Balance Bubble -->
+  <div aria-label="ZYN Balance" class="fixed bottom-20 right-6 md:right-12 bg-cyan-900/70 border border-neon rounded-full px-5 py-2 flex items-center space-x-2 text-xs md:text-sm font-semibold text-neon shadow-lg pulse-shadow cursor-default select-none z-50" id="zyn-balance-bubble">
+   <span class="iconify" data-icon="mdi:currency-usd" data-inline="false" style="color:#00fff7; font-size:1.2rem;">
+   </span>
+   <span id="balance-display">
+    ZYN: 0.0
+   </span>
+  </div>
+  <!-- Main Content Wrapper -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-20">
+   <!-- Home Section -->
+   <section class="min-h-[80vh] flex flex-col justify-center items-center text-center px-4 md:px-0" id="home">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-neon mb-6 select-text" style="text-shadow: 0 0 10px #00fff7, 0 0 20px #00fff7, 0 0 30px #00fff7;">
+     Zynthetix
+    </h1>
+    <p class="text-sm md:text-base max-w-xl mb-8 text-cyan-300">
+     The Future of zk-Synthetic Testnets. Connect your wallet and explore the next-gen Web3 experience.
+    </p>
+    <button class="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-black font-semibold rounded-full px-6 py-3 shadow-lg pulse-shadow transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400" id="connect-wallet-btn">
+     <span class="iconify" data-icon="mdi:wallet" data-inline="false" style="color:#000; font-size:1.3rem;">
+     </span>
+     <span>
+      Connect Wallet
+     </span>
+    </button>
+    <div class="mt-12 flex flex-wrap justify-center gap-6 text-xs md:text-sm font-semibold text-neon" id="home-cta">
+     <a class="glass border border-neon rounded-lg px-5 py-3 hover:bg-cyan-900/40 transition-colors flex items-center space-x-2 shadow-md pulse-shadow" href="#tasks">
+      <span class="iconify" data-icon="mdi:clipboard-text" data-inline="false" style="font-size:1.2rem;">
+      </span>
+      <span>
+       Tasks
+      </span>
+     </a>
+     <a class="glass border border-neon rounded-lg px-5 py-3 hover:bg-cyan-900/40 transition-colors flex items-center space-x-2 shadow-md pulse-shadow" href="#bridge">
+      <span class="iconify" data-icon="mdi:swap-horizontal" data-inline="false" style="font-size:1.2rem;">
+      </span>
+      <span>
+       Bridge
+      </span>
+     </a>
+     <a class="glass border border-neon rounded-lg px-5 py-3 hover:bg-cyan-900/40 transition-colors flex items-center space-x-2 shadow-md pulse-shadow" href="#faucet">
+      <span class="iconify" data-icon="mdi:faucet" data-inline="false" style="font-size:1.2rem;">
+      </span>
+      <span>
+       Faucet
+      </span>
+     </a>
+     <a class="glass border border-neon rounded-lg px-5 py-3 hover:bg-cyan-900/40 transition-colors flex items-center space-x-2 shadow-md pulse-shadow" href="#swap">
+      <span class="iconify" data-icon="mdi:swap-vertical" data-inline="false" style="font-size:1.2rem;">
+      </span>
+      <span>
+       Swap
+      </span>
+     </a>
+    </div>
+   </section>
+   <!-- Faucet Section -->
+   <section class="max-w-3xl mx-auto glass border border-neon rounded-xl p-6 space-y-6 text-sm md:text-base" id="faucet">
+    <h2 class="text-neon font-bold text-xl mb-4 select-text flex items-center space-x-2">
+     <span class="iconify" data-icon="mdi:faucet" data-inline="false" style="font-size:1.5rem;">
+     </span>
+     <span>
+      Faucet
+     </span>
+    </h2>
+    <div class="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
+     <div class="flex-1">
+      <label class="block mb-1 text-cyan-300" for="faucet-address">
+       Your Unique Address
+      </label>
+      <input aria-label="User unique wallet address" class="w-full bg-black/30 border border-neon rounded-md px-3 py-2 text-xs md:text-sm text-neon select-all" id="faucet-address" readonly="" type="text"/>
+     </div>
+     <div class="flex-1 relative">
+      <label class="block mb-1 text-cyan-300" for="token-select">
+       Select Token
+      </label>
+      <div class="relative cursor-pointer select-none" id="token-dropdown">
+       <button aria-expanded="false" aria-haspopup="listbox" class="w-full bg-black/30 border border-neon rounded-md px-3 py-2 flex justify-between items-center text-neon text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400" id="token-dropdown-btn">
+        <span id="token-selected">
+         ZYN
+        </span>
+        <span class="dropdown-arrow ml-2">
+        </span>
+       </button>
+       <ul class="absolute z-40 mt-1 w-full max-h-40 overflow-y-auto glass border border-neon rounded-md shadow-lg hidden scrollbar-thin" id="token-dropdown-list" role="listbox" tabindex="-1">
+        <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="ZYN" role="option" tabindex="0">
+         ZYN
+        </li>
+        <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="ETH" role="option" tabindex="0">
+         ETH
+        </li>
+        <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="SOL" role="option" tabindex="0">
+         SOL
+        </li>
+        <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="SUI" role="option" tabindex="0">
+         SUI
+        </li>
+       </ul>
+      </div>
+     </div>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
+     <div class="flex-1">
+      <label class="block mb-1 text-cyan-300">
+       Balance
+      </label>
+      <div class="glass border border-neon rounded-md px-4 py-3 text-neon font-mono text-sm md:text-base select-text transition-all duration-700 ease-in-out" id="faucet-balance">
+       0.0
+      </div>
+     </div>
+     <button class="flex items-center space-x-2 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-black font-semibold rounded-full px-6 py-3 shadow-lg pulse-shadow transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400" id="claim-faucet-btn">
+      <span class="iconify" data-icon="mdi:hand-water" data-inline="false" style="color:#000; font-size:1.3rem;">
+      </span>
+      <span>
+       Claim Faucet
+      </span>
+     </button>
+    </div>
+    <div class="text-xs md:text-sm text-cyan-400 font-mono select-text break-all min-h-[1.5rem]" id="faucet-tx">
+    </div>
+   </section>
+   <!-- Swap Section -->
+   <section class="max-w-3xl mx-auto glass border border-neon rounded-xl p-6 space-y-6 text-sm md:text-base" id="swap">
+    <h2 class="text-neon font-bold text-xl mb-4 select-text flex items-center space-x-2">
+     <span class="iconify" data-icon="mdi:swap-horizontal" data-inline="false" style="font-size:1.5rem;">
+     </span>
+     <span>
+      Swap
+     </span>
+    </h2>
+    <form class="space-y-6" id="swap-form">
+     <div class="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
+      <div class="flex-1 relative">
+       <label class="block mb-1 text-cyan-300" for="swap-from">
+        From
+       </label>
+       <div class="relative cursor-pointer select-none" id="swap-from-dropdown">
+        <button aria-expanded="false" aria-haspopup="listbox" class="w-full bg-black/30 border border-neon rounded-md px-3 py-2 flex justify-between items-center text-neon text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400" id="swap-from-btn">
+         <span id="swap-from-selected">
+          ZYN
+         </span>
+         <span class="dropdown-arrow ml-2">
+         </span>
+        </button>
+        <ul class="absolute z-40 mt-1 w-full max-h-40 overflow-y-auto glass border border-neon rounded-md shadow-lg hidden scrollbar-thin" id="swap-from-list" role="listbox" tabindex="-1">
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="ZYN" role="option" tabindex="0">
+          ZYN
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="ETH" role="option" tabindex="0">
+          ETH
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="SOL" role="option" tabindex="0">
+          SOL
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="SUI" role="option" tabindex="0">
+          SUI
+         </li>
+        </ul>
+       </div>
+      </div>
+      <div class="flex-1 relative">
+       <label class="block mb-1 text-cyan-300" for="swap-to">
+        To
+       </label>
+       <div class="relative cursor-pointer select-none" id="swap-to-dropdown">
+        <button aria-expanded="false" aria-haspopup="listbox" class="w-full bg-black/30 border border-neon rounded-md px-3 py-2 flex justify-between items-center text-neon text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400" id="swap-to-btn">
+         <span id="swap-to-selected">
+          ETH
+         </span>
+         <span class="dropdown-arrow ml-2">
+         </span>
+        </button>
+        <ul class="absolute z-40 mt-1 w-full max-h-40 overflow-y-auto glass border border-neon rounded-md shadow-lg hidden scrollbar-thin" id="swap-to-list" role="listbox" tabindex="-1">
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="ZYN" role="option" tabindex="0">
+          ZYN
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="ETH" role="option" tabindex="0">
+          ETH
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="SOL" role="option" tabindex="0">
+          SOL
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-token="SUI" role="option" tabindex="0">
+          SUI
+         </li>
+        </ul>
+       </div>
+      </div>
+     </div>
+     <div>
+      <label class="block mb-1 text-cyan-300" for="swap-amount">
+       Amount
+      </label>
+      <input aria-label="Swap amount slider" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="w-full cursor-pointer" id="swap-amount" max="100" min="0" step="0.1" type="range" value="0"/>
+      <div class="text-neon text-xs mt-1" id="swap-amount-display">
+       0.0
+      </div>
+     </div>
+     <div>
+      <label class="block mb-1 text-cyan-300" for="slippage">
+       Slippage Tolerance (%)
+      </label>
+      <input aria-label="Slippage tolerance input" class="w-24 bg-black/30 border border-neon rounded-md px-3 py-1 text-neon text-xs md:text-sm" id="slippage" max="50" min="0" step="0.1" type="number" value="0.5"/>
+     </div>
+     <button class="flex items-center space-x-2 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-black font-semibold rounded-full px-6 py-3 shadow-lg pulse-shadow transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400" id="swap-confirm-btn" type="button">
+      <span class="iconify" data-icon="mdi:check-circle-outline" data-inline="false" style="color:#000; font-size:1.3rem;">
+      </span>
+      <span>
+       Confirm Swap
+      </span>
+     </button>
+    </form>
+   </section>
+   <!-- Swap Confirm Modal -->
+   <div aria-describedby="swap-modal-desc" aria-labelledby="swap-modal-title" aria-modal="true" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-60 hidden" id="swap-modal" role="dialog">
+    <div class="glass border border-neon rounded-xl max-w-md w-full p-6 space-y-6 text-neon text-sm md:text-base relative animate-fadeIn">
+     <h3 class="text-xl font-bold text-center" id="swap-modal-title">
+      Confirm Swap
+     </h3>
+     <p class="text-center" id="swap-modal-desc">
+     </p>
+     <div class="flex justify-center space-x-6">
+      <button class="bg-red-600 hover:bg-red-700 rounded-full px-6 py-2 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-500" id="swap-modal-cancel">
+       Cancel
+      </button>
+      <button class="bg-cyan-500 hover:bg-cyan-600 rounded-full px-6 py-2 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400" id="swap-modal-confirm">
+       Confirm
+      </button>
+     </div>
+    </div>
+   </div>
+   <!-- Bridge Section -->
+   <section class="max-w-3xl mx-auto glass border border-neon rounded-xl p-6 space-y-6 text-sm md:text-base" id="bridge">
+    <h2 class="text-neon font-bold text-xl mb-4 select-text flex items-center space-x-2">
+     <span class="iconify" data-icon="mdi:bridge" data-inline="false" style="font-size:1.5rem;">
+     </span>
+     <span>
+      Bridge
+     </span>
+    </h2>
+    <form class="space-y-6" id="bridge-form">
+     <div class="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
+      <div class="flex-1 relative">
+       <label class="block mb-1 text-cyan-300" for="bridge-source">
+        Source Chain
+       </label>
+       <div class="relative cursor-pointer select-none" id="bridge-source-dropdown">
+        <button aria-expanded="false" aria-haspopup="listbox" class="w-full bg-black/30 border border-neon rounded-md px-3 py-2 flex justify-between items-center text-neon text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400" id="bridge-source-btn">
+         <span id="bridge-source-selected">
+          Ethereum
+         </span>
+         <span class="dropdown-arrow ml-2">
+         </span>
+        </button>
+        <ul class="absolute z-40 mt-1 w-full max-h-40 overflow-y-auto glass border border-neon rounded-md shadow-lg hidden scrollbar-thin" id="bridge-source-list" role="listbox" tabindex="-1">
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-chain="Ethereum" role="option" tabindex="0">
+          Ethereum
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-chain="Solana" role="option" tabindex="0">
+          Solana
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-chain="Sui" role="option" tabindex="0">
+          Sui
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-chain="Polygon" role="option" tabindex="0">
+          Polygon
+         </li>
+        </ul>
+       </div>
+      </div>
+      <div class="flex-1 relative">
+       <label class="block mb-1 text-cyan-300" for="bridge-destination">
+        Destination Chain
+       </label>
+       <div class="relative cursor-pointer select-none" id="bridge-destination-dropdown">
+        <button aria-expanded="false" aria-haspopup="listbox" class="w-full bg-black/30 border border-neon rounded-md px-3 py-2 flex justify-between items-center text-neon text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400" id="bridge-destination-btn">
+         <span id="bridge-destination-selected">
+          Solana
+         </span>
+         <span class="dropdown-arrow ml-2">
+         </span>
+        </button>
+        <ul class="absolute z-40 mt-1 w-full max-h-40 overflow-y-auto glass border border-neon rounded-md shadow-lg hidden scrollbar-thin" id="bridge-destination-list" role="listbox" tabindex="-1">
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-chain="Ethereum" role="option" tabindex="0">
+          Ethereum
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-chain="Solana" role="option" tabindex="0">
+          Solana
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-chain="Sui" role="option" tabindex="0">
+          Sui
+         </li>
+         <li class="px-3 py-2 hover:bg-cyan-900/60 cursor-pointer text-neon text-xs md:text-sm" data-chain="Polygon" role="option" tabindex="0">
+          Polygon
+         </li>
+        </ul>
+       </div>
+      </div>
+     </div>
+     <button class="flex items-center space-x-2 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-blue-500 hover:to-cyan-400 text-black font-semibold rounded-full px-6 py-3 shadow-lg pulse-shadow transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400" id="bridge-start-btn" type="button">
+      <span class="iconify" data-icon="mdi:rocket-launch" data-inline="false" style="color:#000; font-size:1.3rem;">
+      </span>
+      <span>
+       Start Bridge
+      </span>
+     </button>
+    </form>
+    <div class="relative w-full h-48 mt-6 rounded-lg overflow-hidden border border-neon glass hidden" id="bridge-animation-container">
+     <canvas class="w-full h-full" id="bridge-canvas">
+     </canvas>
+     <div class="absolute inset-0 flex flex-col justify-center items-center bg-black/70 text-neon text-sm font-semibold select-none" id="bridge-loader">
+      <span class="iconify animate-spin" data-icon="mdi:loading" data-inline="false" style="font-size:2rem;">
+      </span>
+      <span class="mt-2">
+       Bridging transaction...
+      </span>
+     </div>
+    </div>
+    <div class="text-xs md:text-sm text-cyan-400 font-mono select-text break-all min-h-[1.5rem] mt-2" id="bridge-tx">
+    </div>
+   </section>
+   <!-- Tasks Section -->
+   <section class="max-w-4xl mx-auto glass border border-neon rounded-xl p-6 space-y-6 text-sm md:text-base" id="tasks">
+    <h2 class="text-neon font-bold text-xl mb-4 select-text flex items-center space-x-2">
+     <span class="iconify" data-icon="mdi:clipboard-check-multiple-outline" data-inline="false" style="font-size:1.5rem;">
+     </span>
+     <span>
+      Tasks
+     </span>
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="tasks-board">
+     <div aria-pressed="false" class="task-item glass border border-neon rounded-lg p-4 flex items-center space-x-4 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-cyan-400" data-task="daily-login" role="button" tabindex="0">
+      <span class="iconify text-neon text-3xl" data-icon="mdi:calendar-today" data-inline="false">
+      </span>
+      <div>
+       <h3 class="font-semibold text-neon text-sm md:text-base">
+        Daily Login
+       </h3>
+       <p class="text-cyan-400 text-xs md:text-sm">
+        Earn ZYN by logging in daily
+       </p>
+      </div>
+      <span aria-label="Incomplete" class="ml-auto iconify task-status text-cyan-400 text-xl" data-icon="mdi:checkbox-blank-outline" data-inline="false">
+      </span>
+     </div>
+     <div aria-pressed="false" class="task-item glass border border-neon rounded-lg p-4 flex items-center space-x-4 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-cyan-400" data-task="follow-twitter" role="button" tabindex="0">
+      <span class="iconify text-neon text-3xl" data-icon="mdi:twitter" data-inline="false">
+      </span>
+      <div>
+       <h3 class="font-semibold text-neon text-sm md:text-base">
+        Follow on Twitter
+       </h3>
+       <p class="text-cyan-400 text-xs md:text-sm">
+        Follow @Zynthetix on Twitter
+       </p>
+      </div>
+      <span aria-label="Incomplete" class="ml-auto iconify task-status text-cyan-400 text-xl" data-icon="mdi:checkbox-blank-outline" data-inline="false">
+      </span>
+     </div>
+     <div aria-pressed="false" class="task-item glass border border-neon rounded-lg p-4 flex items-center space-x-4 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-cyan-400" data-task="join-discord" role="button" tabindex="0">
+      <span class="iconify text-neon text-3xl" data-icon="mdi:discord" data-inline="false">
+      </span>
+      <div>
+       <h3 class="font-semibold text-neon text-sm md:text-base">
+        Join Discord
+       </h3>
+       <p class="text-cyan-400 text-xs md:text-sm">
+        Join the Zynthetix Discord community
+       </p>
+      </div>
+      <span aria-label="Incomplete" class="ml-auto iconify task-status text-cyan-400 text-xl" data-icon="mdi:checkbox-blank-outline" data-inline="false">
+      </span>
+     </div>
+     <div aria-pressed="false" class="task-item glass border border-neon rounded-lg p-4 flex items-center space-x-4 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-cyan-400" data-task="connect-wallet" role="button" tabindex="0">
+      <span class="iconify text-neon text-3xl" data-icon="mdi:wallet" data-inline="false">
+      </span>
+      <div>
+       <h3 class="font-semibold text-neon text-sm md:text-base">
+        Connect Wallet
+       </h3>
+       <p class="text-cyan-400 text-xs md:text-sm">
+        Connect your wallet to Zynthetix
+       </p>
+      </div>
+      <span aria-label="Incomplete" class="ml-auto iconify task-status text-cyan-400 text-xl" data-icon="mdi:checkbox-blank-outline" data-inline="false">
+      </span>
+     </div>
+     <div aria-pressed="false" class="task-item glass border border-neon rounded-lg p-4 flex items-center space-x-4 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-cyan-400" data-task="share-referral" role="button" tabindex="0">
+      <span class="iconify text-neon text-3xl" data-icon="mdi:share-variant" data-inline="false">
+      </span>
+      <div>
+       <h3 class="font-semibold text-neon text-sm md:text-base">
+        Share Referral Link
+       </h3>
+       <p class="text-cyan-400 text-xs md:text-sm">
+        Invite friends and earn rewards
+       </p>
+      </div>
+      <span aria-label="Incomplete" class="ml-auto iconify task-status text-cyan-400 text-xl" data-icon="mdi:checkbox-blank-outline" data-inline="false">
+      </span>
+     </div>
+    </div>
+   </section>
+   <!-- Profile Section -->
+   <section class="max-w-3xl mx-auto glass border border-neon rounded-xl p-6 space-y-6 text-sm md:text-base" id="profile">
+    <h2 class="text-neon font-bold text-xl mb-4 select-text flex items-center space-x-2">
+     <span class="iconify" data-icon="mdi:account-circle" data-inline="false" style="font-size:1.5rem;">
+     </span>
+     <span>
+      Profile
+     </span>
+    </h2>
+    <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0 items-center">
+     <img alt="User avatar placeholder with ZYN logo on futuristic blue background" class="w-24 h-24 rounded-full border border-neon shadow-lg" height="96" id="profile-avatar" src="https://storage.googleapis.com/a1aa/image/18d3083d-7f65-4494-fa61-e412830f6060.jpg" width="96"/>
+     <div class="flex-1 space-y-3 w-full max-w-md">
+      <div>
+       <label class="block mb-1 text-cyan-300" for="profile-address">
+        Wallet Address
+       </label>
+       <input aria-label="User wallet address" class="w-full bg-black/30 border border-neon rounded-md px-3 py-2 text-xs md:text-sm text-neon select-all" id="profile-address" readonly="" type="text"/>
+      </div>
+      <div>
+       <label class="block mb-1 text-cyan-300" for="profile-username">
+        Username
+       </label>
+       <input aria-label="Edit username" class="w-full bg-black/30 border border-neon rounded-md px-3 py-2 text-xs md:text-sm text-neon placeholder-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400" id="profile-username" maxlength="20" minlength="3" placeholder="Enter username (min 3 chars)" type="text"/>
+       <p class="text-red-600 text-xs mt-1 hidden" id="username-error">
+        Username must be at least 3 characters
+       </p>
+      </div>
+      <div>
+       <label class="block mb-1 text-cyan-300">
+        XP Level
+       </label>
+       <div class="w-full bg-black/30 border border-neon rounded-full h-6 relative overflow-hidden">
+        <div class="bg-cyan-400 h-full rounded-full transition-all duration-700 ease-in-out" id="xp-bar" style="width: 0%;">
+        </div>
+        <span class="absolute inset-0 flex justify-center items-center text-xs font-semibold text-black select-none" id="xp-level-text">
+         Level 0
+        </span>
+       </div>
+      </div>
+      <div class="flex space-x-6 text-xs md:text-sm text-cyan-400 select-text">
+       <div>
+        <span class="font-semibold text-neon" id="login-streak">
+         0
+        </span>
+        <br/>
+        Login Streak
+       </div>
+       <div class="flex-1">
+        <span class="font-semibold text-neon">
+         Activity Chart
+        </span>
+        <div class="mt-1 h-16 w-full bg-black/20 rounded-md border border-neon overflow-x-auto scrollbar-thin flex space-x-1 px-1 py-2" id="activity-chart">
+         <!-- Activity bars inserted by JS -->
+        </div>
+       </div>
+      </div>
+      <button class="mt-4 bg-red-700 hover:bg-red-800 rounded-full px-5 py-2 font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-red-500" id="reset-profile-btn">
+       Reset Profile
+      </button>
+     </div>
+    </div>
+   </section>
+  </main>
+  <!-- Footer -->
+  <footer class="bg-black/40 backdrop-blur-md border-t border-neon py-6 text-center text-xs md:text-sm text-cyan-400 select-none flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-6">
+   <div class="flex space-x-6 justify-center">
+    <a aria-label="Discord" class="hover:text-white transition-colors" href="https://discord.com" rel="noopener" target="_blank">
+     <span class="iconify" data-icon="mdi:discord" data-inline="false" style="font-size:1.4rem;">
+     </span>
+    </a>
+    <a aria-label="Telegram" class="hover:text-white transition-colors" href="https://telegram.org" rel="noopener" target="_blank">
+     <span class="iconify" data-icon="mdi:telegram" data-inline="false" style="font-size:1.4rem;">
+     </span>
+    </a>
+    <a aria-label="Twitter" class="hover:text-white transition-colors" href="https://twitter.com" rel="noopener" target="_blank">
+     <span class="iconify" data-icon="mdi:twitter" data-inline="false" style="font-size:1.4rem;">
+     </span>
+    </a>
+    <a aria-label="YouTube" class="hover:text-white transition-colors" href="https://youtube.com" rel="noopener" target="_blank">
+     <span class="iconify" data-icon="mdi:youtube" data-inline="false" style="font-size:1.4rem;">
+     </span>
+    </a>
+   </div>
+   <div>
+    Built on Testnet for Future Chains ©
+    <span id="footer-year">
+    </span>
+   </div>
+  </footer>
+  <!-- Toast Container -->
+  <div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-60 max-w-xs" id="toast-container">
+  </div>
+  <script>
+   // Utility functions
+  function randomHex(len) {
+    let result = '';
+    const chars = '0123456789ABCDEF';
+    for(let i=0; i<len; i++) {
+      result += chars[Math.floor(Math.random()*chars.length)];
+    }
+    return result;
+  }
+  function generateAddress() {
+    return '0xZYN' + randomHex(5);
+  }
+  function generateTxHash() {
+    return '0x' + randomHex(64);
+  }
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Toast system
+  const toastContainer = document.getElementById('toast-container');
+  function showToast(message, duration=3500) {
+    const toast = document.createElement('div');
+    toast.className = 'glass border border-neon rounded-lg px-4 py-2 text-xs md:text-sm text-neon shadow-lg toast-enter';
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.remove('toast-enter');
+      toast.classList.add('toast-exit');
+      toast.addEventListener('animationend', () => toast.remove());
+    }, duration);
+  }
+
+  // LocalStorage keys
+  const STORAGE_KEY = 'zynthetix_data';
+
+  // Default user data structure
+  const defaultUserData = {
+    address: '',
+    username: '',
+    balances: { ZYN: 0, ETH: 0, SOL: 0, SUI: 0 },
+    tasks: {
+      'daily-login': false,
+      'follow-twitter': false,
+      'join-discord': false,
+      'connect-wallet': false,
+      'share-referral': false
+    },
+    xp: 0,
+    loginStreak: 0,
+    lastLoginDate: null,
+    referralCode: '',
+    referrals: [],
+  };
+
+  // Load or initialize user data
+  function loadUserData() {
+    let data = localStorage.getItem(STORAGE_KEY);
+    if (!data) {
+      // New user, generate address and referral code
+      const address = generateAddress();
+      const referralCode = randomHex(6);
+      const newData = {...defaultUserData, address, referralCode};
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+      return newData;
+    }
+    try {
+      return JSON.parse(data);
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
+      return loadUserData();
+    }
+  }
+  function saveUserData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  // Referral rewards
+  function applyReferralRewards(newUserData, refCode) {
+    if (!refCode) return;
+    // Load all users from localStorage (simulate leaderboard)
+    // For demo, only current user data exists, so just simulate referrer reward
+    if (refCode === newUserData.referralCode) return; // can't refer self
+    // For demo, just add 0.5 ZYN to referrer and 0.3 ZYN to new user
+    newUserData.balances.ZYN += 0.3;
+    showToast('Referral bonus: +0.3 ZYN to you');
+  }
+
+  // Update balance display bubble
+  function updateBalanceBubble(balances) {
+    const balEl = document.getElementById('balance-display');
+    balEl.textContent = `ZYN: ${balances.ZYN.toFixed(3)}`;
+  }
+
+  // Update faucet balance box
+  function updateFaucetBalance(balances, token) {
+    const balBox = document.getElementById('faucet-balance');
+    balBox.textContent = balances[token].toFixed(3);
+  }
+
+  // Update faucet address input
+  function updateFaucetAddress(address) {
+    const addrInput = document.getElementById('faucet-address');
+    addrInput.value = address;
+  }
+
+  // Update profile address input
+  function updateProfileAddress(address) {
+    const addrInput = document.getElementById('profile-address');
+    addrInput.value = address;
+  }
+
+  // Update username input
+  function updateUsernameInput(username) {
+    const input = document.getElementById('profile-username');
+    input.value = username;
+  }
+
+  // Update XP bar and level text
+  function updateXPBar(xp) {
+    const xpBar = document.getElementById('xp-bar');
+    const xpLevelText = document.getElementById('xp-level-text');
+    // Level calculation: every 100 XP = 1 level
+    const level = Math.floor(xp / 100);
+    const progress = (xp % 100);
+    xpBar.style.width = progress + '%';
+    xpLevelText.textContent = `Level ${level}`;
+  }
+
+  // Update login streak display
+  function updateLoginStreak(streak) {
+    const streakEl = document.getElementById('login-streak');
+    streakEl.textContent = streak;
+  }
+
+  // Update activity chart
+  function updateActivityChart(activityData) {
+    const chart = document.getElementById('activity-chart');
+    chart.innerHTML = '';
+    // activityData is array of last 14 days boolean (true=active)
+    for(let i=0; i<14; i++) {
+      const active = activityData[i] || false;
+      const bar = document.createElement('div');
+      bar.className = 'rounded-sm';
+      bar.style.width = '6%';
+      bar.style.height = active ? '100%' : '30%';
+      bar.style.backgroundColor = active ? '#00fff7' : '#003f3f';
+      bar.title = `Day ${i+1}: ${active ? 'Active' : 'Inactive'}`;
+      chart.appendChild(bar);
+    }
+  }
+
+  // Update task status icons
+  function updateTaskStatus(tasks) {
+    const taskItems = document.querySelectorAll('.task-item');
+    taskItems.forEach(item => {
+      const task = item.getAttribute('data-task');
+      const statusIcon = item.querySelector('.task-status');
+      if (tasks[task]) {
+        statusIcon.dataset.icon = 'mdi:checkbox-marked-circle-outline';
+        statusIcon.setAttribute('aria-label', 'Complete');
+        statusIcon.classList.add('text-cyan-400');
+        statusIcon.classList.remove('text-cyan-800');
+      } else {
+        statusIcon.dataset.icon = 'mdi:checkbox-blank-outline';
+        statusIcon.setAttribute('aria-label', 'Incomplete');
+        statusIcon.classList.remove('text-cyan-400');
+        statusIcon.classList.add('text-cyan-800');
+      }
+    });
+  }
+
+  // Update floating avatar image (simulate with placeholder + username initials)
+  function updateAvatar(username) {
+    const avatar = document.getElementById('profile-avatar');
+    if (!username) {
+      avatar.src = 'https://placehold.co/96x96/png?text=ZYN';
+      avatar.alt = 'User avatar placeholder with ZYN logo on futuristic blue background';
+      return;
+    }
+    // Generate initials
+    const initials = username.trim().split(' ').map(w => w[0].toUpperCase()).join('').slice(0,2);
+    // Use placehold.co with initials text
+    avatar.src = `https://placehold.co/96x96/png?text=${encodeURIComponent(initials)}&font=Orbitron&bg=001f2f&fg=00fff7`;
+    avatar.alt = `User avatar with initials ${initials} on futuristic blue background`;
+  }
+
+  // Update faucet TX hash display
+  function updateFaucetTx(txHash) {
+    const txEl = document.getElementById('faucet-tx');
+    txEl.textContent = txHash ? `TX Hash: ${txHash}` : '';
+  }
+
+  // Update bridge TX hash display
+  function updateBridgeTx(txHash) {
+    const txEl = document.getElementById('bridge-tx');
+    txEl.textContent = txHash ? `TX Hash: ${txHash}` : '';
+  }
+
+  // Dropdown toggle helper
+  function setupDropdown(buttonId, listId, onSelect) {
+    const btn = document.getElementById(buttonId);
+    const list = document.getElementById(listId);
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      closeAllDropdowns();
+      if (!expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        list.classList.remove('hidden');
+      }
+    });
+    list.querySelectorAll('li').forEach(li => {
+      li.addEventListener('click', e => {
+        e.stopPropagation();
+        const val = li.dataset.token || li.dataset.chain;
+        onSelect(val);
+        btn.setAttribute('aria-expanded', 'false');
+        list.classList.add('hidden');
+      });
+      li.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          li.click();
+        }
+      });
+    });
+  }
+  function closeAllDropdowns() {
+    document.querySelectorAll('[aria-haspopup="listbox"]').forEach(btn => {
+      btn.setAttribute('aria-expanded', 'false');
+    });
+    document.querySelectorAll('ul[role="listbox"]').forEach(list => {
+      list.classList.add('hidden');
+    });
+  }
+  document.addEventListener('click', closeAllDropdowns);
+
+  // Mobile menu toggle
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  mobileToggle.addEventListener('click', () => {
+    if (mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.remove('hidden');
+    } else {
+      mobileMenu.classList.add('hidden');
+    }
+  });
+  // Close mobile menu on link click
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+    });
+  });
+
+  // Main app logic
+  (function(){
+    let userData = loadUserData();
+
+    // Referral system: check URL for invite code
+    const url = new URL(window.location.href);
+    const pathParts = url.pathname.split('/');
+    if (pathParts.length >= 4 && pathParts[2] === 'invite') {
+      const inviteCode = pathParts[3];
+      if (inviteCode && inviteCode !== userData.referralCode) {
+        // Apply referral rewards
+        userData.balances.ZYN += 0.3; // new user bonus
+        // For demo, no referrer data stored, just show toast
+        showToast('Referral bonus: +0.3 ZYN for you');
+        saveUserData(userData);
+      }
+    }
+
+    // Initialize UI with user data
+    updateFaucetAddress(userData.address);
+    updateProfileAddress(userData.address);
+    updateUsernameInput(userData.username);
+    updateBalanceBubble(userData.balances);
+    updateFaucetBalance(userData.balances, 'ZYN');
+    updateXPBar(userData.xp);
+    updateLoginStreak(userData.loginStreak);
+    updateTaskStatus(userData.tasks);
+    updateAvatar(userData.username);
+
+    // Activity chart: simulate last 14 days activity from login streak
+    const activityData = [];
+    for(let i=0; i<14; i++) {
+      activityData.push(i < userData.loginStreak);
+    }
+    updateActivityChart(activityData);
+
+    // Connect wallet button
+    const connectBtn = document.getElementById('connect-wallet-btn');
+    connectBtn.addEventListener('click', () => {
+      if (!userData.address) {
+        userData.address = generateAddress();
+        saveUserData(userData);
+        updateFaucetAddress(userData.address);
+        updateProfileAddress(userData.address);
+        showToast('Wallet connected: ' + userData.address);
+      } else {
+        showToast('Wallet already connected: ' + userData.address);
+      }
+      // Mark connect-wallet task complete
+      if (!userData.tasks['connect-wallet']) {
+        userData.tasks['connect-wallet'] = true;
+        userData.xp += 20;
+        saveUserData(userData);
+        updateTaskStatus(userData.tasks);
+        updateXPBar(userData.xp);
+        updateBalanceBubble(userData.balances);
+        showToast('Task Complete: Connect Wallet (+20 XP)');
+      }
+    });
+
+    // Faucet dropdown
+    let selectedFaucetToken = 'ZYN';
+    setupDropdown('token-dropdown-btn', 'token-dropdown-list', (val) => {
+      selectedFaucetToken = val;
+      document.getElementById('token-selected').textContent = val;
+      updateFaucetBalance(userData.balances, val);
+    });
+
+    // Faucet claim button
+    const claimBtn = document.getElementById('claim-faucet-btn');
+    claimBtn.addEventListener('click', () => {
+      if (!userData.address) {
+        showToast('Please connect your wallet first');
+        return;
+      }
+      // Add 0.5 token to balance
+      userData.balances[selectedFaucetToken] = (userData.balances[selectedFaucetToken] || 0) + 0.5;
+      saveUserData(userData);
+      updateFaucetBalance(userData.balances, selectedFaucetToken);
+      updateBalanceBubble(userData.balances);
+      // Generate fake TX hash
+      const txHash = generateTxHash();
+      updateFaucetTx(txHash);
+      showToast(`Faucet Claimed: +0.5 ${selectedFaucetToken}`);
+    });
+
+    // Swap dropdowns
+    let swapFrom = 'ZYN';
+    let swapTo = 'ETH';
+    setupDropdown('swap-from-btn', 'swap-from-list', (val) => {
+      if (val === swapTo) {
+        // Swap tokens if same
+        [swapFrom, swapTo] = [swapTo, swapFrom];
+        document.getElementById('swap-from-selected').textContent = swapFrom;
+        document.getElementById('swap-to-selected').textContent = swapTo;
+      } else {
+        swapFrom = val;
+        document.getElementById('swap-from-selected').textContent = val;
+      }
+    });
+    setupDropdown('swap-to-btn', 'swap-to-list', (val) => {
+      if (val === swapFrom) {
+        [swapFrom, swapTo] = [swapTo, swapFrom];
+        document.getElementById('swap-from-selected').textContent = swapFrom;
+        document.getElementById('swap-to-selected').textContent = swapTo;
+      } else {
+        swapTo = val;
+        document.getElementById('swap-to-selected').textContent = val;
+      }
+    });
+
+    // Swap amount slider
+    const swapAmountInput = document.getElementById('swap-amount');
+    const swapAmountDisplay = document.getElementById('swap-amount-display');
+    swapAmountInput.addEventListener('input', () => {
+      swapAmountDisplay.textContent = parseFloat(swapAmountInput.value).toFixed(3);
+    });
+
+    // Swap confirm modal
+    const swapModal = document.getElementById('swap-modal');
+    const swapModalDesc = document.getElementById('swap-modal-desc');
+    const swapConfirmBtn = document.getElementById('swap-modal-confirm');
+    const swapCancelBtn = document.getElementById('swap-modal-cancel');
+    const swapConfirmTrigger = document.getElementById('swap-confirm-btn');
+
+    swapConfirmTrigger.addEventListener('click', () => {
+      const amount = parseFloat(swapAmountInput.value);
+      if (amount <= 0) {
+        showToast('Enter a valid amount to swap');
+        return;
+      }
+      if (swapFrom === swapTo) {
+        showToast('Select different tokens to swap');
+        return;
+      }
+      swapModalDesc.textContent = `Swap ${amount.toFixed(3)} ${swapFrom} → ${swapTo} with slippage tolerance ${document.getElementById('slippage').value}%?`;
+      swapModal.classList.remove('hidden');
+    });
+    swapCancelBtn.addEventListener('click', () => {
+      swapModal.classList.add('hidden');
+    });
+    swapConfirmBtn.addEventListener('click', () => {
+      swapModal.classList.add('hidden');
+      showToast(`Swap confirmed: ${swapAmountInput.value} ${swapFrom} → ${swapTo}`);
+    });
+
+    // Bridge dropdowns
+    let bridgeSource = 'Ethereum';
+    let bridgeDestination = 'Solana';
+    setupDropdown('bridge-source-btn', 'bridge-source-list', (val) => {
+      if (val === bridgeDestination) {
+        [bridgeSource, bridgeDestination] = [bridgeDestination, bridgeSource];
+        document.getElementById('bridge-source-selected').textContent = bridgeSource;
+        document.getElementById('bridge-destination-selected').textContent = bridgeDestination;
+      } else {
+        bridgeSource = val;
+        document.getElementById('bridge-source-selected').textContent = val;
+      }
+    });
+    setupDropdown('bridge-destination-btn', 'bridge-destination-list', (val) => {
+      if (val === bridgeSource) {
+        [bridgeSource, bridgeDestination] = [bridgeDestination, bridgeSource];
+        document.getElementById('bridge-source-selected').textContent = bridgeSource;
+        document.getElementById('bridge-destination-selected').textContent = bridgeDestination;
+      } else {
+        bridgeDestination = val;
+        document.getElementById('bridge-destination-selected').textContent = val;
+      }
+    });
+
+    // Bridge animation and simulation
+    const bridgeStartBtn = document.getElementById('bridge-start-btn');
+    const bridgeAnimContainer = document.getElementById('bridge-animation-container');
+    const bridgeCanvas = document.getElementById('bridge-canvas');
+    const bridgeLoader = document.getElementById('bridge-loader');
+    const bridgeTxEl = document.getElementById('bridge-tx');
+    let bridgeRenderer, bridgeScene, bridgeCamera, bridgeOrb;
+    let bridgeAnimating = false;
+
+    function initBridgeThree() {
+      bridgeRenderer = new THREE.WebGLRenderer({canvas: bridgeCanvas, alpha: true, antialias: true});
+      bridgeRenderer.setSize(bridgeCanvas.clientWidth, bridgeCanvas.clientHeight);
+      bridgeRenderer.setClearColor(0x000000, 0);
+      bridgeScene = new THREE.Scene();
+      bridgeCamera = new THREE.PerspectiveCamera(45, bridgeCanvas.clientWidth / bridgeCanvas.clientHeight, 0.1, 1000);
+      bridgeCamera.position.z = 5;
+
+      // Orb geometry and material
+      const geometry = new THREE.SphereGeometry(0.5, 32, 32);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0x00fff7,
+        emissive: 0x00fff7,
+        emissiveIntensity: 0.8,
+        metalness: 0.5,
+        roughness: 0.2,
+        transparent: true,
+        opacity: 0.9,
+      });
+      bridgeOrb = new THREE.Mesh(geometry, material);
+      bridgeScene.add(bridgeOrb);
+
+      // Light
+      const pointLight = new THREE.PointLight(0x00fff7, 1.5);
+      pointLight.position.set(5, 5, 5);
+      bridgeScene.add(pointLight);
+
+      const ambientLight = new THREE.AmbientLight(0x004040, 0.5);
+      bridgeScene.add(ambientLight);
+    }
+    function animateBridgeOrb() {
+      if (!bridgeAnimating) return;
+      bridgeOrb.position.x += 0.02;
+      if (bridgeOrb.position.x > 3) bridgeOrb.position.x = -3;
+      bridgeOrb.rotation.y += 0.05;
+      bridgeRenderer.render(bridgeScene, bridgeCamera);
+      requestAnimationFrame(animateBridgeOrb);
+    }
+
+    bridgeStartBtn.addEventListener('click', async () => {
+      if (bridgeAnimating) return;
+      bridgeAnimating = true;
+      bridgeAnimContainer.classList.remove('hidden');
+      bridgeTxEl.textContent = '';
+      if (!bridgeRenderer) initBridgeThree();
+      bridgeOrb.position.x = -3;
+      bridgeLoader.style.display = 'flex';
+      animateBridgeOrb();
+
+      // Simulate bridging delay
+      await sleep(4000);
+      bridgeLoader.style.display = 'none';
+      const txHash = generateTxHash();
+      updateBridgeTx(txHash);
+      showToast('Bridge transaction confirmed');
+      await sleep(3000);
+      bridgeAnimContainer.classList.add('hidden');
+      bridgeAnimating = false;
+    });
+
+    // Tasks interaction
+    const taskItems = document.querySelectorAll('.task-item');
+    taskItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const task = item.getAttribute('data-task');
+        if (!userData.tasks[task]) {
+          userData.tasks[task] = true;
+          userData.xp += 15;
+          if (task === 'daily-login') {
+            // Update login streak
+            const today = new Date().toDateString();
+            if (userData.lastLoginDate !== today) {
+              if (userData.lastLoginDate) {
+                const lastDate = new Date(userData.lastLoginDate);
+                const diff = (new Date(today) - lastDate) / (1000*60*60*24);
+                if (diff === 1) {
+                  userData.loginStreak++;
+                } else {
+                  userData.loginStreak = 1;
+                }
+              } else {
+                userData.loginStreak = 1;
+              }
+              userData.lastLoginDate = today;
+            }
+          }
+          if (task === 'share-referral') {
+            // For demo, just show toast
+            showToast('Referral link copied to clipboard');
+            navigator.clipboard.writeText(window.location.origin + '/testnet/invite/' + userData.referralCode);
+          }
+          saveUserData(userData);
+          updateTaskStatus(userData.tasks);
+          updateXPBar(userData.xp);
+          updateLoginStreak(userData.loginStreak);
+          updateBalanceBubble(userData.balances);
+          showToast(`Task Complete: ${item.querySelector('h3').textContent} (+15 XP)`);
+        }
+      });
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          item.click();
+        }
+      });
+    });
+
+    // Username edit
+    const usernameInput = document.getElementById('profile-username');
+    const usernameError = document.getElementById('username-error');
+    usernameInput.addEventListener('input', () => {
+      const val = usernameInput.value.trim();
+      if (val.length < 3 && val.length > 0) {
+        usernameError.classList.remove('hidden');
+      } else {
+        usernameError.classList.add('hidden');
+      }
+    });
+    usernameInput.addEventListener('change', () => {
+      const val = usernameInput.value.trim();
+      if (val.length >= 3) {
+        userData.username = val;
+        saveUserData(userData);
+        updateAvatar(val);
+        showToast('Username updated');
+      } else if (val.length === 0) {
+        userData.username = '';
+        saveUserData(userData);
+        updateAvatar('');
+      } else {
+        usernameInput.value = userData.username;
+      }
+    });
+
+    // Reset profile button
+    const resetBtn = document.getElementById('reset-profile-btn');
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset your profile? This will clear all data.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    });
+
+    // Footer year update
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  })();
+
+  // Three.js Background for Home Section
+  (function(){
+    const canvas = document.getElementById('bg-canvas');
+    const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 1);
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Glowing grid helper
+    const gridSize = 20;
+    const gridDivisions = 40;
+    const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x00fff7, 0x004040);
+    gridHelper.material.opacity = 0.15;
+    gridHelper.material.transparent = true;
+    scene.add(gridHelper);
+
+    // Floating ZYN logo (sphere with emissive material)
+    const geometry = new THREE.SphereGeometry(0.7, 32, 32);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x00fff7,
+      emissive: 0x00fff7,
+      emissiveIntensity: 1.2,
+      metalness: 0.6,
+      roughness: 0.1,
+      transparent: true,
+      opacity: 0.9,
+    });
+    const zynSphere = new THREE.Mesh(geometry, material);
+    scene.add(zynSphere);
+
+    // Particles
+    const particleCount = 150;
+    const particlesGeometry = new THREE.BufferGeometry();
+    const positions = [];
+    for(let i=0; i<particleCount; i++) {
+      positions.push((Math.random()-0.5)*gridSize*1.5);
+      positions.push((Math.random()-0.5)*gridSize*1.5);
+      positions.push((Math.random()-0.5)*gridSize*1.5);
+    }
+    particlesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    const particlesMaterial = new THREE.PointsMaterial({
+      color: 0x00fff7,
+      size: 0.05,
+      transparent: true,
+      opacity: 0.6,
+      sizeAttenuation: true,
+    });
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particles);
+
+    // Lights
+    const pointLight = new THREE.PointLight(0x00fff7, 1.5);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+    const ambientLight = new THREE.AmbientLight(0x004040, 0.5);
+    scene.add(ambientLight);
+
+    // Animate
+    let clock = new THREE.Clock();
+    function animate() {
+      const elapsed = clock.getElapsedTime();
+      zynSphere.position.y = Math.sin(elapsed * 1.5) * 0.3;
+      zynSphere.rotation.y += 0.01;
+      particles.rotation.y += 0.002;
+      gridHelper.material.opacity = 0.15 + Math.sin(elapsed*2)*0.05;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+  })();
+  </script>
+ </body>
+</html>
