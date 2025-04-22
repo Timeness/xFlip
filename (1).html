@@ -1,0 +1,1319 @@
+<html class="scroll-smooth" lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Testnet Ecosystem
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Signika&amp;display=swap" rel="stylesheet"/>
+  <script src="https://code.iconify.design/2/2.2.1/iconify.min.js">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   html, body {
+      font-family: 'Signika', sans-serif;
+      background: #0f111a;
+      color: #e0e7ff;
+      scroll-behavior: smooth;
+    }
+    /* Glassmorphism card */
+    .glass-card {
+      background: rgba(15, 17, 26, 0.6);
+      backdrop-filter: saturate(180%) blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
+      border-radius: 1rem;
+      transition: box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      box-shadow: 0 0 25px #00fff7, 0 0 40px #00fff7;
+    }
+    /* Neon outline */
+    .neon-outline {
+      border: 1.5px solid #00fff7;
+      box-shadow:
+        0 0 5px #00fff7,
+        0 0 10px #00fff7,
+        0 0 20px #00fff7,
+        0 0 40px #00fff7;
+      border-radius: 0.5rem;
+      transition: box-shadow 0.3s ease;
+    }
+    .neon-outline:hover {
+      box-shadow:
+        0 0 10px #00fff7,
+        0 0 20px #00fff7,
+        0 0 40px #00fff7,
+        0 0 80px #00fff7;
+    }
+    /* Animated gradient button */
+    .btn-gradient {
+      background: linear-gradient(270deg, #00fff7, #00aaff, #00fff7);
+      background-size: 600% 600%;
+      animation: gradientBG 8s ease infinite;
+      color: #0f111a;
+      font-weight: 600;
+      border-radius: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+    .btn-gradient:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00fff7;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    /* Scrollbar for leaderboard */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f111a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #00fff7;
+      border-radius: 10px;
+    }
+    /* Modal backdrop */
+    .modal-backdrop {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+    }
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #00fff7;
+      color: #0f111a;
+      padding: 1rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      box-shadow: 0 0 15px #00fff7;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 9999;
+    }
+    #toast.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* Calendar day */
+    .calendar-day {
+      width: 2.5rem;
+      height: 2.5rem;
+      line-height: 2.5rem;
+      text-align: center;
+      border-radius: 0.5rem;
+      cursor: default;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    .calendar-day.today {
+      background: #00fff7;
+      color: #0f111a;
+      font-weight: 700;
+      box-shadow: 0 0 10px #00fff7;
+    }
+    .calendar-day.streak {
+      background: #00aaff;
+      color: #e0e7ff;
+      font-weight: 600;
+      box-shadow: 0 0 8px #00aaff;
+    }
+    .calendar-day.missed {
+      color: #555a6e;
+    }
+    /* Loading spinner */
+    .spinner {
+      border: 3px solid rgba(0, 255, 247, 0.2);
+      border-top: 3px solid #00fff7;
+      border-radius: 50%;
+      width: 1.5rem;
+      height: 1.5rem;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    /* Neon input focus */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #00fff7;
+      box-shadow: 0 0 8px #00fff7;
+      background: rgba(0, 255, 247, 0.1);
+      color: #e0e7ff;
+    }
+    /* Scroll smooth for anchor links */
+    a:focus {
+      outline-offset: 3px;
+      outline: 2px solid #00fff7;
+      outline-radius: 0.5rem;
+    }
+  </style>
+ </head>
+ <body class="min-h-screen flex flex-col">
+  <!-- NAVIGATION -->
+  <nav class="sticky top-0 z-50 bg-[#0f111a]/90 backdrop-blur-md border-b border-cyan-600/30 shadow-lg">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+     <a class="flex items-center space-x-2 text-cyan-400 font-bold text-2xl tracking-wide select-none" href="#home">
+      <span class="iconify" data-icon="mdi:network" data-inline="false" style="font-size: 1.8rem;">
+      </span>
+      <span>
+       Testnet Ecosystem
+      </span>
+     </a>
+     <div class="hidden md:flex space-x-6 font-semibold text-cyan-300">
+      <a class="nav-link hover:text-cyan-400 transition" href="#home">
+       Home
+      </a>
+      <a class="nav-link hover:text-cyan-400 transition" href="#swap">
+       Swap
+      </a>
+      <a class="nav-link hover:text-cyan-400 transition" href="#bridge">
+       Bridge
+      </a>
+      <a class="nav-link hover:text-cyan-400 transition" href="#tasks">
+       Tasks
+      </a>
+      <a class="nav-link hover:text-cyan-400 transition" href="#earn">
+       Earn
+      </a>
+      <a class="nav-link hover:text-cyan-400 transition" href="#wallet">
+       Wallet
+      </a>
+      <a class="nav-link hover:text-cyan-400 transition" href="#faucet">
+       Faucet
+      </a>
+      <a class="nav-link hover:text-cyan-400 transition" href="#analytics">
+       Analytics
+      </a>
+      <a class="nav-link hover:text-cyan-400 transition" href="#profile">
+       Profile
+      </a>
+     </div>
+     <button aria-label="Toggle menu" class="md:hidden text-cyan-400 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded" id="mobile-menu-button">
+      <span class="iconify" data-icon="mdi:menu" data-inline="false" style="font-size: 1.8rem;">
+      </span>
+     </button>
+    </div>
+   </div>
+   <div class="md:hidden bg-[#0f111a]/95 backdrop-blur-md border-t border-cyan-600/30 hidden" id="mobile-menu">
+    <div class="flex flex-col space-y-2 px-4 py-3 font-semibold text-cyan-300">
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#home">
+      Home
+     </a>
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#swap">
+      Swap
+     </a>
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#bridge">
+      Bridge
+     </a>
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#tasks">
+      Tasks
+     </a>
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#earn">
+      Earn
+     </a>
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#wallet">
+      Wallet
+     </a>
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#faucet">
+      Faucet
+     </a>
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#analytics">
+      Analytics
+     </a>
+     <a class="mobile-nav-link py-2 px-3 rounded hover:bg-cyan-700/30 transition" href="#profile">
+      Profile
+     </a>
+    </div>
+   </div>
+  </nav>
+  <!-- MAIN CONTENT -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+   <!-- HOME -->
+   <section class="scroll-mt-20" id="home">
+    <div class="text-center max-w-3xl mx-auto space-y-6">
+     <h1 class="text-5xl font-extrabold text-cyan-400 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+      Welcome to the Testnet Ecosystem
+     </h1>
+     <p class="text-lg text-cyan-200">
+      Your next-gen Web3 playground for swapping, bridging, earning, and managing testnet tokens with a sleek, dark, neon-glass UI.
+     </p>
+     <a class="inline-block btn-gradient px-8 py-3 mt-4 shadow-lg select-none" href="#wallet">
+      Connect Wallet to Get Started
+     </a>
+    </div>
+    <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+     <div class="glass-card p-6 neon-outline flex flex-col items-center space-y-4">
+      <span class="iconify text-cyan-400" data-icon="mdi:swap-horizontal" data-inline="false" style="font-size: 3rem;">
+      </span>
+      <h3 class="text-xl font-semibold text-cyan-300">
+       Swap Tokens
+      </h3>
+      <p class="text-cyan-200 text-center">
+       Simulate token swaps with adjustable rates and slippage.
+      </p>
+      <a class="btn-gradient px-4 py-2 mt-auto select-none" href="#swap">
+       Try Swap
+      </a>
+     </div>
+     <div class="glass-card p-6 neon-outline flex flex-col items-center space-y-4">
+      <span class="iconify text-cyan-400" data-icon="mdi:bank-transfer" data-inline="false" style="font-size: 3rem;">
+      </span>
+      <h3 class="text-xl font-semibold text-cyan-300">
+       Bridge Tokens
+      </h3>
+      <p class="text-cyan-200 text-center">
+       Transfer testnet tokens across chains (UI only).
+      </p>
+      <a class="btn-gradient px-4 py-2 mt-auto select-none" href="#bridge">
+       Go to Bridge
+      </a>
+     </div>
+     <div class="glass-card p-6 neon-outline flex flex-col items-center space-y-4">
+      <span class="iconify text-cyan-400" data-icon="mdi:wallet" data-inline="false" style="font-size: 3rem;">
+      </span>
+      <h3 class="text-xl font-semibold text-cyan-300">
+       Wallet Connect
+      </h3>
+      <p class="text-cyan-200 text-center">
+       Connect Phantom or MetaMask wallets to manage your tokens.
+      </p>
+      <a class="btn-gradient px-4 py-2 mt-auto select-none" href="#wallet">
+       Connect Wallet
+      </a>
+     </div>
+     <div class="glass-card p-6 neon-outline flex flex-col items-center space-y-4">
+      <span class="iconify text-cyan-400" data-icon="mdi:gift" data-inline="false" style="font-size: 3rem;">
+      </span>
+      <h3 class="text-xl font-semibold text-cyan-300">
+       Faucet
+      </h3>
+      <p class="text-cyan-200 text-center">
+       Get free testnet tokens for ETH, SOL, SUI, and more.
+      </p>
+      <a class="btn-gradient px-4 py-2 mt-auto select-none" href="#faucet">
+       Claim Tokens
+      </a>
+     </div>
+     <div class="glass-card p-6 neon-outline flex flex-col items-center space-y-4">
+      <span class="iconify text-cyan-400" data-icon="mdi:clipboard-list" data-inline="false" style="font-size: 3rem;">
+      </span>
+      <h3 class="text-xl font-semibold text-cyan-300">
+       Tasks &amp; Engagement
+      </h3>
+      <p class="text-cyan-200 text-center">
+       Complete tasks, earn points, and climb the leaderboard.
+      </p>
+      <a class="btn-gradient px-4 py-2 mt-auto select-none" href="#tasks">
+       View Tasks
+      </a>
+     </div>
+     <div class="glass-card p-6 neon-outline flex flex-col items-center space-y-4">
+      <span class="iconify text-cyan-400" data-icon="mdi:chart-line" data-inline="false" style="font-size: 3rem;">
+      </span>
+      <h3 class="text-xl font-semibold text-cyan-300">
+       Analytics &amp; Charts
+      </h3>
+      <p class="text-cyan-200 text-center">
+       Track token performance with live charts and analytics.
+      </p>
+      <a class="btn-gradient px-4 py-2 mt-auto select-none" href="#analytics">
+       View Analytics
+      </a>
+     </div>
+    </div>
+   </section>
+   <!-- SWAP -->
+   <section class="scroll-mt-20" id="swap">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-6 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+     Swap Tokens
+    </h2>
+    <div class="glass-card p-8 max-w-3xl mx-auto neon-outline">
+     <form class="space-y-6" id="swap-form">
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="swap-from">
+        From Token
+       </label>
+       <select class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="swap-from" required="">
+        <option value="ETH">
+         ETH (Testnet)
+        </option>
+        <option value="SOL">
+         SOL (Testnet)
+        </option>
+        <option value="SUI">
+         SUI (Testnet)
+        </option>
+        <option value="USDC">
+         USDC (Testnet)
+        </option>
+        <option value="DAI">
+         DAI (Testnet)
+        </option>
+       </select>
+      </div>
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="swap-to">
+        To Token
+       </label>
+       <select class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="swap-to" required="">
+        <option value="SOL">
+         SOL (Testnet)
+        </option>
+        <option value="ETH">
+         ETH (Testnet)
+        </option>
+        <option value="SUI">
+         SUI (Testnet)
+        </option>
+        <option value="USDC">
+         USDC (Testnet)
+        </option>
+        <option value="DAI">
+         DAI (Testnet)
+        </option>
+       </select>
+      </div>
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="swap-amount">
+        Amount
+       </label>
+       <input class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="swap-amount" min="0" placeholder="Enter amount" required="" step="any" type="number"/>
+      </div>
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="swap-rate">
+        Rate (1 From Token = X To Token)
+       </label>
+       <input class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="swap-rate" min="0" required="" step="any" type="number" value="1"/>
+      </div>
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="swap-slippage">
+        Slippage Tolerance (%)
+       </label>
+       <input class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="swap-slippage" max="100" min="0" required="" step="0.1" type="number" value="0.5"/>
+      </div>
+      <button class="btn-gradient w-full py-3 font-semibold select-none flex justify-center items-center space-x-2" type="submit">
+       <span>
+        Swap
+       </span>
+       <span class="iconify" data-icon="mdi:swap-horizontal" data-inline="false" style="font-size: 1.3rem;">
+       </span>
+      </button>
+     </form>
+     <div class="mt-6 text-cyan-300 font-semibold text-center" id="swap-result">
+     </div>
+    </div>
+   </section>
+   <!-- BRIDGE -->
+   <section class="scroll-mt-20" id="bridge">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-6 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+     Bridge Tokens
+    </h2>
+    <div class="glass-card p-8 max-w-3xl mx-auto neon-outline">
+     <form class="space-y-6" id="bridge-form">
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="bridge-from-chain">
+        From Chain
+       </label>
+       <select class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="bridge-from-chain" required="">
+        <option value="Ethereum Testnet">
+         Ethereum Testnet
+        </option>
+        <option value="Solana Testnet">
+         Solana Testnet
+        </option>
+        <option value="Sui Testnet">
+         Sui Testnet
+        </option>
+        <option value="Polygon Testnet">
+         Polygon Testnet
+        </option>
+       </select>
+      </div>
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="bridge-to-chain">
+        To Chain
+       </label>
+       <select class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="bridge-to-chain" required="">
+        <option value="Solana Testnet">
+         Solana Testnet
+        </option>
+        <option value="Ethereum Testnet">
+         Ethereum Testnet
+        </option>
+        <option value="Sui Testnet">
+         Sui Testnet
+        </option>
+        <option value="Polygon Testnet">
+         Polygon Testnet
+        </option>
+       </select>
+      </div>
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="bridge-token">
+        Token
+       </label>
+       <select class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="bridge-token" required="">
+        <option value="ETH">
+         ETH (Testnet)
+        </option>
+        <option value="SOL">
+         SOL (Testnet)
+        </option>
+        <option value="SUI">
+         SUI (Testnet)
+        </option>
+        <option value="USDC">
+         USDC (Testnet)
+        </option>
+        <option value="DAI">
+         DAI (Testnet)
+        </option>
+       </select>
+      </div>
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="bridge-amount">
+        Amount
+       </label>
+       <input class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="bridge-amount" min="0" placeholder="Enter amount" required="" step="any" type="number"/>
+      </div>
+      <button class="btn-gradient w-full py-3 font-semibold select-none flex justify-center items-center space-x-2" type="submit">
+       <span>
+        Bridge
+       </span>
+       <span class="iconify" data-icon="mdi:bank-transfer" data-inline="false" style="font-size: 1.3rem;">
+       </span>
+      </button>
+     </form>
+     <div class="mt-6 text-cyan-300 font-semibold text-center" id="bridge-result">
+     </div>
+    </div>
+   </section>
+   <!-- TASKS -->
+   <section class="scroll-mt-20" id="tasks">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-6 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+     Tasks &amp; Engagement
+    </h2>
+    <div class="glass-card p-8 max-w-4xl mx-auto neon-outline space-y-8">
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <button aria-label="Follow Twitter" class="btn-gradient py-3 flex items-center justify-center space-x-3 select-none hover:brightness-110 transition" id="task-twitter">
+       <span class="iconify" data-icon="mdi:twitter" data-inline="false" style="font-size: 1.5rem;">
+       </span>
+       <span>
+        Follow Twitter
+       </span>
+      </button>
+      <button aria-label="Join Discord" class="btn-gradient py-3 flex items-center justify-center space-x-3 select-none hover:brightness-110 transition" id="task-discord">
+       <span class="iconify" data-icon="mdi:discord" data-inline="false" style="font-size: 1.5rem;">
+       </span>
+       <span>
+        Join Discord
+       </span>
+      </button>
+      <button aria-label="Share Referral Link" class="btn-gradient py-3 flex items-center justify-center space-x-3 select-none hover:brightness-110 transition" id="task-referral">
+       <span class="iconify" data-icon="mdi:link-variant" data-inline="false" style="font-size: 1.5rem;">
+       </span>
+       <span>
+        Share Referral Link
+       </span>
+      </button>
+      <button aria-label="Connect Wallet" class="btn-gradient py-3 flex items-center justify-center space-x-3 select-none hover:brightness-110 transition" id="task-connect-wallet">
+       <span class="iconify" data-icon="mdi:wallet" data-inline="false" style="font-size: 1.5rem;">
+       </span>
+       <span>
+        Connect Wallet
+       </span>
+      </button>
+      <button aria-label="Invite Friends" class="btn-gradient py-3 flex items-center justify-center space-x-3 select-none hover:brightness-110 transition" id="task-invite-friends">
+       <span class="iconify" data-icon="mdi:account-multiple-plus" data-inline="false" style="font-size: 1.5rem;">
+       </span>
+       <span>
+        Invite Friends
+       </span>
+      </button>
+     </div>
+     <div>
+      <h3 class="text-cyan-300 font-semibold mb-3">
+       Daily Login Streak
+      </h3>
+      <div class="grid grid-cols-7 gap-2 text-sm text-cyan-300 select-none" id="login-calendar">
+      </div>
+      <div class="mt-4 flex items-center space-x-4">
+       <button aria-label="Daily Login" class="btn-gradient px-6 py-2 font-semibold select-none flex items-center space-x-2" id="daily-login-btn">
+        <span>
+         Daily Login
+        </span>
+        <span class="iconify" data-icon="mdi:login-variant" data-inline="false" style="font-size: 1.3rem;">
+        </span>
+       </button>
+       <div class="text-cyan-300 font-semibold" id="login-points">
+       </div>
+      </div>
+     </div>
+     <div>
+      <h3 class="text-cyan-300 font-semibold mb-3">
+       Leaderboard (Top 10)
+      </h3>
+      <div class="max-h-64 overflow-y-auto glass-card p-4 neon-outline text-cyan-200 text-sm rounded" id="leaderboard">
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- EARN -->
+   <section class="scroll-mt-20" id="earn">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-6 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+     Earn Points &amp; Rewards
+    </h2>
+    <div class="glass-card p-8 max-w-4xl mx-auto neon-outline space-y-8">
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="flex flex-col items-center space-y-3 p-6 glass-card neon-outline">
+       <span class="iconify text-cyan-400" data-icon="mdi:calendar-check" data-inline="false" style="font-size: 3rem;">
+       </span>
+       <h3 class="text-xl font-semibold text-cyan-300">
+        Daily Login
+       </h3>
+       <p class="text-cyan-200 text-center">
+        Earn xTest points every day you log in and maintain your streak.
+       </p>
+      </div>
+      <div class="flex flex-col items-center space-y-3 p-6 glass-card neon-outline">
+       <span class="iconify text-cyan-400" data-icon="mdi:account-group" data-inline="false" style="font-size: 3rem;">
+       </span>
+       <h3 class="text-xl font-semibold text-cyan-300">
+        Engagement
+       </h3>
+       <p class="text-cyan-200 text-center">
+        Complete social tasks and invite friends to boost your points.
+       </p>
+      </div>
+      <div class="flex flex-col items-center space-y-3 p-6 glass-card neon-outline">
+       <span class="iconify text-cyan-400" data-icon="mdi:star-circle" data-inline="false" style="font-size: 3rem;">
+       </span>
+       <h3 class="text-xl font-semibold text-cyan-300">
+        Social Boosts
+       </h3>
+       <p class="text-cyan-200 text-center">
+        Share referral links and get badges, XP, and rewards.
+       </p>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- WALLET -->
+   <section class="scroll-mt-20" id="wallet">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-6 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+     Wallet Connect
+    </h2>
+    <div class="glass-card p-8 max-w-3xl mx-auto neon-outline space-y-6">
+     <div class="flex flex-col space-y-4">
+      <button aria-label="Connect Phantom Wallet" class="btn-gradient py-3 flex items-center justify-center space-x-3 select-none hover:brightness-110 transition" id="connect-phantom">
+       <img alt="Phantom wallet logo, stylized purple ghost icon" class="w-8 h-8 rounded" height="32" src="https://storage.googleapis.com/a1aa/image/831720e7-e4f1-48d9-e68f-8b2d7ac78760.jpg" width="32"/>
+       <span>
+        Connect Phantom Wallet
+       </span>
+      </button>
+      <button aria-label="Connect MetaMask Wallet" class="btn-gradient py-3 flex items-center justify-center space-x-3 select-none hover:brightness-110 transition" id="connect-metamask">
+       <img alt="MetaMask wallet logo, stylized orange fox icon" class="w-8 h-8 rounded" height="32" src="https://storage.googleapis.com/a1aa/image/b6f86001-986c-4e9b-d471-c8823907f8d0.jpg" width="32"/>
+       <span>
+        Connect MetaMask Wallet
+       </span>
+      </button>
+     </div>
+     <div class="text-cyan-300 font-semibold text-center" id="wallet-info">
+     </div>
+    </div>
+   </section>
+   <!-- FAUCET -->
+   <section class="scroll-mt-20" id="faucet">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-6 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+     Faucet
+    </h2>
+    <div class="glass-card p-8 max-w-3xl mx-auto neon-outline">
+     <form class="space-y-6" id="faucet-form">
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="faucet-coin">
+        Select Coin
+       </label>
+       <select class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="faucet-coin" required="">
+        <option value="ETH">
+         ETH (Testnet)
+        </option>
+        <option value="SOL">
+         SOL (Testnet)
+        </option>
+        <option value="SUI">
+         SUI (Testnet)
+        </option>
+        <option value="USDC">
+         USDC (Testnet)
+        </option>
+        <option value="DAI">
+         DAI (Testnet)
+        </option>
+       </select>
+      </div>
+      <div>
+       <label class="block mb-2 font-semibold text-cyan-300" for="faucet-wallet">
+        Wallet Address
+       </label>
+       <input class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="faucet-wallet" placeholder="Enter your wallet address" required="" type="text"/>
+      </div>
+      <button class="btn-gradient w-full py-3 font-semibold select-none flex justify-center items-center space-x-2" type="submit">
+       <span>
+        Get Tokens
+       </span>
+       <span class="iconify" data-icon="mdi:gift" data-inline="false" style="font-size: 1.3rem;">
+       </span>
+      </button>
+     </form>
+     <div class="mt-6 text-cyan-300 font-semibold text-center break-words" id="faucet-result">
+     </div>
+    </div>
+   </section>
+   <!-- ANALYTICS / TOKEN CHART -->
+   <section class="scroll-mt-20" id="analytics">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-6 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+     Analytics &amp; Token Chart
+    </h2>
+    <div class="glass-card p-8 max-w-4xl mx-auto neon-outline">
+     <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:space-x-6">
+      <label class="text-cyan-300 font-semibold mb-2 sm:mb-0" for="analytics-token">
+       Select Token
+      </label>
+      <select class="w-full sm:w-48 bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="analytics-token">
+       <option value="ETH">
+        ETH (Testnet)
+       </option>
+       <option value="SOL">
+        SOL (Testnet)
+       </option>
+       <option value="SUI">
+        SUI (Testnet)
+       </option>
+       <option value="USDC">
+        USDC (Testnet)
+       </option>
+       <option value="DAI">
+        DAI (Testnet)
+       </option>
+      </select>
+     </div>
+     <div class="relative w-full h-64 bg-[#0f111a] rounded neon-outline flex items-center justify-center">
+      <img alt="Placeholder image of a futuristic neon styled token price chart with candlesticks and volume bars" class="w-full h-full object-contain rounded" height="256" src="https://storage.googleapis.com/a1aa/image/f38910d5-7e6d-47d9-0d72-cd052b7f7cce.jpg" width="600"/>
+      <div class="absolute top-2 right-2 text-cyan-400 font-mono text-xs select-none">
+       UI Only
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- PROFILE -->
+   <section class="scroll-mt-20" id="profile">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-6 drop-shadow-[0_0_10px_rgba(0,255,247,0.7)]">
+     Profile
+    </h2>
+    <div class="glass-card p-8 max-w-3xl mx-auto neon-outline space-y-6">
+     <form class="space-y-6 flex flex-col items-center" id="profile-form">
+      <div aria-label="Edit avatar" class="relative w-32 h-32 rounded-full overflow-hidden neon-outline cursor-pointer" tabindex="0">
+       <img alt="User avatar placeholder, circular image with neon border" class="w-full h-full object-cover" height="128" id="profile-avatar" src="https://storage.googleapis.com/a1aa/image/b0a41a55-28dd-4b6f-2aa4-7345223e9e0d.jpg" width="128"/>
+       <div class="absolute inset-0 bg-cyan-400/20 flex items-center justify-center opacity-0 hover:opacity-100 transition cursor-pointer">
+        <span class="iconify text-cyan-400" data-icon="mdi:pencil" data-inline="false" style="font-size: 2rem;">
+        </span>
+       </div>
+       <input accept="image/*" class="hidden" id="avatar-input" type="file"/>
+      </div>
+      <div class="w-full">
+       <label class="block mb-2 font-semibold text-cyan-300" for="profile-username">
+        Username
+       </label>
+       <input class="w-full bg-[#0f111a] border border-cyan-600 text-cyan-200 p-3 rounded neon-outline" id="profile-username" maxlength="20" placeholder="Enter your username" type="text"/>
+      </div>
+      <button class="btn-gradient w-full py-3 font-semibold select-none flex justify-center items-center space-x-2" type="submit">
+       <span>
+        Save Profile
+       </span>
+       <span class="iconify" data-icon="mdi:content-save" data-inline="false" style="font-size: 1.3rem;">
+       </span>
+      </button>
+     </form>
+     <div class="text-cyan-300 font-semibold text-center" id="profile-info">
+     </div>
+    </div>
+   </section>
+  </main>
+  <!-- FOOTER -->
+  <footer class="bg-[#0f111a] border-t border-cyan-600/30 py-8 mt-16">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+    <div class="text-cyan-400 font-semibold select-none flex items-center space-x-2">
+     <span class="iconify" data-icon="mdi:network" data-inline="false" style="font-size: 1.5rem;">
+     </span>
+     <span>
+      Testnet Ecosystem
+     </span>
+    </div>
+    <div class="flex space-x-6 text-cyan-400 text-xl">
+     <a aria-label="Discord" class="hover:text-cyan-300 transition" href="https://discord.gg" rel="noopener" target="_blank">
+      <span class="iconify" data-icon="mdi:discord" data-inline="false">
+      </span>
+     </a>
+     <a aria-label="Telegram" class="hover:text-cyan-300 transition" href="https://telegram.org" rel="noopener" target="_blank">
+      <span class="iconify" data-icon="mdi:telegram" data-inline="false">
+      </span>
+     </a>
+     <a aria-label="Twitter" class="hover:text-cyan-300 transition" href="https://twitter.com" rel="noopener" target="_blank">
+      <span class="iconify" data-icon="mdi:twitter" data-inline="false">
+      </span>
+     </a>
+     <a aria-label="YouTube" class="hover:text-cyan-300 transition" href="https://youtube.com" rel="noopener" target="_blank">
+      <span class="iconify" data-icon="mdi:youtube" data-inline="false">
+      </span>
+     </a>
+     <a aria-label="GitHub" class="hover:text-cyan-300 transition" href="https://github.com" rel="noopener" target="_blank">
+      <span class="iconify" data-icon="mdi:github" data-inline="false">
+      </span>
+     </a>
+    </div>
+    <div class="text-cyan-400 select-none text-sm" id="copyright">
+    </div>
+   </div>
+  </footer>
+  <!-- MODALS -->
+  <div aria-describedby="modal-desc" aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop" id="modal" role="dialog">
+   <div class="bg-[#0f111a] rounded-xl p-6 max-w-md w-full neon-outline glass-card shadow-lg relative">
+    <button aria-label="Close modal" class="absolute top-3 right-3 text-cyan-400 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded" id="modal-close">
+     <span class="iconify" data-icon="mdi:close" data-inline="false" style="font-size: 1.5rem;">
+     </span>
+    </button>
+    <h3 class="text-xl font-bold text-cyan-400 mb-4" id="modal-title">
+    </h3>
+    <div class="text-cyan-300" id="modal-desc">
+    </div>
+    <div class="mt-6 flex justify-end space-x-4">
+     <button class="btn-gradient px-4 py-2 font-semibold select-none" id="modal-cancel">
+      Cancel
+     </button>
+     <button class="btn-gradient px-4 py-2 font-semibold select-none" id="modal-confirm">
+      Confirm
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- TOAST -->
+  <div aria-atomic="true" aria-live="assertive" id="toast" role="alert">
+  </div>
+  <script>
+   // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      // toggle icon between menu and close
+      const icon = mobileMenuBtn.querySelector('.iconify');
+      if (mobileMenu.classList.contains('hidden')) {
+        icon.setAttribute('data-icon', 'mdi:menu');
+      } else {
+        icon.setAttribute('data-icon', 'mdi:close');
+      }
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+        const target = document.getElementById(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+          if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            mobileMenuBtn.querySelector('.iconify').setAttribute('data-icon', 'mdi:menu');
+          }
+        }
+      });
+    });
+
+    // Toast system
+    const toast = document.getElementById('toast');
+    let toastTimeout;
+    function showToast(message, duration = 3000) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+
+    // Modal system
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalConfirm = document.getElementById('modal-confirm');
+    const modalClose = document.getElementById('modal-close');
+
+    let modalConfirmCallback = null;
+
+    function openModal(title, description, onConfirm) {
+      modalTitle.textContent = title;
+      modalDesc.textContent = description;
+      modal.classList.remove('hidden');
+      modalConfirmCallback = onConfirm;
+      modalConfirm.focus();
+    }
+    function closeModal() {
+      modal.classList.add('hidden');
+      modalConfirmCallback = null;
+    }
+    modalCancel.addEventListener('click', closeModal);
+    modalClose.addEventListener('click', closeModal);
+    modalConfirm.addEventListener('click', () => {
+      if (modalConfirmCallback) modalConfirmCallback();
+      closeModal();
+    });
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    // LocalStorage keys
+    const STORAGE_KEYS = {
+      PROFILE: 'testnet_profile',
+      LEADERBOARD: 'testnet_leaderboard',
+      LOGIN_STREAK: 'testnet_login_streak',
+      LOGIN_DATES: 'testnet_login_dates',
+      POINTS: 'testnet_points',
+      TASKS_DONE: 'testnet_tasks_done',
+      WALLET: 'testnet_wallet',
+      REFERRAL: 'testnet_referral',
+    };
+
+    // Profile management
+    const profileForm = document.getElementById('profile-form');
+    const profileUsernameInput = document.getElementById('profile-username');
+    const profileAvatarImg = document.getElementById('profile-avatar');
+    const avatarInput = document.getElementById('avatar-input');
+    const profileInfo = document.getElementById('profile-info');
+
+    function loadProfile() {
+      const profile = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROFILE));
+      if (profile) {
+        profileUsernameInput.value = profile.username || '';
+        if (profile.avatar) {
+          profileAvatarImg.src = profile.avatar;
+        }
+        profileInfo.textContent = `Logged in as: ${profile.username || 'Anonymous'}`;
+      } else {
+        profileInfo.textContent = 'No profile saved yet.';
+      }
+    }
+    loadProfile();
+
+    avatarInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          profileAvatarImg.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    profileAvatarImg.parentElement.addEventListener('click', () => {
+      avatarInput.click();
+    });
+    profileAvatarImg.parentElement.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        avatarInput.click();
+      }
+    });
+
+    profileForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const username = profileUsernameInput.value.trim() || 'Anonymous';
+      const avatar = profileAvatarImg.src;
+      localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify({ username, avatar }));
+      profileInfo.textContent = `Profile saved as: ${username}`;
+      showToast('Profile saved successfully!');
+      updateLeaderboard();
+    });
+
+    // Leaderboard management
+    const leaderboardDiv = document.getElementById('leaderboard');
+
+    function getLeaderboard() {
+      const lb = JSON.parse(localStorage.getItem(STORAGE_KEYS.LEADERBOARD));
+      return lb ? lb : [];
+    }
+    function saveLeaderboard(lb) {
+      localStorage.setItem(STORAGE_KEYS.LEADERBOARD, JSON.stringify(lb));
+    }
+    function updateLeaderboard() {
+      const profile = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROFILE));
+      if (!profile) return;
+      const username = profile.username || 'Anonymous';
+      const points = getPoints();
+      let lb = getLeaderboard();
+      const existingIndex = lb.findIndex(u => u.username === username);
+      if (existingIndex >= 0) {
+        lb[existingIndex].points = points;
+      } else {
+        lb.push({ username, points });
+      }
+      lb.sort((a,b) => b.points - a.points);
+      if (lb.length > 10) lb = lb.slice(0,10);
+      saveLeaderboard(lb);
+      renderLeaderboard(lb);
+    }
+    function renderLeaderboard(lb) {
+      if (!lb.length) {
+        leaderboardDiv.innerHTML = '<p class="text-cyan-400 text-center">No leaderboard data yet.</p>';
+        return;
+      }
+      leaderboardDiv.innerHTML = '';
+      lb.forEach((user, i) => {
+        const div = document.createElement('div');
+        div.className = 'flex justify-between py-1 px-2 rounded hover:bg-cyan-700/20 transition cursor-default';
+        div.innerHTML = `<span class="font-semibold">${i+1}. ${user.username}</span><span class="font-mono">${user.points} xTest</span>`;
+        leaderboardDiv.appendChild(div);
+      });
+    }
+    updateLeaderboard();
+
+    // Points management
+    function getPoints() {
+      return parseInt(localStorage.getItem(STORAGE_KEYS.POINTS)) || 0;
+    }
+    function addPoints(amount) {
+      const current = getPoints();
+      localStorage.setItem(STORAGE_KEYS.POINTS, current + amount);
+      updateLeaderboard();
+    }
+
+    // Tasks management
+    const tasksDone = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS_DONE)) || {
+      twitter: false,
+      discord: false,
+      referral: false,
+      wallet: false,
+      invite: false,
+    };
+
+    // Task buttons
+    const taskTwitterBtn = document.getElementById('task-twitter');
+    const taskDiscordBtn = document.getElementById('task-discord');
+    const taskReferralBtn = document.getElementById('task-referral');
+    const taskConnectWalletBtn = document.getElementById('task-connect-wallet');
+    const taskInviteFriendsBtn = document.getElementById('task-invite-friends');
+
+    function updateTaskButtons() {
+      taskTwitterBtn.disabled = tasksDone.twitter;
+      taskDiscordBtn.disabled = tasksDone.discord;
+      taskReferralBtn.disabled = tasksDone.referral;
+      taskConnectWalletBtn.disabled = tasksDone.wallet;
+      taskInviteFriendsBtn.disabled = tasksDone.invite;
+
+      [taskTwitterBtn, taskDiscordBtn, taskReferralBtn, taskConnectWalletBtn, taskInviteFriendsBtn].forEach(btn => {
+        if (btn.disabled) {
+          btn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+          btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      });
+    }
+    updateTaskButtons();
+
+    function completeTask(taskName, points) {
+      if (tasksDone[taskName]) {
+        showToast(`Task "${taskName}" already completed.`);
+        return;
+      }
+      tasksDone[taskName] = true;
+      localStorage.setItem(STORAGE_KEYS.TASKS_DONE, JSON.stringify(tasksDone));
+      addPoints(points);
+      updateTaskButtons();
+      showToast(`Task "${taskName}" completed! +${points} xTest points`);
+    }
+
+    // Task button handlers
+    taskTwitterBtn.addEventListener('click', () => {
+      openModal('Follow Twitter', 'Open Twitter in a new tab and follow our official account to complete this task.', () => {
+        window.open('https://twitter.com', '_blank', 'noopener');
+        completeTask('twitter', 10);
+      });
+    });
+    taskDiscordBtn.addEventListener('click', () => {
+      openModal('Join Discord', 'Open Discord in a new tab and join our official server to complete this task.', () => {
+        window.open('https://discord.gg', '_blank', 'noopener');
+        completeTask('discord', 10);
+      });
+    });
+    taskReferralBtn.addEventListener('click', () => {
+      openModal('Share Referral Link', 'Copy your referral link and share it with friends to complete this task.', () => {
+        const profile = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROFILE));
+        const username = profile ? profile.username : 'Anonymous';
+        const referralLink = `${window.location.origin}?ref=${encodeURIComponent(username)}`;
+        navigator.clipboard.writeText(referralLink).then(() => {
+          completeTask('referral', 15);
+          showToast('Referral link copied to clipboard!');
+        });
+      });
+    });
+    taskConnectWalletBtn.addEventListener('click', () => {
+      openModal('Connect Wallet', 'Connect your Phantom or MetaMask wallet to complete this task.', () => {
+        // Simulate wallet connect
+        connectWallet('Simulated Wallet');
+        completeTask('wallet', 20);
+      });
+    });
+    taskInviteFriendsBtn.addEventListener('click', () => {
+      openModal('Invite Friends', 'Share your referral link with friends. When they join, you get points.', () => {
+        const profile = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROFILE));
+        const username = profile ? profile.username : 'Anonymous';
+        const referralLink = `${window.location.origin}?ref=${encodeURIComponent(username)}`;
+        navigator.clipboard.writeText(referralLink).then(() => {
+          completeTask('invite', 25);
+          showToast('Referral link copied to clipboard! Invite friends to earn more points.');
+        });
+      });
+    });
+
+    // Daily Login System
+    const dailyLoginBtn = document.getElementById('daily-login-btn');
+    const loginCalendar = document.getElementById('login-calendar');
+    const loginPointsDisplay = document.getElementById('login-points');
+
+    function getLoginDates() {
+      const dates = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOGIN_DATES));
+      return dates ? dates : [];
+    }
+    function saveLoginDates(dates) {
+      localStorage.setItem(STORAGE_KEYS.LOGIN_DATES, JSON.stringify(dates));
+    }
+    function getLoginStreak() {
+      return parseInt(localStorage.getItem(STORAGE_KEYS.LOGIN_STREAK)) || 0;
+    }
+    function saveLoginStreak(streak) {
+      localStorage.setItem(STORAGE_KEYS.LOGIN_STREAK, streak);
+    }
+
+    function isToday(date) {
+      const today = new Date();
+      return date.getFullYear() === today.getFullYear() &&
+             date.getMonth() === today.getMonth() &&
+             date.getDate() === today.getDate();
+    }
+    function isYesterday(date) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      return date.getFullYear() === yesterday.getFullYear() &&
+             date.getMonth() === yesterday.getMonth() &&
+             date.getDate() === yesterday.getDate();
+    }
+
+    function renderCalendar() {
+      loginCalendar.innerHTML = '';
+      const today = new Date();
+      const dates = getLoginDates().map(d => new Date(d));
+      // Show last 30 days
+      for (let i = 29; i >= 0; i--) {
+        const day = new Date(today);
+        day.setDate(today.getDate() - i);
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+        dayDiv.textContent = day.getDate();
+        if (isToday(day)) {
+          dayDiv.classList.add('today');
+        }
+        if (dates.some(d => d.getFullYear() === day.getFullYear() && d.getMonth() === day.getMonth() && d.getDate() === day.getDate())) {
+          dayDiv.classList.add('streak');
+        } else if (day < today) {
+          dayDiv.classList.add('missed');
+        }
+        loginCalendar.appendChild(dayDiv);
+      }
+    }
+
+    function updateLoginPointsDisplay() {
+      const points = getPoints();
+      const streak = getLoginStreak();
+      loginPointsDisplay.textContent = `Total Points: ${points} | Current Streak: ${streak} days`;
+    }
+
+    function dailyLogin() {
+      const today = new Date();
+      const dates = getLoginDates().map(d => new Date(d));
+      if (dates.some(d => isToday(d))) {
+        showToast('You already logged in today!');
+        return;
+      }
+      // Check if yesterday was logged in to continue streak
+      const yesterdayLoggedIn = dates.some(d => isYesterday(d));
+      let streak = getLoginStreak();
+      if (yesterdayLoggedIn) {
+        streak++;
+      } else {
+        streak = 1;
+      }
+      saveLoginStreak(streak);
+      dates.push(today.toISOString());
+      saveLoginDates(dates);
+      // Award points: base 10 + streak bonus (e.g. 2 points per streak day)
+      const pointsAwarded = 10 + (streak * 2);
+      addPoints(pointsAwarded);
+      renderCalendar();
+      updateLoginPointsDisplay();
+      showToast(`Daily login successful! +${pointsAwarded} xTest points`);
+    }
+
+    dailyLoginBtn.addEventListener('click', dailyLogin);
+
+    renderCalendar();
+    updateLoginPointsDisplay();
+
+    // Wallet Connect Simulation
+    const connectPhantomBtn = document.getElementById('connect-phantom');
+    const connectMetaMaskBtn = document.getElementById('connect-metamask');
+    const walletInfoDiv = document.getElementById('wallet-info');
+
+    function connectWallet(type) {
+      // Simulate wallet connection with random address
+      const address = type === 'Phantom' ? 'Phantom_' + Math.random().toString(36).substring(2, 10) : 'MetaMask_' + Math.random().toString(36).substring(2, 10);
+      localStorage.setItem(STORAGE_KEYS.WALLET, JSON.stringify({ type, address }));
+      walletInfoDiv.textContent = `Connected: ${type} - ${address}`;
+      showToast(`${type} wallet connected!`);
+      // Mark wallet task done if not done
+      if (!tasksDone.wallet) {
+        completeTask('wallet', 20);
+      }
+    }
+
+    connectPhantomBtn.addEventListener('click', () => connectWallet('Phantom'));
+    connectMetaMaskBtn.addEventListener('click', () => connectWallet('MetaMask'));
+
+    // Load wallet info on page load
+    function loadWalletInfo() {
+      const wallet = JSON.parse(localStorage.getItem(STORAGE_KEYS.WALLET));
+      if (wallet) {
+        walletInfoDiv.textContent = `Connected: ${wallet.type} - ${wallet.address}`;
+      } else {
+        walletInfoDiv.textContent = 'No wallet connected.';
+      }
+    }
+    loadWalletInfo();
+
+    // Faucet form
+    const faucetForm = document.getElementById('faucet-form');
+    const faucetResult = document.getElementById('faucet-result');
+
+    faucetForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const coin = faucetForm['faucet-coin'].value;
+      const wallet = faucetForm['faucet-wallet'].value.trim();
+      if (!wallet) {
+        showToast('Please enter a wallet address.');
+        return;
+      }
+      faucetResult.innerHTML = `<span class="spinner" aria-label="Loading spinner"></span> Processing transaction...`;
+      setTimeout(() => {
+        // Simulate TX hash
+        const txHash = '0x' + Math.random().toString(16).substring(2, 18).toUpperCase();
+        faucetResult.innerHTML = `Success! Sent <strong>${coin}</strong> tokens to <code>${wallet}</code>.<br />Transaction Hash: <code>${txHash}</code>`;
+        showToast('Faucet tokens sent!');
+      }, 2000);
+    });
+
+    // Swap form
+    const swapForm = document.getElementById('swap-form');
+    const swapResult = document.getElementById('swap-result');
+
+    swapForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const fromToken = swapForm['swap-from'].value;
+      const toToken = swapForm['swap-to'].value;
+      const amount = parseFloat(swapForm['swap-amount'].value);
+      const rate = parseFloat(swapForm['swap-rate'].value);
+      const slippage = parseFloat(swapForm['swap-slippage'].value);
+
+      if (fromToken === toToken) {
+        showToast('From and To tokens cannot be the same.');
+        return;
+      }
+      if (amount <= 0 || rate <= 0 || slippage < 0) {
+        showToast('Please enter valid positive numbers.');
+        return;
+      }
+      swapResult.innerHTML = `<span class="spinner" aria-label="Loading spinner"></span> Swapping tokens...`;
+      setTimeout(() => {
+        // Calculate output amount with slippage tolerance
+        const minReceived = amount * rate * (1 - slippage / 100);
+        swapResult.innerHTML = `Swapped <strong>${amount.toFixed(4)} ${fromToken}</strong> for approximately <strong>${minReceived.toFixed(4)} ${toToken}</strong> (slippage tolerance: ${slippage}%).`;
+        showToast('Swap simulation complete!');
+      }, 1500);
+    });
+
+    // Bridge form
+    const bridgeForm = document.getElementById('bridge-form');
+    const bridgeResult = document.getElementById('bridge-result');
+
+    bridgeForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const fromChain = bridgeForm['bridge-from-chain'].value;
+      const toChain = bridgeForm['bridge-to-chain'].value;
+      const token = bridgeForm['bridge-token'].value;
+      const amount = parseFloat(bridgeForm['bridge-amount'].value);
+
+      if (fromChain === toChain) {
+        showToast('From Chain and To Chain cannot be the same.');
+        return;
+      }
+      if (amount <= 0) {
+        showToast('Please enter a valid amount.');
+        return;
+      }
+      bridgeResult.innerHTML = `<span class="spinner" aria-label="Loading spinner"></span> Bridging tokens...`;
+      setTimeout(() => {
+        bridgeResult.innerHTML = `Simulated transfer of <strong>${amount.toFixed(4)} ${token}</strong> from <strong>${fromChain}</strong> to <strong>${toChain}</strong>. (UI only)`;
+        showToast('Bridge simulation complete!');
+      }, 1800);
+    });
+
+    // Referral link from URL param
+    function checkReferral() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref');
+      if (ref) {
+        const profile = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROFILE));
+        const username = profile ? profile.username : null;
+        if (username !== ref) {
+          // Add points for referral
+          addPoints(30);
+          showToast(`Referral bonus! You earned 30 xTest points from ${ref}.`);
+          // Clear referral param so it doesn't repeat
+          history.replaceState(null, '', window.location.pathname);
+        }
+      }
+    }
+    checkReferral();
+
+    // Auto update copyright
+    const copyrightDiv = document.getElementById('copyright');
+    const year = new Date().getFullYear();
+    copyrightDiv.textContent = `© ${year} Testnet Ecosystem. All rights reserved.`;
+  </script>
+ </body>
+</html>
