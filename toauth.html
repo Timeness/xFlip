@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Telegram OAuth Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Signika', sans-serif;
+    }
+    body {
+      background: #0d0d0d;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+    .container {
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    }
+    h1 {
+      font-size: 1.6rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 0.5rem 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.95rem;
+    }
+    input, select {
+      background: #2d2d2d;
+      color: #fff;
+    }
+    button {
+      background: #0066ff;
+      color: white;
+      cursor: pointer;
+    }
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .profile-info img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+    .hidden {
+      display: none;
+    }
+    #errorMsg {
+      color: red;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    a {
+      font-size: 0.85rem;
+      display: block;
+      text-align: center;
+      margin-top: 0.3rem;
+      color: #00bfff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Telegram Access ID</h1>
+    <input id="accessId" type="text" placeholder="Enter your Access ID" />
+    <button onclick="verifyAccessId()">Verify</button>
+    <a href="https://t.me/mybot" target="_blank">Get your Access ID from Telegram</a>
+    <p id="errorMsg"></p>
+
+    <div id="profileInfo" class="profile-info hidden">
+      <img id="profilePic" src="">
+      <div>
+        <strong id="firstName"></strong>
+      </div>
+    </div>
+
+    <form id="fullForm" class="hidden" onsubmit="event.preventDefault(); alert('Registered!');">
+      <input type="text" placeholder="First Name" required />
+      <input type="text" placeholder="Last Name" required />
+      <input type="text" placeholder="Username" required />
+      <input type="date" placeholder="Date of Birth" required />
+      <select required>
+        <option value="">Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+      <input type="text" placeholder="Region" required />
+      <input type="text" placeholder="State" required />
+      <input type="email" placeholder="Email ID" required />
+      <input type="tel" placeholder="Mobile Number" required />
+      <input type="text" placeholder="Nationality" required />
+      <input type="text" placeholder="Telegram Username" required />
+      <input type="text" id="tgId" placeholder="Telegram ID (auto)" readonly />
+      <input type="text" id="tgFirst" placeholder="Telegram First Name (auto)" readonly />
+      <input type="text" placeholder="Account Type" required />
+      <input type="text" placeholder="Preferred Language" required />
+      <button type="submit">Register</button>
+    </form>
+  </div>
+
+  <script>
+    // Mocked DB for demo — replace with real API if needed
+    const fakeAccessDB = {
+      "abc123": {
+        first_name: "Rahul",
+        photo: "https://telegra.ph/file/47d4d98f62ac8b387a066.jpg"
+      },
+      "xyz789": {
+        first_name: "Priya",
+        photo: "https://telegra.ph/file/300d0f05b0bc13a725187.jpg"
+      }
+    };
+
+    function verifyAccessId() {
+      const id = document.getElementById('accessId').value.trim();
+      const data = fakeAccessDB[id];
+
+      if (data) {
+        document.getElementById('profileInfo').classList.remove('hidden');
+        document.getElementById('fullForm').classList.remove('hidden');
+        document.getElementById('profilePic').src = data.photo;
+        document.getElementById('firstName').innerText = data.first_name;
+        document.getElementById('tgId').value = id;
+        document.getElementById('tgFirst').value = data.first_name;
+        document.getElementById('errorMsg').innerText = '';
+      } else {
+        document.getElementById('profileInfo').classList.add('hidden');
+        document.getElementById('fullForm').classList.add('hidden');
+        document.getElementById('errorMsg').innerText = 'Invalid Access ID';
+      }
+    }
+  </script>
+</body>
+  </html>
