@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dice Duel Battle - Frontend Multiplayer</title>
+<link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    font-family: 'Viga', sans-serif;
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #f8fafc;
+  }
+  .dice {
+    width: 70px;
+    height: 70px;
+    background: #334155;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    box-shadow: 0 4px 15px rgb(100 116 139 / 0.5);
+    user-select: none;
+  }
+  .btn-primary {
+    background: #6366f1;
+    transition: background-color 0.3s;
+  }
+  .btn-primary:hover {
+    background: #4f46e5;
+  }
+  input, button {
+    font-family: 'Viga', sans-serif;
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+<header class="mb-6 text-center max-w-lg">
+  <h1 class="text-4xl mb-1">Dice Duel Battle</h1>
+  <p class="text-sm text-gray-400">Multiplayer Frontend Battle (2 tabs or browsers)</p>
+</header>
+<main class="bg-gray-800 bg-opacity-70 rounded-lg p-6 w-full max-w-lg shadow-lg">
+  <section id="connection" class="mb-6 text-center space-y-2">
+    <div>
+      <label for="playerId" class="block mb-1">Your Player ID (random):</label>
+      <input id="playerId" type="text" readonly class="w-full p-2 rounded bg-gray-700 text-white text-center" />
+    </div>
+    <div>
+      <label for="opponentId" class="block mb-1">Enter Opponent's Player ID to Connect:</label>
+      <input id="opponentId" type="text" placeholder="Enter opponent ID" class="w-full p-2 rounded bg-gray-700 text-white text-center" />
+    </div>
+    <button id="connectBtn" class="btn-primary text-white px-4 py-2 rounded font-semibold shadow-md w-full mt-2">
+      Connect
+    </button>
+    <p id="connStatus" class="mt-2 text-yellow-300 font-semibold"></p>
+  </section>
+  <section id="gameSection" class="hidden">
+    <section class="flex justify-around mb-6 items-center">
+      <div>
+        <p class="mb-1 text-gray-400">You (Player 1)</p>
+        <div id="playerDice" class="dice">–</div>
+        <p id="playerScore" class="mt-2 text-lg">Score: 0</p>
+      </div>
+      <div>
+        <p class="mb-1 text-gray-400">Opponent (Player 2)</p>
+        <div id="opponentDice" class="dice">–</div>
+        <p id="opponentScore" class="mt-2 text-lg">Score: 0</p>
+      </div>
+    </section>
+    <section class="text-center mb-6">
+      <button id="rollBtn" class="btn-primary text-white px-6 py-3 rounded font-semibold shadow-md" disabled>
+        Roll Dice
+      </button>
+    </section>
+    <section id="roundResult" class="mb-4 text-center text-yellow-300 font-semibold min-h-[1.5rem]"></section>
+    <section id="battleStatus" class="text-center text-yellow-400 font-bold text-lg"></section>
+  </section>
+</main>
+<script>
+  const playerIdInput = document.getElementById('playerId');
+  const opponentIdInput = document.getElementById('opponentId');
+  const connectBtn = document.getElementById('connectBtn');
+  const connStatus = document.getElementById('connStatus');
+  const gameSection = document.getElementById('gameSection');
+  const rollBtn = document.getElementById('rollBtn');
+  const playerDice = document.getElementById('playerDice');
+  const opponentDice = document.getElementById('opponentDice');
+  const playerScoreEl = document.getElementById('playerScore');
+  const opponentScoreEl = document.getElementById('opponentScore');
+  const roundResultEl = document.getElementById('roundResult');
+  const battleStatusEl = document.getElementById('battleStatus');
+  const playerId = generateId();
+  playerIdInput.value = playerId;
+  const channel = new BroadcastChannel('dice-duel-channel');
+  let connected = false;
+  let opponentId = null;
+  let playerScore = 0;
+  let opponentScore = 0;
+  let roundsPlayed = 0;
+  const maxRounds = 3;
+  let turn = null;
+  let lastRoll = null;
+  channel.onmessage = (ev) => {
+    const msg = ev.data;
+    if (!msg || !msg.type) return;
+    if (msg.to !== playerId) return;
+    switch(msg.type) {
+      case 'connect_request':
+        if (!connected && msg.from === opponentIdInput.value.trim()) {
+          opponentId = msg.from;
+          sendMessage('connect_accept');
+          connected = true;
+          connStatus.textContent = `Connected with ${opponentId}`;
+          startGame();
+        }
+        break;
+      case 'connect_accept':
+        connected = true;
+        opponentId = msg.from;
+        connStatus.textContent = `Connected with ${opponentId}`;
+        startGame();
+        break;
+      case 'roll':
+        if (msg.from === opponentId) {
+          opponentDice.textContent = msg.value;
+          opponentScore += (msg.value > (lastRoll || 0)) ? 1 : 0;
+          opponentScoreEl.textContent = `Score: ${opponentScore}`;
+          roundResultEl.textContent = `Opponent rolled ${msg.value}`;
+          turn = 'player';
+          rollBtn.disabled = false;
+          roundsPlayed++;
+          checkEnd();
+        }
+        break;
+    }
+  };
+  connectBtn.addEventListener('click', () => {
+    const oppId = opponentIdInput.value.trim();
+    if (!oppId) {
+      alert('Please enter opponent ID');
+      return;
+    }
+    opponentId = oppId;
+    sendMessage('connect_request');
+    connStatus.textContent = 'Connecting...';
+  });
+  rollBtn.addEventListener('click', () => {
+    if (turn !== 'player') return;
+    const rollVal = rollDice();
+    playerDice.textContent = rollVal;
+    lastRoll = rollVal;
+    playerScoreEl.textContent = `Score: ${++playerScore}`;
+    roundResultEl.textContent = `You rolled ${rollVal}`;
+    rollBtn.disabled = true;
+    roundsPlayed++;
+    sendMessage('roll', rollVal);
+    turn = 'opponent';
+    checkEnd();
+  });
+  function startGame() {
+    gameSection.classList.remove('hidden');
+    rollBtn.disabled = true;
+    playerDice.textContent = '–';
+    opponentDice.textContent = '–';
+    playerScore = 0;
+    opponentScore = 0;
+    roundsPlayed = 0;
+    turn = Math.random() < 0.5 ? 'player' : 'opponent';
+    playerScoreEl.textContent = `Score: 0`;
+    opponentScoreEl.textContent = `Score: 0`;
+    roundResultEl.textContent = '';
+    battleStatusEl.textContent = `Game started! ${turn === 'player' ? 'Your' : "Opponent's"} turn to roll.`;
+    if (turn === 'player') {
+      rollBtn.disabled = false;
+    }
+  }
+  function rollDice() {
+    return Math.floor(Math.random() * 6) + 1;
+  }
+  function checkEnd() {
+    if (roundsPlayed >= maxRounds) {
+      rollBtn.disabled = true;
+      let resultText = '';
+      if (playerScore > opponentScore) resultText = 'You won the battle!';
+      else if (playerScore < opponentScore) resultText = 'You lost the battle!';
+      else resultText = 'Battle tied!';
+      battleStatusEl.textContent = resultText;
+    }
+  }
+  function sendMessage(type, value) {
+    channel.postMessage({type, from: playerId, to: opponentId, value});
+  }
+  function generateId() {
+    return Math.random().toString(36).slice(2, 8);
+  }
+</script>
+</body>
+  </html>
