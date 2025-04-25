@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Color Trader Multiplayer</title>
+<link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    font-family: 'Viga', sans-serif;
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #f8fafc;
+  }
+  .color-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgb(100 116 139 / 0.7);
+  }
+  .selected {
+    outline: 3px solid #6366f1;
+    outline-offset: 2px;
+  }
+  .btn-primary {
+    background: #6366f1;
+    transition: background-color 0.3s;
+  }
+  .btn-primary:hover {
+    background: #4f46e5;
+  }
+  input, button {
+    font-family: 'Viga', sans-serif;
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+<header class="mb-6 text-center max-w-lg">
+  <h1 class="text-4xl mb-1">Color Trader Multiplayer</h1>
+  <p class="text-sm text-gray-400">Trade colors with your friend! Connect via Player IDs</p>
+</header>
+<main class="bg-gray-800 bg-opacity-70 rounded-lg p-6 w-full max-w-lg shadow-lg">
+  <section id="connection" class="mb-6 space-y-2">
+    <div>
+      <label for="playerId" class="block mb-1">Your Player ID (random):</label>
+      <input id="playerId" type="text" readonly class="w-full p-2 rounded bg-gray-700 text-white text-center" />
+    </div>
+    <div>
+      <label for="opponentId" class="block mb-1">Enter Opponent's Player ID to Connect:</label>
+      <input id="opponentId" type="text" placeholder="Enter opponent ID" class="w-full p-2 rounded bg-gray-700 text-white text-center" />
+    </div>
+    <button id="connectBtn" class="btn-primary text-white px-4 py-2 rounded font-semibold shadow-md w-full mt-2">
+      Connect
+    </button>
+    <p id="connStatus" class="mt-2 text-yellow-300 font-semibold"></p>
+  </section>
+  <section id="gameSection" class="hidden">
+    <div class="mb-4">
+      <p class="mb-1">Available Colors (click to select):</p>
+      <div id="colorPalette" class="flex gap-3 flex-wrap"></div>
+    </div>
+    <div class="mb-4 flex justify-between">
+      <div>
+        <h2 class="mb-1 text-gray-400">Your Collection</h2>
+        <div id="playerColors" class="flex gap-2 flex-wrap min-h-[70px]"></div>
+      </div>
+      <div>
+        <h2 class="mb-1 text-gray-400">Opponent Collection</h2>
+        <div id="opponentColors" class="flex gap-2 flex-wrap min-h-[70px]"></div>
+      </div>
+    </div>
+    <div class="mb-4 text-center">
+      <button id="tradeBtn" class="btn-primary text-white px-6 py-3 rounded font-semibold shadow-md" disabled>Propose Trade</button>
+    </div>
+    <div id="tradeStatus" class="text-yellow-300 font-semibold text-center min-h-[1.5rem] mb-2"></div>
+    <div id="gameResult" class="text-center text-yellow-400 font-bold text-lg"></div>
+  </section>
+</main>
+
+<script>
+  const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6'];
+  const playerIdInput = document.getElementById('playerId');
+  const opponentIdInput = document.getElementById('opponentId');
+  const connectBtn = document.getElementById('connectBtn');
+  const connStatus = document.getElementById('connStatus');
+  const gameSection = document.getElementById('gameSection');
+  const colorPalette = document.getElementById('colorPalette');
+  const playerColorsDiv = document.getElementById('playerColors');
+  const opponentColorsDiv = document.getElementById('opponentColors');
+  const tradeBtn = document.getElementById('tradeBtn');
+  const tradeStatus = document.getElementById('tradeStatus');
+  const gameResult = document.getElementById('gameResult');
+
+  const playerId = generateId();
+  playerIdInput.value = playerId;
+  let opponentId = null;
+  let connected = false;
+
+  let playerColors = [];
+  let opponentColors = [];
+  let selectedColor = null;
+  let tradesCount = 0;
+  const maxTrades = 5;
+
+  const channel = new BroadcastChannel('color-trader-channel');
+
+  channel.onmessage = (ev) => {
+    const msg = ev.data;
+    if (!msg || !msg.type) return;
+    if (msg.to !== playerId) return;
+
+    switch(msg.type) {
+      case 'connect_request':
+        if (!connected && msg.from === opponentIdInput.value.trim()) {
+          opponentId = msg.from;
+          sendMessage('connect_accept');
+          connected = true;
+          connStatus.textContent = `Connected with ${opponentId}`;
+          startGame();
+        }
+        break;
+      case 'connect_accept':
+        connected = true;
+        opponentId = msg.from;
+        connStatus.textContent = `Connected with ${opponentId}`;
+        startGame();
+        break;
+      case 'trade_propose':
+        tradeStatus.textContent = `Opponent proposes trading color: `;
+        showColorBox(msg.color, tradeStatus, false);
+        tradeStatus.innerHTML += ` <button id="acceptTrade" class="ml-2 px-2 py-1 bg-green-600 rounded text-white">Accept</button> 
+        <button id="declineTrade" class="ml-2 px-2 py-1 bg-red-600 rounded text-white">Decline</button>`;
+        document.getElementById('acceptTrade').onclick = () => {
+          playerColors.push(msg.color);
+          removeColorFromPalette(msg.color);
+          sendMessage('trade_accept', msg.color);
+          tradeStatus.textContent = 'Trade accepted!';
+          updateCollections();
+          incrementTrade();
+        };
+        document.getElementById('declineTrade').onclick = () => {
+          sendMessage('trade_decline');
+          tradeStatus.textContent = 'Trade declined.';
+        };
+        break;
+      case 'trade_accept':
+        tradeStatus.textContent = 'Opponent accepted your trade.';
+        playerColors.push(msg.color);
+        removeColorFromPalette(msg.color);
+        updateCollections();
+        incrementTrade();
+        break;
+      case 'trade_decline':
+        tradeStatus.textContent = 'Opponent declined your trade.';
+        break;
+    }
+  };
+
+  connectBtn.addEventListener('click', () => {
+    const oppId = opponentIdInput.value.trim();
+    if (!oppId) {
+      alert('Enter opponent ID');
+      return;
+    }
+    opponentId = oppId;
+    sendMessage('connect_request');
+    connStatus.textContent = 'Connecting...';
+  });
+
+  function startGame() {
+    gameSection.classList.remove('hidden');
+    initColorPalette();
+    playerColors = [];
+    opponentColors = [];
+    tradesCount = 0;
+    updateCollections();
+    selectedColor = null;
+    tradeBtn.disabled = true;
+    tradeStatus.textContent = '';
+    gameResult.textContent = '';
+  }
+
+  function initColorPalette() {
+    colorPalette.innerHTML = '';
+    colors.forEach(c => {
+      const box = document.createElement('div');
+      box.className = 'color-box';
+      box.style.backgroundColor = c;
+      box.onclick = () => {
+        if (selectedColor === c) {
+          selectedColor = null;
+          box.classList.remove('selected');
+          tradeBtn.disabled = true;
+        } else {
+          selectedColor = c;
+          [...colorPalette.children].forEach(b => b.classList.remove('selected'));
+          box.classList.add('selected');
+          tradeBtn.disabled = false;
+        }
+      };
+      colorPalette.appendChild(box);
+    });
+  }
+
+  tradeBtn.addEventListener('click', () => {
+    if (!selectedColor) return;
+    tradeStatus.textContent = 'Trade proposed, waiting for opponent...';
+    sendMessage('trade_propose', selectedColor);
+  });
+
+  function updateCollections() {
+    playerColorsDiv.innerHTML = '';
+    opponentColorsDiv.innerHTML = '';
+    playerColors.forEach(c => showColorBox(c, playerColorsDiv));
+    opponentColors.forEach(c => showColorBox(c, opponentColorsDiv));
+  }
+
+  function showColorBox(color, container, clickable = false) {
+    const box = document.createElement('div');
+    box.className = 'color-box';
+    box.style.backgroundColor = color;
+    if (clickable) {
+      box.style.cursor = 'pointer';
+      box.onclick = () => alert('Clicked color: ' + color);
+    }
+    container.appendChild(box);
+  }
+
+  function sendMessage(type, color = null) {
+    channel.postMessage({type, from: playerId, to: opponentId, color});
+  }
+
+  function removeColorFromPalette(color) {
+    const index = colors.indexOf(color);
+    if (index > -1) colors.splice(index, 1);
+    initColorPalette();
+  }
+
+  function incrementTrade() {
+    tradesCount++;
+    if (tradesCount >= maxTrades) {
+      tradeBtn.disabled = true;
+      colorPalette.innerHTML = '';
+      tradeStatus.textContent = '';
+      let winnerText = '';
+      if (playerColors.length > opponentColors.length) winnerText = 'You Win!';
+      else if (playerColors.length < opponentColors.length) winnerText = 'You Lose!';
+      else winnerText = "It's a Tie!";
+      gameResult.textContent = winnerText;
+    }
+  }
+
+  function generateId() {
+    return Math.random().toString(36).slice(2, 8);
+  }
+</script>
+</body>
+</html>
