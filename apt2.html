@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Apatos Wallet Connect</title>
+  <title>Ethereum Wallet Connect</title>
 
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
@@ -12,11 +12,6 @@
     body {
       font-family: 'Viga', sans-serif;
       background: linear-gradient(145deg, #0b0b0b, #2b0033);
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
     }
   </style>
 </head>
@@ -37,7 +32,7 @@
   <div class="mt-10 text-center">
     <h2 class="text-xl font-semibold mb-2">Dashboard</h2>
     <div class="bg-gray-800 p-4 rounded-xl w-64 mx-auto shadow-lg">
-      <p class="text-sm text-gray-300">Current Apatos Balance:</p>
+      <p class="text-sm text-gray-300">Current Ethereum Balance:</p>
       <p id="balance" class="text-lg font-bold text-yellow-300 mt-1">0.00</p>
     </div>
   </div>
@@ -56,7 +51,7 @@
       return `${addr.slice(0, 6)}.....${addr.slice(-6)}`;
     }
 
-    async function connectApatosWallet() {
+    async function connectEthereumWallet() {
       showToast('Connecting.');
       await new Promise(r => setTimeout(r, 500));
       showToast('Connecting..');
@@ -64,9 +59,9 @@
       showToast('Connecting...');
       await new Promise(r => setTimeout(r, 500));
 
-      if (typeof window.apatos !== "undefined") {
+      if (typeof window.ethereum !== "undefined") {
         try {
-          const accounts = await window.apatos.request({ method: 'eth_requestAccounts' });
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
           connectedAddress = accounts[0];
           document.getElementById("walletBtn").innerText = truncateAddress(connectedAddress);
           document.getElementById("walletBtn").onclick = toggleDropdown;
@@ -76,7 +71,7 @@
           showToast("Connection Failed");
         }
       } else {
-        showToast("Apatos Wallet Not Found");
+        showToast("MetaMask Not Found");
       }
     }
 
@@ -90,7 +85,7 @@
     }
 
     function handleWalletClick() {
-      connectApatosWallet();
+      connectEthereumWallet();
     }
 
     function toggleDropdown() {
@@ -107,9 +102,9 @@
 
     async function getBalance() {
       try {
-        const balance = await window.apatos.request({ method: 'eth_getBalance', params: [connectedAddress, 'latest'] });
+        const balance = await window.ethereum.request({ method: 'eth_getBalance', params: [connectedAddress, 'latest'] });
         const eth = parseFloat(parseInt(balance, 16) / 1e18).toFixed(4);
-        document.getElementById("balance").innerText = `${eth} Apatos`;
+        document.getElementById("balance").innerText = `${eth} ETH`;
       } catch (err) {
         document.getElementById("balance").innerText = "0.00";
       }
