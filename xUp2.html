@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CuddleChain Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/smooth-scrollbar@8.7.4/dist/smooth-scrollbar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<style>
+body {font-family: 'Signika', sans-serif; background: linear-gradient(135deg, #ffe6f0, #e0f7ff);}
+.glass {background: rgba(255, 255, 255, 0.15); border-radius: 20px; backdrop-filter: blur(10px); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);}
+</style>
+</head>
+<body class="overflow-x-hidden">
+<div id="particles-js" class="absolute w-full h-full -z-10"></div>
+<header class="text-center p-6">
+<h1 class="text-4xl font-bold text-pink-600 animate__animated animate__fadeInDown">CuddleChain Dashboard</h1>
+<p class="text-lg text-gray-600 mt-2 animate__animated animate__fadeIn">The Cutest Web3 Spot on the Internet</p>
+</header>
+<section class="p-6 flex flex-col items-center">
+<div class="glass p-8 w-full max-w-3xl" data-aos="fade-up">
+<h2 class="text-2xl font-semibold text-center mb-4">Join Our Waitlist</h2>
+<form id="waitlistForm" class="flex flex-col gap-4">
+<input type="text" placeholder="Your Full Name" required class="p-3 rounded-lg bg-white/50 focus:outline-none">
+<input type="email" placeholder="Your Email" required class="p-3 rounded-lg bg-white/50 focus:outline-none">
+<input type="text" placeholder="Preferred Username" required class="p-3 rounded-lg bg-white/50 focus:outline-none">
+<button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg transition-all">Join Now</button>
+</form>
+</div>
+</section>
+<section class="mt-12 p-6 text-center" data-aos="fade-up">
+<h2 class="text-2xl font-bold mb-4">Why CuddleChain?</h2>
+<div class="flex flex-wrap justify-center gap-6">
+<div class="glass p-6 w-64">
+<span class="iconify text-4xl text-pink-500" data-icon="mdi:heart"></span>
+<p class="mt-2 text-gray-700">Community First Always</p>
+</div>
+<div class="glass p-6 w-64">
+<span class="iconify text-4xl text-pink-500" data-icon="mdi:rocket-launch"></span>
+<p class="mt-2 text-gray-700">Next-Gen Web3 Tech</p>
+</div>
+<div class="glass p-6 w-64">
+<span class="iconify text-4xl text-pink-500" data-icon="mdi:emoticon-happy-outline"></span>
+<p class="mt-2 text-gray-700">Positive Vibes Only</p>
+</div>
+</div>
+</section>
+<section class="p-6 mt-12">
+<div class="glass p-8" data-aos="fade-up">
+<h2 class="text-2xl font-bold mb-4 text-center">Roadmap</h2>
+<ul class="text-gray-700 list-disc pl-6">
+<li class="mb-2">Phase 1: Waitlist Launch</li>
+<li class="mb-2">Phase 2: Beta Dashboard Access</li>
+<li class="mb-2">Phase 3: NFT Minting & Rewards</li>
+<li class="mb-2">Phase 4: Full CuddleChain Platform Release</li>
+</ul>
+</div>
+</section>
+<footer class="text-center p-6 mt-12 text-gray-600">
+<div class="flex justify-center gap-4 mb-4">
+<a href="#" class="text-pink-400"><span class="iconify" data-icon="mdi:discord"></span></a>
+<a href="#" class="text-pink-400"><span class="iconify" data-icon="mdi:telegram"></span></a>
+<a href="#" class="text-pink-400"><span class="iconify" data-icon="mdi:twitter"></span></a>
+</div>
+<p>© <span id="year"></span> CuddleChain. All Rights Reserved.</p>
+</footer>
+<script>
+AOS.init();
+particlesJS.load('particles-js', 'particles.json');
+document.getElementById('year').innerText = new Date().getFullYear();
+document.getElementById('waitlistForm').addEventListener('submit', function(e) {
+e.preventDefault();
+Swal.fire({
+title: 'Success!',
+text: 'You have joined the waitlist!',
+icon: 'success',
+confirmButtonText: 'Yay!'
+});
+this.reset();
+});
+</script>
+</body>
+</html>
