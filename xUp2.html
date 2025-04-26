@@ -1,8 +1,9 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CuddleChain Dashboard</title>
+<title>x | Cuddle</title>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -27,39 +28,10 @@ body {font-family: 'Signika', sans-serif; background: linear-gradient(135deg, #f
 <div class="glass p-8 w-full max-w-3xl" data-aos="fade-up">
 <h2 class="text-2xl font-semibold text-center mb-4">Join Our Waitlist</h2>
 <form id="waitlistForm" class="flex flex-col gap-4">
-<input type="text" placeholder="Your Full Name" required class="p-3 rounded-lg bg-white/50 focus:outline-none">
 <input type="email" placeholder="Your Email" required class="p-3 rounded-lg bg-white/50 focus:outline-none">
-<input type="text" placeholder="Preferred Username" required class="p-3 rounded-lg bg-white/50 focus:outline-none">
+<input type="text" placeholder="Your EVM Wallet Address" required class="p-3 rounded-lg bg-white/50 focus:outline-none">
 <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg transition-all">Join Now</button>
 </form>
-</div>
-</section>
-<section class="mt-12 p-6 text-center" data-aos="fade-up">
-<h2 class="text-2xl font-bold mb-4">Why CuddleChain?</h2>
-<div class="flex flex-wrap justify-center gap-6">
-<div class="glass p-6 w-64">
-<span class="iconify text-4xl text-pink-500" data-icon="mdi:heart"></span>
-<p class="mt-2 text-gray-700">Community First Always</p>
-</div>
-<div class="glass p-6 w-64">
-<span class="iconify text-4xl text-pink-500" data-icon="mdi:rocket-launch"></span>
-<p class="mt-2 text-gray-700">Next-Gen Web3 Tech</p>
-</div>
-<div class="glass p-6 w-64">
-<span class="iconify text-4xl text-pink-500" data-icon="mdi:emoticon-happy-outline"></span>
-<p class="mt-2 text-gray-700">Positive Vibes Only</p>
-</div>
-</div>
-</section>
-<section class="p-6 mt-12">
-<div class="glass p-8" data-aos="fade-up">
-<h2 class="text-2xl font-bold mb-4 text-center">Roadmap</h2>
-<ul class="text-gray-700 list-disc pl-6">
-<li class="mb-2">Phase 1: Waitlist Launch</li>
-<li class="mb-2">Phase 2: Beta Dashboard Access</li>
-<li class="mb-2">Phase 3: NFT Minting & Rewards</li>
-<li class="mb-2">Phase 4: Full CuddleChain Platform Release</li>
-</ul>
 </div>
 </section>
 <footer class="text-center p-6 mt-12 text-gray-600">
@@ -68,7 +40,7 @@ body {font-family: 'Signika', sans-serif; background: linear-gradient(135deg, #f
 <a href="#" class="text-pink-400"><span class="iconify" data-icon="mdi:telegram"></span></a>
 <a href="#" class="text-pink-400"><span class="iconify" data-icon="mdi:twitter"></span></a>
 </div>
-<p>© <span id="year"></span> CuddleChain. All Rights Reserved.</p>
+<p>© <span id="year"></span> Cuddle. All Rights Reserved.</p>
 </footer>
 <script>
 AOS.init();
@@ -77,10 +49,12 @@ document.getElementById('year').innerText = new Date().getFullYear();
 document.getElementById('waitlistForm').addEventListener('submit', function(e) {
 e.preventDefault();
 Swal.fire({
-title: 'Success!',
-text: 'You have joined the waitlist!',
+position: 'top-end',
 icon: 'success',
-confirmButtonText: 'Yay!'
+title: 'You have joined the waitlist!',
+showConfirmButton: false,
+timer: 1500,
+toast: true
 });
 this.reset();
 });
