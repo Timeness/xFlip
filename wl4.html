@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black text-white">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carous Protocol - Waitlist</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@1.6.5/dist/flowbite.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.260.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@iconify/iconify@3.1.0/dist/iconify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+</head>
+<body class="font-rajdhani relative overflow-hidden min-h-screen flex flex-col justify-between">
+
+<div id="particles-js" class="absolute inset-0 z-0"></div>
+
+<header class="relative z-10 flex justify-between items-center p-6">
+  <div class="text-4xl font-bold tracking-wider bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-transparent bg-clip-text animate__animated animate__fadeInDown">
+    Carous Protocol
+  </div>
+  <button class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-black font-bold hover:scale-105 transition transform animate__animated animate__fadeInDown">
+    Join Waitlist
+  </button>
+</header>
+
+<main class="relative z-10 flex flex-col items-center justify-center flex-1 text-center space-y-10 p-5" data-aos="fade-up">
+  <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 text-transparent bg-clip-text drop-shadow-lg">
+    Get Ready for the Airdrop
+  </h1>
+  <p class="text-lg sm:text-xl max-w-xl text-gray-300 animate__animated animate__fadeInUp">
+    Unlock the future. Be among the first 500 elite waitlist members.
+  </p>
+  <form class="flex flex-col sm:flex-row items-center gap-4 mt-6 animate__animated animate__fadeInUp">
+    <input type="email" placeholder="Enter your email" class="px-6 py-4 rounded-full text-black w-72 sm:w-96 focus:ring-4 focus:ring-purple-500 focus:outline-none">
+    <button type="submit" class="px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full hover:scale-110 transition transform text-white font-bold">
+      Join Now
+    </button>
+  </form>
+
+  <div class="mt-10">
+    <p class="text-sm text-gray-400">Top Inviters will win special airdrop bonuses.</p>
+  </div>
+</main>
+
+<section class="relative z-10 p-10 bg-black/80 backdrop-blur-md rounded-2xl m-5" data-aos="fade-up">
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 text-gray-400 text-center">
+    <div>
+      <i class="iconify text-5xl" data-icon="mdi:trophy-award"></i>
+      <p class="mt-2">Top Rewards</p>
+    </div>
+    <div>
+      <i class="iconify text-5xl" data-icon="mdi:rocket-launch"></i>
+      <p class="mt-2">Fast Launch</p>
+    </div>
+    <div>
+      <i class="iconify text-5xl" data-icon="mdi:shield-lock"></i>
+      <p class="mt-2">Secure Protocol</p>
+    </div>
+    <div>
+      <i class="iconify text-5xl" data-icon="mdi:globe-light"></i>
+      <p class="mt-2">Global Access</p>
+    </div>
+  </div>
+</section>
+
+<footer class="relative z-10 text-center p-6 text-gray-500 text-xs">
+  © <span id="year"></span> Carous Protocol. All rights reserved.
+</footer>
+
+<script>
+  AOS.init();
+  document.getElementById('year').textContent = new Date().getFullYear();
+  particlesJS('particles-js', {
+    particles: {
+      number: { value: 100 },
+      color: { value: "#ffffff" },
+      shape: { type: "circle" },
+      opacity: { value: 0.3 },
+      size: { value: 3 },
+      move: { enable: true, speed: 1 }
+    },
+    interactivity: {
+      events: {
+        onhover: { enable: true, mode: "repulse" }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
