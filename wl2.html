@@ -1,57 +1,127 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-black text-white">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Carous Protocol - Waitlist</title>
-
+  <title>Carous Protocol | Waitlist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flowbite@1.6.5/dist/flowbite.min.js"></script>
-  <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.2.4/swiper-bundle.min.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.2.4/swiper-bundle.min.js"></script>
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.260.0/dist/umd/lucide.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@iconify/iconify@3.1.0/dist/iconify.min.js"></script>
+  <link href="https://unpkg.com/@iconify/iconify@2.2.1/dist/iconify.min.js" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Unbounded', sans-serif;
+      background: radial-gradient(circle at center, #111827 0%, #000000 100%);
+      color: white;
+    }
+    .glow {
+      box-shadow: 0 0 20px #7f5af0, 0 0 30px #7f5af0;
+    }
+  </style>
 </head>
-<body class="font-orbitron min-h-screen flex flex-col justify-between bg-gradient-to-b from-black via-gray-900 to-black">
+<body class="relative min-h-screen flex flex-col items-center justify-center overflow-x-hidden px-4">
 
-  <header class="flex justify-between items-center p-5">
-    <div class="text-3xl font-bold animate__animated animate__fadeInDown">Carous Protocol</div>
-    <button class="px-5 py-2 bg-white text-black rounded-full hover:bg-gray-300 transition-all animate__animated animate__fadeInDown">Join Waitlist</button>
-  </header>
+<div id="particles-js" class="absolute inset-0 z-0"></div>
 
-  <main class="flex flex-col items-center justify-center flex-1 text-center space-y-8" data-aos="fade-up">
-    <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">Get Ready for the Airdrop</h1>
-    <p class="text-lg sm:text-xl max-w-xl">Be the first to experience the next-gen Carous Protocol. Secure your spot now!</p>
-    <form class="flex flex-col sm:flex-row items-center gap-4 mt-6">
-      <input type="email" placeholder="Enter your email" class="px-5 py-3 rounded-full text-black focus:outline-none focus:ring-4 focus:ring-purple-500 w-72 sm:w-96">
-      <button type="submit" class="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full hover:opacity-90 transition-all">Join Now</button>
-    </form>
-  </main>
+<div class="relative z-10 text-center space-y-6 pt-20">
+  <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight glow bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+    Carous Protocol
+  </h1>
+  <p class="text-lg md:text-2xl text-gray-300">Join the Exclusive Airdrop Waitlist</p>
 
-  <section class="p-10 bg-gradient-to-t from-black via-gray-900 to-black" data-aos="fade-up">
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 items-center justify-center text-gray-400">
-      <div><i class="bx bx-trophy text-5xl"></i><p class="mt-2">Top Rewards</p></div>
-      <div><i class="bx bx-rocket text-5xl"></i><p class="mt-2">Fast Launch</p></div>
-      <div><i class="bx bx-shield text-5xl"></i><p class="mt-2">Secure</p></div>
-      <div><i class="bx bx-globe text-5xl"></i><p class="mt-2">Global</p></div>
-    </div>
-  </section>
+  <div id="countdown" class="text-2xl md:text-3xl mt-4 font-bold text-pink-400"></div>
 
-  <footer class="text-center p-5 text-gray-500 text-sm">
-    © <span id="year"></span> Carous Protocol. All rights reserved.
-  </footer>
+  <div class="mt-8 space-y-4">
+    <input id="email" type="email" placeholder="Enter your email" class="w-72 md:w-96 p-3 rounded-lg bg-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-pink-600">
+    <button onclick="joinWaitlist()" class="w-72 md:w-96 p-3 rounded-lg glow bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 font-bold transition transform hover:scale-105">
+      Join Waitlist
+    </button>
+    <div id="referralLink" class="text-gray-400 mt-2 text-sm break-all"></div>
+  </div>
+
+  <div class="flex space-x-4 justify-center mt-8">
+    <button onclick="share('twitter')" class="p-3 rounded-full glow bg-gradient-to-r from-blue-500 to-cyan-500 hover:scale-110 transition">
+      <span class="iconify text-white text-2xl" data-icon="mdi:twitter"></span>
+    </button>
+    <button onclick="share('telegram')" class="p-3 rounded-full glow bg-gradient-to-r from-blue-600 to-indigo-500 hover:scale-110 transition">
+      <span class="iconify text-white text-2xl" data-icon="mdi:telegram"></span>
+    </button>
+    <button onclick="share('discord')" class="p-3 rounded-full glow bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-110 transition">
+      <span class="iconify text-white text-2xl" data-icon="mdi:discord"></span>
+    </button>
+  </div>
+
+  <div class="mt-10 w-full max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold mb-4">Top Inviters</h2>
+    <ul id="leaderboard" class="space-y-2 text-left"></ul>
+  </div>
+</div>
 
 <script>
-  AOS.init();
-  Splitting();
-  document.getElementById('year').textContent = new Date().getFullYear();
+particlesJS("particles-js", {
+  particles: {
+    number: { value: 80 },
+    color: { value: "#ffffff" },
+    shape: { type: "circle" },
+    opacity: { value: 0.5 },
+    size: { value: 3 },
+    move: { enable: true, speed: 2 }
+  }
+});
+
+const waitlist = JSON.parse(localStorage.getItem("waitlist") || "[]");
+const leaderboard = document.getElementById("leaderboard");
+
+function joinWaitlist() {
+  const email = document.getElementById("email").value.trim();
+  if (!email) return alert("Please enter a valid email.");
+
+  const id = Math.random().toString(36).substring(2, 8);
+  waitlist.push({ email, id, invites: 0 });
+  localStorage.setItem("waitlist", JSON.stringify(waitlist));
+
+  const referral = `${location.origin}?ref=${id}`;
+  document.getElementById("referralLink").innerText = `Your referral link: ${referral}`;
+  updateLeaderboard();
+}
+
+function updateLeaderboard() {
+  leaderboard.innerHTML = "";
+  const sorted = [...waitlist].sort((a, b) => b.invites - a.invites);
+  sorted.slice(0, 5).forEach((user, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="font-bold text-pink-400">#${i+1}</span> ${user.email.split('@')[0]} — <span class="text-gray-400">${user.invites} invites</span>`;
+    leaderboard.appendChild(li);
+  });
+}
+
+function share(platform) {
+  const url = encodeURIComponent(location.href);
+  let link = "";
+  if (platform === "twitter") link = `https://twitter.com/intent/tweet?text=Join Carous Protocol Airdrop!&url=${url}`;
+  if (platform === "telegram") link = `https://t.me/share/url?url=${url}&text=Join Carous Protocol Airdrop!`;
+  if (platform === "discord") link = `https://discord.com/channels/@me`;
+  window.open(link, "_blank");
+}
+
+function startCountdown() {
+  const end = luxon.DateTime.now().plus({ days: 7 });
+  setInterval(() => {
+    const now = luxon.DateTime.now();
+    const diff = end.diff(now, ['days', 'hours', 'minutes', 'seconds']).toObject();
+    if (diff.seconds <= 0) {
+      document.getElementById("countdown").innerText = "Airdrop Launched!";
+      return;
+    }
+    document.getElementById("countdown").innerText =
+      `${Math.floor(diff.days)}d ${Math.floor(diff.hours)}h ${Math.floor(diff.minutes)}m ${Math.floor(diff.seconds)}s`;
+  }, 1000);
+}
+
+startCountdown();
+updateLeaderboard();
 </script>
 
 </body>
