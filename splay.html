@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JioSaavn Music Player</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4">🎵 JioSaavn Music Player</h1>
+    <input id="searchInput" type="text" placeholder="Search for songs..." class="w-full p-2 border border-gray-300 rounded mb-4"/>
+    <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const resultsDiv = document.getElementById('results');
+
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query) {
+          fetchSongs(query);
+        }
+      }
+    });
+
+    async function fetchSongs(query) {
+      resultsDiv.innerHTML = 'Loading...';
+      try {
+        const response = await fetch(`https://api.jiosaavn.com/searchSongs?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        displayResults(data.songs);
+      } catch (error) {
+        resultsDiv.innerHTML = 'Error fetching songs.';
+        console.error(error);
+      }
+    }
+
+    function displayResults(songs) {
+      if (!songs || songs.length === 0) {
+        resultsDiv.innerHTML = 'No songs found.';
+        return;
+      }
+      resultsDiv.innerHTML = '';
+      songs.forEach(song => {
+        const songDiv = document.createElement('div');
+        songDiv.className = 'bg-white p-4 rounded shadow';
+        songDiv.innerHTML = `
+          <img src="${song.image}" alt="${song.title}" class="w-full h-48 object-cover rounded mb-2"/>
+          <h2 class="text-xl font-semibold">${song.title}</h2>
+          <p class="text-gray-600">${song.artist}</p>
+          <audio controls class="w-full mt-2">
+            <source src="${song.media_url}" type="audio/mp3">
+            Your browser does not support the audio element.
+          </audio>
+        `;
+        resultsDiv.appendChild(songDiv);
+      });
+    }
+  </script>
+</body>
+</html>
