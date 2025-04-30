@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Saavn Room Player</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Chakra Petch', sans-serif; }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+  <div class="max-w-3xl mx-auto p-4">
+    <h1 class="text-4xl font-bold text-center text-purple-400 mb-6">Saavn Room Player</h1>
+
+    <div id="roomStatus" class="text-center mb-4 text-sm text-gray-400"></div>
+
+    <div class="flex items-center space-x-2">
+      <input id="searchInput" type="text" placeholder="Search songs..." class="flex-1 p-3 rounded-lg text-black" />
+      <button id="searchBtn" class="bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-700">Search</button>
+    </div>
+
+    <div id="results" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6"></div>
+  </div>
+
+  <script>
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInput = document.getElementById('searchInput');
+    const results = document.getElementById('results');
+    const roomStatus = document.getElementById('roomStatus');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomID = urlParams.get('room');
+
+    const isHost = !localStorage.getItem('joinedRoom') && roomID;
+    if (roomID) {
+      roomStatus.innerText = isHost
+        ? `You're hosting Room: ${roomID}`
+        : `You're joined in Room: ${roomID}`;
+      localStorage.setItem('joinedRoom', roomID);
+    }
+
+    if (!roomID) {
+      roomStatus.innerText = "You're not in a room. Add ?room=xyz in URL to create/join.";
+    }
+
+    searchBtn.addEventListener('click', () => {
+      const query = searchInput.value.trim();
+      if (query) searchSongs(query);
+    });
+
+    async function searchSongs(query) {
+      results.innerHTML = '<p class="text-center">Loading...</p>';
+      try {
+        const res = await fetch(`https://jiosaavn-api-privatecvc2.vercel.app/search/songs?query=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        if (data.status === 'SUCCESS' && data.data.results.length > 0) {
+          showSongs(data.data.results);
+        } else {
+          results.innerHTML = '<p class="text-center text-red-400">No songs found.</p>';
+        }
+      } catch (err) {
+        results.innerHTML = '<p class="text-center text-red-500">Error fetching songs.</p>';
+      }
+    }
+
+    function showSongs(songs) {
+      results.innerHTML = '';
+      songs.forEach(song => {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-900 rounded-xl p-4 shadow-lg';
+
+        const audioURL = song.downloadUrl[song.downloadUrl.length - 1].link;
+        const songData = {
+          name: song.name,
+          artist: song.primaryArtists,
+          image: song.image[2].link,
+          url: audioURL
+        };
+
+        card.innerHTML = `
+          <img src="${songData.image}" alt="${songData.name}" class="w-full h-48 object-cover rounded-lg mb-3" />
+          <h2 class="text-xl font-semibold text-purple-300">${songData.name}</h2>
+          <p class="text-sm text-gray-300 mb-2">${songData.artist}</p>
+          <audio controls class="w-full mt-2" data-url="${songData.url}">
+            <source src="${songData.url}" type="audio/mpeg">
+            Your browser does not support audio.
+          </audio>
+          ${isHost ? `<button class="bg-purple-600 mt-2 w-full py-2 rounded hover:bg-purple-700 sync-btn">Play in Room</button>` : ''}
+        `;
+
+        results.appendChild(card);
+      });
+
+      if (isHost) {
+        document.querySelectorAll('.sync-btn').forEach(btn => {
+          btn.addEventListener('click', e => {
+            const audio = btn.parentElement.querySelector('audio');
+            const trackURL = audio.dataset.url;
+            localStorage.setItem(`room_${roomID}`, JSON.stringify({
+              url: trackURL,
+              time: Date.now()
+            }));
+          });
+        });
+      }
+    }
+
+    // Room listener (for joined users)
+    if (!isHost && roomID) {
+      setInterval(() => {
+        const data = JSON.parse(localStorage.getItem(`room_${roomID}`));
+        if (data && data.url !== currentTrackURL) {
+          playSharedSong(data.url);
+        }
+      }, 2000);
+    }
+
+    let currentTrackURL = '';
+    function playSharedSong(url) {
+      currentTrackURL = url;
+      const audio = new Audio(url);
+      audio.play();
+    }
+  </script>
+</body>
+</html>
