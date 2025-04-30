@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saavn Music Player</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Signika', sans-serif;
+        background: black;
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen p-6">
+    <header class="text-center text-3xl font-bold text-white mb-6">
+      Saavn Music Player
+    </header><div class="flex flex-col items-center gap-4">
+  <input id="songInput" type="text" placeholder="Search for a song..."
+    class="w-full max-w-md px-4 py-2 rounded-lg text-black" />
+  <button onclick="searchSong()" class="bg-green-600 px-6 py-2 rounded-lg hover:bg-green-700">
+    <span class="iconify inline-block" data-icon="mdi:search"></span> Search
+  </button>
+</div>
+
+<div id="songDetails" class="mt-8 hidden">
+  <div class="flex flex-col md:flex-row items-center gap-6">
+    <img id="thumbnail" class="w-60 h-60 rounded-xl shadow-lg" />
+    <div class="space-y-2 text-lg">
+      <div><strong>Song:</strong> <span id="title"></span></div>
+      <div><strong>Artist:</strong> <span id="singer"></span></div>
+      <div><strong>Album:</strong> <a id="albumUrl" class="underline text-blue-400" target="_blank"></a></div>
+      <div><strong>Language:</strong> <span id="language"></span></div>
+      <div><strong>Year:</strong> <span id="year"></span></div>
+      <div><strong>Duration:</strong> <span id="duration"></span></div>
+      <div><strong>Download:</strong> <a id="downloadLink" class="underline text-green-400" target="_blank">Click here</a></div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <audio id="audioPlayer" controls class="w-full max-w-xl mx-auto"></audio>
+  </div>
+
+  <button onclick="toggleLyrics()" class="mt-4 bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-700">
+    <span class="iconify inline-block" data-icon="mdi:music-note"></span> Toggle Lyrics
+  </button>
+
+  <div id="lyricsBox" class="mt-4 p-4 bg-gray-800 rounded-lg hidden max-w-xl mx-auto"></div>
+</div>
+
+<script>
+  async function searchSong() {
+    const query = document.getElementById("songInput").value.trim();
+    if (!query) return alert("Enter a song name");
+
+    const res = await fetch(`https://saavnapi-nine.vercel.app/search/songs?query=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    const song = data.data?.results?.[0];
+
+    if (!song) return alert("No song found");
+
+    document.getElementById("title").textContent = song.name;
+    document.getElementById("singer").textContent = song.primaryArtists;
+    document.getElementById("albumUrl").textContent = song.album.name;
+    document.getElementById("albumUrl").href = song.album.url;
+    document.getElementById("language").textContent = song.language;
+    document.getElementById("year").textContent = song.year;
+    document.getElementById("duration").textContent = Math.floor(song.duration / 60) + ':' + (song.duration % 60).toString().padStart(2, '0');
+    document.getElementById("thumbnail").src = song.image[2]?.link || song.image[1]?.link;
+    document.getElementById("downloadLink").href = song.downloadUrl[4]?.link || song.downloadUrl[0]?.link;
+    document.getElementById("audioPlayer").src = song.downloadUrl[4]?.link || song.downloadUrl[0]?.link;
+
+    const lyricsRes = await fetch(`https://saavnapi-nine.vercel.app/songs/lyrics/${song.id}`);
+    const lyricsData = await lyricsRes.json();
+    document.getElementById("lyricsBox").textContent = lyricsData?.data?.lyrics || "Lyrics not available.";
+
+    document.getElementById("songDetails").classList.remove("hidden");
+  }
+
+  function toggleLyrics() {
+    const box = document.getElementById("lyricsBox");
+    box.classList.toggle("hidden");
+  }
+</script>
+
+  </body>
+</html>
