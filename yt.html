@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Music Video Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #search-container {
+            margin-bottom: 20px;
+        }
+        #search-input {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+        #search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #player {
+            margin-top: 20px;
+        }
+        #results {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .result-item {
+            padding: 10px;
+            background-color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .result-item:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Music Video Player</h1>
+    <div id="search-container">
+        <input type="text" id="search-input" placeholder="Search for a music video...">
+        <button id="search-button">Search</button>
+    </div>
+    <div id="player"></div>
+    <div id="results"></div>
+
+    <script>
+        // Load YouTube Iframe API
+        let tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        let firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        let player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '360',
+                width: '640',
+                videoId: '', // Initial video ID (empty)
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // Player is ready, but no video is loaded yet
+        }
+
+        // Search functionality (mock for now, replace with unofficial API)
+        document.getElementById('search-button').addEventListener('click', () => {
+            let query = document.getElementById('search-input').value;
+            if (query) {
+                searchVideos(query);
+            }
+        });
+
+        function searchVideos(query) {
+            // Mock search results (replace with unofficial API call)
+            let mockResults = [
+                { title: "Sample Music Video 1", videoId: "dQw4w9WgXcQ" },
+                { title: "Sample Music Video 2", videoId: "3tmd-ClpJxA" }
+            ];
+
+            let resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            mockResults.forEach(result => {
+                let div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerText = result.title;
+                div.onclick = () => {
+                    player.loadVideoById(result.videoId);
+                };
+                resultsDiv.appendChild(div);
+            });
+
+            // TODO: Integrate unofficial API (e.g., ytmusic-api) for real search
+            // Example: Fetch results from a backend server using ytmusic-api
+        }
+    </script>
+</body>
+</html>
