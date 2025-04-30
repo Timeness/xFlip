@@ -32,7 +32,7 @@
 
     async function searchSong() {
       const query = document.getElementById('searchInput').value;
-      const res = await fetch(`https://saavn.me/search/songs?query=${encodeURIComponent(query)}`);
+      const res = await fetch(`https://jiosaavn-api-privatecvc2.vercel.app/search/songs?query=${encodeURIComponent(query)}`);
       const data = await res.json();
       currentPlaylist = data.data.results;
       currentIndex = 0;
