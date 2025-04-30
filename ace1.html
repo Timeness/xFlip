@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaama Music Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Urbanist', sans-serif; }
+  </style>
+</head>
+<body class="bg-black text-white p-6 min-h-screen">
+  <h1 class="text-3xl font-bold mb-6">Gaama Music Player</h1>
+
+  <input id="searchInput" type="text" placeholder="Search for a song..."
+         class="w-full p-3 mb-4 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white" />
+
+  <div id="results" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10"></div>
+
+  <div id="player" class="hidden p-4 bg-gray-900 rounded mt-8">
+    <h2 id="nowPlaying" class="text-xl font-semibold mb-2"></h2>
+    <audio id="audio" controls class="w-full mb-4"></audio>
+    <div id="lyrics" class="text-sm text-gray-300"></div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const resultsDiv = document.getElementById('results');
+    const audio = document.getElementById('audio');
+    const nowPlaying = document.getElementById('nowPlaying');
+    const player = document.getElementById('player');
+    const lyricsDiv = document.getElementById('lyrics');
+
+    searchInput.addEventListener('keyup', async (e) => {
+      if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (!query) return;
+
+        resultsDiv.innerHTML = '<p class="text-gray-400">Searching...</p>';
+        player.classList.add('hidden');
+
+        try {
+          const res = await fetch(`https://musicapi.x007.workers.dev/search?q=${encodeURIComponent(query)}&searchEngine=gaama`);
+          const data = await res.json();
+          const songs = data.response;
+
+          resultsDiv.innerHTML = '';
+          if (!songs || songs.length === 0) {
+            resultsDiv.innerHTML = '<p class="text-gray-500">No results found.</p>';
+            return;
+          }
+
+          songs.forEach(song => {
+            const card = document.createElement('div');
+            card.className = "bg-gray-800 p-4 rounded cursor-pointer hover:bg-gray-700 transition";
+            card.innerHTML = `
+              <img src="${song.img}" class="w-full h-48 object-cover rounded mb-3" />
+              <h3 class="text-lg font-semibold">${song.title}</h3>
+            `;
+            card.addEventListener('click', async () => {
+              try {
+                nowPlaying.textContent = song.title;
+                lyricsDiv.innerHTML = 'Loading lyrics...';
+
+                const fetchRes = await fetch(`https://musicapi.x007.workers.dev/fetch?id=${song.id}`);
+                const fetchData = await fetchRes.json();
+                audio.src = fetchData.response;
+                audio.play();
+                player.classList.remove('hidden');
+
+                const lyricsRes = await fetch(`https://musicapi.x007.workers.dev/lyrics?id=${song.id}`);
+                const lyricsData = await lyricsRes.json();
+                if (lyricsData.response) {
+                  lyricsDiv.innerHTML = lyricsData.response;
+                } else {
+                  lyricsDiv.innerHTML = '<p class="text-gray-500">Lyrics not found.</p>';
+                }
+              } catch {
+                lyricsDiv.innerHTML = '<p class="text-red-500">Error loading song or lyrics.</p>';
+              }
+            });
+            resultsDiv.appendChild(card);
+          });
+        } catch {
+          resultsDiv.innerHTML = '<p class="text-red-500">Something went wrong.</p>';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
