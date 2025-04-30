@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Player</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans p-4">
+
+  <div class="max-w-xl mx-auto space-y-6">
+    <h1 class="text-3xl font-bold text-center">X007 Music Search</h1>
+
+    <div class="flex gap-2">
+      <input id="query" type="text" placeholder="Enter song name..." class="flex-1 p-2 rounded text-black" />
+      <select id="engine" class="p-2 text-black rounded">
+        <option value="gaama">Gaama</option>
+        <option value="seevn">Seevn</option>
+        <option value="hunjama">Hunjama</option>
+        <option value="mtmusic">MTMusic</option>
+        <option value="wunk">Wunk</option>
+      </select>
+      <button onclick="searchSongs()" class="bg-blue-600 px-4 rounded hover:bg-blue-700">Search</button>
+    </div>
+
+    <div id="results" class="space-y-4"></div>
+
+    <h2 class="text-2xl font-semibold mt-8">Playlist</h2>
+    <ul id="playlist" class="space-y-2"></ul>
+
+    <div class="mt-4">
+      <audio id="player" controls autoplay class="w-full"></audio>
+    </div>
+  </div>
+
+  <script>
+    let playlist = [];
+    let currentIndex = 0;
+
+    async function searchSongs() {
+      const q = document.getElementById('query').value;
+      const engine = document.getElementById('engine').value;
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '<p>Searching...</p>';
+
+      const res = await fetch(`https://musicapi.x007.workers.dev/search?q=${encodeURIComponent(q)}&searchEngine=${engine}`);
+      const data = await res.json();
+
+      if (data.status !== 200 || !data.response) {
+        resultsDiv.innerHTML = '<p class="text-red-500">No results found.</p>';
+        return;
+      }
+
+      resultsDiv.innerHTML = '';
+      data.response.forEach(song => {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-800 p-4 rounded shadow flex items-center gap-4';
+
+        card.innerHTML = `
+          <img src="${song.img}" alt="${song.title}" class="w-16 h-16 rounded" />
+          <div class="flex-1">
+            <h3 class="text-lg font-bold">${song.title}</h3>
+            <button class="mt-2 bg-green-600 px-3 py-1 rounded hover:bg-green-700" onclick="addToPlaylist('${song.id}', '${song.title}', '${engine}')">+ Add to Playlist</button>
+          </div>
+        `;
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    async function addToPlaylist(id, title, engine) {
+      const res = await fetch(`https://musicapi.x007.workers.dev/fetch?id=${id}`);
+      const data = await res.json();
+      if (data.status === 200 && data.response) {
+        playlist.push({ title, url: data.response });
+        updatePlaylistUI();
+        if (playlist.length === 1) {
+          playSong(0);
+        }
+      }
+    }
+
+    function updatePlaylistUI() {
+      const list = document.getElementById('playlist');
+      list.innerHTML = '';
+      playlist.forEach((song, i) => {
+        const item = document.createElement('li');
+        item.className = 'bg-gray-700 p-2 rounded flex justify-between items-center';
+        item.innerHTML = `
+          <span>${song.title}</span>
+          <button onclick="playSong(${i})" class="text-blue-400 hover:underline">Play</button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function playSong(index) {
+      currentIndex = index;
+      const player = document.getElementById('player');
+      player.src = playlist[index].url;
+      player.play();
+    }
+
+    document.getElementById('player').addEventListener('ended', () => {
+      currentIndex++;
+      if (currentIndex < playlist.length) {
+        playSong(currentIndex);
+      }
+    });
+  </script>
+
+</body>
+</html>
