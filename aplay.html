@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Music Player</title>
+  <title>Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: 'Urbanist', sans-serif; }
   </style>
 </head>
-<body class="bg-black text-white p-6">
-  <h1 class="text-3xl font-semibold mb-4">Music Player</h1>
-  
-  <input type="text" id="searchInput" placeholder="Search song..." 
-         class="w-full p-2 mb-4 rounded bg-gray-800 text-white border border-gray-600">
+<body class="bg-black text-white min-h-screen p-6">
+  <h1 class="text-3xl font-semibold mb-6">Player</h1>
+
+  <input type="text" id="searchInput" placeholder="Type a song and press Enter..."
+         class="w-full p-3 mb-6 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white">
 
   <div id="results" class="space-y-4"></div>
 
-  <audio id="audioPlayer" controls class="w-full mt-6 hidden"></audio>
+  <audio id="audioPlayer" controls class="w-full mt-8 hidden rounded bg-gray-800"></audio>
 
   <script>
     const searchInput = document.getElementById('searchInput');
@@ -28,36 +29,41 @@
       if (e.key === 'Enter') {
         const query = searchInput.value.trim();
         if (!query) return;
-        
-        resultsDiv.innerHTML = 'Loading...';
+
+        resultsDiv.innerHTML = '<p class="text-gray-400">Searching...</p>';
+        audioPlayer.classList.add('hidden');
 
         try {
-          const res = await fetch(`https://musicapi.x007.workers.dev/search?query=${encodeURIComponent(query)}`);
+          const res = await fetch(`https://musicapi.x007.workers.dev/search?q=${encodeURIComponent(query)}&searchEngine=seevn`);
           const data = await res.json();
+
           const songs = data.results || [];
 
           if (songs.length === 0) {
-            resultsDiv.innerHTML = 'No results found.';
+            resultsDiv.innerHTML = '<p class="text-gray-500">No results found.</p>';
             return;
           }
 
           resultsDiv.innerHTML = '';
           songs.forEach(song => {
             const card = document.createElement('div');
-            card.className = "bg-gray-800 p-4 rounded shadow hover:bg-gray-700 cursor-pointer transition";
+            card.className = "bg-gray-900 p-4 rounded shadow hover:bg-gray-800 cursor-pointer transition";
             card.innerHTML = `
               <h2 class="text-xl font-semibold">${song.title}</h2>
               <p class="text-sm text-gray-400">${song.artists}</p>
             `;
             card.addEventListener('click', () => {
-              audioPlayer.src = song.downloadUrl[4]?.url || song.downloadUrl[0]?.url;
-              audioPlayer.classList.remove('hidden');
-              audioPlayer.play();
+              const audioUrl = song.downloadUrl?.[4]?.url || song.downloadUrl?.[0]?.url;
+              if (audioUrl) {
+                audioPlayer.src = audioUrl;
+                audioPlayer.classList.remove('hidden');
+                audioPlayer.play();
+              }
             });
             resultsDiv.appendChild(card);
           });
         } catch (err) {
-          resultsDiv.innerHTML = 'Error fetching results.';
+          resultsDiv.innerHTML = '<p class="text-red-500">Error fetching results.</p>';
         }
       }
     });
