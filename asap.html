@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JioSaavn Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <style>
+    body {
+      font-family: 'Signika', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center p-4">  <!-- Magic Nav -->  <nav class="fixed top-0 left-0 w-full z-50 bg-black border-b border-gray-800 flex justify-between items-center px-6 py-3 shadow">
+    <h1 class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-500 text-transparent bg-clip-text">Saavn Player</h1>
+    <div class="space-x-4">
+      <button onclick="scrollToEl('searchInput')" class="hover:text-cyan-400">Search</button>
+      <button onclick="scrollToEl('results')" class="hover:text-cyan-400">Results</button>
+      <button onclick="scrollToEl('player')" class="hover:text-cyan-400">Now Playing</button>
+    </div>
+  </nav>  <div class="pt-20 w-full max-w-xl">
+    <input id="searchInput" type="text" placeholder="Search songs, albums..." class="w-full p-3 bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 mb-4 text-white">
+    <div id="results" class="space-y-4"></div>
+  </div>  <div id="player" class="fixed bottom-0 left-0 right-0 bg-gray-900 p-4 shadow-2xl flex items-center justify-between">
+    <img id="cover" src="" alt="Cover" class="w-14 h-14 rounded-md mr-4 hidden">
+    <div class="flex-1">
+      <div id="title" class="font-semibold text-lg"></div>
+      <div id="artist" class="text-sm text-gray-400"></div>
+      <div class="flex items-center mt-2">
+        <span id="currentTime" class="text-xs w-12">00:00</span>
+        <input id="progress" type="range" value="0" min="0" max="100" class="flex-1 mx-2">
+        <span id="duration" class="text-xs w-12">00:00</span>
+      </div>
+      <div class="flex items-center mt-2">
+        <input id="volume" type="range" min="0" max="1" step="0.01" value="1" class="w-24">
+        <button id="lyricsToggle" class="ml-4 text-sm text-cyan-400 underline">Show Lyrics</button>
+      </div>
+      <div id="lyrics" class="mt-2 text-xs text-gray-300 hidden max-h-32 overflow-auto"></div>
+    </div>
+    <div class="flex items-center space-x-4 ml-4">
+      <button id="prevBtn"><iconify-icon icon="ph:skip-back-fill" class="text-white text-2xl"></iconify-icon></button>
+      <button id="playBtn"><iconify-icon icon="ph:play-fill" class="text-white text-2xl"></iconify-icon></button>
+      <button id="nextBtn"><iconify-icon icon="ph:skip-forward-fill" class="text-white text-2xl"></iconify-icon></button>
+    </div>
+  </div><audio id="audio" preload="metadata"></audio>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const results = document.getElementById('results');
+    const audio = document.getElementById('audio');
+    const title = document.getElementById('title');
+    const artist = document.getElementById('artist');
+    const cover = document.getElementById('cover');
+    const playBtn = document.getElementById('playBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const progress = document.getElementById('progress');
+    const volume = document.getElementById('volume');
+    const lyricsToggle = document.getElementById('lyricsToggle');
+    const lyricsBox = document.getElementById('lyrics');
+
+    let playlist = [];
+    let currentIndex = 0;
+    let isPlaying = false;
+    let currentSongId = null;
+
+    async function searchSongs(query) {
+      const res = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      playlist = data.data.results;
+      renderResults();
+    }
+
+    function renderResults() {
+      results.innerHTML = '';
+      playlist.forEach((song, index) => {
+        const div = document.createElement('div');
+        div.className = "flex items-center bg-gray-800 p-3 rounded-lg cursor-pointer hover:bg-gray-700 transition";
+        div.innerHTML = `
+          <img src="${song.image[1].link}" class="w-12 h-12 rounded-md mr-4">
+          <div>
+            <div class="font-semibold">${song.name}</div>
+            <div class="text-sm text-gray-400">${song.primaryArtists}</div>
+          </div>
+        `;
+        div.onclick = () => playSong(index);
+        results.appendChild(div);
+      });
+    }
+
+    async function playSong(index) {
+      const song = playlist[index];
+      currentIndex = index;
+      currentSongId = song.id;
+      const res = await fetch(`https://saavn.dev/api/songs/${song.id}`);
+      const fullData = await res.json();
+      const data = fullData.data[0];
+      const link = data.downloadUrl[4].link;
+
+      audio.src = link;
+      title.textContent = song.name;
+      artist.textContent = song.primaryArtists;
+      cover.src = song.image[1].link;
+      cover.classList.remove('hidden');
+      lyricsBox.classList.add('hidden');
+      lyricsBox.textContent = '';
+
+      audio.play();
+      isPlaying = true;
+      updatePlayButton();
+    }
+
+    lyricsToggle.onclick = async () => {
+      if (!currentSongId) return;
+      const res = await fetch(`https://saavn.dev/api/lyrics?id=${currentSongId}`);
+      const data = await res.json();
+      lyricsBox.textContent = data.data.lyrics.replace(/\n/g, '\n');
+      lyricsBox.classList.toggle('hidden');
+    };
+
+    function updatePlayButton() {
+      playBtn.innerHTML = isPlaying
+        ? `<iconify-icon icon="ph:pause-fill" class="text-white text-2xl"></iconify-icon>`
+        : `<iconify-icon icon="ph:play-fill" class="text-white text-2xl"></iconify-icon>`;
+    }
+
+    playBtn.onclick = () => {
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+      } else {
+        audio.play();
+        isPlaying = true;
+      }
+      updatePlayButton();
+    };
+
+    nextBtn.onclick = () => {
+      if (currentIndex < playlist.length - 1) playSong(currentIndex + 1);
+    };
+
+    prevBtn.onclick = () => {
+      if (currentIndex > 0) playSong(currentIndex - 1);
+    };
+
+    audio.ontimeupdate = () => {
+      const current = audio.currentTime;
+      const dur = audio.duration;
+      currentTimeEl.textContent = formatTime(current);
+      durationEl.textContent = formatTime(dur);
+      progress.value = dur ? (current / dur) * 100 : 0;
+    };
+
+    audio.onended = () => {
+      if (currentIndex < playlist.length - 1) playSong(currentIndex + 1);
+    };
+
+    progress.oninput = () => {
+      if (audio.duration) {
+        audio.currentTime = (progress.value / 100) * audio.duration;
+      }
+    };
+
+    volume.oninput = () => {
+      audio.volume = volume.value;
+    };
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function scrollToEl(id) {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        searchSongs(searchInput.value);
+      }
+    });
+  </script></body>
+</html>
