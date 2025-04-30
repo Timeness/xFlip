@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <style>
+    body {
+      font-family: 'Signika', sans-serif;
+    }
+    .gradient-bg {
+      background: linear-gradient(to bottom right, #0f0f0f, #1a1a1a, #1f2937);
+    }
+  </style>
+</head>
+<body class="gradient-bg text-white min-h-screen flex flex-col items-center py-10 px-4">
+  <h1 class="text-3xl font-bold mb-6 text-center">Music Player</h1>  <div class="flex gap-2 w-full max-w-lg mb-4">
+    <input id="searchInput" type="text" placeholder="Search a song..." class="flex-1 p-3 rounded-lg text-black focus:outline-none" />
+    <button onclick="searchSong()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-3 rounded-lg font-semibold">Search</button>
+  </div>  <div id="results" class="w-full max-w-lg space-y-6"></div>  <script>
+    let audio = new Audio();
+    let currentIndex = 0;
+    let currentPlaylist = [];
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${mins}:${secs}`;
+    }
+
+    async function searchSong() {
+      const query = document.getElementById('searchInput').value;
+      const res = await fetch(`https://saavn.me/search/songs?query=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      currentPlaylist = data.data.results;
+      currentIndex = 0;
+      displaySongs(currentPlaylist);
+      playSong(currentIndex);
+    }
+
+    function displaySongs(songs) {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      songs.forEach((song, index) => {
+        const div = document.createElement('div');
+        div.className = 'bg-gray-800 p-4 rounded-lg shadow-lg';
+
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-semibold">${song.name}</h2>
+              <p class="text-sm text-gray-400">${song.primaryArtists}</p>
+            </div>
+            <button onclick="playSong(${index})" class="bg-emerald-700 hover:bg-emerald-800 p-2 rounded-full">
+              <iconify-icon icon="mdi:play-circle-outline" class="text-2xl"></iconify-icon>
+            </button>
+          </div>
+          <div class="mt-3">
+            <div class="w-full bg-gray-700 h-2 rounded overflow-hidden">
+              <div id="progress-${index}" class="bg-emerald-500 h-2 w-0"></div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-400 mt-1">
+              <span id="current-${index}">0:00</span>
+              <span id="duration-${index}">--:--</span>
+            </div>
+          </div>
+        `;
+        resultsDiv.appendChild(div);
+      });
+    }
+
+    function playSong(index) {
+      const song = currentPlaylist[index];
+      const url = song.downloadUrl[4].link;
+      audio.src = url;
+      audio.play();
+
+      updateTime(index);
+
+      audio.onended = () => {
+        currentIndex = (index + 1) % currentPlaylist.length;
+        playSong(currentIndex);
+      };
+    }
+
+    function updateTime(index) {
+      audio.ontimeupdate = () => {
+        const current = document.getElementById(`current-${index}`);
+        const duration = document.getElementById(`duration-${index}`);
+        const progress = document.getElementById(`progress-${index}`);
+
+        if (audio.duration) {
+          current.textContent = formatTime(audio.currentTime);
+          duration.textContent = formatTime(audio.duration);
+          const percent = (audio.currentTime / audio.duration) * 100;
+          progress.style.width = `${percent}%`;
+        }
+      };
+    }
+  </script></body>
+</html>
