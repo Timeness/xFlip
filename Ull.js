@@ -42,4 +42,3 @@ if (!/\/claim\s+0c\d{5}HEXA/.test(msg.text || "")) {
 });
 
 bot.start();
-
