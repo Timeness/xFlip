@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StegoFile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Share Tech Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-black text-green-400 p-6">
+  <h1 class="text-2xl mb-4">Steganography File Encoder/Decoder</h1>
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-gray-900 p-4 rounded-xl border border-green-500">
+      <h2 class="text-lg mb-2">Encode File into Image</h2>
+      <input type="file" id="coverImage" accept="image/png" class="mb-2 w-full bg-black text-white p-1">
+      <input type="file" id="secretFile" class="mb-2 w-full bg-black text-white p-1">
+      <button onclick="encodeFile()" class="mt-2 bg-green-700 hover:bg-green-500 text-black px-4 py-2 rounded">Encode & Download</button>
+      <canvas id="canvasEncode" class="hidden"></canvas>
+    </div>
+    <div class="bg-gray-900 p-4 rounded-xl border border-green-500">
+      <h2 class="text-lg mb-2">Decode File from Image</h2>
+      <input type="file" id="encodedImage" accept="image/png" class="mb-2 w-full bg-black text-white p-1">
+      <button onclick="decodeFile()" class="bg-blue-700 hover:bg-blue-500 text-black px-4 py-2 rounded">Decode</button>
+      <div id="downloadLink" class="mt-4"></div>
+      <canvas id="canvasDecode" class="hidden"></canvas>
+    </div>
+  </div>
+  <script>
+    function encodeFile() {
+      const imageFile = document.getElementById("coverImage").files[0];
+      const secretFile = document.getElementById("secretFile").files[0];
+      if (!imageFile || !secretFile) return alert("Image and file are required");
+
+      const reader1 = new FileReader();
+      reader1.onload = e1 => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.getElementById("canvasEncode");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const reader2 = new FileReader();
+          reader2.onload = e2 => {
+            const b64 = btoa(new Uint8Array(e2.target.result).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+            const ext = secretFile.name.split('.').pop();
+            const payload = ext.padEnd(10) + b64;
+            const bin = payload.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join('');
+            if (bin.length > imgData.data.length / 4 * 3) return alert("File too big for selected image");
+            let j = 0;
+            for (let i = 0; i < imgData.data.length && j < bin.length; i += 4) {
+              imgData.data[i] = (imgData.data[i] & 0xFE) | parseInt(bin[j++]);
+              imgData.data[i + 1] = (imgData.data[i + 1] & 0xFE) | parseInt(bin[j++]);
+              imgData.data[i + 2] = (imgData.data[i + 2] & 0xFE) | parseInt(bin[j++]);
+            }
+            ctx.putImageData(imgData, 0, 0);
+            const link = document.createElement("a");
+            link.download = "stego.png";
+            link.href = canvas.toDataURL();
+            link.click();
+          };
+          reader2.readAsArrayBuffer(secretFile);
+        };
+        img.src = e1.target.result;
+      };
+      reader1.readAsDataURL(imageFile);
+    }
+
+    function decodeFile() {
+      const imageFile = document.getElementById("encodedImage").files[0];
+      if (!imageFile) return alert("Please select an image");
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.getElementById("canvasDecode");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let bin = "";
+          for (let i = 0; i < imgData.data.length; i += 4) {
+            bin += (imgData.data[i] & 1).toString();
+            bin += (imgData.data[i + 1] & 1).toString();
+            bin += (imgData.data[i + 2] & 1).toString();
+          }
+          let bytes = bin.match(/.{1,8}/g).map(b => String.fromCharCode(parseInt(b, 2))).join('');
+          const ext = bytes.slice(0, 10).trim();
+          const base64 = bytes.slice(10);
+          const binary = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+          const blob = new Blob([binary]);
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "extracted." + ext;
+          link.textContent = "Download extracted." + ext;
+          link.className = "underline text-green-300 hover:text-green-100";
+          const container = document.getElementById("downloadLink");
+          container.innerHTML = "";
+          container.appendChild(link);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(imageFile);
+    }
+  </script>
+</body>
+        </html>
