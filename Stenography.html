@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Steganography Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Share Tech Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-black text-green-400 p-6">
+  <h1 class="text-2xl mb-6">Steganography Encoder / Decoder</h1>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <!-- ENCODER -->
+    <div class="bg-gray-900 p-4 rounded-xl border border-green-500">
+      <h2 class="text-lg mb-2">Encode Message</h2>
+      <input type="file" id="encodeImage" accept="image/*" class="mb-2 w-full bg-black text-white p-1">
+      <textarea id="message" class="w-full h-24 p-2 bg-black text-green-400 border border-green-500 rounded" placeholder="Enter secret message..."></textarea>
+      <button onclick="encode()" class="mt-2 bg-green-700 hover:bg-green-500 text-black px-4 py-2 rounded">Encode & Download</button>
+      <canvas id="canvasEncode" class="hidden"></canvas>
+    </div>
+
+    <!-- DECODER -->
+    <div class="bg-gray-900 p-4 rounded-xl border border-green-500">
+      <h2 class="text-lg mb-2">Decode Message</h2>
+      <input type="file" id="decodeImage" accept="image/*" class="mb-2 w-full bg-black text-white p-1">
+      <button onclick="decode()" class="bg-blue-700 hover:bg-blue-500 text-black px-4 py-2 rounded">Decode</button>
+      <p id="output" class="mt-4 text-lime-300 whitespace-pre-wrap"></p>
+      <canvas id="canvasDecode" class="hidden"></canvas>
+    </div>
+  </div>
+
+  <script>
+    function textToBinary(text) {
+      return text.split('').map(char =>
+        char.charCodeAt(0).toString(2).padStart(8, '0')).join('');
+    }
+
+    function binaryToText(bin) {
+      return bin.match(/.{1,8}/g).map(byte =>
+        String.fromCharCode(parseInt(byte, 2))).join('');
+    }
+
+    function encode() {
+      const file = document.getElementById("encodeImage").files[0];
+      const message = document.getElementById("message").value;
+      if (!file || !message) return alert("Upload an image and enter a message.");
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.getElementById("canvasEncode");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+
+          const binaryMsg = textToBinary(message) + "0000000000000000"; // End marker
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+          for (let i = 0; i < binaryMsg.length; i++) {
+            imgData.data[i * 4] = (imgData.data[i * 4] & 0xFE) | parseInt(binaryMsg[i]);
+          }
+          ctx.putImageData(imgData, 0, 0);
+
+          const link = document.createElement("a");
+          link.download = "encoded-image.png";
+          link.href = canvas.toDataURL();
+          link.click();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function decode() {
+      const file = document.getElementById("decodeImage").files[0];
+      if (!file) return alert("Upload an image to decode.");
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.getElementById("canvasDecode");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let binaryMsg = "";
+          for (let i = 0; i < imgData.data.length; i += 4) {
+            binaryMsg += (imgData.data[i] & 1);
+            if (binaryMsg.endsWith("0000000000000000")) break;
+          }
+
+          const msg = binaryToText(binaryMsg.replace(/0000000000000000$/, ""));
+          document.getElementById("output").innerText = msg || "No hidden message found.";
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>
