@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stego Encode/Decode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Share Tech Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-black text-green-400 p-6">
+  <h1 class="text-2xl mb-6">Steganography Encoder / Decoder</h1>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-gray-900 p-4 rounded-xl border border-green-500">
+      <h2 class="text-lg mb-2">Encode File into Image</h2>
+      <input type="file" id="fileInput" class="mb-2 w-full bg-black text-white p-1">
+      <input type="file" id="coverImage" accept="image/*" class="mb-2 w-full bg-black text-white p-1">
+      <button onclick="encodeFile()" class="mt-2 bg-green-700 hover:bg-green-500 text-black px-4 py-2 rounded">Encode & Download</button>
+      <canvas id="canvasEncode" class="hidden"></canvas>
+    </div>
+
+    <div class="bg-gray-900 p-4 rounded-xl border border-green-500">
+      <h2 class="text-lg mb-2">Decode File from Image</h2>
+      <input type="file" id="stegoImage" accept="image/*" class="mb-2 w-full bg-black text-white p-1">
+      <button onclick="decodeFile()" class="bg-blue-700 hover:bg-blue-500 text-black px-4 py-2 rounded">Decode</button>
+      <div id="downloadSection" class="mt-4 hidden">
+        <p class="mb-2 text-lime-300">Decoded file:</p>
+        <a id="downloadLink" class="underline text-green-300" target="_blank"></a>
+      </div>
+      <div id="errorSection" class="text-red-500 mt-3 hidden">Decoding failed. Maybe wrong image or too small to hold file.</div>
+      <canvas id="canvasDecode" class="hidden"></canvas>
+    </div>
+  </div>
+
+  <script>
+    function toBinary(str) {
+      return str.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join('');
+    }
+
+    function fromBinary(bin) {
+      return bin.match(/.{1,8}/g).map(b => String.fromCharCode(parseInt(b, 2))).join('');
+    }
+
+    function encodeFile() {
+      const file = document.getElementById("fileInput").files[0];
+      const image = document.getElementById("coverImage").files[0];
+      if (!file || !image) return alert("Select both file and image");
+
+      const reader = new FileReader();
+      reader.onload = fe => {
+        const fileData = btoa(fe.target.result);
+        const fileName = file.name;
+        const combined = fileName + "::" + fileData + "::END";
+        const binary = toBinary(combined);
+
+        const imgReader = new FileReader();
+        imgReader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.getElementById("canvasEncode");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            if (binary.length > imgData.data.length / 4) {
+              alert("Image too small for this file. Try a bigger image.");
+              return;
+            }
+
+            for (let i = 0; i < binary.length; i++) {
+              imgData.data[i * 4] = (imgData.data[i * 4] & 0xFE) | parseInt(binary[i]);
+            }
+
+            ctx.putImageData(imgData, 0, 0);
+            const link = document.createElement("a");
+            link.download = "stego-image.png";
+            link.href = canvas.toDataURL();
+            link.click();
+          };
+          img.src = e.target.result;
+        };
+        imgReader.readAsDataURL(image);
+      };
+      reader.readAsBinaryString(file);
+    }
+
+    function decodeFile() {
+      document.getElementById("errorSection").classList.add("hidden");
+      document.getElementById("downloadSection").classList.add("hidden");
+
+      const file = document.getElementById("stegoImage").files[0];
+      if (!file) return alert("Upload stego image");
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.getElementById("canvasDecode");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let binary = "";
+          let stop = false;
+          for (let i = 0; i < imgData.data.length; i += 4) {
+            binary += (imgData.data[i] & 1);
+            const checkText = fromBinary(binary);
+            if (checkText.includes("::END")) {
+              stop = true;
+              break;
+            }
+            if (i > 1000000) break;
+          }
+
+          if (!stop) {
+            document.getElementById("errorSection").classList.remove("hidden");
+            return;
+          }
+
+          const text = fromBinary(binary).replace("::END", "");
+          const parts = text.split("::");
+          const fileName = parts[0];
+          const base64 = parts[1];
+          const blob = new Blob([Uint8Array.from(atob(base64), c => c.charCodeAt(0))]);
+          const link = document.getElementById("downloadLink");
+          link.href = URL.createObjectURL(blob);
+          link.download = fileName;
+          link.textContent = "Download " + fileName;
+          document.getElementById("downloadSection").classList.remove("hidden");
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>
