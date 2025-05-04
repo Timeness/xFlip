@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumo's Decentralized Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconify CDN -->
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <!-- Google Fonts: Poppins, Orbitron, Russo One -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Orbitron:wght@700&family=Russo+One&display=swap" rel="stylesheet">
+    <!-- AOS (Animate on Scroll) CDN -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Particles.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- Typed.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <!-- Anime.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <!-- ScrollReveal CDN -->
+    <script src="https://unpkg.com/scrollreveal@4.0.9/dist/scrollreveal.min.js"></script>
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <!-- Web3.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Tilt.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>
+    <!-- Hover.css CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css" rel="stylesheet">
+    <!-- Glitch Effect CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/glitch-effect@1.0.0/glitch.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Normalize.css CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <!-- Toastr CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Parallax.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
+    <!-- LottieFiles CDN -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <!-- Swiper.js CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    <!-- Vanta.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.21/dist/vanta.waves.min.js"></script>
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a23;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .glitch {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00ff;
+        }
+        .neon {
+            text-shadow: 0 0 5px #00ffcc, 0 0 10px #ff00ff, 0 0 20px #00ffcc;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles.js Background -->
+    <div id="particles-js"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full bg-black bg-opacity-50 backdrop-blur-lg z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-[#00ffcc] neon">Soumo</h1>
+            <ul class="flex space-x-6">
+                <li><a href="#home" class="hover:text-[#00ffcc] transition">Home</a></li>
+                <li><a href="#about" class="hover:text-[#00ffcc] transition">About</a></li>
+                <li><a href="#skills" class="hover:text-[#00ffcc] transition">Skills</a></li>
+                <li><a href="#projects" class="hover:text-[#00ffcc] transition">Projects</a></li>
+                <li><a href="#contact" class="hover:text-[#00ffcc] transition">Contact</a></li>
+            </ul>
+            <button id="connectWallet" class="bg-[#00ffcc] text-black px-4 py-2 rounded-full hover:bg-[#ff00ff] transition">
+                Connect Wallet
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative">
+        <div class="text-center" data-aos="fade-up">
+            <h1 class="glitch" data-text="Hey, I'm Soumo">Hey, I'm Soumo</h1>
+            <p class="text-2xl mt-4">
+                I'm a <span id="typed" class="text-[#00ffcc]"></span>
+            </p>
+            <button class="mt-6 bg-[#00ffcc] text-black px-6 py-3 rounded-full hover:bg-[#ff00ff] transition hvr-pulse">
+                Explore My Work
+            </button>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-10 neon" data-aos="fade-up">About Me</h2>
+            <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-10" data-aos="fade-right">
+                <div class="w-full md:w-1/2">
+                    <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_kkflmtur.json" background="transparent" speed="1" style="width: 100%; height: 400px;" loop autoplay></lottie-player>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <p class="text-lg">
+                        Yo, I'm Soumo! A passionate developer and entrepreneur with a love for anime and building next-gen tech. I craft decentralized apps, sleek websites, and innovative solutions that push boundaries. Inspired by cyberpunk aesthetics and the spirit of Naruto, I’m here to create a digital revolution!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 bg-black bg-opacity-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-10 neon" data-aos="fade-up">Skills</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6" data-aos="zoom-in">
+                    <h3 class="text-xl font-bold mb-2">Web Development</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div class="bg-[#00ffcc] h-2.5 rounded-full" style="width: 90%"></div>
+                    </div>
+                </div>
+                <div class="card p-6" data-aos="zoom-in">
+                    <h3 class="text-xl font-bold mb-2">Blockchain</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div class="bg-[#00ffcc] h-2.5 rounded-full" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="card p-6" data-aos="zoom-in">
+                    <h3 class="text-xl font-bold mb-2">Anime Art</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div class="bg-[#00ffcc] h-2.5 rounded-full" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div class="card p-6" data-aos="zoom-in">
+                    <h3 class="text-xl font-bold mb-2">Entrepreneurship</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div class="bg-[#00ffcc] h-2.5 rounded-full" style="width: 80%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-10 neon" data-aos="fade-up">Projects</h2>
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide card p-6" data-aos="flip-left">
+                        <h3 class="text-xl font-bold mb-2">Decentralized Anime Marketplace</h3>
+                        <p>A Web3 platform for trading anime NFTs using Ethereum.</p>
+                        <a href="#" class="text-[#00ffcc] hover:underline">View Project</a>
+                    </div>
+                    <div class="swiper-slide card p-6" data-aos="flip-left">
+                        <h3 class="text-xl font-bold mb-2">Cyberpunk Portfolio</h3>
+                        <p>A sleek portfolio website with anime-inspired design.</p>
+                        <a href="#" class="text-[#00ffcc] hover:underline">View Project</a>
+                    </div>
+                    <div class="swiper-slide card p-6" data-aos="flip-left">
+                        <h3 class="text-xl font-bold mb-2">Anime Streaming DApp</h3>
+                        <p>A decentralized app for streaming anime securely.</p>
+                        <a href="#" class="text-[#00ffcc] hover:underline">View Project</a>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-black bg-opacity-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-10 neon" data-aos="fade-up">Get in Touch</h2>
+            <form id="contactForm" class="max-w-lg mx-auto" data-aos="zoom-in">
+                <div class="mb-4">
+                    <input type="text" placeholder="Name" class="w-full p-3 bg-transparent border border-[#00ffcc] rounded neon" required>
+                </div>
+                <div class="mb-4">
+                    <input type="email" placeholder="Email" class="w-full p-3 bg-transparent border border-[#00ffcc] rounded neon" required>
+                </div>
+                <div class="mb-4">
+                    <textarea placeholder="Message" class="w-full p-3 bg-transparent border border-[#00ffcc] rounded neon" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="w-full bg-[#00ffcc] text-black p-3 rounded hover:bg-[#ff00ff] transition hvr-buzz">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center bg-black bg-opacity-50">
+        <p>&copy; 2025 Soumo. All Rights Reserved.</p>
+        <div class="flex justify-center space-x-4 mt-4">
+            <a href="#" class="text-[#00ffcc] hover:text-[#ff00ff]"><span class="iconify" data-icon="mdi:github"></span></a>
+            <a href="#" class="text-[#00ffcc] hover:text-[#ff00ff]"><span class="iconify" data-icon="mdi:linkedin"></span></a>
+            <a href="#" class="text-[#00ffcc] hover:text-[#ff00ff]"><span class="iconify" data-icon="mdi:twitter"></span></a>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize AOS
+        AOS.init();
+
+        // Particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#00ffcc' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#ff00ff', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 6, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
+                modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+            },
+            retina_detect: true
+        });
+
+        // Typed.js
+        var typed = new Typed('#typed', {
+            strings: ['Developer', 'Anime Lover', 'Entrepreneur', 'Web3 Enthusiast'],
+            typeSpeed: 50,
+            backSpeed: 30,
+            loop: true
+        });
+
+        // Swiper.js
+        var swiper = new Swiper('.mySwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            breakpoints: {
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 }
+            }
+        });
+
+        // Web3 Wallet Connection
+        const connectWalletBtn = document.getElementById('connectWallet');
+        connectWalletBtn.addEventListener('click', async () => {
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    toastr.success(`Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`);
+                    connectWalletBtn.textContent = `Connected`;
+                    connectWalletBtn.disabled = true;
+                } catch (error) {
+                    toastr.error('Failed to connect wallet');
+                }
+            } else {
+                toastr.error('Please install MetaMask');
+            }
+        });
+
+        // Contact Form Submission
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Message Sent!',
+                text: 'Thanks for reaching out, Soumo will get back to you soon!',
+                icon: 'success',
+                confirmButtonColor: '#00ffcc'
+            });
+            e.target.reset();
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+  </html>
