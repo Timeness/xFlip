@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Soumo | Developer & Dreamer</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Iconify -->
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <!-- Typed.js -->
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
+  <!-- Anime.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+  <!-- Vanta.js -->
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+
+  <!-- Other CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lax.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.0.0/dist/full.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.0/build/player/lottie.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.3/dist/vanilla-tilt.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Signika', sans-serif;
+    }
+    #hero {
+      height: 100vh;
+    }
+  </style>
+</head>
+<body class="bg-black text-white overflow-x-hidden">
+
+  <!-- Hero Section -->
+  <div id="hero" class="flex items-center justify-center relative z-10">
+    <div class="text-center space-y-4">
+      <h1 class="text-4xl md:text-6xl font-bold">Hi, I'm Soumo</h1>
+      <p class="text-xl md:text-2xl text-gray-300">
+        <span id="typed"></span>
+      </p>
+      <div class="flex justify-center gap-4 mt-6">
+        <iconify-icon icon="mdi:github" class="text-3xl hover:text-purple-400 cursor-pointer"></iconify-icon>
+        <iconify-icon icon="mdi:linkedin" class="text-3xl hover:text-blue-400 cursor-pointer"></iconify-icon>
+        <iconify-icon icon="mdi:youtube" class="text-3xl hover:text-red-400 cursor-pointer"></iconify-icon>
+      </div>
+    </div>
+    <div id="vanta" class="absolute top-0 left-0 w-full h-full -z-10"></div>
+  </div>
+
+  <!-- About Section -->
+  <section class="p-10 max-w-5xl mx-auto space-y-6" data-aos="fade-up">
+    <h2 class="text-3xl font-bold">About Me</h2>
+    <p class="text-gray-400 text-lg">
+      I'm a full-stack developer, anime enthusiast, and the kind of entrepreneur who loves to build cool, cold, and next-gen ideas. Code is my sword, and vision is my battle plan.
+    </p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm mt-4">
+      <div class="bg-gray-900 p-4 rounded-xl shadow hover:scale-105 transition">
+        <iconify-icon icon="mdi:code-braces" class="text-3xl text-purple-400"></iconify-icon>
+        <p>Developer</p>
+      </div>
+      <div class="bg-gray-900 p-4 rounded-xl shadow hover:scale-105 transition">
+        <iconify-icon icon="mdi:anime" class="text-3xl text-pink-400"></iconify-icon>
+        <p>Otaku</p>
+      </div>
+      <div class="bg-gray-900 p-4 rounded-xl shadow hover:scale-105 transition">
+        <iconify-icon icon="mdi:rocket-launch" class="text-3xl text-yellow-400"></iconify-icon>
+        <p>Founder</p>
+      </div>
+      <div class="bg-gray-900 p-4 rounded-xl shadow hover:scale-105 transition">
+        <iconify-icon icon="mdi:lightbulb-on" class="text-3xl text-blue-400"></iconify-icon>
+        <p>Dreamer</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="p-10 bg-gray-900" data-aos="fade-up">
+    <div class="max-w-5xl mx-auto space-y-4">
+      <h2 class="text-3xl font-bold">Skills</h2>
+      <div class="flex flex-wrap gap-4 text-sm">
+        <span class="px-3 py-1 bg-purple-600 rounded-full">JavaScript</span>
+        <span class="px-3 py-1 bg-blue-600 rounded-full">Tailwind CSS</span>
+        <span class="px-3 py-1 bg-yellow-500 rounded-full">Node.js</span>
+        <span class="px-3 py-1 bg-pink-500 rounded-full">Web3</span>
+        <span class="px-3 py-1 bg-green-600 rounded-full">MongoDB</span>
+        <span class="px-3 py-1 bg-indigo-600 rounded-full">React</span>
+        <span class="px-3 py-1 bg-red-500 rounded-full">Anime.js</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-500 text-sm p-4 bg-black border-t border-gray-800">
+    © <span id="year"></span> Soumo | Built fully decentralized with love and code.
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    VANTA.NET({
+      el: "#vanta",
+      mouseControls: true,
+      touchControls: true,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x2222ff,
+      backgroundColor: 0x000000
+    })
+
+    new Typed("#typed", {
+      strings: ["Developer", "Anime Lover", "Entrepreneur", "Dream Chaser"],
+      typeSpeed: 60,
+      backSpeed: 40,
+      loop: true
+    });
+
+    AOS.init();
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+  </html>
