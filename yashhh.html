@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soumo's Decentralized Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Viga', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/wowjs@1.1.3/dist/wow.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lax.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.polyfills.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/parallax-js@3.1.0/dist/parallax.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/rellax/rellax.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-parallax-js@5.6.2/dist/simpleParallax.min.js"></script>
+</head>
+<body class="bg-gray-950 text-white font-sans">
+
+  <header class="p-6 text-center text-4xl font-bold text-yellow-400" data-aos="fade-down">
+    Soumo
+  </header>
+
+  <section class="p-10 text-center text-2xl" data-aos="fade-up">
+    <span id="typed"></span>
+    <script>
+      new Typed("#typed", {
+        strings: ["Developer", "Anime Lover", "Entrepreneur Vibes"],
+        typeSpeed: 60,
+        backSpeed: 40,
+        loop: true
+      });
+    </script>
+  </section>
+
+  <section class="p-10 bg-gray-900" data-aos="fade-up">
+    <div class="max-w-5xl mx-auto space-y-4">
+      <h2 class="text-3xl font-bold">Skills</h2>
+      <div class="flex flex-wrap gap-4 text-sm">
+        <span class="flex items-center gap-1 px-3 py-1 bg-purple-600 rounded-full">
+          <iconify-icon icon="skill-icons:javascript" class="text-xl"></iconify-icon> JavaScript
+        </span>
+        <span class="flex items-center gap-1 px-3 py-1 bg-blue-600 rounded-full">
+          <iconify-icon icon="skill-icons:tailwindcss-dark" class="text-xl"></iconify-icon> Tailwind CSS
+        </span>
+        <span class="flex items-center gap-1 px-3 py-1 bg-yellow-500 rounded-full">
+          <iconify-icon icon="logos:nodejs-icon" class="text-xl"></iconify-icon> Node.js
+        </span>
+        <span class="flex items-center gap-1 px-3 py-1 bg-pink-500 rounded-full">
+          <iconify-icon icon="logos:web3js" class="text-xl"></iconify-icon> Web3
+        </span>
+        <span class="flex items-center gap-1 px-3 py-1 bg-green-600 rounded-full">
+          <iconify-icon icon="logos:mongodb-icon" class="text-xl"></iconify-icon> MongoDB
+        </span>
+        <span class="flex items-center gap-1 px-3 py-1 bg-indigo-600 rounded-full">
+          <iconify-icon icon="skill-icons:react-dark" class="text-xl"></iconify-icon> React
+        </span>
+        <span class="flex items-center gap-1 px-3 py-1 bg-red-500 rounded-full">
+          <iconify-icon icon="mdi:anime" class="text-xl"></iconify-icon> Anime.js
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="p-10 text-center bg-gray-800" data-aos="zoom-in">
+    <h2 class="text-2xl font-bold mb-2">Otaku</h2>
+    <p class="text-gray-300">Anime is not just a hobby, it's a lifestyle.</p>
+  </section>
+
+  <footer class="text-center p-4 bg-black text-sm">
+    © <span id="year"></span> Soumo. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    AOS.init();
+    new WOW().init();
+  </script>
+
+</body>
+</html>
