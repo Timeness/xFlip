@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Soumo's Portfolio</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.3/dist/vanilla-tilt.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background: #000;
+      font-size: 0.875rem; /* Reduced font size */
+    }
+    #hero {
+      height: 100vh;
+    }
+    .text-content {
+      text-align: left; /* Align the "Who Am I?" section text to the left */
+    }
+    .icon-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-text p {
+      margin-left: 0.5rem;
+    }
+    .icon-size {
+      font-size: 2rem; /* Slightly smaller icons */
+    }
+  </style>
+</head>
+<body class="text-white overflow-x-hidden bg-black">
+
+  <div id="hero" class="flex items-center justify-center relative z-10">
+    <div class="text-center space-y-6">
+      <h1 class="text-4xl md:text-5xl font-bold text-white">
+        Soumo
+      </h1>
+      <p class="text-lg md:text-2xl text-gray-300 tracking-wide">
+        <span id="typed"></span>
+      </p>
+      <div class="flex justify-center gap-6 mt-8">
+        <iconify-icon icon="mdi:github" class="text-3xl hover:text-purple-500 transition duration-300 cursor-pointer"></iconify-icon>
+        <iconify-icon icon="mdi:linkedin" class="text-3xl hover:text-blue-500 transition duration-300 cursor-pointer"></iconify-icon>
+        <iconify-icon icon="mdi:youtube" class="text-3xl hover:text-red-500 transition duration-300 cursor-pointer"></iconify-icon>
+      </div>
+    </div>
+    <div id="vanta" class="absolute top-0 left-0 w-full h-full -z-10"></div>
+  </div>
+
+  <section class="p-10 max-w-4xl mx-auto space-y-8 text-content" data-aos="fade-up">
+    <h2 class="text-3xl font-bold text-left text-white">Who Am I?</h2>
+    <p class="text-gray-400 text-base text-left leading-relaxed">
+      I'm a full-stack developer, Web3 builder, and visionary founder passionate about creating secure, decentralized, and futuristic tech experiences. If it's bold, encrypted, and game-changing — I'm in.
+    </p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 text-center">
+      <div class="bg-gray-900 p-4 rounded-xl shadow-2xl hover:scale-105 transition duration-300" data-tilt>
+        <div class="icon-text">
+          <iconify-icon icon="mdi:code-braces" class="icon-size text-purple-500"></iconify-icon>
+          <p>Dev</p>
+        </div>
+      </div>
+      <div class="bg-gray-900 p-4 rounded-xl shadow-2xl hover:scale-105 transition duration-300" data-tilt>
+        <div class="icon-text">
+          <iconify-icon icon="mdi:anime" class="icon-size text-pink-500"></iconify-icon>
+          <p>Otaku</p>
+        </div>
+      </div>
+      <div class="bg-gray-900 p-4 rounded-xl shadow-2xl hover:scale-105 transition duration-300" data-tilt>
+        <div class="icon-text">
+          <iconify-icon icon="mdi:rocket-launch" class="icon-size text-yellow-400"></iconify-icon>
+          <p>Founder</p>
+        </div>
+      </div>
+      <div class="bg-gray-900 p-4 rounded-xl shadow-2xl hover:scale-105 transition duration-300" data-tilt>
+        <div class="icon-text">
+          <iconify-icon icon="mdi:lightbulb-on" class="icon-size text-blue-400"></iconify-icon>
+          <p>Dreamer</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="text-center text-gray-500 text-sm p-4 bg-black border-t border-gray-800">
+    © <span id="year"></span> Soumo | Encrypted & Decentralized with Love & Code.
+  </footer>
+
+  <script>
+    VANTA.NET({
+      el: "#vanta",
+      mouseControls: true,
+      touchControls: true,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x7700ff,
+      backgroundColor: 0x000000
+    })
+
+    new Typed("#typed", {
+      strings: ["Web3 Dev", "Visionary", "Otaku Builder", "Dream Chaser", "Secured Soul"],
+      typeSpeed: 60,
+      backSpeed: 40,
+      loop: true
+    });
+
+    AOS.init()
+
+    document.getElementById("year").textContent = new Date().getFullYear()
+
+    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+      max: 15,
+      speed: 400,
+      glare: true,
+      "max-glare": 0.3
+    });
+  </script>
+</body>
+</html>
