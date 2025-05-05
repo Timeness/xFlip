@@ -179,18 +179,23 @@
     body {
       font-family: 'Viga', sans-serif;
       background-color: #f9f9f9;
+      -webkit-tap-highlight-color: transparent;
     }
 
     input:focus,
     textarea:focus,
     button:focus {
+      font-family: 'Viga', sans-serif !important;
       outline: none !important;
       box-shadow: none !important;
       border-color: #ccc !important;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .button {
+      font-family: 'Viga', sans-serif !important;
       transition: all 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .button:hover {
@@ -206,6 +211,10 @@
       padding: 0.5rem;
       border-bottom: 1px solid #eee;
       font-size: 0.95rem;
+    }
+
+    .Viga {
+      font-family: 'Viga', sans-serif;
     }
   </style>
 
@@ -283,7 +292,7 @@
             <div class="field">
               <label class="label">Token</label>
               <div class="control has-icons-left">
-                <input class="input" type="text" id="bot_token" placeholder="Your bot token" />
+                <input class="input Viga" type="text" id="bot_token" placeholder="Your bot token" />
                 <span class="icon is-left">
                   <span class="iconify" data-icon="mdi:key-variant"></span>
                 </span>
@@ -293,7 +302,7 @@
             <div class="field">
               <label class="label">Chat ID</label>
               <div class="control has-icons-left">
-                <input class="input" type="text" id="bot_chat_id" placeholder="Telegram chat ID" />
+                <input class="input Viga" type="text" id="bot_chat_id" placeholder="Telegram chat ID" />
                 <span class="icon is-left">
                   <span class="iconify" data-icon="ic:baseline-chat"></span>
                 </span>
@@ -303,7 +312,7 @@
             <div class="field">
               <label class="label">Message</label>
               <div class="control">
-                <textarea class="textarea" id="bot_message" placeholder="Your message here..."></textarea>
+                <textarea class="textarea Viga" id="bot_message" placeholder="Your message here..."></textarea>
               </div>
             </div>
 
