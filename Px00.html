@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Connect Telegram</title>
+  <title>OAuth | Telegram</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -12,53 +13,71 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      font-family: 'Rubik', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     button {
       align-items: center;
       background-color: rgb(174, 100, 216);
-      border-bottom-color: rgba(255, 255, 255, 0.2);
-      border-bottom-right-radius: 17px;
-      border-bottom-style: solid;
-      border-bottom-width: 1px;
-      border-left-color: rgba(255, 255, 255, 0.2);
-      border-left-style: solid;
-      border-left-width: 1px;
-      border-right-color: rgba(255, 255, 255, 0.2);
-      border-right-style: solid;
-      border-right-width: 1px;
-      border-top-color: rgba(255, 255, 255, 0.2);
-      border-top-left-radius: 17px;
-      border-top-style: solid;
-      border-top-width: 1px;
-      color: rgb(255, 255, 255);
-      column-gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 17px;
+      color: #fff;
       cursor: pointer;
       display: flex;
-      font-family: Rubik, sans-serif;
-      font-optical-sizing: auto;
       font-size: 15px;
-      font-style: normal;
       font-weight: 500;
       height: 56px;
       justify-content: center;
-      line-height: 15px;
-      padding-bottom: 0px;
-      padding-left: 58px;
-      padding-right: 58px;
-      padding-top: 0px;
+      padding: 0 58px;
       text-transform: uppercase;
       transition: all 0.25s ease;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus {
+      outline: none;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #1f1f1f;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      box-shadow: 0 0 12px rgba(174, 100, 216, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: 9999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      bottom: 60px;
     }
   </style>
 </head>
 <body>
   <button onclick="connectTelegram()">CONNECT TELEGRAM</button>
 
+  <div id="toast" class="toast">Connecting...</div>
+
   <script>
     function connectTelegram() {
-      alert("Telegram connect logic goes here");
-      // Add your actual Telegram connection code here
+      const toast = document.getElementById("toast");
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
+      setTimeout(() => {
+        window.location.href = "https://telegram.me/ViaMsgBot?startapp=oauth.gram.me";
+      }, 600);
     }
   </script>
 </body>
