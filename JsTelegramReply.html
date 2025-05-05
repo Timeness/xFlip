@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -156,6 +157,169 @@
             </article>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JsTelegramReply</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Viga:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+      background-color: #f9f9f9;
+    }
+
+    input:focus,
+    textarea:focus,
+    button:focus {
+      outline: none !important;
+      box-shadow: none !important;
+      border-color: #ccc !important;
+    }
+
+    .button {
+      transition: all 0.3s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .iconify {
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    #ReceivedMessages p {
+      padding: 0.5rem;
+      border-bottom: 1px solid #eee;
+      font-size: 0.95rem;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      setDefaultValue()
+    })
+
+    function setDefaultValue() {
+      const urlParams = new URLSearchParams(window.location.search)
+      document.getElementById('bot_token').value = urlParams.get('bot_token') || ''
+      document.getElementById('bot_chat_id').value = urlParams.get('bot_chat_id') || ''
+      document.getElementById('bot_message').value = urlParams.get('bot_message') || ''
+    }
+
+    function send() {
+      let bot_token = document.getElementById('bot_token').value
+      let bot_chat_id = document.getElementById('bot_chat_id').value
+      let bot_message = document.getElementById('bot_message').value
+      bot_message = bot_message.replace(/ /g, "+")
+      let bot_request_url = `https://api.telegram.org/bot${bot_token}/sendMessage?chat_id=${bot_chat_id}&text=${bot_message}`
+      fetch(bot_request_url).then(r => r.json()).then(data => console.log(data))
+    }
+
+    function viewReceived() {
+      let bot_token = document.getElementById('bot_token').value
+      let bot_request_url = `https://api.telegram.org/bot${bot_token}/getUpdates`
+      fetch(bot_request_url)
+        .then(r => r.json())
+        .then(data => {
+          const container = document.getElementById("ReceivedMessages")
+          container.innerHTML = ""
+          if (!data.result.length) {
+            container.innerHTML = "<p>No messages found.</p>"
+            return
+          }
+          data.result.forEach(msg => {
+            const chat = msg.message
+            const p = document.createElement("p")
+            p.innerHTML = `<strong>Chat ID:</strong> ${chat.chat.id} <br>
+                           <strong>Date:</strong> ${new Date(chat.date * 1000).toLocaleString()} <br>
+                           <strong>Name:</strong> ${chat.chat.first_name || 'Unknown'} <br>
+                           <strong>Message:</strong> ${chat.text}`
+            container.appendChild(p)
+          })
+        }).catch(() => {
+          const p = document.createElement("p")
+          p.innerHTML = "Error! Check your Token / Chat ID / Network."
+          document.getElementById("ReceivedMessages").appendChild(p)
+        })
+    }
+  </script>
+</head>
+
+<body>
+  <section class="hero is-white is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title is-size-4-mobile has-text-weight-bold">
+          <span class="iconify" data-icon="logos:javascript" data-width="24"></span> JsTelegramReply
+        </h1>
+        <p class="subtitle is-size-6-mobile mb-5">Send messages via Telegram Bot</p>
+
+        <div class="columns is-variable is-6">
+          <div class="column is-one-third">
+
+            <div class="field">
+              <label class="label">Token</label>
+              <div class="control has-icons-left">
+                <input class="input" type="text" id="bot_token" placeholder="Your bot token" />
+                <span class="icon is-left">
+                  <span class="iconify" data-icon="mdi:key-variant"></span>
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Chat ID</label>
+              <div class="control has-icons-left">
+                <input class="input" type="text" id="bot_chat_id" placeholder="Telegram chat ID" />
+                <span class="icon is-left">
+                  <span class="iconify" data-icon="ic:baseline-chat"></span>
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Message</label>
+              <div class="control">
+                <textarea class="textarea" id="bot_message" placeholder="Your message here..."></textarea>
+              </div>
+            </div>
+
+            <div class="buttons">
+              <button class="button is-success is-fullwidth" onclick="send();">
+                <span class="iconify" data-icon="mdi:telegram"></span> Send Message
+              </button>
+              <button class="button is-link is-fullwidth" onclick="viewReceived();">
+                <span class="iconify" data-icon="carbon:view"></span> View Received
+              </button>
+            </div>
+
+          </div>
+
+          <div class="column">
+            <label class="label">Received Messages</label>
+            <article class="message">
+              <div class="message-body" id="ReceivedMessages">
+                <p>Enter bot token and click "View Received" to load messages.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
