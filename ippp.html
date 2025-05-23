@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>IP Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: #000;
+            color: #00ff00;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 0;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff00, #008000, #00ff00);
+            z-index: -1;
+            border-radius: 4px;
+            opacity: 0.7;
+            animation: borderGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes borderGlow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 1rem;
+        }
+
+        .date {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 0.5rem 1rem;
+            border: 1px solid #00ff00;
+            font-size: 0.9rem;
+            color: #00ff00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .refresh {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: 'Courier Prime', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+            animation: textGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); }
+            100% { text-shadow: 0 0 20px rgba(0, 255, 0, 1), 0 0 30px rgba(0, 255, 0, 0.8); }
+        }
+
+        .ip-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .ip-label {
+            color: #00ff00;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .ip-box {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1.5rem;
+            border: 2px dashed #00ff00;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
+            animation: ipPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes ipPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .copy-btn {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 0.8rem 2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Courier Prime', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .details {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff00;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px dotted #008000;
+            font-size: 1rem;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: #00ff00;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            color: #00ff00;
+            text-align: right;
+            font-weight: 400;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 1rem 1.5rem;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            font-family: 'Courier Prime', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #008000;
+            border-radius: 50%;
+            border-top-color: #00ff00;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .terminal-prefix {
+            color: #00ff00;
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .ip-box {
+                font-size: 1.3rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+    
+    <div class="container">
+        <div class="header">
+            <div class="date" id="date"></div>
+            <button class="refresh" onclick="refresh()">► REFRESH</button>
+        </div>
+
+        <h1 class="title">◄ IP TRACKER ►</h1>
+
+        <div class="ip-section">
+            <div class="ip-label">► YOUR IP ADDRESS ◄</div>
+            <div class="ip-box" id="ip"><div class="loading"></div></div>
+            <button class="copy-btn" onclick="copy()">▼ COPY IP ▼</button>
+        </div>
+
+        <div class="details" id="details" style="display:none;">
+            <div id="info"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">► IP COPIED TO CLIPBOARD ◄</div>
+
+    <script>
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+        const charArray = chars.split('');
+
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff00';
+            ctx.font = fontSize + 'px Courier Prime';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        let currentIP = '';
+
+        async function getIP() {
+            try {
+                const res = await fetch('https://api.ipify.org/?format=json');
+                const data = await res.json();
+                currentIP = data.ip;
+                document.getElementById('ip').innerHTML = `<span class="terminal-prefix">></span>${currentIP}`;
+                getDetails(currentIP);
+            } catch (e) {
+                document.getElementById('ip').innerHTML = `<span class="terminal-prefix">></span>ERROR`;
+            }
+        }
+
+        async function getDetails(ip) {
+            try {
+                const res = await fetch(`https://ipinfo.io/${ip}`);
+                const data = await res.json();
+                
+                const details = [
+                    ['IP ADDRESS', data.ip || 'N/A'],
+                    ['CITY', data.city || 'N/A'],
+                    ['REGION', data.region || 'N/A'],
+                    ['COUNTRY', data.country || 'N/A'],
+                    ['ISP', data.org || 'N/A'],
+                    ['POSTAL', data.postal || 'N/A'],
+                    ['TIMEZONE', data.timezone || 'N/A']
+                ];
+
+                const html = details.map(([label, value]) => 
+                    `<div class="detail-row">
+                        <span class="label">► ${label}:</span>
+                        <span class="value">${value}</span>
+                    </div>`
+                ).join('');
+
+                document.getElementById('info').innerHTML = html;
+                document.getElementById('details').style.display = 'block';
+            } catch (e) {
+                console.log('Details unavailable');
+            }
+        }
+
+        function copy() {
+            navigator.clipboard.writeText(currentIP);
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function refresh() {
+            document.getElementById('ip').innerHTML = '<div class="loading"></div>';
+            document.getElementById('details').style.display = 'none';
+            getIP();
+        }
+
+        function setDate() {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            document.getElementById('date').textContent = `${day}-${month}-${year}`;
+        }
+
+        setDate();
+        getIP();
+        setInterval(getIP, 30000);
+    </script>
+</body>
+  </html>
