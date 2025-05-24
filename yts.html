@@ -9,20 +9,21 @@
     iframe { pointer-events: none; }
   </style>
 </head>
-<body class="relative min-h-screen flex items-center justify-center">
-  <!-- Input UI -->
-  <div id="input-section" class="bg-black/60 p-6 rounded-xl shadow-xl backdrop-blur-sm space-y-4 z-10">
+<body class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+  
+  <!-- Input Section -->
+  <div id="input-section" class="z-10 bg-black/60 p-6 rounded-xl shadow-xl backdrop-blur-sm space-y-4">
     <h1 class="text-2xl font-bold text-indigo-300 text-center">Enter YouTube URL</h1>
     <input id="youtube-url" type="text" placeholder="Paste YouTube link"
            class="w-full px-4 py-2 bg-gray-800 text-white border border-indigo-500 rounded focus:outline-none" />
-    <button onclick="startBackgroundPlayer()"
+    <button onclick="startPlayer()"
             class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded text-white font-semibold">
       Play
     </button>
     <p id="error" class="text-red-400 text-sm hidden">Invalid YouTube link</p>
   </div>
 
-  <!-- Background Video Container -->
+  <!-- Video Background -->
   <div id="player-wrapper" class="absolute inset-0 -z-10 hidden">
     <iframe id="bg-video" class="w-full h-full object-cover"
             frameborder="0"
@@ -31,15 +32,32 @@
     </iframe>
   </div>
 
-  <!-- Script -->
+  <!-- Overlay Controls -->
+  <div id="controls" class="hidden z-10 mt-6 flex space-x-4">
+    <button onclick="togglePlay()" id="playBtn"
+      class="bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded-lg text-white font-semibold">
+      Pause
+    </button>
+    <button onclick="toggleMute()" id="muteBtn"
+      class="bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded-lg text-white font-semibold">
+      Mute
+    </button>
+    <button onclick="enablePIP()"
+      class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg text-black font-semibold">
+      Picture-in-Picture
+    </button>
+  </div>
+
+  <!-- YouTube API -->
   <script>
+    let player;
     function extractVideoID(url) {
       const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/;
       const match = url.match(regex);
       return match ? match[1] : null;
     }
 
-    function startBackgroundPlayer() {
+    function startPlayer() {
       const url = document.getElementById("youtube-url").value.trim();
       const videoId = extractVideoID(url);
       const error = document.getElementById("error");
@@ -52,9 +70,57 @@
       error.classList.add("hidden");
       document.getElementById("input-section").classList.add("hidden");
       document.getElementById("player-wrapper").classList.remove("hidden");
+      document.getElementById("controls").classList.remove("hidden");
 
       const iframe = document.getElementById("bg-video");
-      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&loop=1&playlist=${videoId}&modestbranding=1`;
+      iframe.id = "yt-player";
+
+      const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&loop=1&enablejsapi=1&playlist=${videoId}`;
+      iframe.src = src;
+
+      // Load YouTube API dynamically
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(tag);
+    }
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('yt-player', {
+        events: {
+          'onReady': () => player.playVideo()
+        }
+      });
+    }
+
+    function togglePlay() {
+      const state = player.getPlayerState();
+      if (state === 1) {
+        player.pauseVideo();
+        document.getElementById("playBtn").innerText = "Play";
+      } else {
+        player.playVideo();
+        document.getElementById("playBtn").innerText = "Pause";
+      }
+    }
+
+    function toggleMute() {
+      if (player.isMuted()) {
+        player.unMute();
+        document.getElementById("muteBtn").innerText = "Mute";
+      } else {
+        player.mute();
+        document.getElementById("muteBtn").innerText = "Unmute";
+      }
+    }
+
+    function enablePIP() {
+      const iframe = document.getElementById("yt-player");
+      const video = iframe.contentWindow.document.querySelector("video");
+      if (video) {
+        video.requestPictureInPicture();
+      } else {
+        alert("Please click play first, then try PIP again.");
+      }
     }
   </script>
 </body>
