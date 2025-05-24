@@ -27,6 +27,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            cursor: pointer;
         }
 
         #videoPlayer {
@@ -106,7 +107,7 @@
         <input type="text" id="videoUrl" placeholder="Enter YouTube URL">
         <button id="loadVideoBtn">Load Video</button>
     </div>
-    <div class="video-container">
+    <div class="video-container" id="videoContainer">
         <div id="videoPlayer"></div>
         <div class="custom-controls">
             <button id="playPauseBtn">Play</button>
@@ -129,7 +130,7 @@
                     'showinfo': 0, // Hide video title and uploader info
                     'modestbranding': 1, // Minimize YouTube logo
                     'autoplay': 1, // Auto-play the video
-                    'mute': 1, // Start muted (optional, for background effect)
+                    'mute': 0, // Start unmuted for better user experience
                     'loop': 1, // Loop the video
                     'rel': 0, // Disable related videos
                     'enablejsapi': 1 // Enable API control
@@ -158,6 +159,25 @@
         const fullScreenBtn = document.getElementById('fullScreenBtn');
         const loadVideoBtn = document.getElementById('loadVideoBtn');
         const videoUrl = document.getElementById('videoUrl');
+        const videoContainer = document.getElementById('videoContainer');
+
+        // Tap/click to play or pause
+        videoContainer.addEventListener('click', (event) => {
+            // Prevent click on controls from triggering play/pause
+            if (event.target.classList.contains('custom-controls') || 
+                event.target.parentElement.classList.contains('custom-controls') ||
+                event.target.tagName === 'BUTTON' || 
+                event.target.tagName === 'INPUT') {
+                return;
+            }
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+                playPauseBtn.textContent = 'Play';
+            } else {
+                player.playVideo();
+                playPauseBtn.textContent = 'Pause';
+            }
+        });
 
         playPauseBtn.addEventListener('click', () => {
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {
