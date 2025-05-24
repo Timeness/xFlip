@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-900 text-white font-sans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart YouTube Player</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center px-4 py-10 space-y-6">
+  <h1 class="text-3xl font-bold text-indigo-400">Sexy Intelligent YouTube Player</h1>
+
+  <input id="youtube-url" type="text" placeholder="Paste YouTube URL here"
+         class="w-full max-w-md px-4 py-2 bg-gray-800 text-white border border-indigo-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"/>
+
+  <button onclick="loadVideo()" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-2 rounded-lg text-white font-semibold transition">
+    Play Video
+  </button>
+
+  <div id="player-container" class="w-full max-w-2xl aspect-video mt-6 hidden">
+    <iframe id="player" class="w-full h-full rounded-xl shadow-xl border-4 border-indigo-500" allowfullscreen></iframe>
+  </div>
+
+  <p id="error" class="text-red-500 hidden">Invalid YouTube URL. Please try again.</p>
+
+  <script>
+    function extractVideoID(url) {
+      const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/;
+      const match = url.match(regex);
+      return match ? match[1] : null;
+    }
+
+    function loadVideo() {
+      const input = document.getElementById("youtube-url").value.trim();
+      const videoId = extractVideoID(input);
+      const error = document.getElementById("error");
+      const container = document.getElementById("player-container");
+      const iframe = document.getElementById("player");
+
+      if (videoId) {
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+        container.classList.remove("hidden");
+        error.classList.add("hidden");
+      } else {
+        container.classList.add("hidden");
+        error.classList.remove("hidden");
+      }
+    }
+  </script>
+</body>
+</html>
