@@ -1,231 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom YouTube Video Player</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #1a1a1a;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .video-container {
-            position: relative;
-            width: 80%;
-            max-width: 1200px;
-            aspect-ratio: 16 / 9;
-            background: #000;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        #videoPlayer {
-            width: 100%;
-            height: 100%;
-        }
-
-        .custom-controls {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 10px;
-            transition: opacity 0.3s ease;
-            opacity: 0;
-        }
-
-        .video-container:hover .custom-controls {
-            opacity: 1;
-        }
-
-        .custom-controls button {
-            background: #ff4d4d;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .custom-controls button:hover {
-            background: #e60000;
-        }
-
-        #volumeSlider {
-            width: 100px;
-            accent-color: #ff4d4d;
-        }
-
-        .input-container {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-        }
-
-        #videoUrl {
-            padding: 10px;
-            width: 300px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background: #333;
-            color: white;
-        }
-
-        #loadVideoBtn {
-            background: #ff4d4d;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #loadVideoBtn:hover {
-            background: #e60000;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>YouTube Streamer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="input-container">
-        <input type="text" id="videoUrl" placeholder="Enter YouTube URL">
-        <button id="loadVideoBtn">Load Video</button>
-    </div>
-    <div class="video-container" id="videoContainer">
-        <div id="videoPlayer"></div>
-        <div class="custom-controls">
-            <button id="playPauseBtn">Play</button>
-            <button id="muteBtn">Mute</button>
-            <input type="range" id="volumeSlider" min="0" max="100" value="50">
-            <button id="fullScreenBtn">Fullscreen</button>
-        </div>
-    </div>
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script>
-        let player;
+<body class="bg-gray-900 text-white font-sans p-4">
+  <h1 class="text-2xl font-bold mb-4">YouTube Audio/Video Stream</h1>
+  <input type="text" id="searchBox" class="p-2 w-full text-black" placeholder="Search..." />
+  <div id="results" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('videoPlayer', {
-                height: '100%',
-                width: '100%',
-                videoId: '', // Default empty; updated by URL
-                playerVars: {
-                    'controls': 0, // Hide default YouTube controls
-                    'showinfo': 0, // Hide video title and uploader info
-                    'modestbranding': 1, // Minimize YouTube logo
-                    'autoplay': 1, // Auto-play the video
-                    'mute': 0, // Start unmuted for better user experience
-                    'loop': 1, // Loop the video
-                    'rel': 0, // Disable related videos
-                    'enablejsapi': 1 // Enable API control
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
+  <video id="videoPlayer" controls class="w-full mt-6 hidden"></video>
+  <audio id="audioPlayer" controls class="w-full mt-4 hidden"></audio>
 
-        function onPlayerReady(event) {
-            event.target.setVolume(50); // Set initial volume
-        }
+  <script>
+    const API = "https://yourplays.vercel.app";
 
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                player.playVideo(); // Replay on end if looping
-            }
-        }
-
-        // Custom controls
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const muteBtn = document.getElementById('muteBtn');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const fullScreenBtn = document.getElementById('fullScreenBtn');
-        const loadVideoBtn = document.getElementById('loadVideoBtn');
-        const videoUrl = document.getElementById('videoUrl');
-        const videoContainer = document.getElementById('videoContainer');
-
-        // Tap/click to play or pause
-        videoContainer.addEventListener('click', (event) => {
-            // Prevent click on controls from triggering play/pause
-            if (event.target.classList.contains('custom-controls') || 
-                event.target.parentElement.classList.contains('custom-controls') ||
-                event.target.tagName === 'BUTTON' || 
-                event.target.tagName === 'INPUT') {
-                return;
-            }
-            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                player.pauseVideo();
-                playPauseBtn.textContent = 'Play';
-            } else {
-                player.playVideo();
-                playPauseBtn.textContent = 'Pause';
-            }
+    document.getElementById("searchBox").addEventListener("keypress", async (e) => {
+      if (e.key === "Enter") {
+        const q = e.target.value;
+        const res = await fetch(`${API}/search?query=${q}`);
+        const data = await res.json();
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = "";
+        data.forEach(video => {
+          const div = document.createElement("div");
+          div.className = "bg-gray-800 p-4 rounded shadow";
+          div.innerHTML = `
+            <img src="${video.thumbnail}" class="w-full rounded" />
+            <h2 class="text-lg mt-2">${video.title}</h2>
+            <button onclick="playAudio('${video.video_id}')" class="bg-blue-600 px-3 py-1 mt-2 mr-2 rounded">Audio</button>
+            <button onclick="playVideo('${video.video_id}')" class="bg-green-600 px-3 py-1 mt-2 rounded">Video</button>
+          `;
+          resultsDiv.appendChild(div);
         });
+      }
+    });
 
-        playPauseBtn.addEventListener('click', () => {
-            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                player.pauseVideo();
-                playPauseBtn.textContent = 'Play';
-            } else {
-                player.playVideo();
-                playPauseBtn.textContent = 'Pause';
-            }
-        });
+    function playAudio(id) {
+      const audio = document.getElementById("audioPlayer");
+      const video = document.getElementById("videoPlayer");
+      video.classList.add("hidden");
+      audio.classList.remove("hidden");
+      audio.src = `${API}/stream/audio/${id}`;
+      audio.play();
+    }
 
-        muteBtn.addEventListener('click', () => {
-            if (player.isMuted()) {
-                player.unMute();
-                muteBtn.textContent = 'Mute';
-            } else {
-                player.mute();
-                muteBtn.textContent = 'Unmute';
-            }
-        });
-
-        volumeSlider.addEventListener('input', () => {
-            player.setVolume(volumeSlider.value);
-        });
-
-        fullScreenBtn.addEventListener('click', () => {
-            const iframe = document.querySelector('#videoPlayer iframe');
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            }
-        });
-
-        loadVideoBtn.addEventListener('click', () => {
-            const url = videoUrl.value;
-            const videoId = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/)?.[1] ||
-                           url.match(/(?:https?:\/\/)?youtu\.be\/([^?]+)/)?.[1];
-            if (videoId) {
-                player.loadVideoById({
-                    videoId: videoId,
-                    suggestedQuality: 'hd720' // Optional: Set quality to 720p
-                });
-                // Update loop playlist to current video ID
-                player.setLoop(true);
-                player.loadPlaylist([videoId]);
-            } else {
-                alert('Invalid YouTube URL');
-            }
-        });
-    </script>
+    function playVideo(id) {
+      const video = document.getElementById("videoPlayer");
+      const audio = document.getElementById("audioPlayer");
+      audio.classList.add("hidden");
+      video.classList.remove("hidden");
+      video.src = `${API}/stream/video/${id}`;
+      video.play();
+    }
+  </script>
 </body>
 </html>
