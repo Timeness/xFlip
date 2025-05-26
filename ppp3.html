@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Soumo | Developer & Trader + AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Modern font -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Remixicon for icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --card: #181a1b;
+      --accent: #00ffe7;
+      --accent2: #ff6bcb;
+      --metal: linear-gradient(90deg, #b6b6b6 0%, #e0e0e0 40%, #b6b6b6 100%);
+      --font: 'Space Grotesk', sans-serif;
+      --text: #e9e9e9;
+      --subtext: #a7a7a7;
+      --radius: 20px;
+      --shadow: 0 4px 32px 0 rgba(0,0,0,0.6);
+      --icon-size: 1.3em;
+      --transition: 0.2s cubic-bezier(.4,0,.2,1);
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      margin: 0;
+      padding: 0;
+      font-size: 13px;
+      min-height: 100vh;
+    }
+    .soumo-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .soumo-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.2em 1.5em 2em 1.5em;
+      max-width: 370px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #24272b;
+      margin-bottom: 1.5em;
+    }
+    .soumo-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2.5px solid #00ffe7;
+      margin-bottom: 1.1em;
+      object-fit: cover;
+      box-shadow: 0 2px 16px #00ffe744;
+      background: var(--metal);
+    }
+    .soumo-name {
+      font-size: 1.45em;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 0.2em;
+      font-family: inherit;
+      text-shadow: 0 2px 8px #00ffe733;
+      background: var(--metal);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .soumo-roles {
+      display: flex;
+      justify-content: center;
+      gap: 1.1em;
+      margin-bottom: 1.1em;
+    }
+    .soumo-role {
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      background: rgba(0,255,231,0.09);
+      padding: 0.32em 0.8em;
+      border-radius: 1.1em;
+      font-size: 0.95em;
+      color: var(--subtext);
+      letter-spacing: 0.02em;
+      border: 1px solid #23272b;
+      transition: background var(--transition);
+    }
+    .soumo-role i {
+      font-size: var(--icon-size);
+      color: var(--accent2);
+    }
+    .soumo-bio {
+      color: var(--subtext);
+      margin-bottom: 1.7em;
+      font-size: 0.97em;
+      line-height: 1.6;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+    .soumo-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.2em;
+      margin-bottom: 1.3em;
+    }
+    .soumo-links a {
+      color: var(--accent);
+      font-size: 1.4em;
+      transition: color var(--transition), transform var(--transition);
+      text-decoration: none;
+      border-radius: 50%;
+      padding: 0.3em;
+      background: rgba(255,255,255,0.01);
+      border: 1px solid #23272b;
+    }
+    .soumo-links a:hover {
+      color: #fff;
+      background: var(--accent2);
+      transform: scale(1.15) rotate(-8deg);
+      box-shadow: 0 2px 8px #ff6bcb33;
+    }
+    .soumo-section-title {
+      color: var(--accent2);
+      font-size: 1.08em;
+      font-weight: 700;
+      margin-bottom: 0.7em;
+      letter-spacing: 0.01em;
+      text-align: left;
+    }
+    .soumo-projects {
+      margin-top: 1.1em;
+      text-align: left;
+    }
+    .soumo-project-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.6em;
+    }
+    .soumo-project-list li {
+      background: rgba(255,255,255,0.02);
+      border-radius: 0.7em;
+      padding: 0.7em 1em;
+      font-size: 0.97em;
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      border: 1px solid #23272b;
+      transition: background var(--transition), border var(--transition);
+      cursor: pointer;
+    }
+    .soumo-project-list li:hover {
+      background: rgba(0,255,231,0.10);
+      border: 1px solid var(--accent2);
+    }
+    .soumo-project-list i {
+      color: var(--accent2);
+      font-size: 1.1em;
+    }
+    .soumo-story {
+      background: rgba(0,255,231,0.05);
+      border-radius: 1em;
+      padding: 1em 1em 1em 1em;
+      margin-bottom: 1.2em;
+      font-size: 0.96em;
+      color: var(--text);
+      border: 1px solid #23272b;
+      text-align: left;
+      box-shadow: 0 2px 8px #00ffe71a;
+    }
+    .soumo-story strong {
+      color: var(--accent2);
+    }
+    .soumo-testimonials {
+      margin-top: 1.2em;
+      font-size: 0.95em;
+      color: var(--subtext);
+      border-left: 3px solid var(--accent2);
+      padding-left: 1em;
+      font-style: italic;
+    }
+    .soumo-services {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+    .soumo-service {
+      background: rgba(255,255,255,0.03);
+      border-radius: 0.7em;
+      padding: 0.6em 1em;
+      color: var(--accent);
+      font-size: 0.96em;
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      border: 1px solid #23272b;
+      transition: background var(--transition), border var(--transition);
+    }
+    .soumo-service i {
+      color: var(--accent2);
+      font-size: 1.1em;
+    }
+    /* AI Chatbot Styles */
+    .soumo-ai-chat {
+      position: fixed;
+      right: 1.2em;
+      bottom: 1.2em;
+      width: 260px;
+      background: var(--card);
+      border-radius: 1.1em;
+      box-shadow: 0 4px 32px 0 rgba(0,0,0,0.7);
+      border: 1px solid #23272b;
+      z-index: 100;
+      font-size: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s;
+    }
+    .soumo-ai-header {
+      background: var(--accent2);
+      color: #fff;
+      font-weight: 700;
+      padding: 0.7em 1em;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .soumo-ai-messages {
+      background: var(--card);
+      height: 160px;
+      overflow-y: auto;
+      padding: 0.7em 1em;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+    }
+    .soumo-ai-message {
+      background: rgba(0,255,231,0.08);
+      color: var(--text);
+      border-radius: 0.5em;
+      padding: 0.4em 0.7em;
+      align-self: flex-start;
+      max-width: 90%;
+      font-size: 0.97em;
+    }
+    .soumo-ai-message.user {
+      background: rgba(255,107,203,0.11);
+      align-self: flex-end;
+      color: var(--accent2);
+    }
+    .soumo-ai-input-row {
+      display: flex;
+      border-top: 1px solid #23272b;
+      background: var(--bg);
+    }
+    .soumo-ai-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      padding: 0.7em;
+      font-size: 1em;
+      outline: none;
+    }
+    .soumo-ai-send {
+      background: none;
+      border: none;
+      color: var(--accent2);
+      font-size: 1.2em;
+      cursor: pointer;
+      padding: 0 0.8em;
+      transition: color 0.2s;
+    }
+    .soumo-ai-send:hover {
+      color: var(--accent);
+    }
+    @media (max-width: 480px) {
+      .soumo-card {
+        padding: 1.3em 0.5em 1.2em 0.5em;
+        max-width: 97vw;
+      }
+      .soumo-ai-chat {
+        right: 0.3em;
+        bottom: 0.3em;
+        width: 98vw;
+        max-width: 98vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="soumo-main">
+    <div class="soumo-card">
+      <img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" alt="Soumo Avatar" class="soumo-avatar">
+      <div class="soumo-name">Soumo</div>
+      <div class="soumo-roles">
+        <div class="soumo-role"><i class="ri-code-s-slash-line"></i> Developer</div>
+        <div class="soumo-role"><i class="ri-line-chart-line"></i> Trader</div>
+        <div class="soumo-role"><i class="ri-robot-2-line"></i> AI Enthusiast</div>
+      </div>
+      <div class="soumo-bio">
+        <span style="color:var(--accent2);">AI-powered tech & trading.</span> <br>
+        Building smart apps, automating markets, and exploring the future with AI.<br>
+        <span style="color:var(--accent);">#NextGen #AI #Finance</span>
+      </div>
+      <div class="soumo-links">
+        <a href="https://github.com/" target="_blank" title="GitHub"><i class="ri-github-fill"></i></a>
+        <a href="https://twitter.com/" target="_blank" title="Twitter"><i class="ri-twitter-x-fill"></i></a>
+        <a href="mailto:soumo@email.com" title="Email"><i class="ri-mail-line"></i></a>
+        <a href="https://linkedin.com/" target="_blank" title="LinkedIn"><i class="ri-linkedin-box-fill"></i></a>
+      </div>
+      <div class="soumo-section-title">What I Do</div>
+      <div class="soumo-services">
+        <div class="soumo-service"><i class="ri-terminal-box-fill"></i> Web & App Development</div>
+        <div class="soumo-service"><i class="ri-robot-2-fill"></i> AI Bots & Automation</div>
+        <div class="soumo-service"><i class="ri-bar-chart-2-fill"></i> Data Analytics & Dashboards</div>
+      </div>
+      <div class="soumo-section-title">My AI Story</div>
+      <div class="soumo-story">
+        <strong>Challenge:</strong> Trading signals were slow and inconsistent.<br>
+        <strong>My AI Solution:</strong> I built an AI model to predict market trends in real-time.<br>
+        <strong>Result:</strong> 35% more accurate trades, happier clients, and a smarter workflow.<br>
+        <span style="color:var(--accent2);">I use AI to solve real problems, fast.</span>
+      </div>
+      <div class="soumo-section-title">Featured Projects</div>
+      <ul class="soumo-project-list">
+        <li><i class="ri-flashlight-line"></i> AI Trading Bot <span style="color:var(--subtext);font-size:0.89em;">(Python, OpenAI, Binance API)</span></li>
+        <li><i class="ri-global-line"></i> AI Portfolio Website <span style="color:var(--subtext);font-size:0.89em;">(Next.js, NextUI, TailwindCSS)</span></li>
+        <li><i class="ri-database-2-line"></i> AI Stock Analytics <span style="color:var(--subtext);font-size:0.89em;">(React, D3.js, GPT-4)</span></li>
+      </ul>
+      <div class="soumo-section-title">Testimonials</div>
+      <div class="soumo-testimonials">
+        “Soumo’s AI bot transformed our trading. Insightful, fast, and reliable.”<br>
+        — Client, 2025
+      </div>
+    </div>
+    <!-- AI Chatbot Widget -->
+    <div class="soumo-ai-chat" id="soumoAiChat">
+      <div class="soumo-ai-header">
+        <i class="ri-robot-2-line"></i> AI Chat
+      </div>
+      <div class="soumo-ai-messages" id="aiMessages">
+        <div class="soumo-ai-message">Hi! Ask me anything about Soumo, AI, or trading.</div>
+      </div>
+      <form class="soumo-ai-input-row" id="aiChatForm" autocomplete="off">
+        <input class="soumo-ai-input" id="aiInput" type="text" placeholder="Type your question..." />
+        <button class="soumo-ai-send" type="submit"><i class="ri-send-plane-2-line"></i></button>
+      </form>
+    </div>
+  </div>
+  <script>
+    // Simple front-end AI chat simulation
+    const form = document.getElementById('aiChatForm');
+    const input = document.getElementById('aiInput');
+    const messages = document.getElementById('aiMessages');
+
+    const aiReplies = [
+      "I'm Soumo's AI assistant. Ask me about his projects or trading bots!",
+      "Soumo specializes in AI-powered trading and web development.",
+      "Want to know more about Soumo's AI projects? Just ask!",
+      "Soumo uses AI to make trading smarter and faster.",
+      "Check out the projects section for more details!"
+    ];
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const userMsg = input.value.trim();
+      if (!userMsg) return;
+      // Add user message
+      const userDiv = document.createElement('div');
+      userDiv.className = 'soumo-ai-message user';
+      userDiv.textContent = userMsg;
+      messages.appendChild(userDiv);
+      // AI reply (random for demo)
+      setTimeout(() => {
+        const aiDiv = document.createElement('div');
+        aiDiv.className = 'soumo-ai-message';
+        aiDiv.textContent = aiReplies[Math.floor(Math.random() * aiReplies.length)];
+        messages.appendChild(aiDiv);
+        messages.scrollTop = messages.scrollHeight;
+      }, 700);
+      input.value = '';
+      messages.scrollTop = messages.scrollHeight;
+    });
+  </script>
+</body>
+</html>
