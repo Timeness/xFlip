@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Soumo | Cold Romantic Dev Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+  <style>
+    html,body { background: #0a0a13; font-family: 'Inter', 'JetBrains Mono', 'Orbitron', monospace, sans-serif; }
+    .frost {
+      background: linear-gradient(120deg,rgba(255,255,255,0.04) 0%,rgba(255,0,80,0.08) 100%);
+      backdrop-filter: blur(14px);
+      border-radius: 2rem;
+      border: 1.5px solid #ff1a4b44;
+      box-shadow: 0 8px 40px 0 #ff1a4b30, 0 2px 20px 0 #fff2;
+    }
+    .neon-heart { filter: drop-shadow(0 0 12px #ff1a4b77); }
+    .cold-glow { text-shadow: 0 0 18px #00ffe7b0, 0 0 2px #00ffe7; }
+    .cold-gradient { background: linear-gradient(90deg, #7f8c8d 0%, #00ffe7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .romantic-gradient { background: linear-gradient(90deg, #ff1a4b 0%, #ff7eb3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .heart-float {
+      animation: heartfloat 4s infinite cubic-bezier(.68,-0.55,.27,1.55);
+    }
+    @keyframes heartfloat {
+      0% { transform: translateY(0) scale(1);}
+      40% { transform: translateY(-24px) scale(1.1);}
+      60% { transform: translateY(-32px) scale(0.92);}
+      100% { transform: translateY(0) scale(1);}
+    }
+    .frosty-border { border: 2px solid #00ffe7cc; border-radius: 1.5rem; }
+    ::selection { background: #ff1a4b; color: #fff; }
+    .cold-blur { filter: blur(48px) opacity(0.4); pointer-events:none; position: absolute; }
+    .cold-blur1 { left: -90px; top: -60px; width: 220px; height: 220px; background: #00ffe7; border-radius: 50%; }
+    .cold-blur2 { right: -60px; top: 120px; width: 180px; height: 180px; background: #ff1a4b; border-radius: 50%; }
+    .cold-blur3 { left: 50%; top: 60%; width: 140px; height: 140px; background: #00ffe7; border-radius: 50%; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center relative overflow-x-hidden">
+
+  <div class="cold-blur cold-blur1"></div>
+  <div class="cold-blur cold-blur2"></div>
+  <div class="cold-blur cold-blur3"></div>
+  
+  <main class="relative z-10 flex flex-col items-center w-full max-w-3xl px-4 pt-12 pb-10">
+    <div class="relative flex flex-col items-center mb-10">
+      <div class="relative w-36 h-36 flex items-center justify-center">
+        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Soumo" alt="Soumo Avatar" class="w-36 h-36 rounded-full border-4 border-[#ff1a4b] shadow-xl frost animate__animated animate__fadeInDown" />
+        <span class="absolute -top-6 left-1/2 -translate-x-1/2 neon-heart heart-float">
+          <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
+            <path d="M24 43s-1.8-1.7-6.7-5.6C8.4 31.2 3 25.7 3 19.4 3 13.8 7.8 9 13.4 9c3.3 0 6.4 1.6 8.6 4.3C24.2 10.6 27.3 9 30.6 9 36.2 9 41 13.8 41 19.4c0 6.3-5.4 11.8-14.3 18-4.9 3.9-6.7 5.6-6.7 5.6z" fill="#ff1a4b" stroke="#fff" stroke-width="2"/>
+          </svg>
+        </span>
+      </div>
+      <h1 class="mt-7 text-5xl md:text-6xl font-extrabold romantic-gradient tracking-tight animate__animated animate__fadeInDown">Soumo</h1>
+      <div class="mt-2 text-[#ff1a4b] font-mono text-lg md:text-xl tracking-wide animate__animated animate__fadeInDown cold-glow">
+        <span id="typed"></span>
+      </div>
+      <div class="flex mt-6 gap-6 animate__animated animate__fadeInDown">
+        <span class="neon-heart text-3xl heart-float" style="animation-delay:0s;"><svg width="32" height="32" fill="#ff1a4b" viewBox="0 0 24 24"><path d="M12 21s-1.45-1.37-5.38-4.52C2.12 13.36 1 10.28 1 7.5 1 4.42 3.42 2 6.5 2c1.74 0 3.41.81 4.5 2.09C12.09 2.81 13.76 2 15.5 2 18.58 2 21 4.42 21 7.5c0 2.78-1.12 5.86-5.62 8.98C13.45 19.63 12 21 12 21z"/></svg></span>
+        <span class="text-3xl text-cyan-300 cold-glow"><i class="fas fa-snowflake"></i></span>
+        <span class="neon-heart text-3xl heart-float" style="animation-delay:.8s;"><svg width="32" height="32" fill="#ff1a4b" viewBox="0 0 24 24"><path d="M12 21s-1.45-1.37-5.38-4.52C2.12 13.36 1 10.28 1 7.5 1 4.42 3.42 2 6.5 2c1.74 0 3.41.81 4.5 2.09C12.09 2.81 13.76 2 15.5 2 18.58 2 21 4.42 21 7.5c0 2.78-1.12 5.86-5.62 8.98C13.45 19.63 12 21 12 21z"/></svg></span>
+        <span class="text-3xl text-cyan-300 cold-glow"><i class="fas fa-icicles"></i></span>
+        <span class="neon-heart text-3xl heart-float" style="animation-delay:1.6s;"><svg width="32" height="32" fill="#ff1a4b" viewBox="0 0 24 24"><path d="M12 21s-1.45-1.37-5.38-4.52C2.12 13.36 1 10.28 1 7.5 1 4.42 3.42 2 6.5 2c1.74 0 3.41.81 4.5 2.09C12.09 2.81 13.76 2 15.5 2 18.58 2 21 4.42 21 7.5c0 2.78-1.12 5.86-5.62 8.98C13.45 19.63 12 21 12 21z"/></svg></span>
+      </div>
+    </div>
+    <section class="w-full frost p-8 md:p-12 mb-8 flex flex-col gap-8 shadow-xl border border-[#ff1a4b44] animate__animated animate__fadeInUp">
+      <div>
+        <h2 class="text-2xl font-bold romantic-gradient mb-2">About Me</h2>
+        <p class="text-gray-200 leading-relaxed text-lg">
+          <span class="font-bold text-[#ff1a4b]">Soumo</span> — I code in the cold, but my heart is on fire. Building digital dreams with a touch of romance and a chill that makes you shiver. I blend <span class="romantic-gradient font-bold">passion</span> and <span class="cold-gradient font-bold">precision</span> in every project. Welcome to my world where <span class="romantic-gradient font-bold">love</span> meets <span class="cold-gradient font-bold">logic</span>.
+        </p>
+      </div>
+      <div>
+        <div class="flex space-x-2 mb-6">
+          <button class="tab-btn active px-4 py-2 rounded-lg romantic-gradient" id="tab-skills">Skills</button>
+          <button class="tab-btn inactive px-4 py-2 rounded-lg cold-gradient" id="tab-projects">Projects</button>
+          <button class="tab-btn inactive px-4 py-2 rounded-lg cold-gradient" id="tab-anime">Anime</button>
+        </div>
+        <div id="tab-content">
+          <div id="content-skills">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 text-[#ff1a4b] text-base font-mono">
+              <div class="flex items-center gap-2 frosty-border p-3"><span class="neon-heart"><svg width="20" height="20" fill="#ff1a4b" viewBox="0 0 24 24"><path d="M12 21s-1.45-1.37-5.38-4.52C2.12 13.36 1 10.28 1 7.5 1 4.42 3.42 2 6.5 2c1.74 0 3.41.81 4.5 2.09C12.09 2.81 13.76 2 15.5 2 18.58 2 21 4.42 21 7.5c0 2.78-1.12 5.86-5.62 8.98C13.45 19.63 12 21 12 21z"/></svg></span> Next.js</div>
+              <div class="flex items-center gap-2 frosty-border p-3"><i class="fas fa-snowflake text-cyan-300"></i> TailwindCSS</div>
+              <div class="flex items-center gap-2 frosty-border p-3"><i class="fas fa-fire text-[#ff1a4b]"></i> Passionate UI</div>
+              <div class="flex items-center gap-2 frosty-border p-3"><i class="fas fa-brain text-cyan-300"></i> AI/ML</div>
+              <div class="flex items-center gap-2 frosty-border p-3"><i class="fas fa-heartbeat text-[#ff1a4b]"></i> Startup Love</div>
+              <div class="flex items-center gap-2 frosty-border p-3"><i class="fas fa-code text-cyan-300"></i> Node.js</div>
+              <div class="flex items-center gap-2 frosty-border p-3"><i class="fas fa-icicles text-cyan-300"></i> Cold Logic</div>
+              <div class="flex items-center gap-2 frosty-border p-3"><i class="fas fa-dragon text-[#ff1a4b]"></i> Anime Apps</div>
+            </div>
+          </div>
+          <div id="content-projects" class="hidden">
+            <div class="grid md:grid-cols-2 gap-7">
+              <div class="frosty-border p-5 flex flex-col gap-2 bg-[#16181f99]">
+                <span class="font-semibold romantic-gradient text-xl">HeartCode</span>
+                <span class="text-gray-400 text-sm">A portfolio template that melts the coldest hearts with pure code romance.</span>
+              </div>
+              <div class="frosty-border p-5 flex flex-col gap-2 bg-[#16181f99]">
+                <span class="font-semibold cold-gradient text-xl">Icy Launchpad</span>
+                <span class="text-gray-400 text-sm">A SaaS that launches your dreams with a chill, precise workflow.</span>
+              </div>
+              <div class="frosty-border p-5 flex flex-col gap-2 bg-[#16181f99]">
+                <span class="font-semibold romantic-gradient text-xl">Anime Amour</span>
+                <span class="text-gray-400 text-sm">Anime discovery, but with a love story in every pixel.</span>
+              </div>
+              <div class="frosty-border p-5 flex flex-col gap-2 bg-[#16181f99]">
+                <span class="font-semibold cold-gradient text-xl">AI Cupid</span>
+                <span class="text-gray-400 text-sm">AI-powered matchmaking for coders and creators—find your tech soulmate.</span>
+              </div>
+            </div>
+          </div>
+          <div id="content-anime" class="hidden">
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center gap-2 text-[#ff1a4b]"><span class="neon-heart"><svg width="22" height="22" fill="#ff1a4b" viewBox="0 0 24 24"><path d="M12 21s-1.45-1.37-5.38-4.52C2.12 13.36 1 10.28 1 7.5 1 4.42 3.42 2 6.5 2c1.74 0 3.41.81 4.5 2.09C12.09 2.81 13.76 2 15.5 2 18.58 2 21 4.42 21 7.5c0 2.78-1.12 5.86-5.62 8.98C13.45 19.63 12 21 12 21z"/></svg></span> <span class="font-semibold">Romantic Anime:</span></div>
+              <div class="ml-6">1. Your Name (Kimi no Na wa)</div>
+              <div class="ml-6">2. Clannad: After Story</div>
+              <div class="ml-6">3. Fruits Basket</div>
+              <div class="flex items-center gap-2 mt-3 text-[#ff1a4b]"><span class="neon-heart"><svg width="18" height="18" fill="#ff1a4b" viewBox="0 0 24 24"><path d="M12 21s-1.45-1.37-5.38-4.52C2.12 13.36 1 10.28 1 7.5 1 4.42 3.42 2 6.5 2c1.74 0 3.41.81 4.5 2.09C12.09 2.81 13.76 2 15.5 2 18.58 2 21 4.42 21 7.5c0 2.78-1.12 5.86-5.62 8.98C13.45 19.63 12 21 12 21z"/></svg></span> <span>Suggest me your favorite romantic anime!</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="w-full flex flex-col md:flex-row items-center justify-between gap-4 animate__animated animate__fadeInUp">
+      <div>
+        <span class="text-[#ff1a4b] font-semibold">Let's connect:</span>
+      </div>
+      <div class="flex gap-4 mt-2 md:mt-0">
+        <a href="mailto:soumo@email.com" title="Email" class="hover:scale-110 transition-transform"><span class="neon-heart"><svg width="28" height="28" fill="#ff1a4b" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v.01L12 13l8-6.99V6H4zm16 12v-8.99l-8 7-8-7V18h16z"/></svg></span></a>
+        <a href="https://github.com/soumo" target="_blank" title="GitHub" class="hover:scale-110 transition-transform"><i class="fab fa-github text-[#ff1a4b] text-2xl"></i></a>
+        <a href="https://twitter.com/soumo" target="_blank" title="Twitter" class="hover:scale-110 transition-transform"><i class="fab fa-twitter text-[#ff1a4b] text-2xl"></i></a>
+      </div>
+    </section>
+    <footer class="mt-10 mb-4 text-gray-500 text-xs text-center">
+      &copy; 2025 Soumo • Cold ❤️ Romantic Portfolio
+    </footer>
+  </main>
+  <script src="https://kit.fontawesome.com/2b8c9e6e2c.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js"></script>
+  <script>
+    new Typed('#typed', {
+      strings: [
+        "Cold as ice, heart on fire.",
+        "Romantic coder, digital lover.",
+        "Building dreams with logic & love.",
+        "Anime, AI & Amour.",
+        "Welcome to my cold romantic world."
+      ],
+      typeSpeed: 56, backSpeed: 26, backDelay: 1200, loop: true
+    });
+    const tabs = [
+      { btn: 'tab-skills', content: 'content-skills' },
+      { btn: 'tab-projects', content: 'content-projects' },
+      { btn: 'tab-anime', content: 'content-anime' }
+    ];
+    tabs.forEach(({ btn, content }) => {
+      document.getElementById(btn).addEventListener('click', () => {
+        tabs.forEach(({ btn: b, content: c }) => {
+          document.getElementById(b).classList.toggle('active', b === btn);
+          document.getElementById(b).classList.toggle('inactive', b !== btn);
+          document.getElementById(c).classList.toggle('hidden', c !== content);
+        });
+      });
+    });
+  </script>
+</body>
+</html>                                                                                                 
