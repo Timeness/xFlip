@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soumo's Portfolio</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Heroicons (SVGs will be used inline) -->
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center text-white">
+
+  <!-- Hero Section -->
+  <section class="w-full max-w-2xl mx-auto text-center py-16 px-4">
+    <div class="flex flex-col items-center gap-4">
+      <div class="bg-gradient-to-tr from-blue-500 to-purple-600 rounded-full p-2 shadow-lg">
+        <!-- User Icon from Heroicons -->
+        <svg class="h-20 w-20 text-white" fill="none" stroke="currentColor" stroke-width="1.5"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 0115 0v.75a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V19.5z" />
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Hi, I'm Soumo</h1>
+      <p class="text-lg text-gray-300 max-w-md">A passionate web developer who loves building beautiful and functional websites. I enjoy working with modern tools like Tailwind CSS and Heroicons!</p>
+      <div class="flex gap-4 mt-6 justify-center">
+        <a href="mailto:soumo@email.com" class="inline-flex items-center gap-2 px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition font-semibold shadow-lg">
+          <!-- Envelope Icon -->
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75M21.75 6.75A2.25 2.25 0 0019.5 4.5H4.5a2.25 2.25 0 00-2.25 2.25M21.75 6.75v.243a2.25 2.25 0 01-.659 1.591l-7.341 7.341a2.25 2.25 0 01-3.182 0L2.909 8.584A2.25 2.25 0 012.25 6.993V6.75" />
+          </svg>
+          Contact Me
+        </a>
+        <a href="https://github.com/soumo" target="_blank" class="inline-flex items-center gap-2 px-6 py-2 rounded-lg bg-gray-800 hover:bg-gray-900 transition font-semibold shadow-lg">
+          <!-- GitHub Icon -->
+          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.425 2.865 8.178 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.447-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.547 1.378.203 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.338 4.695-4.566 4.943.359.309.678.918.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .268.18.58.688.482C19.138 20.196 22 16.444 22 12.021 22 6.484 17.523 2 12 2z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section class="w-full max-w-3xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-bold mb-6 text-left bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Projects</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Project 1 -->
+      <div class="bg-gray-800/70 rounded-xl p-6 shadow-lg hover:scale-105 transition">
+        <h3 class="text-xl font-semibold mb-2">Portfolio Website</h3>
+        <p class="text-gray-300 mb-4">A modern, responsive portfolio website built with Tailwind CSS and Heroicons.</p>
+        <a href="#" class="text-blue-400 hover:underline flex items-center gap-1">
+          View Project
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+      <!-- Project 2 -->
+      <div class="bg-gray-800/70 rounded-xl p-6 shadow-lg hover:scale-105 transition">
+        <h3 class="text-xl font-semibold mb-2">Weather App</h3>
+        <p class="text-gray-300 mb-4">A simple weather app using OpenWeatherMap API, styled with NextUI-inspired cards.</p>
+        <a href="#" class="text-blue-400 hover:underline flex items-center gap-1">
+          View Project
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="w-full text-center py-6 text-gray-400 text-sm">
+    &copy; 2025 Soumo. Made with <span class="text-pink-400">♥</span> using Tailwind CSS & Heroicons.
+  </footer>
+</body>
+</html>
