@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Soumo | Developer & Trader</title>
+  <!-- Cool Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Remixicon for icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #16181a;
+      --accent: #00e0d3;
+      --font: 'Space Grotesk', sans-serif;
+      --text: #f4f4f4;
+      --subtext: #b0b0b0;
+      --radius: 18px;
+      --shadow: 0 4px 32px 0 rgba(0,0,0,0.7);
+      --icon-size: 1.3em;
+      --transition: 0.2s cubic-bezier(.4,0,.2,1);
+    }
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      margin: 0;
+      padding: 0;
+      font-size: 13px;
+      min-height: 100vh;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(120deg, #0a0a0a 60%, #232526 100%);
+    }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.5em 2em 2em 2em;
+      max-width: 350px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2.5px solid var(--accent);
+      margin-bottom: 1.2em;
+      object-fit: cover;
+      box-shadow: 0 2px 16px #00e0d344;
+    }
+    .name {
+      font-size: 1.5em;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--accent);
+      margin-bottom: 0.4em;
+      font-family: inherit;
+      text-shadow: 0 2px 8px #00e0d366;
+    }
+    .roles {
+      display: flex;
+      justify-content: center;
+      gap: 1.1em;
+      margin-bottom: 1.2em;
+    }
+    .role {
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      background: rgba(0,224,211,0.07);
+      padding: 0.35em 0.9em;
+      border-radius: 1em;
+      font-size: 0.96em;
+      color: var(--subtext);
+      letter-spacing: 0.02em;
+      transition: background var(--transition);
+    }
+    .role i {
+      font-size: var(--icon-size);
+      color: var(--accent);
+    }
+    .bio {
+      color: var(--subtext);
+      margin-bottom: 1.7em;
+      font-size: 0.98em;
+      line-height: 1.6;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+    .links {
+      display: flex;
+      justify-content: center;
+      gap: 1.2em;
+      margin-bottom: 1.3em;
+    }
+    .links a {
+      color: var(--accent);
+      font-size: 1.4em;
+      transition: color var(--transition), transform var(--transition);
+      text-decoration: none;
+      border-radius: 50%;
+      padding: 0.3em;
+    }
+    .links a:hover {
+      color: #fff;
+      background: var(--accent);
+      transform: scale(1.15) rotate(-8deg);
+      box-shadow: 0 2px 8px #00e0d344;
+    }
+    .projects {
+      margin-top: 1.4em;
+      text-align: left;
+    }
+    .projects-title {
+      color: var(--accent);
+      font-size: 1.09em;
+      font-weight: 700;
+      margin-bottom: 0.6em;
+      letter-spacing: 0.01em;
+    }
+    .project-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .project-list li {
+      background: rgba(255,255,255,0.02);
+      border-radius: 0.7em;
+      margin-bottom: 0.5em;
+      padding: 0.7em 1em;
+      font-size: 0.97em;
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      transition: background var(--transition);
+    }
+    .project-list li:hover {
+      background: rgba(0,224,211,0.08);
+    }
+    .project-list i {
+      color: var(--accent);
+      font-size: 1.1em;
+    }
+    /* Responsive */
+    @media (max-width: 480px) {
+      .card {
+        padding: 1.4em 0.7em 1.2em 0.7em;
+        max-width: 97vw;
+      }
+      .projects {
+        margin-top: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- Avatar (add your own image if you want) -->
+    <img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" alt="Soumo Avatar" class="avatar">
+    <div class="name">Soumo</div>
+    <div class="roles">
+      <div class="role"><i class="ri-code-s-slash-line"></i> Developer</div>
+      <div class="role"><i class="ri-line-chart-line"></i> Trader</div>
+    </div>
+    <div class="bio">
+      🚀 Building next-gen web experiences &<br>
+      📈 Navigating the markets with code.<br>
+      <span style="color:var(--accent);">#Tech #Finance #Innovation</span>
+    </div>
+    <div class="links">
+      <a href="https://github.com/" target="_blank" title="GitHub"><i class="ri-github-fill"></i></a>
+      <a href="https://twitter.com/" target="_blank" title="Twitter"><i class="ri-twitter-x-fill"></i></a>
+      <a href="mailto:soumo@email.com" title="Email"><i class="ri-mail-line"></i></a>
+      <a href="https://linkedin.com/" target="_blank" title="LinkedIn"><i class="ri-linkedin-box-fill"></i></a>
+    </div>
+    <div class="projects">
+      <div class="projects-title">Featured Projects</div>
+      <ul class="project-list">
+        <li><i class="ri-flashlight-line"></i> Algo Trading Bot <span style="color:var(--subtext);font-size:0.89em;">(Python, Binance API)</span></li>
+        <li><i class="ri-global-line"></i> Portfolio Website <span style="color:var(--subtext);font-size:0.89em;">(Next.js, TailwindCSS)</span></li>
+        <li><i class="ri-database-2-line"></i> Stock Analytics Dashboard <span style="color:var(--subtext);font-size:0.89em;">(React, D3.js)</span></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
