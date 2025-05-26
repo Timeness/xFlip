@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Soumo | Developer, Entrepreneur & Anime Enthusiast</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Heroicons (Premium look) -->
+  <style>
+    html {
+      background: #0b0c10;
+      font-family: 'Inter', 'JetBrains Mono', monospace, sans-serif;
+      font-size: 15px;
+      scroll-behavior: smooth;
+    }
+    body {
+      background: linear-gradient(135deg, #0b0c10 80%, #1f2833 100%);
+      color: #f8f8f2;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .glass {
+      background: rgba(24, 28, 38, 0.85);
+      box-shadow: 0 8px 32px 0 rgba(31, 40, 51, 0.37);
+      border-radius: 1.25rem;
+      border: 1px solid rgba(44, 62, 80, 0.18);
+      backdrop-filter: blur(10px);
+    }
+    .neon {
+      text-shadow: 0 0 8px #00ffe7, 0 0 2px #00ffe7;
+    }
+    .tab-active {
+      background: linear-gradient(90deg, #00ffe7 0%, #00bfff 100%);
+      color: #0b0c10 !important;
+      font-weight: 600;
+      box-shadow: 0 2px 12px #00ffe7aa;
+    }
+    .tab-inactive {
+      background: transparent;
+      color: #b0bec5;
+    }
+    .icon-premium {
+      filter: drop-shadow(0 0 6px #00ffe7aa);
+    }
+    ::selection {
+      background: #00ffe7;
+      color: #0b0c10;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen px-4">
+
+  <!-- Header & Avatar -->
+  <header class="w-full max-w-2xl mt-12 mb-10 flex flex-col items-center">
+    <div class="relative">
+      <img src="https://avatars.githubusercontent.com/u/9919?v=4" alt="Soumo Avatar" class="w-28 h-28 rounded-full border-4 border-cyan-400 shadow-lg glass" />
+      <span class="absolute bottom-1 right-1 bg-cyan-400 rounded-full w-5 h-5 border-2 border-black animate-pulse"></span>
+    </div>
+    <h1 class="mt-6 text-3xl md:text-4xl font-extrabold neon tracking-tight">Soumo</h1>
+    <p class="mt-2 text-cyan-400 font-mono text-sm md:text-base tracking-wide">Developer • Entrepreneur • Anime Enthusiast</p>
+    <div class="flex mt-4 gap-4">
+      <!-- Coding Icon -->
+      <span class="icon-premium">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" class="text-cyan-400" viewBox="0 0 24 24">
+          <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <!-- Entrepreneurship Icon -->
+      <span class="icon-premium">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" class="text-cyan-400" viewBox="0 0 24 24">
+          <path d="M12 3v18M12 3l7 7-7 7-7-7 7-7z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <!-- Anime Icon (Stylized Cat Ears) -->
+      <span class="icon-premium">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" class="text-cyan-400" viewBox="0 0 24 24">
+          <path d="M4 17C4 9 8 5 12 5s8 4 8 12" />
+          <path d="M8 5L6 2M16 5l2-3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Glass Card -->
+  <main class="glass w-full max-w-2xl p-8 md:p-10 flex flex-col gap-8 shadow-xl border border-cyan-900/30">
+
+    <!-- About Section -->
+    <section>
+      <h2 class="text-xl font-semibold mb-2 text-cyan-400">About Me</h2>
+      <p class="text-gray-300 leading-relaxed">
+        Hi, I'm <span class="font-bold text-cyan-300">Soumo</span>. I build immersive digital experiences, launch startups, and love all things anime. My code is clean, my ideas are bold, and my passion is infinite. Whether it's crafting futuristic web apps, scaling businesses, or discussing the latest anime, I'm always leveling up.
+      </p>
+    </section>
+
+    <!-- Tabs: Skills / Projects / Anime -->
+    <section>
+      <div class="flex space-x-2 mb-4">
+        <button id="tab-skills" class="tab-active px-4 py-2 rounded-lg transition-all duration-200 text-sm">Skills</button>
+        <button id="tab-projects" class="tab-inactive px-4 py-2 rounded-lg transition-all duration-200 text-sm">Projects</button>
+        <button id="tab-anime" class="tab-inactive px-4 py-2 rounded-lg transition-all duration-200 text-sm">Anime</button>
+      </div>
+      <div id="tab-content" class="transition-all duration-300">
+        <!-- Skills Content -->
+        <div id="content-skills">
+          <ul class="grid grid-cols-2 md:grid-cols-3 gap-3 text-cyan-200 text-sm font-mono">
+            <li class="flex items-center gap-2"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" class="text-cyan-400" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>React / Next.js</li>
+            <li class="flex items-center gap-2"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" class="text-cyan-400" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>TypeScript</li>
+            <li class="flex items-center gap-2"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" class="text-cyan-400" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 9h8M8 13h6"/></svg>Node.js / API</li>
+            <li class="flex items-center gap-2"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" class="text-cyan-400" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Startup Building</li>
+            <li class="flex items-center gap-2"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" class="text-cyan-400" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>UI/UX Design</li>
+            <li class="flex items-center gap-2"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" class="text-cyan-400" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>Anime Web Apps</li>
+          </ul>
+        </div>
+        <!-- Projects Content (hidden by default) -->
+        <div id="content-projects" class="hidden">
+          <ul class="space-y-3">
+            <li class="glass p-4 rounded-lg flex flex-col gap-1 border border-cyan-800/40">
+              <span class="font-semibold text-cyan-300">NextGen Portfolio</span>
+              <span class="text-gray-400 text-xs">A futuristic, animated portfolio template for developers and creators (like this one!).</span>
+            </li>
+            <li class="glass p-4 rounded-lg flex flex-col gap-1 border border-cyan-800/40">
+              <span class="font-semibold text-cyan-300">Startup Launchpad</span>
+              <span class="text-gray-400 text-xs">A SaaS platform to help founders ideate, validate, and launch products faster.</span>
+            </li>
+            <li class="glass p-4 rounded-lg flex flex-col gap-1 border border-cyan-800/40">
+              <span class="font-semibold text-cyan-300">AniTrackr</span>
+              <span class="text-gray-400 text-xs">A modern anime tracking and discovery web app, inspired by MyAnimeList and AniList.</span>
+            </li>
+          </ul>
+        </div>
+        <!-- Anime Content (hidden by default) -->
+        <div id="content-anime" class="hidden">
+          <ul class="space-y-3 text-cyan-200">
+            <li class="flex items-center gap-2">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" class="text-cyan-400" viewBox="0 0 24 24"><path d="M4 17C4 9 8 5 12 5s8 4 8 12"/><path d="M8 5L6 2M16 5l2-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="font-semibold">Top 3 Anime:</span>
+            </li>
+            <li class="ml-6">1. Steins;Gate</li>
+            <li class="ml-6">2. Attack on Titan</li>
+            <li class="ml-6">3. Jujutsu Kaisen</li>
+            <li class="flex items-center gap-2 mt-3">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" class="text-cyan-400" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
+              <span>Always open for anime recommendations!</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact / Socials -->
+    <section class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>
+        <span class="text-cyan-400 font-semibold">Let's connect:</span>
+      </div>
+      <div class="flex gap-4 mt-2 md:mt-0">
+        <a href="mailto:soumo@email.com" title="Email" class="hover:scale-110 transition-transform">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" class="text-cyan-400" viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>
+          </svg>
+        </a>
+        <a href="https://github.com/soumo" target="_blank" title="GitHub" class="hover:scale-110 transition-transform">
+          <svg width="26" height="26" fill="currentColor" class="text-cyan-400" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48 0-.24-.01-.87-.01-1.7-2.78.61-3.37-1.34-3.37-1.34-.45-1.15-1.1-1.46-1.1-1.46-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0112 6.8c.85.004 1.7.115 2.5.337 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.95.36.31.68.93.68 1.88 0 1.36-.01 2.45-.01 2.78 0 .27.16.58.67.48A10.01 10.01 0 0022 12c0-5.52-4.48-10-10-10z"/>
+          </svg>
+        </a>
+        <a href="https://twitter.com/soumo" target="_blank" title="Twitter" class="hover:scale-110 transition-transform">
+          <svg width="26" height="26" fill="currentColor" class="text-cyan-400" viewBox="0 0 24 24">
+            <path d="M22.46 6c-.77.35-1.6.59-2.47.69a4.3 4.3 0 001.89-2.37 8.59 8.59 0 01-2.72 1.04A4.28 4.28 0 0016.11 4c-2.37 0-4.29 1.92-4.29 4.29 0 .34.04.67.11.99A12.13 12.13 0 013 5.16a4.29 4.29 0 001.33 5.71c-.7-.02-1.36-.21-1.94-.53v.05c0 2.09 1.49 3.83 3.46 4.23-.36.1-.74.16-1.13.16-.28 0-.54-.03-.8-.08.54 1.7 2.09 2.94 3.93 2.97A8.6 8.6 0 012 19.54a12.13 12.13 0 006.56 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19 0-.39-.01-.58A8.7 8.7 0 0024 4.59a8.53 8.53 0 01-2.54.7z"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 mb-4 text-gray-600 text-xs text-center">
+    &copy; 2025 Soumo • Crafted with <span class="text-cyan-400">NextUI</span> & <span class="text-cyan-400">TailwindCSS</span>
+  </footer>
+
+  <!-- Tab Switcher Script -->
+  <script>
+    const tabs = [
+      { btn: 'tab-skills', content: 'content-skills' },
+      { btn: 'tab-projects', content: 'content-projects' },
+      { btn: 'tab-anime', content: 'content-anime' }
+    ];
+    tabs.forEach(({ btn, content }) => {
+      document.getElementById(btn).addEventListener('click', () => {
+        tabs.forEach(({ btn: b, content: c }) => {
+          document.getElementById(b).className = b === btn ? 'tab-active px-4 py-2 rounded-lg transition-all duration-200 text-sm' : 'tab-inactive px-4 py-2 rounded-lg transition-all duration-200 text-sm';
+          document.getElementById(c).classList.toggle('hidden', c !== content);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
