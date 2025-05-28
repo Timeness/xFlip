@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Soumo | Black Hole Portfolio</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #000;
+      overflow-x: hidden;
+    }
+    .glass {
+      background: rgba(20, 20, 20, 0.7);
+      backdrop-filter: blur(12px) saturate(180%);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 8px 32px 0 rgba(0,0,0,0.45);
+    }
+    .neon {
+      text-shadow: 0 0 16px #00f0ff, 0 0 32px #00f0ff;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border-radius: 2rem;
+      box-shadow: 0 0 64px #00f0ff44;
+      background: transparent;
+    }
+    /* Subtle fade-in animation */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(32px);
+      animation: fadeInUp 1.2s cubic-bezier(.25,.46,.45,.94) 0.2s forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center font-sans text-white">
+
+  <!-- 3D Black Hole Hero Section -->
+  <section class="w-full flex flex-col items-center justify-center pt-8 pb-6">
+    <canvas id="blackhole-canvas" style="width:400px;height:400px;max-width:95vw;max-height:60vw;"></canvas>
+    <h1 class="text-5xl md:text-7xl font-extrabold neon mt-8 mb-2 tracking-tight text-cyan-400 fade-in">Soumo</h1>
+    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-cyan-300 tracking-wider fade-in">Universal Developer</h2>
+    <p class="max-w-xl text-gray-300 mb-8 text-lg text-center fade-in">
+      Welcome to my universe! I’m Soumo, a developer who loves to explore the deepest mysteries of code and creativity.<br>
+      Inspired by the cosmic beauty of black holes, I build immersive, high-performance digital experiences.<br>
+      Let’s create something that bends the fabric of reality!
+    </p>
+    <a href="mailto:soumo@email.com" class="neon px-8 py-3 rounded-full bg-cyan-500 text-black font-bold uppercase tracking-widest hover:bg-cyan-400 transition text-lg shadow-lg mb-8 fade-in">Contact Me</a>
+  </section>
+
+  <!-- Skills & Projects -->
+  <main class="glass max-w-2xl w-full mx-4 my-8 p-10 flex flex-col items-center text-center fade-in">
+    <h3 class="text-2xl font-bold mb-4 text-cyan-300">Skills</h3>
+    <div class="flex flex-wrap gap-3 mb-8 justify-center">
+      <span class="px-4 py-2 rounded-full bg-cyan-900/60 text-cyan-300 border border-cyan-500">JavaScript</span>
+      <span class="px-4 py-2 rounded-full bg-purple-900/60 text-purple-300 border border-purple-500">React</span>
+      <span class="px-4 py-2 rounded-full bg-pink-900/60 text-pink-300 border border-pink-500">Next.js</span>
+      <span class="px-4 py-2 rounded-full bg-gray-800/60 text-gray-300 border border-gray-500">Tailwind CSS</span>
+      <span class="px-4 py-2 rounded-full bg-yellow-900/60 text-yellow-300 border border-yellow-500">Three.js</span>
+    </div>
+    <h3 class="text-2xl font-bold mb-4 text-cyan-300">Projects</h3>
+    <div class="w-full flex flex-col gap-4">
+      <div class="glass p-4 flex flex-col md:flex-row items-center justify-between mb-2">
+        <div class="text-left">
+          <h4 class="text-lg font-semibold text-cyan-400">🌌 Cosmic 3D Explorer</h4>
+          <p class="text-gray-400">An immersive, interactive 3D journey through the universe.</p>
+        </div>
+        <a href="#" class="mt-2 md:mt-0 px-4 py-2 rounded bg-cyan-700 hover:bg-cyan-600 text-white font-semibold transition">View</a>
+      </div>
+      <div class="glass p-4 flex flex-col md:flex-row items-center justify-between">
+        <div class="text-left">
+          <h4 class="text-lg font-semibold text-purple-400">🚀 Dev Toolkit</h4>
+          <p class="text-gray-400">A set of tools to supercharge your workflow—fast as light!</p>
+        </div>
+        <a href="#" class="mt-2 md:mt-0 px-4 py-2 rounded bg-purple-700 hover:bg-purple-600 text-white font-semibold transition">View</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 mb-4 text-gray-500 text-sm text-center fade-in">
+    &copy; 2025 Soumo. Inspired by the cosmos. Crafted with <span class="text-cyan-400">Three.js</span> & <span class="text-cyan-400">Tailwind CSS</span>.
+  </footer>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.167.1/build/three.min.js"></script>
+  <script id="blackhole-script">
+    // Black Hole Shader Material
+    const canvas = document.getElementById('blackhole-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+    camera.position.z = 5;
+
+    // Black hole shader
+    const vertexShader = `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+      }
+    `;
+
+    const fragmentShader = `
+      varying vec2 vUv;
+      uniform float time;
+      void main() {
+        vec2 uv = vUv - 0.5;
+        float r = length(uv) * 2.0;
+        float angle = atan(uv.y, uv.x);
+        float accretion = smoothstep(0.35, 0.55, r) * (0.6 + 0.4 * sin(time + angle*8.0));
+        float glow = smoothstep(0.45, 0.6, r) * (0.7 + 0.3 * cos(time*0.7 - angle*4.0));
+        float shadow = smoothstep(0.2, 0.35, r);
+        float black = 1.0 - smoothstep(0.0, 0.19, r);
+        vec3 color = mix(vec3(0.0), vec3(0.05,0.1,0.13), black);
+        color = mix(color, vec3(0.1,0.5,1.0), accretion);
+        color = mix(color, vec3(0.5,0.9,1.0), glow);
+        color *= (1.0-shadow);
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `;
+
+    const blackholeMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        time: { value: 0 }
+      },
+      vertexShader,
+      fragmentShader
+    });
+
+    const geometry = new THREE.PlaneGeometry(4, 4, 128, 128);
+    const blackhole = new THREE.Mesh(geometry, blackholeMaterial);
+    scene.add(blackhole);
+
+    // Animation
+    function animate() {
+      blackholeMaterial.uniforms.time.value += 0.02;
+      blackhole.rotation.z += 0.002;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Responsive resize
+    window.addEventListener('resize', () => {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+</body>
+</html>
