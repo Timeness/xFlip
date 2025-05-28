@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Soumo | Ultimate 3D Portfolio</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #000;
+      overflow-x: hidden;
+    }
+    .glass {
+      background: rgba(20, 20, 20, 0.7);
+      backdrop-filter: blur(12px) saturate(180%);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 8px 32px 0 rgba(0,0,0,0.45);
+    }
+    .neon {
+      text-shadow: 0 0 8px #00f0ff, 0 0 16px #00f0ff;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 32px #00f0ff55;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center font-sans text-white">
+
+  <!-- 3D Hero Section -->
+  <section class="w-full flex flex-col items-center justify-center pt-12 pb-6">
+    <div class="w-full flex flex-col items-center justify-center">
+      <canvas id="three-canvas" style="width:340px;height:340px;max-width:90vw;max-height:50vw;"></canvas>
+    </div>
+    <h1 class="text-5xl md:text-7xl font-extrabold neon mt-8 mb-2 tracking-tight text-cyan-400">Soumo</h1>
+    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-cyan-300 tracking-wider">Ultimate Developer | 3D Web Specialist</h2>
+    <p class="max-w-xl text-gray-300 mb-8 text-lg text-center">
+      Welcome to my next-level portfolio! I’m Soumo—a developer who crafts immersive, high-performance digital experiences. From interactive 3D worlds to robust web apps, I blend creativity and code to push boundaries. Let’s build the future, one pixel at a time.
+    </p>
+    <a href="mailto:soumo@email.com" class="neon px-8 py-3 rounded-full bg-cyan-500 text-black font-bold uppercase tracking-widest hover:bg-cyan-400 transition text-lg shadow-lg mb-8">Contact Me</a>
+  </section>
+
+  <!-- Skills & Projects -->
+  <main class="glass max-w-2xl w-full mx-4 my-8 p-10 flex flex-col items-center text-center">
+    <h3 class="text-2xl font-bold mb-4 text-cyan-300">Skills</h3>
+    <div class="flex flex-wrap gap-3 mb-8 justify-center">
+      <span class="px-4 py-2 rounded-full bg-cyan-900/60 text-cyan-300 border border-cyan-500">JavaScript</span>
+      <span class="px-4 py-2 rounded-full bg-purple-900/60 text-purple-300 border border-purple-500">React</span>
+      <span class="px-4 py-2 rounded-full bg-pink-900/60 text-pink-300 border border-pink-500">Next.js</span>
+      <span class="px-4 py-2 rounded-full bg-gray-800/60 text-gray-300 border border-gray-500">Tailwind CSS</span>
+      <span class="px-4 py-2 rounded-full bg-green-900/60 text-green-300 border border-green-500">Three.js</span>
+    </div>
+    <h3 class="text-2xl font-bold mb-4 text-cyan-300">Projects</h3>
+    <div class="w-full flex flex-col gap-4">
+      <div class="glass p-4 flex flex-col md:flex-row items-center justify-between mb-2">
+        <div class="text-left">
+          <h4 class="text-lg font-semibold text-cyan-400">⚡ Futuristic 3D Web App</h4>
+          <p class="text-gray-400">An immersive, interactive 3D experience built for the modern web.</p>
+        </div>
+        <a href="#" class="mt-2 md:mt-0 px-4 py-2 rounded bg-cyan-700 hover:bg-cyan-600 text-white font-semibold transition">View</a>
+      </div>
+      <div class="glass p-4 flex flex-col md:flex-row items-center justify-between">
+        <div class="text-left">
+          <h4 class="text-lg font-semibold text-purple-400">🚀 Open Source Toolkit</h4>
+          <p class="text-gray-400">A set of tools and utilities to power up your dev workflow.</p>
+        </div>
+        <a href="#" class="mt-2 md:mt-0 px-4 py-2 rounded bg-purple-700 hover:bg-purple-600 text-white font-semibold transition">View</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 mb-4 text-gray-500 text-sm text-center">
+    &copy; 2025 Soumo. Crafted in 3D with <span class="text-cyan-400">Three.js</span> & <span class="text-cyan-400">Tailwind CSS</span>.
+  </footer>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.167.1/build/three.min.js"></script>
+  <script>
+    // Basic Three.js Neon Cube
+    const canvas = document.getElementById('three-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    renderer.setClearColor(0x000000, 0);
+
+    const scene = new THREE.Scene();
+
+    // Neon cube
+    const geometry = new THREE.BoxGeometry(2, 2, 2);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x00f0ff,
+      emissive: 0x00f0ff,
+      emissiveIntensity: 0.7,
+      metalness: 0.6,
+      roughness: 0.2
+    });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x00f0ff, 0.5);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0xffffff, 1.2, 100);
+    pointLight.position.set(5, 10, 10);
+    scene.add(pointLight);
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+    camera.position.z = 6;
+
+    // Responsive resize
+    function onResize() {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', onResize);
+
+    // Animation
+    function animate() {
+      cube.rotation.x += 0.008;
+      cube.rotation.y += 0.01;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
