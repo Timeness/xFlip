@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@iconify-icon/web@2.0.3/dist/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    body { font-family: 'Signika', sans-serif; }
+    pre code {
+      font-size: 0.9rem;
+      padding: 1rem;
+      display: block;
+      overflow-x: auto;
+      border-radius: 0.5rem;
+      background: #1e1e1e;
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center justify-center p-6 text-center">
+
+  <div class="mb-4">
+    <h1 class="text-2xl font-bold mb-2">🔗 File Viewer</h1>
+    <p class="text-sm text-gray-400" id="metaInfo"></p>
+    <input id="shareLink" class="text-xs mt-2 w-full px-3 py-1 bg-gray-800 text-white rounded" readonly>
+    <button onclick="copyLink()" class="mt-2 text-sm bg-blue-600 px-4 py-1 rounded hover:bg-blue-700">
+      Copy Share Link
+    </button>
+  </div>
+
+  <div id="viewer" class="w-full max-w-5xl"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const file = params.get("q");
+    const viewer = document.getElementById("viewer");
+    const metaInfo = document.getElementById("metaInfo");
+    const shareLink = document.getElementById("shareLink");
+
+    if (file) {
+      const fullURL = location.origin + location.pathname + "?file=" + encodeURIComponent(file);
+      shareLink.value = fullURL;
+
+      const fileName = decodeURIComponent(file.split('/').pop());
+      const fileType = file.split('.').pop().toLowerCase();
+      metaInfo.innerText = `Previewing: ${fileName} (${fileType})`;
+
+      if (file.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+        viewer.innerHTML = `<img src="${file}" alt="Image" class="mx-auto max-h-[80vh] rounded shadow-2xl">`;
+      } else if (file.match(/\.(mp4|webm|ogg)$/i)) {
+        viewer.innerHTML = `<video src="${file}" controls autoplay class="mx-auto max-h-[80vh] rounded shadow-2xl"></video>`;
+      } else if (file.match(/\.(mp3|wav|m4a)$/i)) {
+        viewer.innerHTML = `<audio src="${file}" controls autoplay class="mx-auto w-full max-w-lg mt-4"></audio>`;
+      } else if (file.match(/\.(pdf)$/i)) {
+        viewer.innerHTML = `<iframe src="${file}" class="w-full h-[80vh] rounded-lg shadow-lg"></iframe>`;
+      } else if (file.match(/\.(html|js|css|json|txt|md|xml)$/i)) {
+        fetch(file)
+          .then(res => res.text())
+          .then(code => {
+            let lang = fileType === 'js' ? 'javascript' : fileType;
+            viewer.innerHTML = `<pre><code class="language-${lang}">${escapeHtml(code)}</code></pre>`;
+            hljs.highlightAll();
+          })
+          .catch(err => {
+            viewer.innerHTML = `<p class="text-red-400">Unable to load code file: ${err.message}</p>`;
+          });
+      } else {
+        viewer.innerHTML = `<p class="text-yellow-400">Cannot preview this file type.</p>`;
+      }
+    } else {
+      viewer.innerHTML = `<p class="text-red-400">No file specified in the URL.</p>`;
+    }
+
+    function copyLink() {
+      shareLink.select();
+      document.execCommand("copy");
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, function(m) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        })[m];
+      });
+    }
+  </script>
+</body>
+</html>
