@@ -3,35 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Anime Character Upload</title>
+  <title>Anime Upload</title>
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Viga Font -->
+  <!-- Google Fonts - Viga -->
   <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet" />
 
-  <!-- Heroicons CDN (NextUI uses Heroicons) -->
-  <script src="https://unpkg.com/heroicons@2.0.13/dist/24/outline.min.js"></script>
+  <!-- Iconify CDN -->
+  <script src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
 
   <style>
     body {
       font-family: 'Viga', sans-serif;
+      background-color: #000;
     }
   </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-md p-6 bg-gray-800 rounded-2xl shadow-lg text-center space-y-4">
+<body class="text-white min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md p-6 bg-gray-900 rounded-2xl shadow-xl text-center space-y-4 border border-gray-800">
     <h1 class="text-2xl font-bold mb-2">📸 Upload Anime Character</h1>
-    
-    <label
+
+    <label id="uploadLabel"
       for="imageInput"
       class="cursor-pointer flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-600 rounded-xl hover:border-blue-500 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M7 16V4a2 2 0 012-2h6a2 2 0 012 2v12M5 20h14a2 2 0 002-2V8l-4-4H7a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-      <span class="text-gray-400">Click to upload image</span>
+      <iconify-icon icon="mdi:image-plus" class="text-blue-400 text-4xl mb-2" id="uploadIcon"></iconify-icon>
+      <span class="text-gray-400" id="uploadText">Click to upload image</span>
       <input type="file" accept="image/*" id="imageInput" class="hidden" />
     </label>
 
@@ -42,17 +40,19 @@
     <div class="space-y-3 mt-4 text-left">
       <label class="block text-sm font-semibold text-gray-300">Anime Name</label>
       <input type="text" id="animeName" placeholder="Enter Anime Name"
-        class="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        class="w-full px-4 py-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
       <label class="block text-sm font-semibold text-gray-300">Character Name</label>
       <input type="text" id="characterName" placeholder="Enter Character Name"
-        class="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        class="w-full px-4 py-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
     </div>
   </div>
 
   <script>
     const input = document.getElementById('imageInput');
     const previewImg = document.getElementById('previewImg');
+    const uploadIcon = document.getElementById('uploadIcon');
+    const uploadText = document.getElementById('uploadText');
 
     input.addEventListener('change', (event) => {
       const file = event.target.files[0];
@@ -61,6 +61,8 @@
         reader.onload = (e) => {
           previewImg.src = e.target.result;
           previewImg.classList.remove('hidden');
+          uploadIcon.classList.add('hidden');
+          uploadText.classList.add('hidden');
         };
         reader.readAsDataURL(file);
       }
