@@ -2,77 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Anime Upload</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Character</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+TC&display=swap" rel="stylesheet">
 
   <style>
     body {
-      font-family: 'Varela Round', sans-serif;
-      background: #000;
+      font-family: 'WDXL Lubrifont TC', sans-serif;
+      background-color: #000;
     }
 
-    .glass {
+    .glass-box {
       background: rgba(30, 30, 30, 0.5);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+    }
+
+    input, button {
+      font-family: 'WDXL Lubrifont TC', sans-serif;
     }
   </style>
 </head>
-<body class="text-white min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-md p-6 glass rounded-2xl shadow-xl text-center space-y-4">
-    <h1 class="text-2xl font-bold mb-2">Upload Anime Character</h1>
-
-    <label id="uploadLabel"
-      for="imageInput"
-      class="cursor-pointer flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-600 rounded-xl hover:border-blue-500 transition">
-      <iconify-icon icon="mdi:image-plus" class="text-blue-400 text-4xl mb-2" id="uploadIcon"></iconify-icon>
-      <span class="text-gray-400" id="uploadText">Click to upload image</span>
-      <input type="file" accept="image/*" id="imageInput" class="hidden" />
+<body class="flex items-center justify-center min-h-screen p-4 text-white">
+  <div class="flex flex-col items-center w-full max-w-xs space-y-6">
+    
+    <label for="imageInput" class="w-full aspect-video rounded-3xl glass-box flex items-center justify-center cursor-pointer hover:border-blue-500 border border-gray-700 transition">
+      <iconify-icon icon="mdi:image-plus" class="text-4xl text-gray-400"></iconify-icon>
+      <input type="file" id="imageInput" accept="image/*" class="hidden" />
     </label>
 
-    <div id="preview" class="mt-4">
-      <img id="previewImg" src="" alt="" class="hidden max-w-full rounded-xl border border-gray-700" />
+    <input type="text" placeholder="Anime Name" class="w-full px-4 py-3 rounded-2xl bg-gray-900 bg-opacity-30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400" />
+
+    <input type="text" placeholder="Character Name" class="w-full px-4 py-3 rounded-2xl bg-gray-900 bg-opacity-30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400" />
+
+    <div class="grid grid-cols-2 gap-2 w-full">
+      <button class="py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 transition">1starrrs</button>
+      <button class="py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 transition">2starrrs</button>
+      <button class="py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 transition">3starrrs</button>
+      <button class="py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 transition">4starrrs</button>
     </div>
 
-    <div class="space-y-4 text-left">
-      <input type="text" id="animeName" placeholder="Enter Anime Name"
-        class="w-full px-4 py-2 rounded-md bg-gray-900 bg-opacity-30 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400" />
+    <button class="w-full py-3 rounded-2xl bg-green-600 hover:bg-green-700 transition">Upload</button>
 
-      <input type="text" id="characterName" placeholder="Enter Character Name"
-        class="w-full px-4 py-2 rounded-md bg-gray-900 bg-opacity-30 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400" />
+    <iconify-icon icon="ph:arrow-counter-clockwise-bold" class="text-2xl text-white opacity-80 mt-4"></iconify-icon>
 
-      <div class="bg-gray-900 bg-opacity-20 p-4 rounded-xl border border-gray-700">
-        <div class="grid grid-cols-2 gap-4">
-          <button class="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition">1starrrs</button>
-          <button class="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition">2starrrs</button>
-          <button class="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition">3starrrs</button>
-          <button class="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition">4starrrs</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script>
     const input = document.getElementById('imageInput');
-    const previewImg = document.getElementById('previewImg');
-    const uploadIcon = document.getElementById('uploadIcon');
-    const uploadText = document.getElementById('uploadText');
-
     input.addEventListener('change', (event) => {
       const file = event.target.files[0];
       if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          previewImg.src = e.target.result;
-          previewImg.classList.remove('hidden');
-          uploadIcon.classList.add('hidden');
-          uploadText.classList.add('hidden');
-        };
-        reader.readAsDataURL(file);
+        document.querySelector("iconify-icon[icon='mdi:image-plus']").classList.add("hidden");
       }
     });
   </script>
