@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Upload Site</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/heroicons@2.0.13/dist/24/solid.min.js"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md p-6 bg-gray-800 rounded-2xl shadow-lg text-center">
+    <h1 class="text-2xl font-bold mb-4">📸 Upload Your Image</h1>
+    
+    <label
+      for="imageInput"
+      class="cursor-pointer flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-600 rounded-xl hover:border-blue-500 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4a2 2 0 012-2h6a2 2 0 012 2v12M5 20h14a2 2 0 002-2V8l-4-4H7a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <span class="text-gray-400">Click to upload image</span>
+      <input type="file" accept="image/*" id="imageInput" class="hidden" />
+    </label>
+
+    <div id="preview" class="mt-6">
+      <img id="previewImg" src="" alt="" class="hidden max-w-full rounded-xl border border-gray-700" />
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('imageInput');
+    const previewImg = document.getElementById('previewImg');
+
+    input.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          previewImg.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>
