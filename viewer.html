@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@iconify-icon/web@2.0.3/dist/iconify-icon.min.js"></script>
+</head>
+<body class="bg-black text-white flex items-center justify-center min-h-screen p-4">
+  <div id="viewer" class="w-full text-center"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const file = params.get("q");
+    const viewer = document.getElementById("viewer");
+
+    function sanitizeURL(url) {
+      const el = document.createElement('a');
+      el.href = url;
+      return el.href;
+    }
+
+    if (file) {
+      const safeFile = sanitizeURL(file);
+      if (file.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+        viewer.innerHTML = `<img src="${safeFile}" alt="Image" class="mx-auto max-h-[80vh] rounded shadow-2xl">`;
+      } else if (file.match(/\.(mp4|webm|ogg)$/i)) {
+        viewer.innerHTML = `<video src="${safeFile}" controls autoplay class="mx-auto max-h-[80vh] rounded shadow-2xl"></video>`;
+      } else if (file.match(/\.(mp3|wav|m4a)$/i)) {
+        viewer.innerHTML = `<audio src="${safeFile}" controls autoplay class="mx-auto w-full max-w-lg mt-4"></audio>`;
+      } else if (file.match(/\.(pdf)$/i)) {
+        viewer.innerHTML = `<iframe src="${safeFile}" class="w-full h-[80vh] rounded-lg shadow-lg"></iframe>`;
+      } else {
+        viewer.innerHTML = `
+          <div class="text-gray-400 text-xl mt-6">
+            <iconify-icon icon="mdi:alert-circle-outline" class="text-yellow-400 text-5xl mb-4"></iconify-icon>
+            <p>Preview not available for this file type.</p>
+          </div>
+        `;
+      }
+    } else {
+      viewer.innerHTML = `
+        <div class="text-gray-400 text-xl mt-6">
+          <iconify-icon icon="mdi:file-question-outline" class="text-red-400 text-5xl mb-4"></iconify-icon>
+          <p>No file specified in the URL.</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
