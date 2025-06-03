@@ -135,7 +135,7 @@
                         id: song.id,
                         name: song.name || 'Unknown Title',
                         artist: song.primaryArtists || 'Unknown Artist',
-                        image: song.image?.[2]?.link || 'https://placehold.co/400x400/png?text=No+Image',
+                        image: song.image?.[2]?.link || 'https://graph.org/file/4819c27980649424d637f.png',
                         url: song.downloadUrl?.[song.downloadUrl.length - 1]?.link || ''
                     }));
                     renderSongs();
