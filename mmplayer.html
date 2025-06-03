@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    html { font-family: 'Inter', sans-serif; }
+    .transition-all { transition: all 0.3s; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col transition-all" id="body">
+  <header class="flex items-center justify-between px-6 py-4 bg-gray-800 shadow-md">
+    <div class="text-2xl font-bold flex items-center gap-2">
+      <span class="text-blue-400">▶️</span> MusicX
+    </div>
+    <div class="flex gap-2 items-center">
+      <button id="theme-toggle" class="p-2 rounded bg-gray-700 hover:bg-gray-600 transition" aria-label="Toggle theme">🌗</button>
+      <button id="favorites-btn" class="p-2 rounded bg-pink-700 hover:bg-pink-600 transition" aria-label="Show favorites">❤️</button>
+      <button id="queue-btn" class="p-2 rounded bg-yellow-700 hover:bg-yellow-600 transition" aria-label="Show queue">📃</button>
+    </div>
+  </header>
+
+  <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+    <aside class="w-full md:w-72 bg-gray-800 p-4 space-y-4 hidden md:block">
+      <div>
+        <h3 class="font-bold mb-2">Playlists</h3>
+        <ul id="playlists" class="space-y-1"></ul>
+      </div>
+      <div>
+        <h3 class="font-bold mb-2">Albums</h3>
+        <ul id="albums" class="space-y-1"></ul>
+      </div>
+      <div>
+        <h3 class="font-bold mb-2">Artists</h3>
+        <ul id="artists" class="space-y-1"></ul>
+      </div>
+    </aside>
+    <main class="flex-1 flex flex-col overflow-y-auto">
+      <div class="flex flex-col md:flex-row items-center md:items-stretch justify-between p-6 gap-4">
+        <input id="search" type="text" placeholder="Search songs, albums, artists, playlists..." class="flex-1 p-3 rounded-lg bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" autocomplete="off">
+        <button id="clear-search" class="ml-2 p-2 rounded bg-gray-700 hover:bg-gray-600 transition">❌</button>
+      </div>
+      <section class="px-6">
+        <h2 class="text-xl font-semibold mb-2">Recently Played</h2>
+        <div id="recent-plays" class="flex space-x-4 overflow-x-auto scrollbar-hide"></div>
+      </section>
+      <section class="px-6 mt-8">
+        <h2 class="text-xl font-semibold mb-2">Results</h2>
+        <div id="results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal-bg" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+  <div id="lyrics-modal" class="fixed left-1/2 top-1/2 z-50 bg-gray-900 text-white p-8 rounded-lg shadow-lg w-11/12 max-w-lg transform -translate-x-1/2 -translate-y-1/2 hidden">
+    <button id="close-lyrics" class="absolute top-2 right-2 p-2 bg-gray-700 rounded hover:bg-gray-600">✖️</button>
+    <h2 class="text-xl font-bold mb-4">Lyrics</h2>
+    <pre id="lyrics-content" class="whitespace-pre-wrap"></pre>
+  </div>
+  <div id="queue-modal" class="fixed left-1/2 top-1/2 z-50 bg-gray-900 text-white p-8 rounded-lg shadow-lg w-11/12 max-w-lg transform -translate-x-1/2 -translate-y-1/2 hidden">
+    <button id="close-queue" class="absolute top-2 right-2 p-2 bg-gray-700 rounded hover:bg-gray-600">✖️</button>
+    <h2 class="text-xl font-bold mb-4">Queue</h2>
+    <ul id="queue-list" class="space-y-2"></ul>
+  </div>
+  <div id="favorites-modal" class="fixed left-1/2 top-1/2 z-50 bg-gray-900 text-white p-8 rounded-lg shadow-lg w-11/12 max-w-lg transform -translate-x-1/2 -translate-y-1/2 hidden">
+    <button id="close-favorites" class="absolute top-2 right-2 p-2 bg-gray-700 rounded hover:bg-gray-600">✖️</button>
+    <h2 class="text-xl font-bold mb-4">Favorites</h2>
+    <ul id="favorites-list" class="space-y-2"></ul>
+  </div>
+
+  <footer class="fixed bottom-0 left-0 right-0 bg-gray-800 shadow-lg p-4 flex flex-col md:flex-row items-center justify-between z-30">
+    <div class="flex items-center gap-4 w-full md:w-auto">
+      <img id="song-thumb" src="" alt="Album Art" class="w-14 h-14 rounded shadow object-cover bg-gray-700">
+      <div>
+        <div id="song-title" class="font-bold truncate max-w-xs"></div>
+        <div id="song-artist" class="text-sm text-gray-400 truncate max-w-xs"></div>
+      </div>
+    </div>
+    <div class="flex-1 flex flex-col md:flex-row items-center justify-center gap-4 mt-4 md:mt-0">
+      <div class="flex items-center gap-2">
+        <button id="shuffle" class="p-2 rounded bg-gray-700 hover:bg-gray-600 transition" aria-label="Shuffle">🔀</button>
+        <button id="prev" class="p-2 rounded bg-gray-700 hover:bg-gray-600 transition" aria-label="Previous">⏮️</button>
+        <button id="play" class="p-2 rounded bg-blue-700 hover:bg-blue-600 transition text-lg" aria-label="Play/Pause">▶️</button>
+        <button id="next" class="p-2 rounded bg-gray-700 hover:bg-gray-600 transition" aria-label="Next">⏭️</button>
+        <button id="repeat" class="p-2 rounded bg-gray-700 hover:bg-gray-600 transition" aria-label="Repeat">🔁</button>
+      </div>
+      <div class="flex items-center gap-2 w-full md:w-96">
+        <span id="current-time" class="text-xs w-10 text-right">0:00</span>
+        <input id="seek" type="range" min="0" max="100" value="0" class="flex-1 accent-blue-600 h-2 rounded-lg">
+        <span id="duration" class="text-xs w-10">0:00</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 w-full md:w-auto mt-4 md:mt-0 justify-end">
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="1" class="w-24 accent-blue-600">
+      <button id="like" class="p-2 rounded bg-pink-700 hover:bg-pink-600 transition" aria-label="Like">❤️</button>
+      <button id="share" class="p-2 rounded bg-blue-700 hover:bg-blue-600 transition" aria-label="Share">🔗</button>
+      <button id="lyrics" class="p-2 rounded bg-green-700 hover:bg-green-600 transition" aria-label="Lyrics">📝</button>
+      <a id="download" class="p-2 rounded bg-gray-700 hover:bg-gray-600 transition" download aria-label="Download">⬇️</a>
+    </div>
+    <audio id="audio" class="hidden"></audio>
+  </footer>
+
+  <script>
+    const API_BASE = 'https://jiosaavan-mu.vercel.app/api';
+    const searchInput = document.getElementById('search');
+    const results = document.getElementById('results');
+    const recentPlays = document.getElementById('recent-plays');
+    const songThumb = document.getElementById('song-thumb');
+    const songTitle = document.getElementById('song-title');
+    const songArtist = document.getElementById('song-artist');
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const seek = document.getElementById('seek');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const volume = document.getElementById('volume');
+    const likeBtn = document.getElementById('like');
+    const shareBtn = document.getElementById('share');
+    const lyricsBtn = document.getElementById('lyrics');
+    const downloadBtn = document.getElementById('download');
+    const shuffleBtn = document.getElementById('shuffle');
+    const repeatBtn = document.getElementById('repeat');
+    const themeToggle = document.getElementById('theme-toggle');
+    const queueBtn = document.getElementById('queue-btn');
+    const favoritesBtn = document.getElementById('favorites-btn');
+    const clearSearchBtn = document.getElementById('clear-search');
+    const playlistsEl = document.getElementById('playlists');
+    const albumsEl = document.getElementById('albums');
+    const artistsEl = document.getElementById('artists');
+    const queueModal = document.getElementById('queue-modal');
+    const closeQueueBtn = document.getElementById('close-queue');
+    const queueList = document.getElementById('queue-list');
+    const favoritesModal = document.getElementById('favorites-modal');
+    const closeFavoritesBtn = document.getElementById('close-favorites');
+    const favoritesList = document.getElementById('favorites-list');
+    const lyricsModal = document.getElementById('lyrics-modal');
+    const closeLyricsBtn = document.getElementById('close-lyrics');
+    const lyricsContent = document.getElementById('lyrics-content');
+    const modalBg = document.getElementById('modal-bg');
+    let currentTrack = null;
+    let queue = [];
+    let queueIndex = 0;
+    let isPlaying = false;
+    let isShuffle = false;
+    let isRepeat = false;
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    let recent = JSON.parse(localStorage.getItem('recent') || '[]');
+    function saveFavorites() { localStorage.setItem('favorites', JSON.stringify(favorites)); }
+    function saveRecent() { localStorage.setItem('recent', JSON.stringify(recent)); }
+    function showModal(modal) {
+      modalBg.classList.remove('hidden');
+      modal.classList.remove('hidden');
+    }
+    function hideModal(modal) {
+      modalBg.classList.add('hidden');
+      modal.classList.add('hidden');
+    }
+    function formatTime(sec) {
+      if (isNaN(sec)) return '0:00';
+      let m = Math.floor(sec / 60);
+      let s = Math.floor(sec % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    function updateRecent(track) {
+      recent = recent.filter(t => t.id !== track.id);
+      recent.unshift(track);
+      if (recent.length > 12) recent.pop();
+      saveRecent();
+      renderRecent();
+    }
+    function renderRecent() {
+      recentPlays.innerHTML = '';
+      recent.forEach(track => {
+        const div = document.createElement('div');
+        div.className = 'w-20 flex-shrink-0 cursor-pointer';
+        div.innerHTML = `<img src="${track.image}" class="w-20 h-20 rounded shadow mb-1 object-cover bg-gray-700">
+          <div class="truncate text-xs">${track.title}</div>`;
+        div.onclick = () => playTrack(track, true);
+        recentPlays.appendChild(div);
+      });
+    }
+    function renderFavorites() {
+      favoritesList.innerHTML = '';
+      if (!favorites.length) {
+        favoritesList.innerHTML = '<li class="text-gray-400">No favorites yet.</li>';
+        return;
+      }
+      favorites.forEach(track => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center gap-2';
+        li.innerHTML = `<img src="${track.image}" class="w-10 h-10 rounded object-cover">
+          <div class="flex-1">
+            <div class="font-bold text-sm">${track.title}</div>
+            <div class="text-xs text-gray-400">${track.artist}</div>
+          </div>
+          <button class="p-1 bg-red-700 rounded hover:bg-red-600" aria-label="Remove">🗑️</button>`;
+        li.querySelector('button').onclick = () => {
+          favorites = favorites.filter(f => f.id !== track.id);
+          saveFavorites();
+          renderFavorites();
+        };
+        li.onclick = (e) => { if (e.target.tagName !== 'BUTTON') playTrack(track, true); };
+        favoritesList.appendChild(li);
+      });
+    }
+    function renderQueue() {
+      queueList.innerHTML = '';
+      queue.forEach((track, i) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center gap-2' + (i === queueIndex ? ' bg-blue-900' : '');
+        li.innerHTML = `<img src="${track.image}" class="w-10 h-10 rounded object-cover">
+          <div class="flex-1">
+            <div class="font-bold text-sm">${track.title}</div>
+            <div class="text-xs text-gray-400">${track.artist}</div>
+          </div>
+          <button class="p-1 bg-red-700 rounded hover:bg-red-600" aria-label="Remove">🗑️</button>`;
+        li.querySelector('button').onclick = (e) => {
+          e.stopPropagation();
+          queue.splice(i, 1);
+          if (queueIndex >= queue.length) queueIndex = queue.length - 1;
+          renderQueue();
+        };
+        li.onclick = (e) => { if (e.target.tagName !== 'BUTTON') { queueIndex = i; playTrack(queue[queueIndex], false); } };
+        queueList.appendChild(li);
+      });
+    }
+    function setPlayerUI(track) {
+      songThumb.src = track.image;
+      songTitle.textContent = track.title;
+      songArtist.textContent = track.artist;
+      downloadBtn.href = track.url;
+      likeBtn.classList.toggle('bg-pink-900', favorites.some(f => f.id === track.id));
+      likeBtn.classList.toggle('bg-pink-700', !favorites.some(f => f.id === track.id));
+    }
+    function playTrack(track, addToQueue = false) {
+      currentTrack = track;
+      audio.src = track.url;
+      setPlayerUI(track);
+      audio.play();
+      isPlaying = true;
+      playBtn.textContent = '⏸️';
+      updateRecent(track);
+      if (addToQueue) {
+        queue.push(track);
+        queueIndex = queue.length - 1;
+        renderQueue();
+      }
+    }
+    function playQueue(index) {
+      if (queue.length === 0) return;
+      queueIndex = index;
+      playTrack(queue[queueIndex], false);
+    }
+    audio.addEventListener('play', () => { isPlaying = true; playBtn.textContent = '⏸️'; });
+    audio.addEventListener('pause', () => { isPlaying = false; playBtn.textContent = '▶️'; });
+    playBtn.onclick = () => { if (!currentTrack) return; if (audio.paused) audio.play(); else audio.pause(); };
+    nextBtn.onclick = () => {
+      if (isShuffle) {
+        queueIndex = Math.floor(Math.random() * queue.length);
+      } else {
+        queueIndex = (queueIndex + 1) % queue.length;
+      }
+      playQueue(queueIndex);
+    };
+    prevBtn.onclick = () => {
+      if (isShuffle) {
+        queueIndex = Math.floor(Math.random() * queue.length);
+      } else {
+        queueIndex = (queueIndex - 1 + queue.length) % queue.length;
+      }
+      playQueue(queueIndex);
+    };
+    shuffleBtn.onclick = () => { isShuffle = !isShuffle; shuffleBtn.classList.toggle('bg-blue-700', isShuffle); };
+    repeatBtn.onclick = () => { isRepeat = !isRepeat; repeatBtn.classList.toggle('bg-green-700', isRepeat); };
+    audio.addEventListener('ended', () => {
+      if (isRepeat) { audio.currentTime = 0; audio.play(); return; }
+      nextBtn.onclick();
+    });
+    seek.oninput = () => { audio.currentTime = (audio.duration * seek.value) / 100; };
+    audio.addEventListener('timeupdate', () => {
+      seek.value = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+      durationEl.textContent = formatTime(audio.duration);
+    });
+    volume.oninput = () => { audio.volume = volume.value; };
+    likeBtn.onclick = () => {
+      if (!currentTrack) return;
+      if (favorites.some(f => f.id === currentTrack.id)) {
+        favorites = favorites.filter(f => f.id !== currentTrack.id);
+      } else {
+        favorites.push(currentTrack);
+      }
+      saveFavorites();
+      setPlayerUI(currentTrack);
+    };
+    shareBtn.onclick = async () => {
+      if (!currentTrack) return;
+      const shareData = {
+        title: currentTrack.title,
+        text: `${currentTrack.title} - ${currentTrack.artist}`,
+        url: currentTrack.url
+      };
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        navigator.clipboard.writeText(currentTrack.url);
+        alert('Link copied!');
+      }
+    };
+    lyricsBtn.onclick = async () => {
+      if (!currentTrack) return;
+      showModal(lyricsModal);
+      lyricsContent.textContent = 'Loading...';
+      try {
+        const res = await fetch(`${API_BASE}/songs/${currentTrack.id}`);
+        const data = await res.json();
+        lyricsContent.textContent = data.lyrics || 'No lyrics found.';
+      } catch { lyricsContent.textContent = 'No lyrics found.'; }
+    };
+    closeLyricsBtn.onclick = () => hideModal(lyricsModal);
+    queueBtn.onclick = () => { renderQueue(); showModal(queueModal); };
+    closeQueueBtn.onclick = () => hideModal(queueModal);
+    favoritesBtn.onclick = () => { renderFavorites(); showModal(favoritesModal); };
+    closeFavoritesBtn.onclick = () => hideModal(favoritesModal);
+    modalBg.onclick = () => {
+      hideModal(lyricsModal);
+      hideModal(queueModal);
+      hideModal(favoritesModal);
+    };
+    clearSearchBtn.onclick = () => { searchInput.value = ''; results.innerHTML = ''; };
+    themeToggle.onclick = () => {
+      const body = document.getElementById('body');
+      body.classList.toggle('bg-gray-900');
+      body.classList.toggle('bg-white');
+      body.classList.toggle('text-white');
+      body.classList.toggle('text-gray-900');
+    };
+    async function fetchAndRender(endpoint, container, itemRenderer) {
+      const res = await fetch(endpoint);
+      const data = await res.json();
+      container.innerHTML = '';
+      data.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'cursor-pointer hover:bg-gray-700 rounded p-2 transition';
+        li.innerHTML = itemRenderer(item);
+        li.onclick = () => handleSidebarClick(item);
+        container.appendChild(li);
+      });
+    }
+    function handleSidebarClick(item) {
+      if (item.type === 'playlist') fetchPlaylist(item.id);
+      if (item.type === 'album') fetchAlbum(item.id);
+      if (item.type === 'artist') fetchArtist(item.id);
+    }
+    async function fetchPlaylist(id) {
+      const res = await fetch(`${API_BASE}/playlists/${id}`);
+      const data = await res.json();
+      results.innerHTML = '';
+      data.songs.forEach(song => {
+        results.appendChild(renderSongCard(song));
+      });
+    }
+    async function fetchAlbum(id) {
+      const res = await fetch(`${API_BASE}/albums/${id}`);
+      const data = await res.json();
+      results.innerHTML = '';
+      data.songs.forEach(song => {
+        results.appendChild(renderSongCard(song));
+      });
+    }
+    async function fetchArtist(id) {
+      const res = await fetch(`${API_BASE}/artists/${id}/songs`);
+      const data = await res.json();
+      results.innerHTML = '';
+      data.forEach(song => {
+        results.appendChild(renderSongCard(song));
+      });
+    }
+    function renderSongCard(song) {
+      const div = document.createElement('div');
+      div.className = 'bg-gray-700 rounded-lg p-4 flex flex-col items-center shadow hover:scale-105 transition-all cursor-pointer';
+      div.innerHTML = `
+        <img src="${song.image}" class="w-24 h-24 rounded mb-2 object-cover bg-gray-800">
+        <div class="font-bold text-center">${song.title}</div>
+        <div class="text-sm text-gray-400 text-center">${song.artist}</div>
+        <div class="flex gap-2 mt-2">
+          <button class="p-2 bg-blue-700 rounded hover:bg-blue-600" aria-label="Play">▶️</button>
+          <button class="p-2 bg-pink-700 rounded hover:bg-pink-600" aria-label="Like">❤️</button>
+        </div>`;
+      div.querySelector('button[aria-label="Play"]').onclick = (e) => { e.stopPropagation(); playTrack(song, true); };
+      div.querySelector('button[aria-label="Like"]').onclick = (e) => {
+        e.stopPropagation();
+        if (!favorites.some(f => f.id === song.id)) {
+          favorites.push(song);
+          saveFavorites();
+        }
+      };
+      div.onclick = () => playTrack(song, true);
+      return div;
+    }
+    searchInput.addEventListener('input', async (e) => {
+      const query = e.target.value.trim();
+      if (!query) return;
+      results.innerHTML = '<div class="text-gray-400">Searching...</div>';
+      const res = await fetch(`${API_BASE}/search/songs?q=${encodeURIComponent(query)}`);
+      const songs = await res.json();
+      results.innerHTML = '';
+      songs.forEach(song => {
+        results.appendChild(renderSongCard(song));
+      });
+    });
+    async function loadSidebar() {
+      await fetchAndRender(`${API_BASE}/playlists`, playlistsEl, p => `<span>${p.title}</span>`);
+      await fetchAndRender(`${API_BASE}/albums`, albumsEl, a => `<span>${a.title}</span>`);
+      await fetchAndRender(`${API_BASE}/artists`, artistsEl, a => `<span>${a.name}</span>`);
+    }
+    function initialLoad() {
+      renderRecent();
+      loadSidebar();
+    }
+    initialLoad();
+  </script>
+</body>
+</html>
