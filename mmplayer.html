@@ -3,83 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate JioSaavn Music Player</title>
+    <title>Saavn Room Player</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@nextui-org/system@2.0.4/dist/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Chakra Petch', sans-serif; font-size: 14px; }
         .player-container { max-width: 1200px; margin: 0 auto; }
-        .queue-item:hover { background-color: rgba(255,255,255,0.1); }
+        .card { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); }
+        .progress-bar { height: 4px; background: rgba(255,255,255,0.2); }
+        .progress { height: 100%; background: #a855f7; }
+        .queue-item:hover { background: rgba(255,255,255,0.1); }
         .favorite { color: #ff4d4f; }
-        .progress-bar { height: 4px; background: #e0e0e0; }
-        .progress { height: 100%; background: #6366f1; }
         .lyrics-container { max-height: 300px; overflow-y: auto; }
-        .glow { box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+        .glow { box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
         .animate-spin-slow { animation: spin 3s linear infinite; }
+        .transparent-input { background: rgba(255,255,255,0.1); border: none; }
+        .room-status { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+<body class="bg-black text-white min-h-screen">
     <div class="player-container p-4">
         <header class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold">Ultimate JioSaavn Player</h1>
-            <div class="flex items-center space-x-4">
-                <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
-                    <span class="iconify" data-icon="mdi:theme-light-dark" data-width="24"></span>
+            <h1 class="text-3xl font-bold text-purple-400">Saavn Room Player</h1>
+            <div class="flex items-center space-x-3">
+                <div class="room-status px-4 py-2 rounded-lg text-sm" id="roomStatus"></div>
+                <button id="theme-toggle" class="p-2 rounded-full bg-gray-800 hover:bg-gray-700">
+                    <span class="iconify" data-icon="mdi:theme-light-dark" data-width="20"></span>
                 </button>
                 <div class="relative">
-                    <input id="search-input" type="text" placeholder="Search songs, artists..." class="p-2 rounded-lg w-64 bg-gray-200 dark:bg-gray-700">
-                    <span class="iconify absolute right-2 top-2" data-icon="mdi:magnify" data-width="20"></span>
+                    <input id="searchInput" type="text" placeholder="Search songs..." class="transparent-input p-2 rounded-lg w-64 text-white placeholder-gray-400">
+                    <span class="iconify absolute right-2 top-2" data-icon="mdi:magnify" data-width="18"></span>
                 </div>
             </div>
         </header>
 
-        <div id="search-results" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"></div>
+        <div id="results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6"></div>
 
         <div class="flex flex-col md:flex-row gap-6">
             <div class="md:w-2/3">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg glow">
+                <div class="card p-6 rounded-xl glow">
                     <img id="current-song-image" src="" alt="Album Art" class="w-full h-64 object-cover rounded-lg mb-4">
-                    <h2 id="current-song-title" class="text-2xl font-semibold"></h2>
-                    <p id="current-song-artist" class="text-gray-600 dark:text-gray-400"></p>
+                    <h2 id="current-song-title" class="text-xl font-semibold text-purple-300"></h2>
+                    <p id="current-song-artist" class="text-sm text-gray-400"></p>
                     <div class="progress-bar mt-4">
                         <div id="progress" class="progress"></div>
                     </div>
-                    <div class="flex justify-between text-sm mt-2">
+                    <div class="flex justify-between text-xs mt-2">
                         <span id="current-time">0:00</span>
                         <span id="duration">0:00</span>
                     </div>
                     <div class="flex justify-center space-x-4 mt-4">
-                        <button id="prev-btn" class="p-2"><span class="iconify" data-icon="mdi:skip-previous" data-width="24"></span></button>
-                        <button id="play-pause-btn" class="p-2"><span class="iconify" data-icon="mdi:play" data-width="24"></span></button>
-                        <button id="next-btn" class="p-2"><span class="iconify" data-icon="mdi:skip-next" data-width="24"></span></button>
-                        <button id="favorite-btn" class="p-2"><span class="iconify" data-icon="mdi:heart-outline" data-width="24"></span></button>
-                        <button id="share-btn" class="p-2"><span class="iconify" data-icon="mdi:share-variant" data-width="24"></span></button>
+                        <button id="prev-btn" class="p-2 hover:bg-gray-700 rounded-full"><span class="iconify" data-icon="mdi:skip-previous" data-width="20"></span></button>
+                        <button id="play-pause-btn" class="p-2 hover:bg-gray-700 rounded-full"><span class="iconify" data-icon="mdi:play" data-width="20"></span></button>
+                        <button id="next-btn" class="p-2 hover:bg-gray-700 rounded-full"><span class="iconify" data-icon="mdi:skip-next" data-width="20"></span></button>
+                        <button id="favorite-btn" class="p-2 hover:bg-gray-700 rounded-full"><span class="iconify" data-icon="mdi:heart-outline" data-width="20"></span></button>
+                        <button id="share-btn" class="p-2 hover:bg-gray-700 rounded-full"><span class="iconify" data-icon="mdi:share-variant" data-width="20"></span></button>
+                        <button id="sync-btn" class="p-2 bg-purple-600 hover:bg-purple-700 rounded-full"><span class="iconify" data-icon="mdi:sync" data-width="20"></span></button>
                     </div>
                     <div class="mt-4">
-                        <label for="volume" class="text-sm">Volume</label>
+                        <label for="volume" class="text-xs">Volume</label>
                         <input id="volume" type="range" min="0" max="1" step="0.01" value="1" class="w-full">
                     </div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mt-6">
-                    <h3 class="text-xl font-semibold mb-4">Lyrics</h3>
-                    <div id="lyrics" class="lyrics-container"></div>
+                <div class="card p-6 rounded-xl mt-6">
+                    <h3 class="text-lg font-semibold text-purple-400 mb-4">Lyrics</h3>
+                    <div id="lyrics" class="lyrics-container text-sm"></div>
                 </div>
             </div>
             <div class="md:w-1/3">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold mb-4">Playback Queue</h3>
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold text-purple-400 mb-4">Playback Queue</h3>
                     <div id="queue" class="space-y-2"></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mt-6">
-                    <h3 class="text-xl font-semibold mb-4">Recent Plays</h3>
+                <div class="card p-6 rounded-xl mt-6">
+                    <h3 class="text-lg font-semibold text-purple-400 mb-4">Recent Plays</h3>
                     <div id="recent-plays" class="space-y-2"></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mt-6">
-                    <h3 class="text-xl font-semibold mb-4">Create Playlist</h3>
-                    <input id="playlist-name" type="text" placeholder="Playlist Name" class="p-2 rounded-lg w-full mb-2 bg-gray-200 dark:bg-gray-700">
-                    <button id="create-playlist-btn" class="p-2 bg-indigo-600 text-white rounded-lg w-full">
-                        <span class="iconify inline" data-icon="mdi:playlist-plus" data-width="20"></span> Create
+                <div class="card p-6 rounded-xl mt-6">
+                    <h3 class="text-lg font-semibold text-purple-400 mb-4">Create Playlist</h3>
+                    <input id="playlist-name" type="text" placeholder="Playlist Name" class="transparent-input p-2 rounded-lg w-full mb-2 text-white placeholder-gray-400">
+                    <button id="create-playlist-btn" class="p-2 bg-purple-600 hover:bg-purple-700 rounded-lg w-full">
+                        <span class="iconify inline" data-icon="mdi:playlist-plus" data-width="18"></span> Create
                     </button>
                     <div id="playlists" class="mt-4 space-y-2"></div>
                 </div>
@@ -90,7 +96,7 @@
     <audio id="audio-player" src=""></audio>
 
     <script>
-        const apiBaseUrl = 'https://jiosaavan-mu.vercel.app/api';
+        const apiBaseUrl = 'https://jiosaavn-api-privatecvc2.vercel.app';
         let currentSong = null;
         let queue = [];
         let recentPlays = JSON.parse(localStorage.getItem('recentPlays')) || [];
@@ -98,56 +104,68 @@
         let playlists = JSON.parse(localStorage.getItem('playlists')) || [];
         let isPlaying = false;
         let audio = document.getElementById('audio-player');
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomID = urlParams.get('room');
+        const isHost = !localStorage.getItem('joinedRoom') && roomID;
+        let currentTrackURL = '';
 
-        async function fetchSongs(query = '') {
+        if (roomID) {
+            document.getElementById('roomStatus').textContent = isHost
+                ? `You're hosting Room: ${roomID}`
+                : `You're joined in Room: ${roomID}`;
+            localStorage.setItem('joinedRoom', roomID);
+        } else {
+            document.getElementById('roomStatus').textContent = "You're not in a room. Add ?room=xyz in URL to create/join.";
+        }
+
+        async function searchSongs(query) {
+            document.getElementById('results').innerHTML = '<p class="text-center text-purple-400">Loading...</p>';
             try {
-                const response = await fetch(`${apiBaseUrl}/search/songs${query ? `?query=${query}` : ''}`);
+                const response = await fetch(`${apiBaseUrl}/search/songs?query=${encodeURIComponent(query)}`);
                 const data = await response.json();
-                return data.results;
+                if (data.status === 'SUCCESS' && data.data.results.length > 0) {
+                    showSongs(data.data.results);
+                } else {
+                    document.getElementById('results').innerHTML = '<p class="text-center text-red-400">No songs found.</p>';
+                }
             } catch (error) {
-                console.error('Error fetching songs:', error);
-                return [];
+                document.getElementById('results').innerHTML = '<p class="text-center text-red-400">Error fetching songs.</p>';
             }
         }
 
-        async function fetchSongDetails(id) {
-            try {
-                const response = await fetch(`${apiBaseUrl}/songs/${id}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error fetching song details:', error);
-                return null;
-            }
-        }
-
-        async function fetchLyrics(id) {
-            try {
-                const response = await fetch(`${apiBaseUrl}/songs/${id}`);
-                const data = await response.json();
-                return data.lyrics || 'Lyrics not available';
-            } catch (error) {
-                console.error('Error fetching lyrics:', error);
-                return 'Lyrics not available';
-            }
-        }
-
-        function displaySearchResults(songs) {
-            const searchResults = document.getElementById('search-results');
-            searchResults.innerHTML = '';
+        function showSongs(songs) {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
             songs.forEach(song => {
+                const audioURL = song.downloadUrl[song.downloadUrl.length - 1].link;
+                const songData = {
+                    id: song.id,
+                    name: song.name,
+                    artist: song.primaryArtists,
+                    image: song.image[2].link,
+                    url: audioURL
+                };
                 const card = document.createElement('div');
-                card.className = 'bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg cursor-pointer';
+                card.className = 'card p-4 rounded-xl shadow-lg cursor-pointer';
                 card.innerHTML = `
-                    <img src="${song.image}" alt="${song.title}" class="w-full h-40 object-cover rounded-lg">
-                    <h3 class="text-lg font-semibold mt-2">${song.title}</h3>
-                    <p class="text-gray-600 dark:text-gray-400">${song.artist}</p>
-                    <button class="add-to-queue p-2 mt-2 bg-indigo-600 text-white rounded-lg">
-                        <span class="iconify inline" data-icon="mdi:plus" data-width="20"></span> Add to Queue
-                    </button>
+                    <img src="${songData.image}" alt="${songData.name}" class="w-full h-40 object-cover rounded-lg mb-3">
+                    <h2 class="text-base font-semibold text-purple-300">${songData.name}</h2>
+                    <p class="text-xs text-gray-400 mb-2">${songData.artist}</p>
+                    <div class="flex space-x-2">
+                        <button class="add-to-queue flex-1 p-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-xs">
+                            <span class="iconify inline" data-icon="mdi:plus" data-width="16"></span> Queue
+                        </button>
+                        ${isHost ? `<button class="sync-btn flex-1 p-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-xs" data-url="${songData.url}">
+                            <span class="iconify inline" data-icon="mdi:sync" data-width="16"></span> Play in Room
+                        </button>` : ''}
+                    </div>
                 `;
-                card.querySelector('.add-to-queue').addEventListener('click', () => addToQueue(song));
-                card.addEventListener('click', () => playSong(song));
-                searchResults.appendChild(card);
+                card.querySelector('.add-to-queue').addEventListener('click', () => addToQueue(songData));
+                card.addEventListener('click', () => playSong(songData));
+                if (isHost) {
+                    card.querySelector('.sync-btn').addEventListener('click', () => syncSong(songData));
+                }
+                results.appendChild(card);
             });
         }
 
@@ -164,11 +182,11 @@
                 item.className = 'queue-item p-2 rounded-lg flex justify-between items-center';
                 item.innerHTML = `
                     <div>
-                        <p class="font-semibold">${song.title}</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">${song.artist}</p>
+                        <p class="text-sm font-semibold text-purple-300">${song.name}</p>
+                        <p class="text-xs text-gray-400">${song.artist}</p>
                     </div>
-                    <button class="remove-from-queue p-2">
-                        <span class="iconify" data-icon="mdi:delete" data-width="20"></span>
+                    <button class="remove-from-queue p-1 hover:bg-gray-700 rounded-full">
+                        <span class="iconify" data-icon="mdi:delete" data-width="16"></span>
                     </button>
                 `;
                 item.querySelector('.remove-from-queue').addEventListener('click', () => {
@@ -179,18 +197,51 @@
             });
         }
 
-        async function playSong(song) {
+        async function playSong(song, sync = false) {
             currentSong = song;
             isPlaying = true;
             audio.src = song.url;
             audio.play();
             document.getElementById('current-song-image').src = song.image;
-            document.getElementById('current-song-title').textContent = song.title;
+            document.getElementById('current-song-title').textContent = song.name;
             document.getElementById('current-song-artist').textContent = song.artist;
-            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:pause" data-width="24"></span>';
-            document.getElementById('lyrics').textContent = await fetchLyrics(song.id);
+            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:pause" data-width="20"></span>';
+            document.getElementById('lyrics').textContent = 'Lyrics not available'; // API doesn't provide lyrics
             addToRecentPlays(song);
             updateFavoriteButton();
+            if (sync && isHost) syncSong(song);
+        }
+
+        function syncSong(song) {
+            if (!isHost || !roomID) return;
+            localStorage.setItem(`room_${roomID}`, JSON.stringify({
+                url: song.url,
+                name: song.name,
+                artist: song.artist,
+                image: song.image,
+                time: Date.now()
+            }));
+            currentTrackURL = song.url;
+        }
+
+        if (!isHost && roomID) {
+            setInterval(() => {
+                const data = JSON.parse(localStorage.getItem(`room_${roomID}`));
+                if (data && data.url !== currentTrackURL) {
+                    playSharedSong(data);
+                }
+            }, 2000);
+        }
+
+        function playSharedSong(data) {
+            currentTrackURL = data.url;
+            playSong({
+                id: data.id || Date.now().toString(),
+                name: data.name,
+                artist: data.artist,
+                image: data.image,
+                url: data.url
+            });
         }
 
         function addToRecentPlays(song) {
@@ -206,10 +257,10 @@
             recentPlaysDiv.innerHTML = '';
             recentPlays.forEach(song => {
                 const item = document.createElement('div');
-                item.className = 'p-2 rounded-lg cursor-pointer';
+                item.className = 'p-2 rounded-lg cursor-pointer hover:bg-gray-700';
                 item.innerHTML = `
-                    <p class="font-semibold">${song.title}</p>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">${song.artist}</p>
+                    <p class="text-sm font-semibold text-purple-300">${song.name}</p>
+                    <p class="text-xs text-gray-400">${song.artist}</p>
                 `;
                 item.addEventListener('click', () => playSong(song));
                 recentPlaysDiv.appendChild(item);
@@ -231,19 +282,19 @@
         function updateFavoriteButton() {
             const favoriteBtn = document.getElementById('favorite-btn');
             if (favorites.find(f => f.id === currentSong?.id)) {
-                favoriteBtn.className = 'p-2 favorite';
-                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart" data-width="24"></span>';
+                favoriteBtn.className = 'p-2 favorite hover:bg-gray-700 rounded-full';
+                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart" data-width="20"></span>';
             } else {
-                favoriteBtn.className = 'p-2';
-                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart-outline" data-width="24"></span>';
+                favoriteBtn.className = 'p-2 hover:bg-gray-700 rounded-full';
+                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart-outline" data-width="20"></span>';
             }
         }
 
         function shareSong() {
             if (!currentSong) return;
             const shareData = {
-                title: currentSong.title,
-                text: `Listen to ${currentSong.title} by ${currentSong.artist} on JioSaavn!`,
+                title: currentSong.name,
+                text: `Listen to ${currentSong.name} by ${currentSong.artist} on Saavn Room Player!`,
                 url: window.location.href
             };
             if (navigator.share) {
@@ -276,22 +327,22 @@
                 item.className = 'p-2 rounded-lg';
                 item.innerHTML = `
                     <div class="flex justify-between items-center">
-                        <p class="font-semibold">${playlist.name}</p>
-                        <div>
-                            <button class="add-to-playlist p-2" data-index="${index}">
-                                <span class="iconify" data-icon="mdi:plus" data-width="20"></span>
+                        <p class="text-sm font-semibold text-purple-300">${playlist.name}</p>
+                        <div class="flex space-x-2">
+                            <button class="add-to-playlist p-1 hover:bg-gray-700 rounded-full" data-index="${index}">
+                                <span class="iconify" data-icon="mdi:plus" data-width="16"></span>
                             </button>
-                            <button class="delete-playlist p-2" data-index="${index}">
-                                <span class="iconify" data-icon="mdi:delete" data-width="20"></span>
+                            <button class="delete-playlist p-1 hover:bg-gray-700 rounded-full" data-index="${index}">
+                                <span class="iconify" data-icon="mdi:delete" data-width="16"></span>
                             </button>
                         </div>
                     </div>
-                    <div class="pl-4">
+                    <div class="pl-4 text-xs">
                         ${playlist.songs.map(song => `
                             <div class="flex justify-between items-center">
-                                <p class="text-sm">${song.title}</p>
-                                <button class="remove-from-playlist p-2" data-playlist="${index}" data-song="${song.id}">
-                                    <span class="iconify" data-icon="mdi:delete" data-width="16"></span>
+                                <p>${song.name}</p>
+                                <button class="remove-from-playlist p-1 hover:bg-gray-700 rounded-full" data-playlist="${index}" data-song="${song.id}">
+                                    <span class="iconify" data-icon="mdi:delete" data-width="14"></span>
                                 </button>
                             </div>
                         `).join('')}
@@ -318,13 +369,12 @@
             });
         }
 
-        document.getElementById('search-input').addEventListener('input', async (e) => {
-            const query = e.target.value;
+        document.getElementById('searchInput').addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
             if (query.length > 2) {
-                const songs = await fetchSongs(query);
-                displaySearchResults(songs);
+                searchSongs(query);
             } else {
-                document.getElementById('search-results').innerHTML = '';
+                document.getElementById('results').innerHTML = '';
             }
         });
 
@@ -332,11 +382,11 @@
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
-                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="24"></span>';
+                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="20"></span>';
             } else {
                 audio.play();
                 isPlaying = true;
-                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:pause" data-width="24"></span>';
+                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:pause" data-width="20"></span>';
             }
         });
 
@@ -344,20 +394,23 @@
             if (queue.length > 0) {
                 const prevSong = queue.shift();
                 queue.push(currentSong);
-                playSong(prevSong);
+                playSong(prevSong, true);
                 updateQueueDisplay();
             }
         });
 
         document.getElementById('next-btn').addEventListener('click', () => {
             if (queue.length > 0) {
-                playSong(queue.shift());
+                playSong(queue.shift(), true);
                 updateQueueDisplay();
             }
         });
 
         document.getElementById('favorite-btn').addEventListener('click', toggleFavorite);
         document.getElementById('share-btn').addEventListener('click', shareSong);
+        document.getElementById('sync-btn').addEventListener('click', () => {
+            if (currentSong) syncSong(currentSong);
+        });
         document.getElementById('create-playlist-btn').addEventListener('click', createPlaylist);
 
         document.getElementById('theme-toggle').addEventListener('click', () => {
@@ -375,11 +428,11 @@
 
         audio.addEventListener('ended', () => {
             if (queue.length > 0) {
-                playSong(queue.shift());
+                playSong(queue.shift(), true);
                 updateQueueDisplay();
             } else {
                 isPlaying = false;
-                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="24"></span>';
+                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="20"></span>';
             }
         });
 
@@ -399,8 +452,6 @@
 
         updateRecentPlaysDisplay();
         updatePlaylistsDisplay();
-
-        fetchSongs().then(displaySearchResults);
     </script>
 </body>
 </html>
