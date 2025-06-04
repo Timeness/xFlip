@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>wêpláy - web3 Player</title>
+    <meta property="og:title" content="wêpláy - Your Music Vibe">
+    <meta property="og:description" content="Stream and share your favorite songs with wêpláy, the ultimate mobile music player.">
+    <meta property="og:image" content="https://placehold.co/400x400/png?text=No+Image">
+    <meta property="og:url" content="https://weplay.example.com">
+    <meta property="og:type" content="website">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@nextui-org/system@2.0.4/dist/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <style>
+        * { user-select: none; outline: none; -webkit-tap-highlight-color: transparent; }
+        button:focus, button:focus-visible, input:focus, input:focus-visible { outline: none !important; box-shadow: none !important; }
+        body { font-family: 'Chakra Petch', sans-serif; font-size: 11px; background-color: #000000; color: #b3b3b3; margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; padding-bottom: 0; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #000000; }
+        ::-webkit-scrollbar-thumb { background-color: #a855f7; border-radius: 8px; border: 1px solid #000000; }
+        a { color: inherit; text-decoration: none; }
+        a:hover { color: #a855f7; }
+        input[type="search"]:focus { border-color: transparent !important; }
+        ::placeholder { color: #666 !important; opacity: 1; }
+        main { width: 100%; max-width: 400px; padding: 0.5rem; box-sizing: border-box; overflow-y: auto; flex-grow: 1; background: #000000; }
+        .player-container { max-width: 400px; margin: 0 auto; background: #000000; }
+        .card { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(6px); border-radius: 8px; border: 1px solid #1a1a1a; }
+        .progress-bar { height: 2px; background: rgba(255,255,255,0.2); }
+        .progress { height: 100%; background: #a855f7; transition: width 0.1s linear; }
+        #results { display: flex; flex-direction: column; gap: 0.25rem; max-width: 400px; margin: 0 auto; }
+        .song-row { display: grid; grid-template-columns: 32px 1fr 24px; align-items: center; gap: 0.5rem; padding: 0.5rem; border-radius: 0.25rem; cursor: pointer; transition: background-color 0.2s ease; background-color: transparent; }
+        .song-row:hover, .song-row:focus-visible { background-color: #1a1a1a; }
+        .song-row:focus-visible { border: 1px solid #a855f7; }
+        .song-row img { width: 32px; height: 32px; border-radius: 3px; object-fit: cover; flex-shrink: 0; }
+        .song-info { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .song-title { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .song-artist { font-size: 10px; color: #b3b3b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.05rem; }
+        .play-icon { color: #a855f7; font-size: 1rem; margin-left: 0.25rem; opacity: 0; transition: opacity 0.2s ease; flex-shrink: 0; }
+        .song-row:hover .play-icon, .song-row:focus-visible .play-icon { opacity: 1; }
+        .search-container { width: 100%; max-width: 400px; margin: 0.5rem auto 0 auto; padding: 0 0.5rem; box-sizing: border-box; }
+        .search-form { display: flex; border-radius: 9999px; background-color: #1a1a1a; overflow: hidden; border: 1px solid #1a1a1a; }
+        .search-input { flex-grow: 1; padding: 0.5rem 0.75rem; font-size: 12px; color: #b3b3b3; background: transparent; border: none; outline: none; caret-color: #a855f7; }
+        .search-input::placeholder { color: #666; opacity: 1; }
+        .search-button { background-color: #a855f7; padding: 0 0.75rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; border: none; position: relative; overflow: hidden; }
+        .search-button:hover { background-color: #c084fc; transform: scale(1.05); }
+        .search-button:active { background-color: #9333ea; transform: scale(0.95); }
+        .search-button span { transition: transform 0.2s ease; }
+        .search-button:hover span { transform: rotate(360deg); }
+        .control-btn { background-color: #1a1a1a; padding: 0.4rem; border-radius: 50%; transition: transform 0.2s ease, background-color 0.2s ease; }
+        .control-btn:hover { background-color: #2a2a2a; transform: scale(1.05); }
+        .control-btn:active { transform: scale(0.9); }
+        .loader { width: 32px; height: 32px; border: 3px solid #a855f7; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 40px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .favorite { color: #ff4d4f; }
+        @media (max-width: 400px) {
+            .player-container { padding: 4px; }
+            .song-row { grid-template-columns: 28px 1fr 20px; }
+            .song-row img { width: 28px; height: 28px; }
+            .song-title { font-size: 11px; }
+            .song-artist { font-size: 9px; }
+            main { padding: 0.4rem; }
+            .search-container { padding: 0 0.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <header class="flex justify-between items-center mb-2 mt-2 px-2">
+            <h1 class="text-lg font-bold text-purple-400">wêpláy</h1>
+            <div class="search-container">
+                <form class="search-form" id="searchForm" novalidate>
+                    <input id="searchInput" class="search-input" type="search" placeholder="Search songs..." autocomplete="off" spellcheck="false" aria-label="Search songs">
+                    <button class="search-button" type="submit" aria-label="Search">
+                        <span class="iconify" data-icon="mdi:magnify" data-width="14"></span>
+                    </button>
+                </form>
+            </div>
+        </header>
+        <main role="main" tabindex="-1">
+            <section aria-label="Search results">
+                <h2 class="sr-only">Search Results</h2>
+                <div id="results" role="list" aria-live="polite"></div>
+            </section>
+        </main>
+        <div class="card p-2 mx-2 mb-2">
+            <img id="current-song-image" src="https://placehold.co/400x400/png?text=No+Image" alt="Album Art" class="w-full h-32 object-cover rounded-md mb-1">
+            <h2 id="current-song-title" class="text-xs font-semibold text-purple-300"></h2>
+            <p id="current-song-artist" class="text-[9px] text-gray-400"></p>
+            <div class="progress-bar mt-1">
+                <div id="progress" class="progress"></div>
+            </div>
+            <div class="flex justify-between text-[9px] mt-0.5">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+            <div class="flex justify-center space-x-1.5 mt-1">
+                <button id="prev-btn" class="control-btn"><span class="iconify" data-icon="mdi:skip-previous" data-width="12"></span></button>
+                <button id="play-pause-btn" class="control-btn"><span class="iconify" data-icon="mdi:play" data-width="12"></span></button>
+                <button id="next-btn" class="control-btn"><span class="iconify" data-icon="mdi:skip-next" data-width="12"></span></button>
+                <button id="favorite-btn" class="control-btn"><span class="iconify" data-icon="mdi:heart-outline" data-width="12"></span></button>
+                <button id="share-btn" class="control-btn"><span class="iconify" data-icon="mdi:share-variant" data-width="12"></span></button>
+            </div>
+        </div>
+        <div class="flex flex-col gap-2 mx-2">
+            <div class="card p-2">
+                <h3 class="text-xs font-semibold text-purple-400 mb-1">Recent Plays</h3>
+                <div id="recent-plays" class="space-y-0.5"></div>
+            </div>
+            <div class="card p-2">
+                <h3 class="text-xs font-semibold text-purple-400 mb-1">Favorites</h3>
+                <div id="favorites" class="space-y-0.5"></div>
+            </div>
+        </div>
+    </div>
+    <audio id="audioPlayer" preload="none"></audio>
+    <script>
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const results = document.getElementById('results');
+        const audioPlayer = document.getElementById('audioPlayer');
+        let songs = [];
+        let currentIndex = -1;
+        let isPlaying = false;
+        let recentPlays = JSON.parse(localStorage.getItem('recentPlays')) || [];
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        let lastPlayed = JSON.parse(localStorage.getItem('lastPlayed')) || null;
+        audioPlayer.volume = 0.8;
+        async function fetchSongById(songId) {
+            try {
+                const res = await fetch(`https://jiosaavn-api-privatecvc2.vercel.app/songs?id=${encodeURIComponent(songId)}`);
+                const data = await res.json();
+                if (data.status === 'SUCCESS' && data.data.length > 0) {
+                    const song = data.data[0];
+                    return {
+                        id: song.id,
+                        name: song.name || 'Unknown Title',
+                        artist: song.primaryArtists || 'Unknown Artist',
+                        image: song.image?.[2]?.link || 'https://placehold.co/400x400/png?text=No+Image',
+                        url: song.downloadUrl?.[song.downloadUrl.length - 1]?.link || ''
+                    };
+                }
+                return null;
+            } catch {
+                return null;
+            }
+        }
+        async function searchSongs(query) {
+            results.innerHTML = '<div class="loader"></div>';
+            try {
+                const res = await fetch(`https://jiosaavn-api-privatecvc2.vercel.app/search/songs?query=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (data.status === 'SUCCESS' && data.data.results.length > 0) {
+                    songs = data.data.results.map(song => ({
+                        id: song.id,
+                        name: song.name || 'Unknown Title',
+                        artist: song.primaryArtists || 'Unknown Artist',
+                        image: song.image?.[2]?.link || 'https://placehold.co/400x400/png?text=No+Image',
+                        url: song.downloadUrl?.[song.downloadUrl.length - 1]?.link || ''
+                    }));
+                    renderSongs();
+                    if (lastPlayed && query === lastPlayed.query && currentIndex === -1) {
+                        const lastIndex = songs.findIndex(s => s.id === lastPlayed.id);
+                        if (lastIndex !== -1) {
+                            currentIndex = lastIndex;
+                            loadSong(lastIndex, false);
+                        }
+                    }
+                } else {
+                    results.innerHTML = `<div class="text-center text-red-400 font-semibold py-2 text-[11px]">No songs found for "<span class="italic">${query}</span>".</div>`;
+                    songs = [];
+                    if (currentIndex === -1) {
+                        audioPlayer.pause();
+                        audioPlayer.src = '';
+                        isPlaying = false;
+                        document.getElementById('current-song-title').textContent = '';
+                        document.getElementById('current-song-artist').textContent = '';
+                        document.getElementById('current-song-image').src = 'https://placehold.co/400x400/png?text=No+Image';
+                    }
+                }
+            } catch {
+                results.innerHTML = '<div class="text-center text-red-400 font-semibold py-2 text-[11px]">Error fetching songs. Try again.</div>';
+                songs = [];
+                if (currentIndex === -1) {
+                    audioPlayer.pause();
+                    audioPlayer.src = '';
+                    isPlaying = false;
+                    document.getElementById('current-song-title').textContent = '';
+                    document.getElementById('current-song-artist').textContent = '';
+                    document.getElementById('current-song-image').src = 'https://placehold.co/400x400/png?text=No+Image';
+                }
+            }
+        }
+        function renderSongs() {
+            results.innerHTML = '';
+            songs.forEach((song, i) => {
+                const row = document.createElement('div');
+                row.className = 'song-row';
+                row.setAttribute('tabindex', '0');
+                row.setAttribute('role', 'listitem');
+                row.setAttribute('aria-pressed', 'false');
+                row.innerHTML = `
+                    <img src="${song.image}" alt="Album cover art for '${song.name}'" loading="lazy">
+                    <div class="song-info">
+                        <div class="song-title" title="${song.name}">${song.name}</div>
+                        <div class="song-artist" title="${song.artist}">${song.artist}</div>
+                    </div>
+                    <div class="play-icon"><span class="iconify" data-icon="${i === currentIndex && isPlaying ? 'mdi:pause-circle' : 'mdi:play-circle'}" data-width="16"></span></div>
+                `;
+                row.addEventListener('click', () => loadSong(i));
+                row.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        loadSong(i);
+                    }
+                });
+                results.appendChild(row);
+            });
+            highlightCurrentSong();
+        }
+        function loadSong(index, updatePlayer = true) {
+            if (index < 0 || index >= songs.length) return;
+            currentIndex = index;
+            const song = songs[index];
+            audioPlayer.src = song.url;
+            audioPlayer.play().catch(() => {});
+            if (updatePlayer) {
+                document.getElementById('current-song-image').src = song.image;
+                document.getElementById('current-song-title').textContent = song.name;
+                document.getElementById('current-song-artist').textContent = song.artist;
+            }
+            addToRecentPlays(song);
+            updateFavoriteButton();
+            localStorage.setItem('lastPlayed', JSON.stringify({ id: song.id, query: searchInput.value.trim() }));
+        }
+        function highlightCurrentSong() {
+            const rows = results.querySelectorAll('.song-row');
+            rows.forEach((row, i) => {
+                const icon = row.querySelector('.play-icon span');
+                if (i === currentIndex && isPlaying) {
+                    row.classList.add('bg-purple-500/20');
+                    row.setAttribute('aria-current', 'true');
+                    if (icon) icon.setAttribute('data-icon', 'mdi:pause-circle');
+                } else {
+                    row.classList.remove('bg-purple-500/20');
+                    row.removeAttribute('aria-current');
+                    if (icon) icon.setAttribute('data-icon', 'mdi:play-circle');
+                }
+            });
+        }
+        function addToRecentPlays(song) {
+            recentPlays = recentPlays.filter(s => s.id !== song.id);
+            recentPlays.unshift(song);
+            if (recentPlays.length > 8) recentPlays.pop();
+            localStorage.setItem('recentPlays', JSON.stringify(recentPlays));
+            updateRecentPlaysDisplay();
+        }
+        function updateRecentPlaysDisplay() {
+            const recentPlaysDiv = document.getElementById('recent-plays');
+            recentPlaysDiv.innerHTML = '';
+            recentPlays.forEach(song => {
+                const item = document.createElement('div');
+                item.className = 'song-row p-1 rounded cursor-pointer';
+                item.innerHTML = `
+                    <img src="${song.image}" alt="${song.name}" class="w-6 h-6 object-cover rounded">
+                    <div class="song-info">
+                        <p class="song-title text-[11px]">${song.name}</p>
+                        <p class="song-artist text-[9px]">${song.artist}</p>
+                    </div>
+                `;
+                item.addEventListener('click', () => {
+                    const index = songs.findIndex(s => s.id === song.id);
+                    if (index !== -1) {
+                        loadSong(index);
+                    } else {
+                        fetchSongById(song.id).then(fetchedSong => {
+                            if (fetchedSong) {
+                                songs = [fetchedSong];
+                                renderSongs();
+                                loadSong(0);
+                            }
+                        });
+                    }
+                });
+                recentPlaysDiv.appendChild(item);
+            });
+        }
+        function toggleFavorite() {
+            if (!songs[currentIndex]) return;
+            const song = songs[currentIndex];
+            const index = favorites.findIndex(f => f.id === song.id);
+            if (index === -1) {
+                favorites.push(song);
+            } else {
+                favorites.splice(index, 1);
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoriteDisplay();
+            updateFavoriteButton();
+        }
+        function updateFavoriteButton() {
+            const favoriteBtn = document.getElementById('favorite-btn');
+            if (favorites.find(f => f.id === songs[currentIndex]?.id)) {
+                favoriteBtn.className = 'control-btn favorite';
+                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart" data-width="12"></span>';
+            } else {
+                favoriteBtn.className = 'control-btn';
+                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart-outline" data-width="12"></span>';
+            }
+        }
+        function updateFavoriteDisplay() {
+            const favoritesDiv = document.getElementById('favorites');
+            favoritesDiv.innerHTML = '';
+            favorites.forEach(song => {
+                const item = document.createElement('div');
+                item.className = 'song-row p-1 rounded cursor-pointer';
+                item.innerHTML = `
+                    <img src="${song.image}" alt="${song.name}" class="w-6 h-6 object-cover rounded">
+                    <div class="song-info">
+                        <p class="song-title text-[11px]">${song.name}</p>
+                        <p class="song-artist text-[9px]">${song.artist}</p>
+                    </div>
+                    <button class="remove-favorite p-0.5 bg-gray-700 hover:bg-gray-600 rounded">
+                        <span class="iconify" data-icon="mdi:heart-broken" data-width="8"></span>
+                    </button>
+                `;
+                item.addEventListener('click', () => {
+                    const index = songs.findIndex(s => s.id === song.id);
+                    if (index !== -1) {
+                        loadSong(index);
+                    } else {
+                        fetchSongById(song.id).then(fetchedSong => {
+                            if (fetchedSong) {
+                                songs = [fetchedSong];
+                                renderSongs();
+                                loadSong(0);
+                            }
+                        });
+                    }
+                });
+                item.querySelector('.remove-favorite').addEventListener('click', e => {
+                    e.stopPropagation();
+                    favorites = favorites.filter(f => f.id !== song.id);
+                    localStorage.setItem('favorites', JSON.stringify(favorites));
+                    updateFavoriteDisplay();
+                    updateFavoriteButton();
+                });
+                favoritesDiv.appendChild(item);
+            });
+        }
+        function shareSong() {
+            if (!songs[currentIndex]) return;
+            const song = songs[currentIndex];
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?songId=${encodeURIComponent(song.id)}`;
+            const shareData = {
+                title: song.name,
+                text: `Vibe to ${song.name} by ${song.artist} on wêpláy!`,
+                url: shareUrl
+            };
+            if (navigator.share) {
+                navigator.share(shareData).catch(() => {
+                    alert(`Share: ${shareData.text}\n${shareData.url}`);
+                });
+            } else {
+                alert(`Share: ${shareData.text}\n${shareData.url}`);
+            }
+        }
+        searchForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query.length > 0) {
+                searchSongs(query);
+                history.replaceState(null, '', `${location.pathname}?search=${encodeURIComponent(query)}`);
+            }
+        });
+        searchInput.addEventListener('input', async e => {
+            const query = e.target.value.trim();
+            if (query.length > 2) {
+                searchSongs(query);
+                history.replaceState(null, '', `${location.pathname}?search=${encodeURIComponent(query)}`);
+            } else {
+                results.innerHTML = '';
+                songs = [];
+                if (currentIndex === -1) {
+                    document.getElementById('current-song-title').textContent = '';
+                    document.getElementById('current-song-artist').textContent = '';
+                    document.getElementById('current-song-image').src = 'https://placehold.co/400x400/png?text=No+Image';
+                }
+            }
+        });
+        audioPlayer.addEventListener('play', () => {
+            isPlaying = true;
+            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:pause" data-width="12"></span>';
+            highlightCurrentSong();
+        });
+        audioPlayer.addEventListener('pause', () => {
+            isPlaying = false;
+            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="12"></span>';
+            highlightCurrentSong();
+        });
+        audioPlayer.addEventListener('timeupdate', () => {
+            const currentTime = audioPlayer.currentTime;
+            const duration = audioPlayer.duration || 0;
+            document.getElementById('current-time').textContent = formatTime(currentTime);
+            document.getElementById('duration').textContent = formatTime(duration);
+            document.getElementById('progress').style.width = `${duration ? (currentTime / duration) * 100 : 0}%`;
+        });
+        audioPlayer.addEventListener('ended', () => {
+            if (currentIndex < songs.length - 1) {
+                loadSong(currentIndex + 1);
+            } else {
+                isPlaying = false;
+                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="12"></span>';
+                highlightCurrentSong();
+            }
+        });
+        document.getElementById('play-pause-btn').addEventListener('click', () => {
+            if (isPlaying) {
+                audioPlayer.pause();
+            } else {
+                audioPlayer.play().catch(() => {});
+            }
+        });
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            if (currentIndex > 0) {
+                loadSong(currentIndex - 1);
+            }
+        });
+        document.getElementById('next-btn').addEventListener('click', () => {
+            if (currentIndex < songs.length - 1 && currentIndex !== -1) {
+                loadSong(currentIndex + 1);
+            }
+        });
+        document.getElementById('favorite-btn').addEventListener('click', toggleFavorite);
+        document.getElementById('share-btn').addEventListener('click', shareSong);
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60) || 0;
+            const secs = Math.floor(seconds % 60) || 0;
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchParam = urlParams.get('search');
+        const songIdParam = urlParams.get('songId');
+        if (songIdParam) {
+            fetchSongById(songIdParam).then(song => {
+                if (song) {
+                    songs = [song];
+                    renderSongs();
+                    loadSong(0);
+                    searchInput.value = '';
+                    history.replaceState(null, '', `${location.pathname}?songId=${encodeURIComponent(songIdParam)}`);
+                }
+            });
+        } else if (searchParam) {
+            const decoded = decodeURIComponent(searchParam).replace(/\+/g, ' ');
+            searchInput.value = decoded;
+            searchSongs(decoded);
+        } else if (lastPlayed) {
+            searchInput.value = lastPlayed.query;
+            searchSongs(lastPlayed.query);
+        }
+        updateRecentPlaysDisplay();
+        updateFavoriteDisplay();
+    </script>
+</body>
+</html>
