@@ -1,0 +1,652 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contributors with Feedback</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+  <script async src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .telegram-icon {
+      width: 14px;
+      height: 14px;
+      vertical-align: middle;
+      margin-right: 6px;
+      display: inline-block;
+    }
+    .telegram-link {
+      display: inline-flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      line-height: 1;
+      background-color: rgba(250, 250, 210, 0.15);
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.3s ease;
+    }
+    .telegram-link:hover {
+      background-color: rgba(250, 250, 210, 0.35);
+      text-decoration: none;
+    }
+    .section-title {
+      font-weight: 700;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+      color: #fbbf24;
+    }
+    .section-title span.bullet {
+      color: #f472b6;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .italic-text {
+      font-style: italic;
+      font-size: 0.8rem;
+      margin-bottom: 1.25rem;
+      color: #d1d5db;
+    }
+    .content-text {
+      font-weight: 600;
+      font-size: 0.75rem;
+      margin-bottom: 1.25rem;
+      color: #e5e7eb;
+    }
+    .footer-text {
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+    /* Feedback button with icon and text like before */
+    .feedback-button {
+      background-color: rgba(255, 182, 193, 0.15);
+      border: 2px solid #f472b6;
+      color: #f472b6;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      margin-top: 1.5rem;
+      user-select: none;
+      justify-content: center;
+      white-space: nowrap;
+    }
+    .feedback-button:hover {
+      background-color: #f472b6;
+      color: black;
+    }
+    .feedback-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    #feedbackModal {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(255 255 255 / 0.06);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 1.5rem 1rem 2rem 1rem;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #feedbackModal.active {
+      display: flex;
+    }
+    #feedbackModalHeader {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      color: #fbbf24;
+      font-weight: 700;
+      font-size: 1.25rem;
+      font-family: 'Poppins', sans-serif;
+      user-select: none;
+    }
+    #feedbackCloseBtn {
+      cursor: pointer;
+      color: #f472b6;
+      font-size: 1.5rem;
+      line-height: 1;
+      transition: color 0.3s ease;
+      user-select: none;
+      background: none;
+      border: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #feedbackCloseBtn:hover {
+      color: #fbbf24;
+    }
+    #feedbackForm {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    #feedbackInput {
+      resize: vertical;
+      min-height: 3rem;
+      max-height: 6rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.375rem;
+      border: none;
+      background-color: rgba(255 255 255 / 0.1);
+      color: #e5e7eb;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      outline-offset: 0;
+      outline-color: transparent;
+      transition: background-color 0.3s ease;
+      box-shadow: inset 0 0 0 1px rgba(255 255 255 / 0.15);
+      line-height: 1.2;
+      user-select: text;
+    }
+    #feedbackInput::placeholder {
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+    #feedbackInput:focus {
+      background-color: rgba(255 255 255 / 0.15);
+      box-shadow: inset 0 0 0 2px #fbbf24;
+      outline: none;
+    }
+    #feedbackSubmitBtn {
+      background-color: #f472b6;
+      color: black;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.4rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      align-self: flex-start;
+      white-space: nowrap;
+    }
+    #feedbackSubmitBtn:disabled {
+      background-color: #fbbf24aa;
+      cursor: not-allowed;
+      color: #333;
+    }
+    #feedbackSubmitBtn:hover:not(:disabled) {
+      background-color: #fbbf24;
+    }
+    #feedbackList {
+      width: 100%;
+      max-width: 480px;
+      max-height: 50vh;
+      overflow-y: auto;
+      background-color: rgba(255 255 255 / 0.05);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(244, 114, 182, 0.7) transparent;
+      font-size: 0.7rem;
+      color: #d1d5db;
+      user-select: text;
+    }
+    #feedbackList::-webkit-scrollbar {
+      width: 6px;
+    }
+    #feedbackList::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 9999px;
+    }
+    #feedbackList::-webkit-scrollbar-thumb {
+      background-color: rgba(244, 114, 182, 0.7);
+      border-radius: 9999px;
+      border: 1.5px solid transparent;
+      background-clip: content-box;
+    }
+    .feedback-item {
+      background-color: transparent;
+      border-radius: 0.375rem;
+      padding: 0.3rem 0.5rem;
+      margin-bottom: 0.4rem;
+      color: #d1d5db;
+      font-weight: 600;
+      font-size: 0.7rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+      word-break: break-word;
+      border: 1px solid rgba(255 255 255 / 0.1);
+      transition: background-color 0.2s ease;
+    }
+    .feedback-item:hover {
+      background-color: rgba(255 182 193 / 0.15);
+      border-color: #f472b6;
+    }
+    .feedback-text {
+      flex: 1;
+      white-space: pre-wrap;
+      user-select: text;
+    }
+    .feedback-user {
+      color: #fbbf24;
+      font-weight: 700;
+      margin-left: 0.5rem;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      user-select: text;
+    }
+    .feedback-user a {
+      color: #fbbf24;
+      text-decoration: underline;
+      user-select: text;
+    }
+    .feedback-delete-btn {
+      color: #f472b6;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      user-select: none;
+      transition: color 0.3s ease;
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.3rem;
+      border-radius: 0.25rem;
+      width: 1.4rem;
+      height: 1.4rem;
+      line-height: 1.2;
+    }
+    .feedback-delete-btn:hover {
+      color: #fbbf24;
+    }
+    .feedback-user-photo {
+      width: 20px;
+      height: 20px;
+      border-radius: 9999px;
+      object-fit: cover;
+      border: 1.5px solid #fbbf24;
+      flex-shrink: 0;
+      user-select: none;
+      background-color: #374151;
+    }
+    @media (max-width: 480px) {
+      #feedbackModal {
+        padding: 1rem 0.5rem 1.5rem 0.5rem;
+      }
+      #feedbackModalHeader {
+        font-size: 1.1rem;
+      }
+      #feedbackInput {
+        font-size: 0.7rem;
+      }
+      #feedbackSubmitBtn {
+        font-size: 0.7rem;
+      }
+      #feedbackList {
+        max-height: 40vh;
+        font-size: 0.65rem;
+      }
+      .feedback-item {
+        font-size: 0.65rem;
+      }
+      .feedback-user-photo {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col justify-between">
+  <main class="p-6 max-w-3xl mx-auto text-sm relative z-0">
+    <h1 class="text-xl font-extrabold mb-2 tracking-wide">Contributors</h1>
+    <p class="text-xs font-semibold mb-3">June 30, 2025 <span class="font-normal">by Yᴀꜱʜ</span></p>
+    <hr class="border-gray-600 mb-5" />
+
+    <div class="section-title">
+      <span class="bullet">•</span>
+      <span>OUR DEVELOPING AND SUPPORT TEAM</span>
+    </div>
+    <p class="italic-text">
+      Whose tireless efforts and expertise have brought joy and entertainment to countless users.
+    </p>
+
+    <div class="section-title">
+      <span class="bullet">•</span>
+      <span>Our developer and database manager:</span>
+    </div>
+    <p class="content-text">
+      <a href="https://telegram.me/iYashKun" target="_blank" rel="noopener noreferrer" class="telegram-link" >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram logo" class="telegram-icon" />
+        Yᴀꜱʜ Gᴜᴘᴛᴀ 🇦🇪
+      </a>
+    </p>
+
+    <div class="section-title">
+      <span class="bullet">•</span>
+      <span>Supporters:</span>
+    </div>
+    <p class="content-text">
+      <a href="https://telegram.me/NothingJustDhruv" target="_blank" rel="noopener noreferrer" class="telegram-link" >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram logo" class="telegram-icon" />
+        | • D H R U V • | [🇮🇳]
+      </a>
+    </p>
+    <p class="content-text">
+      <a href="https://telegram.me/Rizzz_Monarch" target="_blank" rel="noopener noreferrer" class="telegram-link" >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram logo" class="telegram-icon" />
+        Shrutam
+      </a>
+    </p>
+
+    <div class="section-title">
+      <span class="bullet">•</span>
+      <span>Waifu/Husbando Adders:</span>
+    </div>
+    <p class="content-text">
+      <a href="https://telegram.me/NothingJustDhruv" target="_blank" rel="noopener noreferrer" class="telegram-link" >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram logo" class="telegram-icon" />
+        | • D H R U V • | [🇮🇳]
+      </a>
+    </p>
+
+    <p class="content-text font-semibold mt-4">
+      Great job to our amazing developing and support team for their hard work and dedication in making our @NexusWaifuVerseBot a success.
+    </p>
+
+    <p class="content-text font-semibold">
+      Thank you for your unwavering commitment to improving our bot and making it the best it can be. Keep up the fantastic work!
+    </p>
+
+    <button id="openFeedbackBtn" type="button" class="feedback-button" aria-label="Send Feedback" title="Send Feedback">
+      <i class="fas fa-paper-plane feedback-icon" aria-hidden="true"></i> Feedback
+    </button>
+  </main>
+
+  <footer class="bg-gray-900 text-gray-600 text-xs font-mono font-semibold flex justify-start px-6 py-3 max-w-3xl mx-auto w-full">
+    <span id="viewsCount">0 views</span>
+  </footer>
+
+  <div id="feedbackModal" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle" tabindex="-1">
+    <div id="feedbackModalHeader">
+      <span id="feedbackModalTitle">User Feedbacks</span>
+      <button id="feedbackCloseBtn" aria-label="Close Feedback Modal" title="Close Feedback Modal">&times;</button>
+    </div>
+    <form id="feedbackForm" aria-describedby="feedbackFormDesc">
+      <textarea id="feedbackInput" name="feedback" placeholder="Write your feedback here..." aria-required="true" aria-label="Feedback input" spellcheck="true"></textarea>
+      <button type="submit" id="feedbackSubmitBtn" disabled>Send Feedback</button>
+    </form>
+    <div id="feedbackList" aria-live="polite" aria-relevant="additions removals" aria-label="List of user feedbacks"></div>
+  </div>
+
+  <script>
+    const viewsKey = 'pageViewsCount';
+    let views = localStorage.getItem(viewsKey);
+    if (!views) {
+      views = 0;
+    }
+    views = parseInt(views) + 1;
+    localStorage.setItem(viewsKey, views);
+    document.getElementById('viewsCount').textContent = views.toLocaleString() + ' views';
+
+    let tg = null;
+    let user = null;
+    if (window.Telegram && window.Telegram.WebApp) {
+      tg = window.Telegram.WebApp;
+      tg.expand();
+      user = tg.initDataUnsafe?.user || null;
+    }
+
+    const openFeedbackBtn = document.getElementById('openFeedbackBtn');
+    const feedbackModal = document.getElementById('feedbackModal');
+    const feedbackCloseBtn = document.getElementById('feedbackCloseBtn');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const feedbackInput = document.getElementById('feedbackInput');
+    const feedbackSubmitBtn = document.getElementById('feedbackSubmitBtn');
+    const feedbackList = document.getElementById('feedbackList');
+
+    const feedbacksKey = 'userFeedbacks';
+
+    let currentUserId = null;
+    let currentUsername = null;
+    let currentUserPhoto = null;
+
+    function generateLocalUserId() {
+      let localId = localStorage.getItem('localUserId');
+      if (!localId) {
+        localId = 'local-' + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem('localUserId', localId);
+      }
+      return localId;
+    }
+
+    if (user && user.id) {
+      currentUserId = 'tg-' + user.id;
+      currentUsername = user.username || (user.first_name ? user.first_name : 'User');
+      currentUserPhoto = user.photo_url || null;
+    } else {
+      currentUserId = generateLocalUserId();
+      currentUsername = 'Guest';
+      currentUserPhoto = null;
+    }
+
+    function openModal() {
+      feedbackModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      feedbackInput.focus();
+      renderFeedbacks();
+    }
+
+    function closeModal() {
+      feedbackModal.classList.remove('active');
+      document.body.style.overflow = '';
+      feedbackInput.value = '';
+      feedbackSubmitBtn.disabled = true;
+    }
+
+    function loadFeedbacks() {
+      const stored = localStorage.getItem(feedbacksKey);
+      if (!stored) return [];
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [];
+      }
+    }
+
+    function saveFeedbacks(feedbacks) {
+      localStorage.setItem(feedbacksKey, JSON.stringify(feedbacks));
+    }
+
+    function renderFeedbacks() {
+      const feedbacks = loadFeedbacks();
+      feedbackList.innerHTML = '';
+      if (feedbacks.length === 0) {
+        const noFeedback = document.createElement('p');
+        noFeedback.className = 'text-gray-400 text-center py-4 select-none';
+        noFeedback.textContent = 'No feedbacks yet. Be the first to send one!';
+        feedbackList.appendChild(noFeedback);
+        return;
+      }
+      feedbacks.forEach((fb) => {
+        const item = document.createElement('div');
+        item.className = 'feedback-item';
+        item.setAttribute('data-id', fb.id);
+
+        const textUserWrapper = document.createElement('div');
+        textUserWrapper.style.flex = '1';
+        textUserWrapper.style.display = 'flex';
+        textUserWrapper.style.flexDirection = 'column';
+
+        const textContainer = document.createElement('div');
+        textContainer.className = 'feedback-text';
+        textContainer.textContent = fb.text;
+
+        const userContainer = document.createElement('div');
+        userContainer.className = 'feedback-user';
+
+        // Profile photo circle
+        const userPhoto = document.createElement('img');
+        userPhoto.className = 'feedback-user-photo';
+        if (fb.userPhoto) {
+          userPhoto.src = fb.userPhoto;
+          userPhoto.alt = `Profile photo of ${fb.userDisplayName}`;
+        } else {
+          // Placeholder circle with initials or generic icon
+          userPhoto.src = 'https://placehold.co/40x40/6b7280/ffffff?text=U';
+          userPhoto.alt = 'Default user profile photo placeholder';
+        }
+        userContainer.appendChild(userPhoto);
+
+        // Username link or text
+        const userLink = document.createElement('a');
+        userLink.href = fb.username ? `https://t.me/${fb.username}` : '#';
+        userLink.target = '_blank';
+        userLink.rel = 'noopener noreferrer';
+        userLink.textContent = fb.username ? `@${fb.username}` : fb.userDisplayName;
+        userContainer.appendChild(document.createTextNode(' by '));
+        userContainer.appendChild(userLink);
+
+        textUserWrapper.appendChild(textContainer);
+        textUserWrapper.appendChild(userContainer);
+
+        item.appendChild(textUserWrapper);
+
+        // Show delete button only for current user's feedback
+        if (fb.userId === currentUserId) {
+          const delBtn = document.createElement('button');
+          delBtn.className = 'feedback-delete-btn';
+          delBtn.setAttribute('aria-label', 'Delete your feedback');
+          delBtn.title = 'Delete your feedback';
+          delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          delBtn.addEventListener('click', () => {
+            deleteFeedback(fb.id);
+          });
+          item.appendChild(delBtn);
+        }
+
+        feedbackList.appendChild(item);
+      });
+    }
+
+    function deleteFeedback(id) {
+      let feedbacks = loadFeedbacks();
+      feedbacks = feedbacks.filter(fb => fb.id !== id);
+      saveFeedbacks(feedbacks);
+      renderFeedbacks();
+    }
+
+    function generateFeedbackId() {
+      return 'fb-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8);
+    }
+
+    feedbackInput.addEventListener('input', () => {
+      const val = feedbackInput.value.trim();
+      feedbackSubmitBtn.disabled = val.length === 0;
+    });
+
+    feedbackForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = feedbackInput.value.trim();
+      if (!text) return;
+
+      const feedbacks = loadFeedbacks();
+
+      const newFeedback = {
+        id: generateFeedbackId(),
+        text: text,
+        userId: currentUserId,
+        username: currentUsername && currentUsername !== 'Guest' ? currentUsername : null,
+        userDisplayName: currentUsername || 'Guest',
+        userPhoto: currentUserPhoto,
+        timestamp: Date.now()
+      };
+
+      feedbacks.push(newFeedback);
+      saveFeedbacks(feedbacks);
+      feedbackInput.value = '';
+      feedbackSubmitBtn.disabled = true;
+      renderFeedbacks();
+
+      if (tg && tg.sendData) {
+        const message = `{feedback} by @${newFeedback.username || 'Guest'}: ${newFeedback.text}`;
+        try {
+          tg.sendData(message);
+        } catch {}
+      }
+    });
+
+    openFeedbackBtn.addEventListener('click', () => {
+      openModal();
+    });
+
+    feedbackCloseBtn.addEventListener('click', () => {
+      closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && feedbackModal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    feedbackModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        const focusableElements = feedbackModal.querySelectorAll('button, textarea');
+        if (focusableElements.length === 0) return;
+        const firstEl = focusableElements[0];
+        const lastEl = focusableElements[focusableElements.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === firstEl) {
+            e.preventDefault();
+            lastEl.focus();
+          }
+        } else {
+          if (document.activeElement === lastEl) {
+            e.preventDefault();
+            firstEl.focus();
+          }
+        }
+      }
+    });
+
+    renderFeedbacks();
+  </script>
+</body>
+</html>
