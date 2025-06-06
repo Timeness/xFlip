@@ -1,0 +1,594 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contributors with Feedback</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+  <script async src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .telegram-icon {
+      width: 14px;
+      height: 14px;
+      vertical-align: middle;
+      margin-right: 6px;
+      display: inline-block;
+    }
+    .telegram-link {
+      display: inline-flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      line-height: 1;
+      background-color: rgba(250, 250, 210, 0.15);
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.3s ease;
+    }
+    .telegram-link:hover {
+      background-color: rgba(250, 250, 210, 0.35);
+      text-decoration: none;
+    }
+    .section-title {
+      font-weight: 700;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+      color: #fbbf24; /* amber-400 */
+    }
+    .section-title span.bullet {
+      color: #f472b6; /* pink-400 */
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .italic-text {
+      font-style: italic;
+      font-size: 0.8rem;
+      margin-bottom: 1.25rem;
+      color: #d1d5db; /* gray-300 */
+    }
+    .content-text {
+      font-weight: 600;
+      font-size: 0.75rem;
+      margin-bottom: 1.25rem;
+      color: #e5e7eb; /* gray-200 */
+    }
+    .footer-text {
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #9ca3af; /* gray-400 */
+    }
+    .feedback-button {
+      background-color: rgba(255, 182, 193, 0.15); /* light pink transparent */
+      border: 2px solid #f472b6; /* pink-400 */
+      color: #f472b6;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      margin-top: 1.5rem;
+      user-select: none;
+    }
+    .feedback-button:hover {
+      background-color: #f472b6;
+      color: black;
+    }
+    .feedback-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+    /* Feedback modal styles */
+    #feedbackModal {
+      position: fixed;
+      inset: 0;
+      background-color: #000000ee;
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 1.5rem 1rem 2rem 1rem;
+      overflow-y: auto;
+    }
+    #feedbackModal.active {
+      display: flex;
+    }
+    #feedbackModalHeader {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      color: #fbbf24; /* amber-400 */
+      font-weight: 700;
+      font-size: 1.25rem;
+      font-family: 'Poppins', sans-serif;
+    }
+    #feedbackCloseBtn {
+      cursor: pointer;
+      color: #f472b6;
+      font-size: 1.5rem;
+      line-height: 1;
+      transition: color 0.3s ease;
+      user-select: none;
+    }
+    #feedbackCloseBtn:hover {
+      color: #fbbf24;
+    }
+    #feedbackForm {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    #feedbackInput {
+      resize: vertical;
+      min-height: 3.5rem;
+      max-height: 8rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      border: 2px solid #f472b6;
+      background-color: #1f2937; /* gray-800 */
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      outline-offset: 2px;
+      outline-color: transparent;
+      transition: outline-color 0.3s ease;
+    }
+    #feedbackInput:focus {
+      outline-color: #fbbf24;
+      background-color: #111827;
+    }
+    #feedbackSubmitBtn {
+      background-color: #f472b6;
+      color: black;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #feedbackSubmitBtn:disabled {
+      background-color: #fbbf24aa;
+      cursor: not-allowed;
+      color: #333;
+    }
+    #feedbackSubmitBtn:hover:not(:disabled) {
+      background-color: #fbbf24;
+    }
+    #feedbackList {
+      width: 100%;
+      max-width: 480px;
+      max-height: 50vh;
+      overflow-y: auto;
+      background-color: #111827;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 0 10px #f472b6aa;
+      scrollbar-width: thin;
+      scrollbar-color: #f472b6 #1f2937;
+    }
+    #feedbackList::-webkit-scrollbar {
+      width: 8px;
+    }
+    #feedbackList::-webkit-scrollbar-track {
+      background: #1f2937;
+      border-radius: 9999px;
+    }
+    #feedbackList::-webkit-scrollbar-thumb {
+      background-color: #f472b6;
+      border-radius: 9999px;
+      border: 2px solid #1f2937;
+    }
+    .feedback-item {
+      background-color: #374151; /* gray-700 */
+      border-radius: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 0.5rem;
+      color: #e5e7eb;
+      font-weight: 600;
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+      word-break: break-word;
+    }
+    .feedback-text {
+      flex: 1;
+      white-space: pre-wrap;
+    }
+    .feedback-user {
+      color: #fbbf24;
+      font-weight: 700;
+      margin-left: 0.5rem;
+      white-space: nowrap;
+    }
+    .feedback-user a {
+      color: #fbbf24;
+      text-decoration: underline;
+    }
+    .feedback-delete-btn {
+      color: #f472b6;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      user-select: none;
+      transition: color 0.3s ease;
+      flex-shrink: 0;
+    }
+    .feedback-delete-btn:hover {
+      color: #fbbf24;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      #feedbackModal {
+        padding: 1rem 0.5rem 1.5rem 0.5rem;
+      }
+      #feedbackModalHeader {
+        font-size: 1.1rem;
+      }
+      #feedbackInput {
+        font-size: 0.875rem;
+      }
+      #feedbackSubmitBtn {
+        font-size: 0.875rem;
+      }
+      #feedbackList {
+        max-height: 40vh;
+      }
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col justify-between">
+  <main class="p-6 max-w-3xl mx-auto text-sm relative z-0">
+    <h1 class="text-xl font-extrabold mb-2 tracking-wide">Contributors</h1>
+    <p class="text-xs font-semibold mb-3">June 30, 2025 <span class="font-normal">by Yᴀꜱʜ</span></p>
+    <hr class="border-gray-600 mb-5" />
+
+    <div class="section-title">
+      <span class="bullet">•</span>
+      <span>OUR DEVELOPING AND SUPPORT TEAM</span>
+    </div>
+    <p class="italic-text">
+      Whose tireless efforts and expertise have brought joy and entertainment to countless users.
+    </p>
+
+    <div class="section-title">
+      <span class="bullet">•</span>
+      <span>Our developer and database manager:</span>
+    </div>
+    <p class="content-text">
+      <a href="https://telegram.me/iYashKun" target="_blank" rel="noopener noreferrer" class="telegram-link" >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram logo" class="telegram-icon" />
+        Yᴀꜱʜ Gᴜᴘᴛᴀ 🇦🇪
+      </a>
+    </p>
+
+    <div class="section-title">
+      <span class="bullet">•</span>
+      <span>Supporters:</span>
+    </div>
+    <p class="content-text">
+      <a href="https://telegram.me/NothingJustDhruv" target="_blank" rel="noopener noreferrer" class="telegram-link" >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram logo" class="telegram-icon" />
+        | • D H R U V • | [🇮🇳]
+      </a>
+    </p>
+    <p class="content-text">
+      <a href="https://telegram.me/Rizzz_Monarch" target="_blank" rel="noopener noreferrer" class="telegram-link" >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram logo" class="telegram-icon" />
+        Shrutam
+      </a>
+    </p>
+
+    <div class="section-title">
+      <span class="bullet">•</span>
+      <span>Waifu/Husbando Adders:</span>
+    </div>
+    <p class="content-text">
+      <a href="https://telegram.me/NothingJustDhruv" target="_blank" rel="noopener noreferrer" class="telegram-link" >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram logo" class="telegram-icon" />
+        | • D H R U V • | [🇮🇳]
+      </a>
+    </p>
+
+    <p class="content-text font-semibold mt-4">
+      Great job to our amazing developing and support team for their hard work and dedication in making our @NexusWaifuVerseBot a success.
+    </p>
+
+    <p class="content-text font-semibold">
+      Thank you for your unwavering commitment to improving our bot and making it the best it can be. Keep up the fantastic work!
+    </p>
+
+    <button id="openFeedbackBtn" type="button" class="feedback-button" aria-label="Send Feedback">
+      <i class="fas fa-comment-alt feedback-icon" aria-hidden="true"></i>
+      <span>Send Feedback</span>
+    </button>
+  </main>
+
+  <footer class="bg-gray-900 text-gray-600 text-xs font-mono font-semibold flex justify-start px-6 py-3 max-w-3xl mx-auto w-full">
+    <span id="viewsCount">0 views</span>
+  </footer>
+
+  <!-- Feedback Modal -->
+  <div id="feedbackModal" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle" tabindex="-1">
+    <div id="feedbackModalHeader">
+      <span id="feedbackModalTitle">User Feedbacks</span>
+      <button id="feedbackCloseBtn" aria-label="Close Feedback Modal" title="Close Feedback Modal">&times;</button>
+    </div>
+    <form id="feedbackForm" aria-describedby="feedbackFormDesc">
+      <textarea id="feedbackInput" name="feedback" placeholder="Write your feedback here..." aria-required="true" aria-label="Feedback input"></textarea>
+      <button type="submit" id="feedbackSubmitBtn" disabled>Send Feedback</button>
+    </form>
+    <div id="feedbackList" aria-live="polite" aria-relevant="additions removals" aria-label="List of user feedbacks">
+      <!-- Feedback items will be appended here -->
+    </div>
+  </div>
+
+  <script>
+    // Increment views count on each page load using localStorage
+    const viewsKey = 'pageViewsCount';
+    let views = localStorage.getItem(viewsKey);
+    if (!views) {
+      views = 0;
+    }
+    views = parseInt(views) + 1;
+    localStorage.setItem(viewsKey, views);
+    document.getElementById('viewsCount').textContent = views.toLocaleString() + ' views';
+
+    // Telegram Web App integration
+    let tg = null;
+    let user = null;
+    if (window.Telegram.WebApp) {
+      tg = window.Telegram.WebApp;
+      tg.expand();
+      user = tg.initDataUnsafe?.user || null;
+    }
+
+    // Elements
+    const openFeedbackBtn = document.getElementById('openFeedbackBtn');
+    const feedbackModal = document.getElementById('feedbackModal');
+    const feedbackCloseBtn = document.getElementById('feedbackCloseBtn');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const feedbackInput = document.getElementById('feedbackInput');
+    const feedbackSubmitBtn = document.getElementById('feedbackSubmitBtn');
+    const feedbackList = document.getElementById('feedbackList');
+
+    // LocalStorage key for feedbacks
+    const feedbacksKey = 'userFeedbacks';
+
+    // Get current user unique id for feedback ownership
+    // If Telegram user is available, use user.id, else fallback to localStorage userId
+    let currentUserId = null;
+    let currentUsername = null;
+
+    function generateLocalUserId() {
+      // Generate a random id for non-Telegram users and store it
+      let localId = localStorage.getItem('localUserId');
+      if (!localId) {
+        localId = 'local-' + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem('localUserId', localId);
+      }
+      return localId;
+    }
+
+    if (user && user.id) {
+      currentUserId = 'tg-' + user.id;
+      currentUsername = user.username || (user.first_name ? user.first_name : 'User');
+    } else {
+      currentUserId = generateLocalUserId();
+      currentUsername = 'Guest';
+    }
+
+    // Show modal function
+    function openModal() {
+      feedbackModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      feedbackInput.focus();
+      renderFeedbacks();
+    }
+
+    // Close modal function
+    function closeModal() {
+      feedbackModal.classList.remove('active');
+      document.body.style.overflow = '';
+      feedbackInput.value = '';
+      feedbackSubmitBtn.disabled = true;
+    }
+
+    // Load feedbacks from localStorage
+    function loadFeedbacks() {
+      const stored = localStorage.getItem(feedbacksKey);
+      if (!stored) return [];
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [];
+      }
+    }
+
+    // Save feedbacks to localStorage
+    function saveFeedbacks(feedbacks) {
+      localStorage.setItem(feedbacksKey, JSON.stringify(feedbacks));
+    }
+
+    // Render feedbacks in the modal
+    function renderFeedbacks() {
+      const feedbacks = loadFeedbacks();
+      feedbackList.innerHTML = '';
+      if (feedbacks.length === 0) {
+        const noFeedback = document.createElement('p');
+        noFeedback.className = 'text-gray-400 text-center py-4 select-none';
+        noFeedback.textContent = 'No feedbacks yet. Be the first to send one!';
+        feedbackList.appendChild(noFeedback);
+        return;
+      }
+      feedbacks.forEach((fb) => {
+        const item = document.createElement('div');
+        item.className = 'feedback-item';
+        item.setAttribute('data-id', fb.id);
+
+        // Feedback text container
+        const textContainer = document.createElement('div');
+        textContainer.className = 'feedback-text';
+        textContainer.textContent = fb.text;
+
+        // User container with deep link
+        const userContainer = document.createElement('div');
+        userContainer.className = 'feedback-user';
+        const userLink = document.createElement('a');
+        userLink.href = fb.username ? `https://t.me/${fb.username}` : '#';
+        userLink.target = '_blank';
+        userLink.rel = 'noopener noreferrer';
+        userLink.textContent = fb.username ? `@${fb.username}` : fb.userDisplayName;
+        userContainer.appendChild(document.createTextNode(' by '));
+        userContainer.appendChild(userLink);
+
+        // Container for text + user
+        const textUserWrapper = document.createElement('div');
+        textUserWrapper.style.flex = '1';
+        textUserWrapper.appendChild(textContainer);
+        textUserWrapper.appendChild(userContainer);
+
+        item.appendChild(textUserWrapper);
+
+        // Delete button only if feedback belongs to current user
+        if (fb.userId === currentUserId) {
+          const delBtn = document.createElement('button');
+          delBtn.className = 'feedback-delete-btn';
+          delBtn.setAttribute('aria-label', 'Delete your feedback');
+          delBtn.title = 'Delete your feedback';
+          delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          delBtn.addEventListener('click', () => {
+            deleteFeedback(fb.id);
+          });
+          item.appendChild(delBtn);
+        }
+
+        feedbackList.appendChild(item);
+      });
+    }
+
+    // Delete feedback by id
+    function deleteFeedback(id) {
+      let feedbacks = loadFeedbacks();
+      feedbacks = feedbacks.filter(fb => fb.id !== id);
+      saveFeedbacks(feedbacks);
+      renderFeedbacks();
+    }
+
+    // Generate unique id for feedback
+    function generateFeedbackId() {
+      return 'fb-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8);
+    }
+
+    // Handle input change to enable/disable submit button
+    feedbackInput.addEventListener('input', () => {
+      const val = feedbackInput.value.trim();
+      feedbackSubmitBtn.disabled = val.length === 0;
+    });
+
+    // Handle form submit
+    feedbackForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = feedbackInput.value.trim();
+      if (!text) return;
+
+      const feedbacks = loadFeedbacks();
+
+      const newFeedback = {
+        id: generateFeedbackId(),
+        text: text,
+        userId: currentUserId,
+        username: currentUsername && currentUsername !== 'Guest' ? currentUsername : null,
+        userDisplayName: currentUsername || 'Guest',
+        timestamp: Date.now()
+      };
+
+      feedbacks.push(newFeedback);
+      saveFeedbacks(feedbacks);
+      feedbackInput.value = '';
+      feedbackSubmitBtn.disabled = true;
+      renderFeedbacks();
+
+      // If Telegram WebApp is available, send feedback message to bot
+      if (tg && tg.sendData) {
+        const message = `{feedback} by @${newFeedback.username || 'Guest'}: ${newFeedback.text}`;
+        try {
+          tg.sendData(message);
+        } catch {
+          // ignore errors
+        }
+      }
+    });
+
+    // Open modal button click
+    openFeedbackBtn.addEventListener('click', () => {
+      openModal();
+    });
+
+    // Close modal button click
+    feedbackCloseBtn.addEventListener('click', () => {
+      closeModal();
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && feedbackModal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // Trap focus inside modal when open
+    feedbackModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        const focusableElements = feedbackModal.querySelectorAll('button, textarea');
+        if (focusableElements.length === 0) return;
+        const firstEl = focusableElements[0];
+        const lastEl = focusableElements[focusableElements.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === firstEl) {
+            e.preventDefault();
+            lastEl.focus();
+          }
+        } else {
+          if (document.activeElement === lastEl) {
+            e.preventDefault();
+            firstEl.focus();
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
