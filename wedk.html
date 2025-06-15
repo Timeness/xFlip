@@ -3,95 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>wêpláy - Web3 Music Player</title>
-    <meta property="og:title" content="wêpláy - Your Music Vibe">
-    <meta property="og:description" content="Stream and share your favorite songs with wêpláy, the ultimate mobile music player.">
-    <meta property="og:image" content="https://placehold.co/400x400/png?text=No+Image">
+    <title>wêpláy - Ultimate Web3 Music Experience</title>
+    <meta property="og:title" content="wêpláy - Ultimate Music Vibe">
+    <meta property="og:description" content="Revolutionary music streaming with wêpláy, powered by Web3 and AI.">
+    <meta property="og:image" content="https://placehold.co/600x600/png?text=wêpláy">
     <meta property="og:url" content="https://weplay.example.com">
     <meta property="og:type" content="website">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontawesome/fontawesome-free@6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.10/dist/typography.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@headlessui/tailwindcss@0.2.0/dist/headlessui.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@heroicons/tailwindcss@2.0.18/dist/heroicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@material-tailwind/html@2.2.2/dist/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@uikit@3.17.11/dist/css/uikit.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.16/dark.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/howler@2.2.4/dist/howler.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <style>
         * { user-select: none; outline: none; -webkit-tap-highlight-color: transparent; }
         button:focus, button:focus-visible, input:focus, input:focus-visible { outline: none !important; box-shadow: none !important; }
-        body { font-family: 'Chakra Petch', sans-serif; font-size: 12px; background-color: #0a0a0a; color: #d1d1d1; margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background-color: #9333ea; border-radius: 8px; }
+        body { font-family: 'Chakra Petch', sans-serif; font-size: 13px; background: linear-gradient(180deg, #080808 0%, #0f0f0f 100%); color: #e0e0e0; margin: 0; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #080808; }
+        ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 10px; }
         a { color: inherit; text-decoration: none; }
-        a:hover { color: #9333ea; }
+        a:hover { color: #7c3aed; }
         input[type="search"]:focus { border-color: transparent !important; }
         ::placeholder { color: #6b7280 !important; opacity: 1; }
-        .navbar { position: sticky; top: 0; background: #0a0a0a; z-index: 50; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; max-width: 400px; margin: 0 auto; border-bottom: 1px solid #1f1f1f; }
-        .navbar-logo { font-size: 1.75rem; font-weight: 700; color: #9333ea; transition: transform 0.2s ease, color 0.2s ease; letter-spacing: -0.05em; }
-        .navbar-logo:hover { transform: scale(1.03); color: #c084fc; }
-        .nav-items { display: flex; gap: 1.5rem; align-items: center; }
-        .nav-item { font-size: 13px; font-weight: 500; color: #d1d1d1; position: relative; cursor: pointer; transition: color 0.2s ease; padding-bottom: 0.25rem; }
-        .nav-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #9333ea; transform: scaleX(1); transform-origin: left; transition: transform 0.2s ease; }
+        .navbar { position: sticky; top: 0; background: rgba(8, 8, 8, 0.95); z-index: 100; padding: 1rem; display: flex; align-items: center; justify-content: space-between; max-width: 420px; margin: 0 auto; border-bottom: 1px solid #1c1c1c; }
+        .navbar-logo { font-size: 2rem; font-weight: 700; color: #7c3aed; transition: transform 0.3s ease, color 0.3s ease; letter-spacing: -0.08em; }
+        .navbar-logo:hover { transform: scale(1.05); color: #a78bfa; }
+        .nav-items { display: flex; gap: 2rem; align-items: center; }
+        .nav-item { font-size: 14px; font-weight: 500; color: #e0e0e0; position: relative; cursor: pointer; transition: color 0.3s ease; padding-bottom: 0.5rem; }
+        .nav-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: #7c3aed; transform: scaleX(1); transform-origin: center; transition: transform 0.3s ease; }
         .nav-item:not(.active)::after { transform: scaleX(0); }
-        .nav-item:hover { color: #9333ea; }
+        .nav-item:hover { color: #a78bfa; }
         .dropdown { position: relative; }
-        .dropdown-menu { position: absolute; top: 100%; right: 0; background: #1f1f1f; border: 1px solid #2d2d2d; border-radius: 6px; min-width: 140px; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all 0.2s ease; z-index: 60; padding: 0.5rem 0; }
+        .dropdown-menu { position: absolute; top: 100%; right: 0; background: #1c1c1c; border: 1px solid #262626; border-radius: 8px; min-width: 160px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 150; padding: 0.75rem 0; }
         .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
-        .dropdown-item { padding: 0.5rem 1rem; font-size: 12px; color: #d1d1d1; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
-        .dropdown-item:hover { background: #2d2d2d; color: #9333ea; }
-        .sidebar { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: #1f1f1f; z-index: 100; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 1rem; overflow-y: auto; }
+        .dropdown-item { padding: 0.75rem 1.5rem; font-size: 13px; color: #e0e0e0; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+        .dropdown-item:hover { background: #262626; color: #7c3aed; }
+        .sidebar { position: fixed; top: 0; right: -100%; width: 320px; height: 100%; background: #1c1c1c; z-index: 200; transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 1.5rem; overflow-y: auto; }
         .sidebar.open { right: 0; }
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .sidebar-close { background: #2d2d2d; padding: 0.5rem; border-radius: 50%; cursor: pointer; transition: background 0.2s ease; }
-        .sidebar-close:hover { background: #3d3d3d; }
-        .message-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 50vh; overflow-y: auto; }
-        .message-item { background: #2d2d2d; padding: 0.75rem; border-radius: 6px; font-size: 11px; }
-        .message-item.me { background: #9333ea; color: #fff; }
-        .message-input { background: #2d2d2d; border: none; padding: 0.75rem; border-radius: 6px; color: #d1d1d1; width: 100%; margin-top: 1rem; font-size: 12px; }
-        .send-message { background: #9333ea; padding: 0.75rem; border-radius: 6px; text-align: center; cursor: pointer; font-size: 12px; color: #fff; transition: background 0.2s ease; }
-        .send-message:hover { background: #c084fc; }
-        .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200; }
-        .toast { background: #1f1f1f; border: 1px solid #2d2d2d; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 0.5rem; opacity: 0; transform: translateX(20px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 11px; color: #d1d1d1; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .sidebar-close { background: #262626; padding: 0.75rem; border-radius: 50%; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+        .sidebar-close:hover { background: #333333; transform: rotate(90deg); }
+        .message-list { display: flex; flex-direction: column; gap: 1rem; max-height: 60vh; overflow-y: auto; padding-right: 0.5rem; }
+        .message-item { background: #262626; padding: 1rem; border-radius: 8px; font-size: 12px; transition: transform 0.2s ease; }
+        .message-item.me { background: #7c3aed; color: #fff; transform: translateX(10px); }
+        .message-item:hover { transform: translateY(-2px); }
+        .message-input { background: #262626; border: none; padding: 1rem; border-radius: 8px; color: #e0e0e0; width: 100%; margin-top: 1.5rem; font-size: 13px; transition: background 0.2s ease; }
+        .message-input:focus { background: #333333; }
+        .send-message { background: #7c3aed; padding: 1rem; border-radius: 8px; text-align: center; cursor: pointer; font-size: 13px; color: #fff; transition: background 0.2s ease, transform 0.2s ease; }
+        .send-message:hover { background: #a78bfa; transform: scale(1.02); }
+        .toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 300; }
+        .toast { background: #1c1c1c; border: 1px solid #262626; border-radius: 8px; padding: 1rem 1.5rem; margin-bottom: 0.75rem; opacity: 0; transform: translateX(30px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; color: #e0e0e0; }
         .toast.show { opacity: 1; transform: translateX(0); }
-        .toast-error { border-left: 4px solid #ef4444; }
-        .toast-success { border-left: 4px solid #9333ea; }
-        main { width: 100%; max-width: 400px; padding: 5rem 0.75rem 1rem; box-sizing: border-box; overflow-y: auto; flex-grow: 1; background: #0a0a0a; margin: 0 auto; }
-        .player-container { max-width: 400px; margin: 0 auto; }
-        .card { background: #1f1f1f; border: 1px solid #2d2d2d; border-radius: 8px; padding: 1rem; transition: transform 0.2s ease; }
-        .card:hover { transform: translateY(-2px); }
-        .progress-bar { height: 4px; background: #2d2d2d; border-radius: 2px; }
-        .progress { height: 100%; background: #9333ea; border-radius: 2px; transition: width 0.1s linear; }
-        #results { display: flex; flex-direction: column; gap: 0.75rem; }
-        .song-row { display: grid; grid-template-columns: 48px 1fr 24px; align-items: center; gap: 1rem; padding: 0.75rem; border-radius: 6px; cursor: pointer; transition: background 0.2s ease; }
-        .song-row:hover { background: #2d2d2d; }
-        .song-row img { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; }
+        .toast-error { border-left: 5px solid #dc2626; }
+        .toast-success { border-left: 5px solid #7c3aed; }
+        main { width: 100%; max-width: 420px; padding: 6rem 1rem 1.5rem; box-sizing: border-box; overflow-y: auto; flex-grow: 1; background: #080808; margin: 0 auto; }
+        .player-container { max-width: 420px; margin: 0 auto; }
+        .card { background: #1c1c1c; border: 1px solid #262626; border-radius: 12px; padding: 1.5rem; transition: transform 0.3s ease, background 0.2s ease; }
+        .card:hover { transform: translateY(-4px); background: #222222; }
+        .progress-bar { height: 5px; background: #262626; border-radius: 3px; }
+        .progress { height: 100%; background: #7c3aed; border-radius: 3px; transition: width 0.1s linear; }
+        #results { display: flex; flex-direction: column; gap: 1rem; }
+        .song-row { display: grid; grid-template-columns: 56px 1fr 28px; align-items: center; gap: 1.5rem; padding: 1rem; border-radius: 10px; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
+        .song-row:hover { background: #262626; transform: translateY(-2px); }
+        .song-row img { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; transition: transform 0.3s ease; }
+        .song-row:hover img { transform: scale(1.05); }
         .song-info { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-        .song-title { font-size: 14px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .song-artist { font-size: 12px; color: #d1d1d1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.2rem; }
-        .play-icon { color: #9333ea; font-size: 1.5rem; opacity: 0; transition: opacity 0.2s ease; }
-        .song-row:hover .play-icon { opacity: 1; }
-        .search-container { margin: 1rem 0; }
-        .search-form { display: flex; border-radius: 9999px; background: #1f1f1f; border: 1px solid #2d2d2d; transition: border-color 0.2s ease; }
-        .search-form:hover { border-color: #9333ea; }
-        .search-input { flex-grow: 1; padding: 0.75rem 1rem; font-size: 13px; color: #d1d1d1; background: transparent; border: none; }
-        .search-button { background: #9333ea; padding: 0.75rem 1.25rem; display: flex; align-items: center; cursor: pointer; border-radius: 9999px; transition: background 0.2s ease, transform 0.2s ease; }
-        .search-button:hover { background: #c084fc; transform: scale(1.02); }
-        .control-btn { background: #2d2d2d; padding: 0.75rem; border-radius: 50%; transition: background 0.2s ease, transform 0.2s ease; }
-        .control-btn:hover { background: #3d3d3d; transform: scale(1.05); }
+        .song-title { font-size: 16px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .song-artist { font-size: 13px; color: #e0e0e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.3rem; }
+        .play-icon { color: #7c3aed; font-size: 1.8rem; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; }
+        .song-row:hover .play-icon { opacity: 1; transform: scale(1.1); }
+        .search-container { margin: 1.5rem 0; }
+        .search-form { display: flex; border-radius: 9999px; background: #1c1c1c; border: 1px solid #262626; transition: border-color 0.3s ease; }
+        .search-form:hover { border-color: #7c3aed; }
+        .search-input { flex-grow: 1; padding: 1rem 1.5rem; font-size: 14px; color: #e0e0e0; background: transparent; border: none; transition: background 0.2s ease; }
+        .search-button { background: #7c3aed; padding: 1rem 1.5rem; display: flex; align-items: center; cursor: pointer; border-radius: 9999px; transition: background 0.3s ease, transform 0.3s ease; }
+        .search-button:hover { background: #a78bfa; transform: scale(1.03); }
+        .control-btn { background: #262626; padding: 1rem; border-radius: 50%; transition: background 0.3s ease, transform 0.3s ease; }
+        .control-btn:hover { background: #333333; transform: scale(1.1); }
         .control-btn:active { transform: scale(0.95); }
-        .loader { width: 36px; height: 36px; border: 4px solid #9333ea; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 2rem auto; }
+        .loader { width: 40px; height: 40px; border: 5px solid #7c3aed; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 3rem auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .favorite { color: #ef4444; }
-        @media (max-width: 400px) {
-            .navbar { padding: 0.5rem; }
-            .navbar-logo { font-size: 1.5rem; }
-            .nav-items { gap: 1rem; }
-            .song-row { grid-template-columns: 36px 1fr 20px; }
-            .song-row img { width: 36px; height: 36px; }
-            .song-title { font-size: 13px; }
-            .song-artist { font-size: 11px; }
-            .sidebar { width: 85%; }
+        .favorite { color: #dc2626; }
+        .dj-animation { position: fixed; bottom: 0; left: 0; right: 0; height: 50px; background: linear-gradient(90deg, #7c3aed, #a78bfa, #7c3aed); opacity: 0.2; animation: djPulse 3s infinite; }
+        @keyframes djPulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.4; } }
+        @media (max-width: 420px) {
+            .navbar { padding: 0.75rem; }
+            .navbar-logo { font-size: 1.75rem; }
+            .nav-items { gap: 1.25rem; }
+            .song-row { grid-template-columns: 48px 1fr 24px; }
+            .song-row img { width: 48px; height: 48px; }
+            .song-title { font-size: 14px; }
+            .song-artist { font-size: 12px; }
+            .sidebar { width: 90%; }
         }
     </style>
 </head>
-<body>
+<body x-data="{ sidebarOpen: false, searchQuery: '' }">
     <nav class="navbar">
         <div class="navbar-logo">wêpláy</div>
         <div class="nav-items">
@@ -104,73 +138,73 @@
                     <div class="dropdown-item" id="logout-btn">Logout</div>
                 </div>
             </div>
-            <div class="nav-item" id="sidebar-toggle"><span class="iconify" data-icon="mdi:menu" data-width="18"></span></div>
+            <div class="nav-item" @click="sidebarOpen = !sidebarOpen"><span class="iconify" data-icon="mdi:menu" data-width="20"></span></div>
         </div>
     </nav>
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar" :class="{ open: sidebarOpen }" id="sidebar">
         <div class="sidebar-header">
-            <h3 class="text-sm font-semibold text-purple-400">Messages</h3>
-            <button class="sidebar-close" id="sidebar-close"><span class="iconify" data-icon="mdi:close" data-width="14"></span></button>
+            <h3 class="text-base font-semibold text-purple-400">DJ Vibe & Messages</h3>
+            <button class="sidebar-close" @click="sidebarOpen = false"><span class="iconify" data-icon="mdi:close" data-width="16"></span></button>
         </div>
         <div class="message-list" id="message-list"></div>
-        <input type="text" class="message-input" id="message-input" placeholder="Type a message...">
-        <button class="send-message" id="send-message">Send</button>
+        <input type="text" class="message-input" id="message-input" placeholder="Drop a message...">
+        <button class="send-message" id="send-message">Send Beat</button>
     </div>
     <div class="toast-container" id="toast-container"></div>
     <div class="player-container">
         <main role="main" tabindex="-1">
-            <div class="search-container">
+            <div class="search-container" data-aos="fade-up">
                 <form class="search-form" id="searchForm" novalidate>
-                    <input id="searchInput" class="search-input" type="search" placeholder="Search songs..." autocomplete="off" spellcheck="false" aria-label="Search songs">
+                    <input id="searchInput" class="search-input" type="search" placeholder="Search tracks..." autocomplete="off" spellcheck="false" aria-label="Search tracks" x-model="searchQuery">
                     <button class="search-button" type="submit" aria-label="Search">
-                        <span class="iconify" data-icon="mdi:magnify" data-width="16"></span>
+                        <span class="iconify" data-icon="mdi:magnify" data-width="18"></span>
                     </button>
                 </form>
             </div>
-            <section aria-label="Search results">
+            <section aria-label="Search results" data-aos="fade-up" data-aos-delay="100">
                 <h2 class="sr-only">Search Results</h2>
                 <div id="results" role="list" aria-live="polite"></div>
             </section>
-            <div class="card mt-3">
-                <img id="current-song-image" src="https://placehold.co/400x400/png?text=No+Image" alt="Album Art" class="w-full h-56 object-cover rounded-md mb-2">
-                <h2 id="current-song-title" class="text-base font-semibold text-white"></h2>
-                <p id="current-song-artist" class="text-xs text-gray-400"></p>
-                <div class="progress-bar mt-2">
+            <div class="card mt-4" data-aos="fade-up" data-aos-delay="200">
+                <img id="current-song-image" src="https://placehold.co/600x600/png?text=wêpláy" alt="Album Art" class="w-full h-64 object-cover rounded-lg mb-3">
+                <h2 id="current-song-title" class="text-lg font-semibold text-white"></h2>
+                <p id="current-song-artist" class="text-sm text-gray-400"></p>
+                <div class="progress-bar mt-3">
                     <div id="progress" class="progress"></div>
                 </div>
-                <div class="flex justify-between text-xs mt-1">
+                <div class="flex justify-between text-sm mt-1.5">
                     <span id="current-time">0:00</span>
                     <span id="duration">0:00</span>
                 </div>
-                <div class="flex justify-center space-x-3 mt-3">
-                    <button id="prev-btn" class="control-btn"><span class="iconify" data-icon="mdi:skip-previous" data-width="16"></span></button>
-                    <button id="play-pause-btn" class="control-btn"><span class="iconify" data-icon="mdi:play" data-width="16"></span></button>
-                    <button id="next-btn" class="control-btn"><span class="iconify" data-icon="mdi:skip-next" data-width="16"></span></button>
-                    <button id="favorite-btn" class="control-btn"><span class="iconify" data-icon="mdi:heart-outline" data-width="16"></span></button>
-                    <button id="share-btn" class="control-btn"><span class="iconify" data-icon="mdi:share-variant" data-width="16"></span></button>
+                <div class="flex justify-center space-x-4 mt-4">
+                    <button id="prev-btn" class="control-btn" title="Previous"><span class="iconify" data-icon="mdi:skip-previous" data-width="18"></span></button>
+                    <button id="play-pause-btn" class="control-btn" title="Play/Pause"><span class="iconify" data-icon="mdi:play" data-width="18"></span></button>
+                    <button id="next-btn" class="control-btn" title="Next"><span class="iconify" data-icon="mdi:skip-next" data-width="18"></span></button>
+                    <button id="favorite-btn" class="control-btn" title="Favorite"><span class="iconify" data-icon="mdi:heart-outline" data-width="18"></span></button>
+                    <button id="share-btn" class="control-btn" title="Share"><span class="iconify" data-icon="mdi:share-variant" data-width="18"></span></button>
                 </div>
             </div>
-            <div class="flex flex-col gap-3 mt-3">
-                <div class="card">
-                    <h3 class="text-sm font-semibold text-purple-400 mb-1">Recent Plays</h3>
-                    <div id="recent-plays" class="space-y-0.75"></div>
+            <div class="flex flex-col gap-4 mt-4">
+                <div class="card" data-aos="fade-up" data-aos-delay="300">
+                    <h3 class="text-base font-semibold text-purple-400 mb-2">Recent Beats</h3>
+                    <div id="recent-plays" class="space-y-1"></div>
                 </div>
-                <div class="card">
-                    <h3 class="text-sm font-semibold text-purple-400 mb-1">Favorites</h3>
-                    <div id="favorites" class="space-y-0.75"></div>
+                <div class="card" data-aos="fade-up" data-aos-delay="400">
+                    <h3 class="text-base font-semibold text-purple-400 mb-2">Favorite Tracks</h3>
+                    <div id="favorites" class="space-y-1"></div>
                 </div>
             </div>
         </main>
     </div>
+    <div class="dj-animation"></div>
     <audio id="audioPlayer" preload="none"></audio>
     <script>
+        AOS.init({ duration: 800, once: true });
         const searchForm = document.getElementById('searchForm');
         const searchInput = document.getElementById('searchInput');
         const results = document.getElementById('results');
         const audioPlayer = document.getElementById('audioPlayer');
         const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebarClose = document.getElementById('sidebar-close');
         const toastContainer = document.getElementById('toast-container');
         let songs = [];
         let currentIndex = -1;
@@ -179,30 +213,26 @@
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         let lastPlayed = JSON.parse(localStorage.getItem('lastPlayed')) || null;
         let messages = JSON.parse(localStorage.getItem('messages')) || [
-            { id: 1, user: 'Friend', text: 'Check out this new track!', time: '10:30' },
-            { id: 2, user: 'You', text: 'Sounds awesome!', time: '10:32' }
+            { id: 1, user: 'DJ_X', text: 'Yo, drop that new beat!', time: '11:00' },
+            { id: 2, user: 'You', text: 'Fire track, keep it lit!', time: '11:02' }
         ];
-        audioPlayer.volume = 0.8;
+        audioPlayer.volume = 0.7;
+        tippy('.control-btn', { theme: 'dark', delay: [200, 0] });
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
             toast.textContent = message;
             toastContainer.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            gsap.to(toast, { duration: 0.4, opacity: 1, x: 0, onStart: () => toast.classList.add('show') });
+            gsap.to(toast, { duration: 0.4, opacity: 0, x: 30, delay: 3, onComplete: () => toast.remove() });
         }
-        sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
-        sidebarClose.addEventListener('click', () => sidebar.classList.remove('open'));
         function updateMessagesDisplay() {
             const messageList = document.getElementById('message-list');
             messageList.innerHTML = '';
             messages.forEach(msg => {
                 const item = document.createElement('div');
                 item.className = `message-item ${msg.user === 'You' ? 'me' : ''}`;
-                item.innerHTML = `<strong>${msg.user}</strong> <span style="font-size: 10px; opacity: 0.7;">${msg.time}</span><br>${msg.text}`;
+                item.innerHTML = `<strong>${msg.user}</strong> <span style="font-size: 11px; opacity: 0.7;">${msg.time}</span><br>${msg.text}`;
                 messageList.appendChild(item);
                 messageList.scrollTop = messageList.scrollHeight;
             });
@@ -211,17 +241,16 @@
             const input = document.getElementById('message-input');
             const text = input.value.trim();
             if (text) {
-                messages.push({ id: messages.length + 1, user: 'You', text, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+                messages.push({ id: messages.length + 1, user: 'You', text, time: moment().format('HH:mm') });
                 localStorage.setItem('messages', JSON.stringify(messages));
                 updateMessagesDisplay();
                 input.value = '';
-                showToast('Message sent', 'success');
+                showToast('Message dropped!', 'success');
+                new Howl({ src: ['https://cdn.pixabay.com/audio/2023/08/07/audio_8f54c7b283.mp3'], volume: 0.3 }).play();
             }
         });
         document.getElementById('message-input').addEventListener('keypress', e => {
-            if (e.key === 'Enter') {
-                document.getElementById('send-message').click();
-            }
+            if (e.key === 'Enter') document.getElementById('send-message').click();
         });
         const navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(item => {
@@ -239,35 +268,35 @@
         });
         async function fetchSongById(songId) {
             try {
-                const res = await fetch(`https://jiosaavn-api-privatecvc2.vercel.app/songs?id=${encodeURIComponent(songId)}`);
-                const data = await res.json();
+                const res = await axios.get(`https://jiosaavn-api-privatecvc2.vercel.app/songs?id=${encodeURIComponent(songId)}`);
+                const data = res.data;
                 if (data.status === 'SUCCESS' && data.data.length > 0) {
                     const song = data.data[0];
                     return {
                         id: song.id,
-                        name: song.name || 'Unknown Title',
+                        name: song.name || 'Unknown Track',
                         artist: song.primaryArtists || 'Unknown Artist',
-                        image: song.image?.[2]?.link || 'https://placehold.co/400x400/png?text=No+Image',
+                        image: song.image?.[2]?.link || 'https://placehold.co/600x600/png?text=wêpláy',
                         url: song.downloadUrl?.[song.downloadUrl.length - 1]?.link || ''
                     };
                 }
                 return null;
             } catch {
-                showToast('Failed to fetch song', 'error');
+                showToast('Failed to fetch track', 'error');
                 return null;
             }
         }
         async function searchSongs(query) {
             results.innerHTML = '<div class="loader"></div>';
             try {
-                const res = await fetch(`https://jiosaavn-api-privatecvc2.vercel.app/search/songs?query=${encodeURIComponent(query)}`);
-                const data = await res.json();
+                const res = await axios.get(`https://jiosaavn-api-privatecvc2.vercel.app/search/songs?query=${encodeURIComponent(query)}`);
+                const data = res.data;
                 if (data.status === 'SUCCESS' && data.data.results.length > 0) {
                     songs = data.data.results.map(song => ({
                         id: song.id,
-                        name: song.name || 'Unknown Title',
+                        name: song.name || 'Unknown Track',
                         artist: song.primaryArtists || 'Unknown Artist',
-                        image: song.image?.[2]?.link || 'https://placehold.co/400x400/png?text=No+Image',
+                        image: song.image?.[2]?.link || 'https://placehold.co/600x600/png?text=wêpláy',
                         url: song.downloadUrl?.[song.downloadUrl.length - 1]?.link || ''
                     }));
                     renderSongs();
@@ -279,19 +308,15 @@
                         }
                     }
                 } else {
-                    results.innerHTML = `<div class="text-center text-red-400 font-semibold py-2 text-xs">No songs found for "<span class="italic">${query}</span>"</div>`;
+                    results.innerHTML = `<div class="text-center text-red-500 font-semibold py-3 text-sm">No tracks found for "<span class="italic">${query}</span>"</div>`;
                     songs = [];
-                    if (currentIndex === -1) {
-                        resetPlayer();
-                    }
+                    if (currentIndex === -1) resetPlayer();
                 }
             } catch {
-                results.innerHTML = '<div class="text-center text-red-400 font-semibold py-2 text-xs">Error fetching songs</div>';
-                showToast('Error fetching songs', 'error');
+                results.innerHTML = '<div class="text-center text-red-500 font-semibold py-3 text-sm">Error fetching tracks</div>';
+                showToast('Error fetching tracks', 'error');
                 songs = [];
-                if (currentIndex === -1) {
-                    resetPlayer();
-                }
+                if (currentIndex === -1) resetPlayer();
             }
         }
         function resetPlayer() {
@@ -300,9 +325,9 @@
             isPlaying = false;
             document.getElementById('current-song-title').textContent = '';
             document.getElementById('current-song-artist').textContent = '';
-            document.getElementById('current-song-image').src = 'https://placehold.co/400x400/png?text=No+Image';
+            document.getElementById('current-song-image').src = 'https://placehold.co/600x600/png?text=wêpláy';
             document.getElementById('progress').style.width = '0%';
-            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="16"></span>';
+            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="18"></span>';
         }
         function renderSongs() {
             results.innerHTML = '';
@@ -312,12 +337,12 @@
                 row.setAttribute('tabindex', '0');
                 row.setAttribute('role', 'listitem');
                 row.innerHTML = `
-                    <img src="${song.image}" alt="Album cover art for '${song.name}'" loading="lazy">
+                    <img src="${song.image}" alt="Album cover for '${song.name}'" loading="lazy">
                     <div class="song-info">
                         <div class="song-title" title="${song.name}">${song.name}</div>
                         <div class="song-artist" title="${song.artist}">${song.artist}</div>
                     </div>
-                    <div class="play-icon"><span class="iconify" data-icon="${i === currentIndex && isPlaying ? 'mdi:pause-circle' : 'mdi:play-circle'}" data-width="18"></span></div>
+                    <div class="play-icon"><span class="iconify" data-icon="${i === currentIndex && isPlaying ? 'mdi:pause-circle' : 'mdi:play-circle'}" data-width="20"></span></div>
                 `;
                 row.addEventListener('click', () => loadSong(i));
                 row.addEventListener('keydown', e => {
@@ -335,7 +360,7 @@
             currentIndex = index;
             const song = songs[index];
             audioPlayer.src = song.url;
-            audioPlayer.play().catch(() => showToast('Error playing song', 'error'));
+            audioPlayer.play().catch(() => showToast('Error playing track', 'error'));
             if (updatePlayer) {
                 document.getElementById('current-song-image').src = song.image;
                 document.getElementById('current-song-title').textContent = song.name;
@@ -344,18 +369,19 @@
             addToRecentPlays(song);
             updateFavoriteButton();
             localStorage.setItem('lastPlayed', JSON.stringify({ id: song.id, query: searchInput.value.trim() }));
-            showToast(`Playing ${song.name}`, 'success');
+            showToast(`Dropping ${song.name}`, 'success');
+            gsap.to('#current-song-image', { duration: 0.5, scale: 1.05, yoyo: true, repeat: 1 });
         }
         function highlightCurrentSong() {
             const rows = results.querySelectorAll('.song-row');
             rows.forEach((row, i) => {
                 const icon = row.querySelector('.play-icon span');
                 if (i === currentIndex && isPlaying) {
-                    row.classList.add('bg-purple-900/20');
+                    row.classList.add('bg-purple-900/30');
                     row.setAttribute('aria-current', 'true');
                     if (icon) icon.setAttribute('data-icon', 'mdi:pause-circle');
                 } else {
-                    row.classList.remove('bg-purple-900/20');
+                    row.classList.remove('bg-purple-900/30');
                     row.removeAttribute('aria-current');
                     if (icon) icon.setAttribute('data-icon', 'mdi:play-circle');
                 }
@@ -364,7 +390,7 @@
         function addToRecentPlays(song) {
             recentPlays = recentPlays.filter(s => s.id !== song.id);
             recentPlays.unshift(song);
-            if (recentPlays.length > 10) recentPlays.pop();
+            if (recentPlays.length > 12) recentPlays.pop();
             localStorage.setItem('recentPlays', JSON.stringify(recentPlays));
             updateRecentPlaysDisplay();
         }
@@ -373,12 +399,12 @@
             recentPlaysDiv.innerHTML = '';
             recentPlays.forEach(song => {
                 const item = document.createElement('div');
-                item.className = 'song-row p-1 rounded cursor-pointer';
+                item.className = 'song-row p-1.5 rounded cursor-pointer';
                 item.innerHTML = `
-                    <img src="${song.image}" alt="${song.name}" class="w-8 h-8 object-cover rounded">
+                    <img src="${song.image}" alt="${song.name}" class="w-10 h-10 object-cover rounded">
                     <div class="song-info">
-                        <p class="song-title text-xs">${song.name}</p>
-                        <p class="song-artist text-[10px]">${song.artist}</p>
+                        <p class="song-title text-sm">${song.name}</p>
+                        <p class="song-artist text-xs">${song.artist}</p>
                     </div>
                 `;
                 item.addEventListener('click', () => {
@@ -405,6 +431,7 @@
             if (index === -1) {
                 favorites.push(song);
                 showToast(`${song.name} added to favorites`, 'success');
+                Swal.fire({ icon: 'success', title: 'Added to Favorites', text: `${song.name} is now in your favorites!`, timer: 1500, showConfirmButton: false, background: '#1c1c1c', customClass: { title: 'text-white', content: 'text-gray-400' } });
             } else {
                 favorites.splice(index, 1);
                 showToast(`${song.name} removed from favorites`, 'success');
@@ -417,10 +444,10 @@
             const favoriteBtn = document.getElementById('favorite-btn');
             if (favorites.find(f => f.id === songs[currentIndex]?.id)) {
                 favoriteBtn.className = 'control-btn favorite';
-                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart" data-width="16"></span>';
+                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart" data-width="18"></span>';
             } else {
                 favoriteBtn.className = 'control-btn';
-                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart-outline" data-width="16"></span>';
+                favoriteBtn.innerHTML = '<span class="iconify" data-icon="mdi:heart-outline" data-width="18"></span>';
             }
         }
         function updateFavoriteDisplay() {
@@ -428,15 +455,15 @@
             favoritesDiv.innerHTML = '';
             favorites.forEach(song => {
                 const item = document.createElement('div');
-                item.className = 'song-row p-1 rounded cursor-pointer';
+                item.className = 'song-row p-1.5 rounded cursor-pointer';
                 item.innerHTML = `
-                    <img src="${song.image}" alt="${song.name}" class="w-8 h-8 object-cover rounded">
+                    <img src="${song.image}" alt="${song.name}" class="w-10 h-10 object-cover rounded">
                     <div class="song-info">
-                        <p class="song-title text-xs">${song.name}</p>
-                        <p class="song-artist text-[10px]">${song.artist}</p>
+                        <p class="song-title text-sm">${song.name}</p>
+                        <p class="song-artist text-xs">${song.artist}</p>
                     </div>
-                    <button class="remove-favorite p-0.5 bg-gray-700 hover:bg-gray-600 rounded">
-                        <span class="iconify" data-icon="mdi:heart-broken" data-width="10"></span>
+                    <button class="remove-favorite p-1 bg-gray-700 hover:bg-gray-600 rounded">
+                        <span class="iconify" data-icon="mdi:heart-broken" data-width="12"></span>
                     </button>
                 `;
                 item.addEventListener('click', () => {
@@ -471,7 +498,7 @@
             const shareUrl = `${baseUrl}?songId=${encodeURIComponent(song.id)}`;
             const shareData = {
                 title: song.name,
-                text: `Listen to ${song.name} by ${song.artist} on wêpláy!`,
+                text: `Vibe with ${song.name} by ${song.artist} on wêpláy!`,
                 url: shareUrl
             };
             if (navigator.share) {
@@ -498,19 +525,18 @@
             } else {
                 results.innerHTML = '';
                 songs = [];
-                if (currentIndex === -1) {
-                    resetPlayer();
-                }
+                if (currentIndex === -1) resetPlayer();
             }
         });
         audioPlayer.addEventListener('play', () => {
             isPlaying = true;
-            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:pause" data-width="16"></span>';
+            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:pause" data-width="18"></span>';
             highlightCurrentSong();
+            new Howl({ src: ['https://cdn.pixabay.com/audio/2023/08/07/audio_8f54c7b283.mp3'], volume: 0.2 }).play();
         });
         audioPlayer.addEventListener('pause', () => {
             isPlaying = false;
-            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="16"></span>';
+            document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="18"></span>';
             highlightCurrentSong();
         });
         audioPlayer.addEventListener('timeupdate', () => {
@@ -525,7 +551,7 @@
                 loadSong(currentIndex + 1);
             } else {
                 isPlaying = false;
-                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="16"></span>';
+                document.getElementById('play-pause-btn').innerHTML = '<span class="iconify" data-icon="mdi:play" data-width="18"></span>';
                 highlightCurrentSong();
             }
         });
@@ -533,7 +559,7 @@
             if (isPlaying) {
                 audioPlayer.pause();
             } else {
-                audioPlayer.play().catch(() => showToast('Error playing song', 'error'));
+                audioPlayer.play().catch(() => showToast('Error playing track', 'error'));
             }
         });
         document.getElementById('prev-btn').addEventListener('click', () => {
@@ -548,9 +574,12 @@
         });
         document.getElementById('favorite-btn').addEventListener('click', toggleFavorite);
         document.getElementById('share-btn').addEventListener('click', shareSong);
-        document.getElementById('logout-btn').addEventListener('click', () => showToast('Logged out', 'success'));
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            showToast('Logged out', 'success');
+            Swal.fire({ icon: 'success', title: 'Logged Out', text: 'See you soon!', timer: 1500, showConfirmButton: false, background: '#1c1c1c', customClass: { title: 'text-white', content: 'text-gray-400' } });
+        });
         document.getElementById('settings-btn').addEventListener('click', () => {
-            sidebar.classList.add('open');
+            document.dispatchEvent(new CustomEvent('alpine:sidebar-toggle'));
             showToast('Settings opened', 'success');
         });
         function formatTime(seconds) {
@@ -582,6 +611,13 @@
         updateRecentPlaysDisplay();
         updateFavoriteDisplay();
         updateMessagesDisplay();
+        lottie.loadAnimation({
+            container: document.querySelector('.dj-animation'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets.lottiefiles.com/packages/lf20_3rqwf0n1.json'
+        });
     </script>
 </body>
 </html>
