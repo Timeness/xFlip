@@ -1,0 +1,371 @@
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WaifuVerse API Interface</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-black text-gray-300 min-h-screen flex flex-col">
+  <header class="p-4 border-b border-gray-700 flex items-center justify-between">
+    <h1 class="text-xl sm:text-2xl font-viga text-white">WaifuVerse API Interface</h1>
+    <div class="flex items-center space-x-2 text-sm sm:text-base">
+      <label for="authPass" class="text-gray-400">Auth Pass:</label>
+      <input id="authPass" type="password" value="WaifuVerse:0000&admin" class="bg-gray-900 text-gray-300 rounded px-2 py-1 w-48 sm:w-64" />
+      <button id="copyAuth" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-white" title="Copy Auth Pass"><i class="fas fa-copy"></i></button>
+    </div>
+  </header>
+
+  <main class="flex-grow p-4 max-w-7xl mx-auto w-full">
+    <section class="mb-6">
+      <label for="routeSelect" class="block mb-1 text-sm sm:text-base font-semibold">Select API Route:</label>
+      <select id="routeSelect" class="w-full sm:w-96 bg-gray-900 text-gray-300 rounded px-3 py-2 text-xs sm:text-sm">
+        <option value="create_anime" data-method="POST">POST /create_anime</option>
+        <option value="add_character" data-method="POST">POST /add_character</option>
+        <option value="delete_anime" data-method="DELETE">DELETE /delete_anime</option>
+        <option value="delete_character" data-method="DELETE">DELETE /delete_character</option>
+        <option value="edit_anime" data-method="PUT">PUT /edit_anime</option>
+        <option value="edit_character" data-method="PUT">PUT /edit_character</option>
+        <option value="get_anime_by_id" data-method="GET">GET /get_anime_by_id</option>
+        <option value="get_animes_by_first_letter" data-method="GET">GET /get_animes_by_first_letter</option>
+        <option value="get_all_anime" data-method="GET">GET /get_all_anime</option>
+        <option value="get_animes_character_count" data-method="GET">GET /get_animes_character_count</option>
+        <option value="get_anime_by_name" data-method="GET">GET /get_anime_by_name</option>
+        <option value="get_characters_by_anime" data-method="GET">GET /get_characters_by_anime</option>
+        <option value="search_character_from_anime" data-method="GET">GET /search_character_from_anime</option>
+        <option value="get_all_anime_images" data-method="GET">GET /get_all_anime_images</option>
+        <option value="get_all_character_images" data-method="GET">GET /get_all_character_images</option>
+        <option value="get_character_images_by_anime" data-method="GET">GET /get_character_images_by_anime</option>
+        <option value="get_character_details" data-method="GET">GET /get_character_details</option>
+        <option value="get_user_animes" data-method="GET">GET /get_user_animes</option>
+        <option value="get_random_character" data-method="GET">GET /get_random_character</option>
+        <option value="trade_waifus" data-method="POST">POST /trade_waifus</option>
+        <option value="transfer_account" data-method="POST">POST /transfer_account</option>
+        <option value="gift_waifu" data-method="POST">POST /gift_waifu</option>
+        <option value="transfer_anime_waifus" data-method="POST">POST /transfer_anime_waifus</option>
+        <option value="restrict_anime" data-method="POST">POST /restrict_anime</option>
+        <option value="restrict_character" data-method="POST">POST /restrict_character</option>
+        <option value="unrestrict_anime" data-method="POST">POST /unrestrict_anime</option>
+        <option value="unrestrict_character" data-method="POST">POST /unrestrict_character</option>
+        <option value="delete_user_character" data-method="DELETE">DELETE /delete_user_character</option>
+        <option value="add_user_character" data-method="POST">POST /add_user_character</option>
+        <option value="reset_user_characters" data-method="POST">POST /reset_user_characters</option>
+      </select>
+    </section>
+
+    <section id="paramsSection" class="mb-6">
+      <h2 class="text-lg sm:text-xl font-semibold mb-2">Parameters</h2>
+      <form id="apiForm" class="space-y-4 text-xs sm:text-sm">
+        <!-- Dynamic form fields inserted here -->
+      </form>
+    </section>
+
+    <section>
+      <button id="sendRequest" class="bg-violet-700 hover:bg-violet-600 text-white px-5 py-2 rounded text-sm sm:text-base w-full sm:w-auto flex items-center justify-center space-x-2">
+        <i class="fas fa-paper-plane"></i><span>Send Request</span>
+      </button>
+    </section>
+
+    <section class="mt-6">
+      <h2 class="text-lg sm:text-xl font-semibold mb-2">Response</h2>
+      <pre id="responseOutput" class="bg-gray-900 rounded p-4 text-xs sm:text-sm max-h-96 overflow-auto whitespace-pre-wrap"></pre>
+    </section>
+  </main>
+
+  <footer class="p-4 text-center text-gray-500 text-xs sm:text-sm border-t border-gray-700">
+    &copy; 2024 WaifuVerse API Interface
+  </footer>
+
+  <script>
+    const baseUrl = "https://intermediate-milwaukee-statutory-lou.trycloudflare.com";
+    const authInput = document.getElementById("authPass");
+    const copyAuthBtn = document.getElementById("copyAuth");
+    const routeSelect = document.getElementById("routeSelect");
+    const paramsSection = document.getElementById("paramsSection");
+    const apiForm = document.getElementById("apiForm");
+    const sendRequestBtn = document.getElementById("sendRequest");
+    const responseOutput = document.getElementById("responseOutput");
+
+    // Define parameters for each route
+    const routeParams = {
+      create_anime: [
+        { name: "anime_name", type: "text", required: true, placeholder: "Example: Naruto" },
+        { name: "anime_image", type: "url", required: true, placeholder: "Image URL" }
+      ],
+      add_character: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" },
+        { name: "character_name", type: "text", required: true, placeholder: "Character Name" },
+        { name: "img_url", type: "url", required: true, placeholder: "Image URL" },
+        { name: "role", type: "text", required: true, placeholder: "Role (e.g. Wintertime)" },
+        { name: "grade", type: "number", required: true, placeholder: "Grade (1-5)", min: 1, max: 5 }
+      ],
+      delete_anime: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      delete_character: [
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      edit_anime: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" },
+        { name: "anime_name", type: "text", required: true, placeholder: "New Anime Name" },
+        { name: "anime_image", type: "url", required: false, placeholder: "New Image URL (optional)" }
+      ],
+      edit_character: [
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" },
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" },
+        { name: "character_name", type: "text", required: true, placeholder: "Character Name" },
+        { name: "img_url", type: "url", required: true, placeholder: "Image URL" },
+        { name: "role", type: "text", required: true, placeholder: "Role" },
+        { name: "grade", type: "number", required: true, placeholder: "Grade (1-5)", min: 1, max: 5 }
+      ],
+      get_anime_by_id: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      get_animes_by_first_letter: [
+        { name: "first_letter", type: "text", required: true, placeholder: "First Letter" }
+      ],
+      get_all_anime: [],
+      get_animes_character_count: [],
+      get_anime_by_name: [
+        { name: "anime_name", type: "text", required: true, placeholder: "Anime Name" }
+      ],
+      get_characters_by_anime: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      search_character_from_anime: [
+        { name: "character_name", type: "text", required: false, placeholder: "Character Name" },
+        { name: "character_id", type: "text", required: false, placeholder: "Character ID" }
+      ],
+      get_all_anime_images: [],
+      get_all_character_images: [],
+      get_character_images_by_anime: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      get_character_details: [
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      get_user_animes: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" }
+      ],
+      get_random_character: [
+        { name: "grade", type: "number", required: true, placeholder: "Grade (1-5)", min: 1, max: 5 }
+      ],
+      trade_waifus: [
+        { name: "from_user_id", type: "number", required: true, placeholder: "From User ID" },
+        { name: "from_character_id", type: "text", required: true, placeholder: "From Character ID" },
+        { name: "to_user_id", type: "number", required: true, placeholder: "To User ID" },
+        { name: "to_character_id", type: "text", required: true, placeholder: "To Character ID" }
+      ],
+      transfer_account: [
+        { name: "from_user_id", type: "number", required: true, placeholder: "From User ID" },
+        { name: "to_user_id", type: "number", required: true, placeholder: "To User ID" }
+      ],
+      gift_waifu: [
+        { name: "to_user_id", type: "number", required: true, placeholder: "To User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      transfer_anime_waifus: [
+        { name: "to_user_id", type: "number", required: true, placeholder: "To User ID" },
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      restrict_anime: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      restrict_character: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      unrestrict_anime: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      unrestrict_character: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      delete_user_character: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      add_user_character: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      reset_user_characters: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "percentage", type: "number", required: true, placeholder: "Percentage (0-100)", min: 0, max: 100, step: 0.1 }
+      ]
+    };
+
+    // Helper to create input fields
+    function createInputField(param) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "flex flex-col";
+
+      const label = document.createElement("label");
+      label.htmlFor = param.name;
+      label.className = "mb-1 font-medium text-gray-300 text-xs sm:text-sm";
+      label.textContent = param.name + (param.required ? " *" : " (optional)");
+
+      let input;
+      if (param.type === "number") {
+        input = document.createElement("input");
+        input.type = "number";
+        if (param.min !== undefined) input.min = param.min;
+        if (param.max !== undefined) input.max = param.max;
+        if (param.step !== undefined) input.step = param.step;
+      } else if (param.type === "url") {
+        input = document.createElement("input");
+        input.type = "url";
+      } else {
+        input = document.createElement("input");
+        input.type = "text";
+      }
+      input.id = param.name;
+      input.name = param.name;
+      input.placeholder = param.placeholder || "";
+      input.required = param.required;
+      input.className = "bg-gray-900 text-gray-300 rounded px-2 py-1 text-xs sm:text-sm";
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(input);
+      return wrapper;
+    }
+
+    // Render form fields based on selected route
+    function renderFormFields(route) {
+      apiForm.innerHTML = "";
+      const params = routeParams[route] || [];
+      if (params.length === 0) {
+        const p = document.createElement("p");
+        p.className = "text-gray-400 text-xs sm:text-sm";
+        p.textContent = "No parameters required for this route.";
+        apiForm.appendChild(p);
+        return;
+      }
+      params.forEach(param => {
+        apiForm.appendChild(createInputField(param));
+      });
+    }
+
+    // On route change
+    routeSelect.addEventListener("change", () => {
+      renderFormFields(routeSelect.value);
+      responseOutput.textContent = "";
+    });
+
+    // Initial render
+    renderFormFields(routeSelect.value);
+
+    // Copy auth pass button
+    copyAuthBtn.addEventListener("click", () => {
+      authInput.select();
+      authInput.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(authInput.value).then(() => {
+        copyAuthBtn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+          copyAuthBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        }, 1500);
+      });
+    });
+
+    // Send API request
+    sendRequestBtn.addEventListener("click", async () => {
+      responseOutput.textContent = "Loading...";
+      const route = routeSelect.value;
+      const method = routeSelect.selectedOptions[0].dataset.method || "GET";
+      const authPass = authInput.value.trim();
+      if (!authPass) {
+        responseOutput.textContent = "Authorization password is required.";
+        return;
+      }
+
+      // Gather parameters
+      const params = {};
+      const formData = new FormData(apiForm);
+      for (const [key, value] of formData.entries()) {
+        if (value.trim() !== "") {
+          params[key] = value.trim();
+        }
+      }
+
+      // Validate required fields
+      const requiredParams = routeParams[route]?.filter(p => p.required) || [];
+      for (const p of requiredParams) {
+        if (!params[p.name]) {
+          responseOutput.textContent = `Missing required parameter: ${p.name}`;
+          return;
+        }
+      }
+
+      // Special case for search_character_from_anime: at least one of character_name or character_id required
+      if (route === "search_character_from_anime") {
+        if (!params.character_name && !params.character_id) {
+          responseOutput.textContent = "At least one of character_name or character_id must be provided.";
+          return;
+        }
+      }
+
+      // Build URL and options
+      let url = baseUrl + "/" + route;
+      let options = {
+        method,
+        headers: {
+          "Authorization": authPass,
+          "Content-Type": "application/json"
+        }
+      };
+
+      if (method === "GET") {
+        // Append query parameters
+        const query = new URLSearchParams(params).toString();
+        if (query) url += "?" + query;
+      } else if (method === "DELETE") {
+        // DELETE with JSON body
+        options.body = JSON.stringify(params);
+      } else {
+        // POST or PUT with JSON body
+        options.body = JSON.stringify(params);
+      }
+
+      try {
+        const res = await fetch(url, options);
+        const contentType = res.headers.get("content-type") || "";
+        let data;
+        if (contentType.includes("application/json")) {
+          data = await res.json();
+          responseOutput.textContent = JSON.stringify(data, null, 2);
+        } else {
+          data = await res.text();
+          responseOutput.textContent = data;
+        }
+      } catch (err) {
+        responseOutput.textContent = "Error: " + err.message;
+      }
+    });
+
+    // Support quick search by character_id via URL param ?search=character_id
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    window.addEventListener("load", () => {
+      const searchCharId = getQueryParam("search");
+      if (searchCharId) {
+        routeSelect.value = "get_character_details";
+        renderFormFields("get_character_details");
+        document.getElementById("character_id").value = searchCharId;
+        responseOutput.textContent = "";
+      }
+    });
+  </script>
+</body>
+</html>
