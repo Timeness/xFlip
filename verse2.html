@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Waifu Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; }
+    img { max-width: 200px; border-radius: 8px; }
+    .section { margin-bottom: 2rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; }
+    .field { margin: 0.5rem 0; }
+    .field label { display: block; font-weight: bold; }
+    button { padding: 0.5rem 1rem; font-size: 1rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Waifu Dashboard</h1>
+
+  <div id="content"></div>
+
+  <script>
+    const base = "https://post-consumers-picked-advantages.trycloudflare.com";
+    const authToken = "WaifuVerse:0000&admin"; // Replace with your actual API_AUTH_PASS
+
+    async function fetchJSON(url, opts = {}) {
+      opts.headers = opts.headers || {};
+      opts.headers.Authorization = authToken;
+      const res = await fetch(url, opts);
+      return res.json();
+    }
+
+    function showCharacter(character) {
+      return `
+        <div class="section">
+          <h2>${character.character_name}</h2>
+          <img src="${character.img_url}" alt="${character.character_name}" />
+          <div class="field"><strong>Anime:</strong> ${character.anime_name}</div>
+          <div class="field"><strong>Role:</strong> ${character.role}</div>
+          <div class="field"><strong>Grade:</strong> ${character.grade.type} ${character.grade.icon}</div>
+        </div>`;
+    }
+
+    function showUploadForm() {
+      return `
+        <div class="section">
+          <h2>Upload Waifu</h2>
+          <form id="uploadForm">
+            <div class="field"><label>Anime ID:</label><input name="anime_id" required /></div>
+            <div class="field"><label>Character Name:</label><input name="character_name" required /></div>
+            <div class="field"><label>Image URL:</label><input name="img_url" required /></div>
+            <div class="field"><label>Role:</label><input name="role" required /></div>
+            <div class="field"><label>Grade (1‑5):</label><input name="grade" type="number" min="1" max="5" required /></div>
+            <button type="submit">Upload</button>
+          </form>
+          <div id="uploadResult"></div>
+        </div>`;
+    }
+
+    async function handleUpload(e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      const res = await fetchJSON(`${base}/add_character`, {
+        method: "POST",
+        body: JSON.stringify(data)
+      });
+      document.getElementById("uploadResult").textContent = JSON.stringify(res, null, 2);
+    }
+
+    async function main() {
+      const params = new URLSearchParams(location.search);
+      const content = document.getElementById("content");
+
+      if (params.has("search")) {
+        const id = params.get("search");
+        const res = await fetchJSON(`${base}/search_character_from_anime?character_id=${id}`);
+        if (res.characters && res.characters.length > 0) {
+          content.innerHTML = res.characters.map(c => showCharacter(c)).join("");
+        } else {
+          content.innerHTML = `<p>No character found with ID ${id}.</p>`;
+        }
+      }
+      else if (params.get("q") === "upload") {
+        content.innerHTML = showUploadForm();
+        document.getElementById("uploadForm")
+          .addEventListener("submit", handleUpload);
+      }
+      else {
+        content.innerHTML = `
+          <div class="section">
+            <h2>Search a Character</h2>
+            <form onsubmit="event.preventDefault(); location.search='?search='+this.id.value;">
+              <div class="field"><label>Character ID:</label><input name="id" placeholder="e.g. 01" required /></div>
+              <button type="submit">Search</button>
+            </form>
+          </div>
+          <div class="section">
+            <a href="?q=upload"><button>Upload a Waifu</button></a>
+          </div>`;
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", main);
+  </script>
+
+</body>
+</html>
