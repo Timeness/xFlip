@@ -3,7 +3,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WaifuVerse : Uploads</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
@@ -21,7 +20,6 @@
     input::placeholder {
       font-weight: 500;
     }
-    /* Custom dropdown */
     .dropdown {
       position: relative;
       user-select: none;
@@ -70,7 +68,6 @@
       color: white;
       font-weight: 700;
     }
-    /* Toast container */
     #toast-container {
       position: fixed;
       bottom: 1.5rem;
@@ -118,7 +115,6 @@
         transform: translateX(0);
       }
     }
-    /* Scrollbar for dropdown */
     .dropdown-content::-webkit-scrollbar {
       width: 6px;
     }
@@ -126,11 +122,9 @@
       background-color: #2563eb;
       border-radius: 3px;
     }
-    /* Hide default file input */
     input[type="file"] {
       display: none;
     }
-    /* Image preview container */
     .image-preview {
       width: 100%;
       aspect-ratio: 16 / 9;
@@ -159,7 +153,6 @@
       font-size: 3rem;
       user-select: none;
     }
-    /* Buttons grid for grades */
     .grades-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -184,7 +177,6 @@
       background-color: #1e3a8a;
       box-shadow: 0 0 8px #1e40afaa;
     }
-    /* Scroll container for anime list */
     .anime-list {
       max-height: 60vh;
       overflow-y: auto;
@@ -198,7 +190,6 @@
       background-color: #2563eb;
       border-radius: 3px;
     }
-    /* Link style for anime items */
     .anime-item {
       cursor: pointer;
       transition: background-color 0.2s ease;
@@ -206,14 +197,12 @@
     .anime-item:hover {
       background-color: rgba(37, 99, 235, 0.3);
     }
-    /* Arrow icon style */
     .arrow-icon {
       color: white;
       font-size: 1.25rem;
       flex-shrink: 0;
       user-select: none;
     }
-    /* Responsive adjustments */
     @media (max-width: 640px) {
       .grades-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -222,8 +211,6 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row bg-black text-white p-4 gap-6 md:gap-12 font-poppins">
-
-  <!-- Left panel: Choose Anime -->
   <section class="w-full md:w-1/3 max-w-md flex flex-col">
     <header class="text-2xl font-semibold mb-5 text-center md:text-left">
       Choose Anime
@@ -237,26 +224,19 @@
       aria-label="Search anime"
     />
     <nav id="animeList" class="space-y-3 anime-list" aria-live="polite" aria-atomic="true" aria-relevant="additions removals">
-      <!-- Anime items inserted here dynamically -->
     </nav>
   </section>
-
-  <!-- Right panel: Upload Character -->
   <section class="w-full md:w-2/3 max-w-3xl flex flex-col items-center">
     <header class="text-2xl font-semibold mb-6 self-start">
       Upload Character
     </header>
-
     <form id="uploadForm" class="w-full max-w-lg flex flex-col gap-6" novalidate>
-      <!-- Image upload -->
       <label for="imageInput" class="image-preview" tabindex="0" aria-label="Upload character image">
         <i class="fas fa-plus placeholder-icon" id="imagePlaceholder"></i>
         <img id="imagePreview" alt="Preview of uploaded character image" class="hidden rounded-3xl" />
         <input type="file" id="imageInput" accept="image/*" aria-describedby="imageHelp" />
       </label>
       <p id="imageHelp" class="text-xs text-gray-400 select-none">Click or tap to upload character image</p>
-
-      <!-- Character Name -->
       <input
         type="text"
         id="characterName"
@@ -267,27 +247,20 @@
         aria-label="Character Name"
         autocomplete="off"
       />
-
-      <!-- Grade selection -->
-      <div class="grades-grid" role="radiogroup" aria-label="Select character grade">
+      <div class="dropdown" id="roleDropdown" role="radiogroup" aria-label="Select character grade">
         <button type="button" class="grade-btn" data-grade="2" aria-checked="false" role="radio" tabindex="0">Charmete</button>
         <button type="button" class="grade-btn" data-grade="3" aria-checked="false" role="radio" tabindex="-1">Mystata</button>
         <button type="button" class="grade-btn" data-grade="4" aria-checked="false" role="radio" tabindex="-1">Celestique</button>
         <button type="button" class="grade-btn" data-grade="5" aria-checked="false" role="radio" tabindex="-1">Eclipse</button>
       </div>
-
-      <!-- Role dropdown -->
-      <div class="dropdown mt-2" id="roleDropdown" aria-label="Select role" aria-haspopup="listbox" aria-expanded="false" tabindex="0">
-        <div class="dropdown-btn" id="roleDropdownBtn" aria-labelledby="roleDropdownLabel" role="combobox" aria-controls="roleDropdownList" aria-autocomplete="list" aria-activedescendant="">
+      <div class="dropdown mt-2" id="roleDropdown" aria-label="Select role" aria-haspopup="listbox" aria-expanded="true" tabindex="0">
+        <div class="dropdown-btn" id="roleDropdownBtn" role="combobox" aria-labelledby="roleDropdownLabel" aria-controls="roleDropdownList" aria-autocomplete="list" aria-activedescendant="">
           <span id="roleDropdownLabel" class="text-gray-300 select-none">Select Role</span>
           <i class="fas fa-chevron-down ml-2"></i>
         </div>
         <ul class="dropdown-content hidden" id="roleDropdownList" role="listbox" tabindex="-1" aria-labelledby="roleDropdownLabel">
-          <!-- Roles inserted dynamically -->
         </ul>
       </div>
-
-      <!-- Upload button -->
       <button
         type="submit"
         class="w-full py-3 rounded-2xl bg-green-600 hover:bg-green-700 transition font-semibold text-lg"
@@ -295,27 +268,19 @@
       >
         Upload
       </button>
-
-      <!-- Refresh icon -->
       <button type="button" id="resetBtn" aria-label="Reset form" class="self-center mt-4 text-white opacity-80 hover:opacity-100 transition text-3xl">
         <i class="fas fa-sync-alt"></i>
       </button>
     </form>
   </section>
-
-  <!-- Toast container -->
   <div id="toast-container" role="alert" aria-live="assertive" aria-atomic="true"></div>
-
   <script>
     (() => {
-      // Constants
       const API_BASE = "https://yash.mirza.ink";
       const API_AUTH_PASS = "WaifuVerse:0000&admin";
-
-      // Grade map and roles (from backend constants)
       const GRADE_MAP = {
         "2": { type: "Charmete", icon: "💠" },
-        "3": { type: "Mystata", icon: "⚜️" },
+        "3": { type: "Mystata", icon: "⚡" },
         "4": { type: "Celestique", icon: "👑" },
         "5": { type: "Eclipse", icon: "💎" }
       };
@@ -325,8 +290,6 @@
         "Celestique": ["Melancholia", "Catgirl", "Elegant", "Candlelight"],
         "Eclipse": ["Enchantress", "Seraphic", "Fiendish", "Arabian Nights"]
       };
-
-      // Elements
       const animeListEl = document.getElementById("animeList");
       const animeSearchEl = document.getElementById("animeSearch");
       const imageInputEl = document.getElementById("imageInput");
@@ -341,41 +304,32 @@
       const uploadForm = document.getElementById("uploadForm");
       const resetBtn = document.getElementById("resetBtn");
       const toastContainer = document.getElementById("toast-container");
-
-      // State
       let animes = [];
       let filteredAnimes = [];
       let selectedAnime = null;
       let selectedGrade = null;
       let selectedRole = null;
-
-      // Toast function
       function showToast(message, type = "info", duration = 4000) {
         const toast = document.createElement("div");
-        toast.className = "toast";
-        if (type === "error") toast.classList.add("error");
+        toast.className = `toast ${type === "error" ? "error" : ""}`;
         toast.setAttribute("role", "alert");
         toast.setAttribute("aria-live", "assertive");
         toast.setAttribute("aria-atomic", "true");
         toast.innerHTML = `
           <span>${message}</span>
-          <button class="close-btn" aria-label="Close toast">&times;</button>
+          <button class="close-btn" aria-label="Close toast">×</button>
         `;
         toastContainer.appendChild(toast);
-
         const closeBtn = toast.querySelector(".close-btn");
         closeBtn.addEventListener("click", () => {
           toastContainer.removeChild(toast);
         });
-
         setTimeout(() => {
           if (toastContainer.contains(toast)) {
             toastContainer.removeChild(toast);
           }
         }, duration);
       }
-
-      // Fetch all animes from API
       async function fetchAllAnimes() {
         try {
           const res = await fetch(`${API_BASE}/get_all_anime`, {
@@ -390,7 +344,7 @@
           animes = data.animes.map(a => ({
             id: a.id || a.anime_id || a._id || "",
             name: a.anime_name || a.name || "Unknown",
-            image: a.anime_image || a.image || "https://placehold.co/48x48/png?text=No+Image",
+            image: a.anime_image || a.image || "https://placehold.co/48x48/png?text=Image",
           }));
           filteredAnimes = [...animes];
           renderAnimeList();
@@ -398,8 +352,6 @@
           showToast(`Error loading animes: ${e.message}`, "error");
         }
       }
-
-      // Render anime list
       function renderAnimeList() {
         animeListEl.innerHTML = "";
         if (filteredAnimes.length === 0) {
@@ -433,16 +385,11 @@
           animeListEl.appendChild(a);
         });
       }
-
-      // Select anime
       function selectAnime(anime) {
         selectedAnime = anime;
         showToast(`Selected anime: ${anime.name}`, "info");
-        // Scroll to upload form and focus character name
         characterNameEl.focus();
       }
-
-      // Filter animes by search
       function filterAnimes(query) {
         const q = query.trim().toLowerCase();
         if (!q) {
@@ -452,8 +399,6 @@
         }
         renderAnimeList();
       }
-
-      // Image upload preview
       imageInputEl.addEventListener("change", () => {
         const file = imageInputEl.files[0];
         if (file && file.type.startsWith("image/")) {
@@ -470,16 +415,12 @@
           imagePlaceholderEl.classList.remove("hidden");
         }
       });
-
-      // Clicking on image preview label triggers file input
       document.querySelector("label[for='imageInput']").addEventListener("keydown", e => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           imageInputEl.click();
         }
       });
-
-      // Grade selection logic
       gradeButtons.forEach((btn, idx) => {
         btn.addEventListener("click", () => {
           selectGrade(btn.dataset.grade);
@@ -489,7 +430,6 @@
             e.preventDefault();
             selectGrade(btn.dataset.grade);
           }
-          // Keyboard navigation for radio group
           if (e.key === "ArrowRight" || e.key === "ArrowDown") {
             e.preventDefault();
             const nextIdx = (idx + 1) % gradeButtons.length;
@@ -502,19 +442,16 @@
           }
         });
       });
-
       function selectGrade(grade) {
         selectedGrade = grade;
         gradeButtons.forEach(btn => {
           btn.classList.toggle("selected", btn.dataset.grade === grade);
           btn.setAttribute("aria-checked", btn.dataset.grade === grade ? "true" : "false");
-          btn.tabIndex = btn.dataset.grade === grade ? 0 : -1;
+          btn.tabIndex = btn.dataset.grade === grade ? 0" : -1;
         });
         selectedRole = null;
         renderRoleDropdown();
       }
-
-      // Role dropdown logic
       roleDropdownBtn.addEventListener("click", toggleRoleDropdown);
       roleDropdownBtn.addEventListener("keydown", e => {
         if (e.key === "Enter" || e.key === " ") {
@@ -532,8 +469,8 @@
           selectRole(e.target.dataset.role);
         }
       });
-      roleDropdownList.addEventListener("keydown", e => {
-        const items = Array.from(roleDropdownList.querySelectorAll(".dropdown-item"));
+      roleDropdownList.addEventListener("keydown", function(e) {
+        const items = Array.from(this.querySelectorAll(".dropdown-item"));
         const activeEl = document.activeElement;
         const currentIndex = items.indexOf(activeEl);
         if (e.key === "ArrowDown") {
@@ -558,7 +495,17 @@
           }
         }
       });
-
+      function selectRole(role) {
+        selectedRole = role;
+        roleDropdownLabel.textContent = role || "Select Role";
+        const items = roleDropdownList.querySelectorAll(".dropdown-item");
+        items.forEach(item => {
+          item.classList.toggle("active", item.dataset.role === role);
+          item.setAttribute("aria-selected", item.dataset.role === role ? "true" : "false");
+        });
+        closeRoleDropdown();
+        showToast(`Selected role: ${role}`, "info");
+      }
       function toggleRoleDropdown() {
         if (roleDropdownList.classList.contains("hidden")) {
           openRoleDropdown();
@@ -583,7 +530,6 @@
         const firstItem = roleDropdownList.querySelector(".dropdown-item");
         if (firstItem) firstItem.focus();
       }
-
       function renderRoleDropdown() {
         roleDropdownList.innerHTML = "";
         if (!selectedGrade) {
@@ -602,7 +548,8 @@
           const li = document.createElement("li");
           li.className = "dropdown-item";
           li.setAttribute("role", "option");
-          li.setAttribute("tabindex", "-1");
+          li.setAttribute("tabindex", "0");
+          li.setAttribute("aria-selected", role === selectedRole ? "true" : "false");
           li.dataset.role = role;
           li.textContent = role;
           if (role === selectedRole) li.classList.add("active");
@@ -611,8 +558,6 @@
         roleDropdownLabel.textContent = selectedRole || "Select Role";
         closeRoleDropdown();
       }
-
-      // Reset form
       function resetForm() {
         uploadForm.reset();
         selectedAnime = null;
@@ -630,16 +575,12 @@
         closeRoleDropdown();
         showToast("Form reset", "info");
       }
-
       resetBtn.addEventListener("click", e => {
         e.preventDefault();
         resetForm();
       });
-
-      // Upload form submit handler
       uploadForm.addEventListener("submit", async e => {
         e.preventDefault();
-
         if (!selectedAnime) {
           showToast("Please select an anime first", "error");
           return;
@@ -667,8 +608,6 @@
           showToast("Uploaded file is not an image", "error");
           return;
         }
-
-        // Upload image to catbox.moe
         showToast("Uploading image...", "info");
         let imageUrl;
         try {
@@ -679,8 +618,6 @@
           showToast(`Image upload failed: ${err.message}`, "error");
           return;
         }
-
-        // Prepare payload for add_character API
         const payload = {
           anime_id: selectedAnime.id,
           character_name: characterName.replace(/-/g, " ").replace(/\s+/g, " ").trim(),
@@ -688,7 +625,6 @@
           role: selectedRole,
           grade: selectedGrade
         };
-
         try {
           const res = await fetch(`${API_BASE}/add_character`, {
             method: "POST",
@@ -708,8 +644,6 @@
           showToast(`Failed to add character: ${err.message}`, "error");
         }
       });
-
-      // Upload file to catbox.moe
       async function uploadToCatbox(file) {
         const formData = new FormData();
         formData.append("reqtype", "fileupload");
@@ -727,22 +661,15 @@
         }
         return text.trim();
       }
-
-      // Search input event
       animeSearchEl.addEventListener("input", e => {
         filterAnimes(e.target.value);
       });
-
-      // Initial load
       fetchAllAnimes();
-
-      // Accessibility: close dropdown on outside click
       document.addEventListener("click", e => {
         if (!roleDropdown.contains(e.target)) {
           closeRoleDropdown();
         }
       });
-      // Accessibility: close dropdown on Escape key globally
       document.addEventListener("keydown", e => {
         if (e.key === "Escape") {
           closeRoleDropdown();
