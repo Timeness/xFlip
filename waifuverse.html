@@ -1,0 +1,471 @@
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WaifuVerse API</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Viga', sans-serif;
+    }
+    /* Remove borders from inputs and selects */
+    input, select, textarea, button {
+      border: none !important;
+      outline-offset: 0 !important;
+      outline: none !important;
+    }
+    /* Custom scrollbar for response output */
+    #responseOutput::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    #responseOutput::-webkit-scrollbar-thumb {
+      background-color: #7c3aed;
+      border-radius: 4px;
+    }
+    #responseOutput::-webkit-scrollbar-track {
+      background: #1f2937;
+    }
+  </style>
+</head>
+<body class="bg-black text-gray-300 min-h-screen flex flex-col">
+  <header class="p-4 flex items-center justify-between">
+    <h1 class="text-xl sm:text-2xl font-viga text-white select-none">WaifuVerse</h1>
+    <div class="flex items-center space-x-2 text-sm sm:text-base">
+      <label for="authPass" class="text-gray-400 select-none">Auth:</label>
+      <input id="authPass" type="password" value="WaifuVerse:0000&admin" autocomplete="off" class="bg-gray-900 text-gray-300 rounded px-3 py-2 w-48 sm:w-64" />
+      <button id="copyAuth" class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-white flex items-center justify-center" title="Copy Auth Pass" aria-label="Copy Authorization Password">
+        <i class="fas fa-copy"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-grow p-4 max-w-7xl mx-auto w-full">
+    <section class="mb-6">
+      <label for="routeSelect" class="block mb-2 text-sm sm:text-base font-semibold">Select API Route:</label>
+      <div id="customDropdown" class="relative w-full sm:w-96">
+        <button id="dropdownButton" aria-haspopup="listbox" aria-expanded="false" class="w-full bg-gray-900 text-gray-300 rounded px-4 py-2 text-left text-sm sm:text-base flex justify-between items-center focus:ring-2 focus:ring-violet-500 focus:outline-none">
+          <span id="selectedRouteText">POST /create_anime</span>
+          <i class="fas fa-chevron-down text-gray-400"></i>
+        </button>
+        <ul id="dropdownList" role="listbox" tabindex="-1" class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded bg-gray-900 text-gray-300 shadow-lg hidden focus:outline-none">
+          <li role="option" data-value="create_anime" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /create_anime</li>
+          <li role="option" data-value="add_character" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /add_character</li>
+          <li role="option" data-value="delete_anime" data-method="DELETE" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">DELETE /delete_anime</li>
+          <li role="option" data-value="delete_character" data-method="DELETE" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">DELETE /delete_character</li>
+          <li role="option" data-value="edit_anime" data-method="PUT" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">PUT /edit_anime</li>
+          <li role="option" data-value="edit_character" data-method="PUT" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">PUT /edit_character</li>
+          <li role="option" data-value="get_anime_by_id" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_anime_by_id</li>
+          <li role="option" data-value="get_animes_by_first_letter" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_animes_by_first_letter</li>
+          <li role="option" data-value="get_all_anime" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_all_anime</li>
+          <li role="option" data-value="get_animes_character_count" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_animes_character_count</li>
+          <li role="option" data-value="get_anime_by_name" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_anime_by_name</li>
+          <li role="option" data-value="get_characters_by_anime" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_characters_by_anime</li>
+          <li role="option" data-value="search_character_from_anime" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /search_character_from_anime</li>
+          <li role="option" data-value="get_all_anime_images" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_all_anime_images</li>
+          <li role="option" data-value="get_all_character_images" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_all_character_images</li>
+          <li role="option" data-value="get_character_images_by_anime" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_character_images_by_anime</li>
+          <li role="option" data-value="get_character_details" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_character_details</li>
+          <li role="option" data-value="get_user_animes" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_user_animes</li>
+          <li role="option" data-value="get_random_character" data-method="GET" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">GET /get_random_character</li>
+          <li role="option" data-value="trade_waifus" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /trade_waifus</li>
+          <li role="option" data-value="transfer_account" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /transfer_account</li>
+          <li role="option" data-value="gift_waifu" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /gift_waifu</li>
+          <li role="option" data-value="transfer_anime_waifus" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /transfer_anime_waifus</li>
+          <li role="option" data-value="restrict_anime" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /restrict_anime</li>
+          <li role="option" data-value="restrict_character" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /restrict_character</li>
+          <li role="option" data-value="unrestrict_anime" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /unrestrict_anime</li>
+          <li role="option" data-value="unrestrict_character" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /unrestrict_character</li>
+          <li role="option" data-value="delete_user_character" data-method="DELETE" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">DELETE /delete_user_character</li>
+          <li role="option" data-value="add_user_character" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /add_user_character</li>
+          <li role="option" data-value="reset_user_characters" data-method="POST" tabindex="0" class="cursor-pointer px-4 py-2 hover:bg-violet-700 focus:bg-violet-700">POST /reset_user_characters</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="paramsSection" class="mb-6">
+      <h2 class="text-lg sm:text-xl font-semibold mb-3">Parameters</h2>
+      <form id="apiForm" class="space-y-4 text-xs sm:text-sm">
+        <!-- Dynamic form fields inserted here -->
+      </form>
+    </section>
+
+    <section>
+      <button id="sendRequest" class="bg-violet-700 hover:bg-violet-600 text-white px-5 py-3 rounded text-sm sm:text-base w-full sm:w-auto flex items-center justify-center space-x-3 transition-colors duration-200 focus:ring-4 focus:ring-violet-500 focus:outline-none">
+        <i class="fas fa-paper-plane"></i><span>Send Request</span>
+      </button>
+    </section>
+
+    <section class="mt-6">
+      <h2 class="text-lg sm:text-xl font-semibold mb-3">Response</h2>
+      <pre id="responseOutput" class="bg-gray-900 rounded p-4 text-xs sm:text-sm max-h-96 overflow-auto whitespace-pre-wrap font-mono"></pre>
+    </section>
+  </main>
+
+  <footer class="p-4 text-center text-gray-500 text-xs sm:text-sm select-none">
+    &copy; 2024 WaifuVerse API Interface
+  </footer>
+
+  <script>
+    const baseUrl = "https://yash.mirza.ink";
+    const authInput = document.getElementById("authPass");
+    const copyAuthBtn = document.getElementById("copyAuth");
+    const dropdownButton = document.getElementById("dropdownButton");
+    const dropdownList = document.getElementById("dropdownList");
+    const selectedRouteText = document.getElementById("selectedRouteText");
+    const apiForm = document.getElementById("apiForm");
+    const sendRequestBtn = document.getElementById("sendRequest");
+    const responseOutput = document.getElementById("responseOutput");
+
+    // Define parameters for each route
+    const routeParams = {
+      create_anime: [
+        { name: "anime_name", type: "text", required: true, placeholder: "Example: Naruto" },
+        { name: "anime_image", type: "url", required: true, placeholder: "Image URL" }
+      ],
+      add_character: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" },
+        { name: "character_name", type: "text", required: true, placeholder: "Character Name" },
+        { name: "img_url", type: "url", required: true, placeholder: "Image URL" },
+        { name: "role", type: "text", required: true, placeholder: "Role (e.g. Wintertime)" },
+        { name: "grade", type: "number", required: true, placeholder: "Grade (1-5)", min: 1, max: 5 }
+      ],
+      delete_anime: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      delete_character: [
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      edit_anime: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" },
+        { name: "anime_name", type: "text", required: true, placeholder: "New Anime Name" },
+        { name: "anime_image", type: "url", required: false, placeholder: "New Image URL (optional)" }
+      ],
+      edit_character: [
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" },
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" },
+        { name: "character_name", type: "text", required: true, placeholder: "Character Name" },
+        { name: "img_url", type: "url", required: true, placeholder: "Image URL" },
+        { name: "role", type: "text", required: true, placeholder: "Role" },
+        { name: "grade", type: "number", required: true, placeholder: "Grade (1-5)", min: 1, max: 5 }
+      ],
+      get_anime_by_id: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      get_animes_by_first_letter: [
+        { name: "first_letter", type: "text", required: true, placeholder: "First Letter" }
+      ],
+      get_all_anime: [],
+      get_animes_character_count: [],
+      get_anime_by_name: [
+        { name: "anime_name", type: "text", required: true, placeholder: "Anime Name" }
+      ],
+      get_characters_by_anime: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      search_character_from_anime: [
+        { name: "character_name", type: "text", required: false, placeholder: "Character Name" },
+        { name: "character_id", type: "text", required: false, placeholder: "Character ID" }
+      ],
+      get_all_anime_images: [],
+      get_all_character_images: [],
+      get_character_images_by_anime: [
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      get_character_details: [
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      get_user_animes: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" }
+      ],
+      get_random_character: [
+        { name: "grade", type: "number", required: true, placeholder: "Grade (1-5)", min: 1, max: 5 }
+      ],
+      trade_waifus: [
+        { name: "from_user_id", type: "number", required: true, placeholder: "From User ID" },
+        { name: "from_character_id", type: "text", required: true, placeholder: "From Character ID" },
+        { name: "to_user_id", type: "number", required: true, placeholder: "To User ID" },
+        { name: "to_character_id", type: "text", required: true, placeholder: "To Character ID" }
+      ],
+      transfer_account: [
+        { name: "from_user_id", type: "number", required: true, placeholder: "From User ID" },
+        { name: "to_user_id", type: "number", required: true, placeholder: "To User ID" }
+      ],
+      gift_waifu: [
+        { name: "to_user_id", type: "number", required: true, placeholder: "To User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      transfer_anime_waifus: [
+        { name: "to_user_id", type: "number", required: true, placeholder: "To User ID" },
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      restrict_anime: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      restrict_character: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      unrestrict_anime: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "anime_id", type: "text", required: true, placeholder: "Anime ID" }
+      ],
+      unrestrict_character: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      delete_user_character: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      add_user_character: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "character_id", type: "text", required: true, placeholder: "Character ID" }
+      ],
+      reset_user_characters: [
+        { name: "user_id", type: "number", required: true, placeholder: "User ID" },
+        { name: "percentage", type: "number", required: true, placeholder: "Percentage (0-100)", min: 0, max: 100, step: 0.1 }
+      ]
+    };
+
+    // Helper to create input fields
+    function createInputField(param) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "flex flex-col";
+
+      const label = document.createElement("label");
+      label.htmlFor = param.name;
+      label.className = "mb-1 font-medium text-gray-300 text-xs sm:text-sm select-none";
+      label.textContent = param.name + (param.required ? " *" : " (optional)");
+
+      let input;
+      if (param.type === "number") {
+        input = document.createElement("input");
+        input.type = "number";
+        if (param.min !== undefined) input.min = param.min;
+        if (param.max !== undefined) input.max = param.max;
+        if (param.step !== undefined) input.step = param.step;
+      } else if (param.type === "url") {
+        input = document.createElement("input");
+        input.type = "url";
+      } else {
+        input = document.createElement("input");
+        input.type = "text";
+      }
+      input.id = param.name;
+      input.name = param.name;
+      input.placeholder = param.placeholder || "";
+      input.required = param.required;
+      input.autocomplete = "off";
+      input.className = "bg-gray-900 text-gray-300 rounded px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none";
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(input);
+      return wrapper;
+    }
+
+    // Render form fields based on selected route
+    function renderFormFields(route) {
+      apiForm.innerHTML = "";
+      const params = routeParams[route] || [];
+      if (params.length === 0) {
+        const p = document.createElement("p");
+        p.className = "text-gray-400 text-xs sm:text-sm select-none";
+        p.textContent = "No parameters required for this route.";
+        apiForm.appendChild(p);
+        return;
+      }
+      params.forEach(param => {
+        apiForm.appendChild(createInputField(param));
+      });
+    }
+
+    // Dropdown open/close toggle
+    function toggleDropdown(open) {
+      if (open) {
+        dropdownList.classList.remove("hidden");
+        dropdownButton.setAttribute("aria-expanded", "true");
+        dropdownList.focus();
+      } else {
+        dropdownList.classList.add("hidden");
+        dropdownButton.setAttribute("aria-expanded", "false");
+      }
+    }
+
+    // Initialize selected route
+    let selectedRoute = "create_anime";
+    let selectedMethod = "POST";
+
+    // Update selected route display and form
+    function updateSelectedRoute(value, method, text) {
+      selectedRoute = value;
+      selectedMethod = method;
+      selectedRouteText.textContent = text;
+      renderFormFields(value);
+      responseOutput.textContent = "";
+    }
+
+    // Event listeners for dropdown
+    dropdownButton.addEventListener("click", () => {
+      const isOpen = !dropdownList.classList.contains("hidden");
+      toggleDropdown(!isOpen);
+    });
+
+    dropdownList.addEventListener("keydown", (e) => {
+      const focusableOptions = Array.from(dropdownList.querySelectorAll("li[role='option']"));
+      const currentIndex = focusableOptions.indexOf(document.activeElement);
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const nextIndex = (currentIndex + 1) % focusableOptions.length;
+        focusableOptions[nextIndex].focus();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const prevIndex = (currentIndex - 1 + focusableOptions.length) % focusableOptions.length;
+        focusableOptions[prevIndex].focus();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        toggleDropdown(false);
+        dropdownButton.focus();
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (document.activeElement && document.activeElement.getAttribute("role") === "option") {
+          const val = document.activeElement.dataset.value;
+          const method = document.activeElement.dataset.method;
+          const text = document.activeElement.textContent;
+          updateSelectedRoute(val, method, text);
+          toggleDropdown(false);
+          dropdownButton.focus();
+        }
+      }
+    });
+
+    dropdownList.addEventListener("click", (e) => {
+      if (e.target && e.target.matches("li[role='option']")) {
+        const val = e.target.dataset.value;
+        const method = e.target.dataset.method;
+        const text = e.target.textContent;
+        updateSelectedRoute(val, method, text);
+        toggleDropdown(false);
+        dropdownButton.focus();
+      }
+    });
+
+    // Close dropdown if clicked outside
+    document.addEventListener("click", (e) => {
+      if (!dropdownButton.contains(e.target) && !dropdownList.contains(e.target)) {
+        toggleDropdown(false);
+      }
+    });
+
+    // Initial render
+    updateSelectedRoute(selectedRoute, selectedMethod, "POST /create_anime");
+
+    // Copy auth pass button
+    copyAuthBtn.addEventListener("click", () => {
+      authInput.select();
+      authInput.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(authInput.value).then(() => {
+        copyAuthBtn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+          copyAuthBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        }, 1500);
+      });
+    });
+
+    // Send API request
+    sendRequestBtn.addEventListener("click", async () => {
+      responseOutput.textContent = "Loading...";
+      const route = selectedRoute;
+      const method = selectedMethod || "GET";
+      const authPass = authInput.value.trim();
+      if (!authPass) {
+        responseOutput.textContent = "Authorization password is required.";
+        return;
+      }
+
+      // Gather parameters
+      const params = {};
+      const formData = new FormData(apiForm);
+      for (const [key, value] of formData.entries()) {
+        if (value.trim() !== "") {
+          params[key] = value.trim();
+        }
+      }
+
+      // Validate required fields
+      const requiredParams = routeParams[route]?.filter(p => p.required) || [];
+      for (const p of requiredParams) {
+        if (!params[p.name]) {
+          responseOutput.textContent = `Missing required parameter: ${p.name}`;
+          return;
+        }
+      }
+
+      // Special case for search_character_from_anime: at least one of character_name or character_id required
+      if (route === "search_character_from_anime") {
+        if (!params.character_name && !params.character_id) {
+          responseOutput.textContent = "At least one of character_name or character_id must be provided.";
+          return;
+        }
+      }
+
+      // Build URL and options
+      let url = baseUrl + "/" + route;
+      let options = {
+        method,
+        headers: {
+          "Authorization": authPass,
+          "Content-Type": "application/json"
+        }
+      };
+
+      if (method === "GET") {
+        // Append query parameters
+        const query = new URLSearchParams(params).toString();
+        if (query) url += "?" + query;
+      } else if (method === "DELETE") {
+        // DELETE with JSON body
+        options.body = JSON.stringify(params);
+      } else {
+        // POST or PUT with JSON body
+        options.body = JSON.stringify(params);
+      }
+
+      try {
+        const res = await fetch(url, options);
+        const contentType = res.headers.get("content-type") || "";
+        let data;
+        if (contentType.includes("application/json")) {
+          data = await res.json();
+          responseOutput.textContent = JSON.stringify(data, null, 2);
+        } else {
+          data = await res.text();
+          responseOutput.textContent = data;
+        }
+      } catch (err) {
+        responseOutput.textContent = "Error: " + err.message;
+      }
+    });
+
+    // Support quick search by character_id via URL param ?search=character_id
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    window.addEventListener("load", () => {
+      const searchCharId = getQueryParam("search");
+      if (searchCharId) {
+        updateSelectedRoute("get_character_details", "GET", "GET /get_character_details");
+        renderFormFields("get_character_details");
+        const charIdInput = document.getElementById("character_id");
+        if (charIdInput) charIdInput.value = searchCharId;
+        responseOutput.textContent = "";
+      }
+    });
+  </script>
+</body>
+</html>
