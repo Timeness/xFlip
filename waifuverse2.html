@@ -1,22 +1,28 @@
 <html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1" name="viewport"/>
-  <title>
-   WaifuVerse - Anime &amp; Characters Master
-  </title>
-  <script src="https://cdn.tailwindcss.com">
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Signika&amp;display=swap" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>WaifuVerse - Anime & Characters Master</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Signika&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
   <style>
-   body {
-      font-family: 'Signika', sans-serif;
-      font-size: 0.875rem; /* small font size */
+    body {
+      font-family: "Signika", sans-serif;
+      font-size: 0.875rem;
       background-color: #000000;
       color: #e0e0e0;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    /* Scrollbar for dark theme */
     ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
@@ -29,415 +35,803 @@
       border-radius: 10px;
       border: 2px solid #121212;
     }
+    /* Toast container */
+    #toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 320px;
+    }
+    .toast {
+      background: #1f2937;
+      color: #e0e0e0;
+      padding: 0.75rem 1rem;
+      border-radius: 0.375rem;
+      box-shadow: 0 2px 10px rgb(0 0 0 / 0.5);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideIn 0.3s ease forwards;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toast-success {
+      border-left: 4px solid #22c55e;
+    }
+    .toast-error {
+      border-left: 4px solid #ef4444;
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    /* Remove all borders from inputs/selects */
+    input,
+    select,
+    button {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    /* Custom select styling */
+    select {
+      background-color: #121212;
+      color: #e0e0e0;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg fill='none' stroke='%23e0e0e0' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3e%3c/path%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1.25em 1.25em;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: background-color 0.2s ease;
+    }
+    select:focus {
+      background-color: #1f2937;
+    }
+    /* Buttons */
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.2s ease;
+    }
+    button:focus-visible {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
+    }
+    /* Remove all borders from cards */
+    .card {
+      background-color: #121212;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.7);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 20px rgb(99 102 241 / 0.7);
+    }
+    .card img {
+      object-fit: cover;
+      width: 100%;
+      height: 12rem;
+      user-select: none;
+      pointer-events: none;
+    }
+    .card-content {
+      padding: 1rem 1.25rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: #e0e0e0;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-subtitle {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-bottom: 0.5rem;
+      user-select: text;
+    }
+    .card-button {
+      margin-top: auto;
+      background-color: #6366f1;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-align: center;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+    .card-button:hover,
+    .card-button:focus-visible {
+      background-color: #4f46e5;
+      outline: none;
+    }
+    /* Header */
+    header {
+      background-color: #000000cc;
+      backdrop-filter: saturate(180%) blur(10px);
+      border-bottom: none !important;
+      padding: 1rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    header h1 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #e0e0e0;
+      letter-spacing: 0.05em;
+    }
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+    nav a {
+      color: #9ca3af;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      user-select: none;
+    }
+    nav a:hover,
+    nav a:focus-visible {
+      color: #6366f1;
+      outline: none;
+    }
+    /* Mobile menu */
+    #mobile-menu {
+      display: none;
+      flex-direction: column;
+      background-color: #000000cc;
+      backdrop-filter: saturate(180%) blur(10px);
+      padding: 0.5rem 1rem;
+      user-select: none;
+    }
+    #mobile-menu a {
+      color: #9ca3af;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.5rem 0;
+      text-decoration: none;
+      border-bottom: none !important;
+      transition: color 0.2s ease;
+    }
+    #mobile-menu a:hover,
+    #mobile-menu a:focus-visible {
+      color: #6366f1;
+      outline: none;
+    }
+    /* Footer */
+    footer {
+      background-color: #000000cc;
+      backdrop-filter: saturate(180%) blur(10px);
+      color: #6b7280;
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 1rem 0;
+      user-select: none;
+    }
+    /* Forms */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    input[type="text"],
+    input[type="url"],
+    input[type="password"] {
+      background-color: #121212;
+      color: #e0e0e0;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: background-color 0.2s ease;
+      user-select: text;
+    }
+    input[type="text"]::placeholder,
+    input[type="url"]::placeholder,
+    input[type="password"]::placeholder {
+      color: #6b7280;
+      font-weight: 400;
+    }
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    input[type="password"]:focus {
+      background-color: #1f2937;
+      outline: none;
+    }
+    label {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #9ca3af;
+      user-select: none;
+    }
+    /* Responsive grid for cards */
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+      gap: 1.5rem;
+    }
+    /* Section titles */
+    section > h3 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #e0e0e0;
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+    /* Scroll smooth */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Disabled button style */
+    button:disabled {
+      background-color: #374151 !important;
+      cursor: not-allowed;
+      color: #9ca3af !important;
+    }
   </style>
- </head>
- <body class="min-h-screen flex flex-col">
-  <!-- Header -->
-  <header class="sticky top-0 z-50 bg-black bg-opacity-90 backdrop-blur-sm border-b border-gray-800">
-   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <div class="flex items-center space-x-3">
-     <img alt="WaifuVerse logo, stylized W letter in white on black background" class="w-10 h-10 rounded-md" height="40" src="https://storage.googleapis.com/a1aa/image/65865b39-3d44-44c3-45f0-8cf791c48e2b.jpg" width="40"/>
-     <h1 class="text-white font-semibold text-xl tracking-wide select-none">
-      WaifuVerse
-     </h1>
-    </div>
-    <nav class="hidden md:flex space-x-6 text-gray-400 text-sm font-medium">
-     <a class="hover:text-white transition" href="#animes">
-      Animes
-     </a>
-     <a class="hover:text-white transition" href="#characters">
-      Characters
-     </a>
-     <a class="hover:text-white transition" href="#search">
-      Search
-     </a>
-     <a class="hover:text-white transition" href="#user">
-      User Panel
-     </a>
+</head>
+<body>
+  <header>
+    <h1>WaifuVerse</h1>
+    <nav class="hidden md:flex" aria-label="Primary navigation">
+      <a href="#animes" tabindex="0">Animes</a>
+      <a href="#characters" tabindex="0">Characters</a>
+      <a href="#search" tabindex="0">Search</a>
+      <a href="#user" tabindex="0">User Panel</a>
     </nav>
-    <button class="md:hidden text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white" id="mobile-menu-button">
-     <i class="fas fa-bars fa-lg">
-     </i>
+    <button
+      id="mobile-menu-button"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      class="md:hidden text-gray-400 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
+    >
+      <i class="fas fa-bars fa-lg"></i>
     </button>
-   </div>
-   <!-- Mobile menu -->
-   <div class="hidden md:hidden bg-black bg-opacity-95 border-t border-gray-800" id="mobile-menu">
-    <a class="block px-4 py-3 text-gray-400 hover:text-white border-b border-gray-800" href="#animes">
-     Animes
-    </a>
-    <a class="block px-4 py-3 text-gray-400 hover:text-white border-b border-gray-800" href="#characters">
-     Characters
-    </a>
-    <a class="block px-4 py-3 text-gray-400 hover:text-white border-b border-gray-800" href="#search">
-     Search
-    </a>
-    <a class="block px-4 py-3 text-gray-400 hover:text-white" href="#user">
-     User Panel
-    </a>
-   </div>
   </header>
+  <nav id="mobile-menu" class="md:hidden" aria-label="Mobile navigation" hidden>
+    <a href="#animes" tabindex="0">Animes</a>
+    <a href="#characters" tabindex="0">Characters</a>
+    <a href="#search" tabindex="0">Search</a>
+    <a href="#user" tabindex="0">User Panel</a>
+  </nav>
+
   <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-   <!-- Hero Section -->
-   <section class="mb-12 text-center">
-    <h2 class="text-4xl font-semibold text-white mb-2 tracking-wide">
-     Welcome to WaifuVerse
-    </h2>
-    <p class="text-gray-400 max-w-2xl mx-auto">
-     Discover, manage, and trade your favorite anime characters with the ultimate professional platform.
-    </p>
-   </section>
-   <!-- Animes Section -->
-   <section class="mb-16" id="animes">
-    <h3 class="text-2xl font-semibold text-white mb-6 border-b border-gray-700 pb-2">
-     Animes Collection
-    </h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="animes-list">
-     <!-- Anime cards will be dynamically inserted here -->
-    </div>
-   </section>
-   <!-- Characters Section -->
-   <section class="mb-16" id="characters">
-    <h3 class="text-2xl font-semibold text-white mb-6 border-b border-gray-700 pb-2">
-     Characters Gallery
-    </h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="characters-list">
-     <!-- Character cards will be dynamically inserted here -->
-    </div>
-   </section>
-   <!-- Search Section -->
-   <section class="mb-16" id="search">
-    <h3 class="text-2xl font-semibold text-white mb-6 border-b border-gray-700 pb-2">
-     Search Characters &amp; Animes
-    </h3>
-    <form class="flex flex-col sm:flex-row gap-4 max-w-3xl mx-auto" id="search-form">
-     <input autocomplete="off" class="flex-grow rounded-md bg-gray-900 border border-gray-700 text-gray-200 placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="search-input" placeholder="Search by character or anime name..." type="text"/>
-     <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-6 py-2 transition" type="submit">
-      <i class="fas fa-search mr-2">
-      </i>
-      Search
-     </button>
-    </form>
-    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="search-results">
-    </div>
-   </section>
-   <!-- User Panel Section -->
-   <section class="mb-16 max-w-3xl mx-auto" id="user">
-    <h3 class="text-2xl font-semibold text-white mb-6 border-b border-gray-700 pb-2">
-     User Panel
-    </h3>
-    <form class="flex flex-col gap-4 mb-8" id="user-auth-form">
-     <label class="text-gray-300 text-sm font-medium" for="auth-token">
-      Authorization Token
-     </label>
-     <input autocomplete="off" class="rounded-md bg-gray-900 border border-gray-700 text-gray-200 placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="auth-token" placeholder="Enter your API Authorization token" required="" type="password"/>
-     <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md px-6 py-2 transition" type="submit">
-      Authenticate
-     </button>
-    </form>
-    <div class="hidden flex flex-col gap-6" id="user-actions">
-     <div>
-      <h4 class="text-lg font-semibold text-white mb-2">
-       Add New Anime
-      </h4>
-      <form class="flex flex-col gap-3" id="add-anime-form">
-       <input class="rounded-md bg-gray-900 border border-gray-700 text-gray-200 placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="anime-name" placeholder="Anime Name" required="" type="text"/>
-       <input class="rounded-md bg-gray-900 border border-gray-700 text-gray-200 placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="anime-image" placeholder="Anime Image URL" required="" type="url"/>
-       <button class="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md px-6 py-2 transition" type="submit">
-        Add Anime
-       </button>
+    <section class="mb-12 text-center" aria-label="Welcome section">
+      <h2 class="text-4xl font-semibold text-white mb-2 tracking-wide select-none">
+        Welcome to WaifuVerse
+      </h2>
+      <p class="text-gray-400 max-w-2xl mx-auto select-text">
+        Discover, manage, and trade your favorite anime characters with the ultimate professional platform.
+      </p>
+    </section>
+
+    <section id="animes" class="mb-16" aria-label="Animes collection">
+      <h3>Animes Collection</h3>
+      <div id="animes-list" class="grid-cards" role="list" aria-live="polite" aria-busy="false"></div>
+    </section>
+
+    <section id="characters" class="mb-16" aria-label="Characters gallery">
+      <h3>Characters Gallery</h3>
+      <div id="characters-list" class="grid-cards" role="list" aria-live="polite" aria-busy="false"></div>
+    </section>
+
+    <section id="search" class="mb-16" aria-label="Search characters and animes">
+      <h3>Search Characters &amp; Animes</h3>
+      <form id="search-form" class="flex flex-col sm:flex-row gap-4 max-w-3xl mx-auto" role="search" aria-label="Search form">
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Search by character or anime name..."
+          autocomplete="off"
+          aria-label="Search input"
+          required
+        />
+        <button type="submit" aria-label="Search button" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded px-6 py-2">
+          <i class="fas fa-search mr-2"></i>Search
+        </button>
       </form>
-     </div>
-     <div>
-      <h4 class="text-lg font-semibold text-white mb-2">
-       Add New Character
-      </h4>
-      <form class="flex flex-col gap-3" id="add-character-form">
-       <input class="rounded-md bg-gray-900 border border-gray-700 text-gray-200 placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="character-anime-id" placeholder="Anime ID" required="" type="text"/>
-       <input class="rounded-md bg-gray-900 border border-gray-700 text-gray-200 placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="character-name" placeholder="Character Name" required="" type="text"/>
-       <input class="rounded-md bg-gray-900 border border-gray-700 text-gray-200 placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="character-image" placeholder="Character Image URL" required="" type="url"/>
-       <select class="rounded-md bg-gray-900 border border-gray-700 text-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="character-grade" required="">
-        <option disabled="" selected="" value="">
-         Select Grade
-        </option>
-        <option value="1">
-         Peachling 🍀
-        </option>
-        <option value="2">
-         Charmete 💠
-        </option>
-        <option value="3">
-         Mystata ⚜️
-        </option>
-        <option value="4">
-         Celestique 👑
-        </option>
-        <option value="5">
-         Eclipse 💎
-        </option>
-       </select>
-       <input class="rounded-md bg-gray-900 border border-gray-700 text-gray-200 placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="character-role" placeholder="Role (e.g. Wintertime, Mermaid, Enchantress)" required="" type="text"/>
-       <button class="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md px-6 py-2 transition" type="submit">
-        Add Character
-       </button>
+      <div id="search-results" class="grid-cards mt-8" role="list" aria-live="polite" aria-busy="false"></div>
+    </section>
+
+    <section id="user" class="mb-16 max-w-3xl mx-auto" aria-label="User panel">
+      <h3>User Panel</h3>
+      <form id="user-auth-form" class="flex flex-col gap-4" aria-label="User authentication form">
+        <label for="auth-token">Authorization Token</label>
+        <input
+          id="auth-token"
+          type="password"
+          placeholder="Enter your API Authorization token"
+          autocomplete="off"
+          required
+          aria-required="true"
+        />
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded px-6 py-2">
+          Authenticate
+        </button>
       </form>
-     </div>
-    </div>
-   </section>
+
+      <div id="user-actions" class="hidden flex flex-col gap-8 mt-8" aria-live="polite">
+        <div aria-label="Add new anime">
+          <h4 class="text-lg font-semibold text-white mb-2 select-none">Add New Anime</h4>
+          <form id="add-anime-form" class="flex flex-col gap-3" aria-label="Add anime form">
+            <input
+              id="anime-name"
+              type="text"
+              placeholder="Anime Name"
+              autocomplete="off"
+              required
+              aria-required="true"
+              aria-label="Anime name"
+            />
+            <input
+              id="anime-image"
+              type="url"
+              placeholder="Anime Image URL"
+              autocomplete="off"
+              required
+              aria-required="true"
+              aria-label="Anime image URL"
+            />
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white rounded px-6 py-2">
+              Add Anime
+            </button>
+          </form>
+        </div>
+
+        <div aria-label="Add new character">
+          <h4 class="text-lg font-semibold text-white mb-2 select-none">Add New Character</h4>
+          <form id="add-character-form" class="flex flex-col gap-3" aria-label="Add character form">
+            <input
+              id="character-anime-id"
+              type="text"
+              placeholder="Anime ID"
+              autocomplete="off"
+              required
+              aria-required="true"
+              aria-label="Anime ID"
+            />
+            <input
+              id="character-name"
+              type="text"
+              placeholder="Character Name"
+              autocomplete="off"
+              required
+              aria-required="true"
+              aria-label="Character name"
+            />
+            <input
+              id="character-image"
+              type="url"
+              placeholder="Character Image URL"
+              autocomplete="off"
+              required
+              aria-required="true"
+              aria-label="Character image URL"
+            />
+            <label for="character-grade">Grade</label>
+            <select id="character-grade" aria-required="true" aria-label="Select grade" required>
+              <option value="" disabled selected>Select Grade</option>
+              <option value="1">Peachling 🍀</option>
+              <option value="2">Charmete 💠</option>
+              <option value="3">Mystata ⚜️</option>
+              <option value="4">Celestique 👑</option>
+              <option value="5">Eclipse 💎</option>
+            </select>
+            <label for="character-role">Role</label>
+            <select id="character-role" aria-required="true" aria-label="Select role" required>
+              <option value="" disabled selected>Select Role</option>
+            </select>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white rounded px-6 py-2">
+              Add Character
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
   </main>
-  <footer class="bg-black bg-opacity-90 border-t border-gray-800 py-6 text-center text-gray-500 text-xs select-none">
-   © 2024 WaifuVerse. All rights reserved.
+
+  <footer>
+    © 2025 WaifuVerse. All rights reserved.
   </footer>
+
+  <div id="toast-container" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
   <script>
-   // Mobile menu toggle
-    const mobileMenuBtn = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    mobileMenuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
+    (() => {
+      "use strict";
 
-    // API base and auth token management
-    const API_BASE = 'https://arrivals-com-challenging-red.trycloudflare.com';
-    let AUTH_TOKEN = '';
+      // Toast system
+      const toastContainer = document.getElementById("toast-container");
+      function showToast(message, type = "success", duration = 4000) {
+        const toast = document.createElement("div");
+        toast.className = `toast toast-${type}`;
+        toast.setAttribute("role", "alert");
+        toast.setAttribute("tabindex", "0");
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        toast.focus();
 
-    // Elements
-    const animesList = document.getElementById('animes-list');
-    const charactersList = document.getElementById('characters-list');
-    const searchForm = document.getElementById('search-form');
-    const searchInput = document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results');
-    const userAuthForm = document.getElementById('user-auth-form');
-    const authTokenInput = document.getElementById('auth-token');
-    const userActions = document.getElementById('user-actions');
-    const addAnimeForm = document.getElementById('add-anime-form');
-    const addCharacterForm = document.getElementById('add-character-form');
+        function removeToast() {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+          }
+        }
 
-    // Helper: fetch with auth header
-    async function apiFetch(endpoint, options = {}) {
-      if (!AUTH_TOKEN) throw new Error('Not authenticated');
-      options.headers = {
-        ...options.headers,
-        Authorization: AUTH_TOKEN,
-        'Content-Type': 'application/json',
+        toast.addEventListener("click", removeToast);
+        setTimeout(() => {
+          toast.classList.add("fade-out");
+          removeToast();
+        }, duration);
+      }
+
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById("mobile-menu-button");
+      const mobileMenu = document.getElementById("mobile-menu");
+      mobileMenuBtn.addEventListener("click", () => {
+        const expanded = mobileMenuBtn.getAttribute("aria-expanded") === "true";
+        mobileMenuBtn.setAttribute("aria-expanded", String(!expanded));
+        if (mobileMenu.hasAttribute("hidden")) {
+          mobileMenu.removeAttribute("hidden");
+        } else {
+          mobileMenu.setAttribute("hidden", "");
+        }
+      });
+
+      // API base and auth token management
+      const API_BASE = "https://arrivals-com-challenging-red.trycloudflare.com";
+      let AUTH_TOKEN = "";
+
+      // Elements
+      const animesList = document.getElementById("animes-list");
+      const charactersList = document.getElementById("characters-list");
+      const searchForm = document.getElementById("search-form");
+      const searchInput = document.getElementById("search-input");
+      const searchResults = document.getElementById("search-results");
+      const userAuthForm = document.getElementById("user-auth-form");
+      const authTokenInput = document.getElementById("auth-token");
+      const userActions = document.getElementById("user-actions");
+      const addAnimeForm = document.getElementById("add-anime-form");
+      const addCharacterForm = document.getElementById("add-character-form");
+      const characterGradeSelect = document.getElementById("character-grade");
+      const characterRoleSelect = document.getElementById("character-role");
+
+      // Grade to roles mapping
+      const GRADE_ROLES = {
+        "1": [""],
+        "2": ["Wintertime", "Summertime", "Yukata", "Rock Band", "Rainy"],
+        "3": ["Mermaid", "Hangout", "Shinobi", "Fiancée", "Abbess"],
+        "4": ["Melancholia", "Catgirl", "Elegant", "Candlelight"],
+        "5": ["Enchantress", "Seraphic", "Fiendish", "Arabian Nights"],
       };
-      const res = await fetch(API_BASE + endpoint, options);
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || 'API error');
-      }
-      return res.json();
-    }
 
-    // Load all animes
-    async function loadAnimes() {
-      try {
-        const data = await apiFetch('/get_all_anime', { method: 'GET' });
-        animesList.innerHTML = '';
-        if (!data.animes || data.animes.length === 0) {
-          animesList.innerHTML = '<p class="text-gray-500 col-span-full text-center">No animes found.</p>';
-          return;
+      // Helper: fetch with auth header
+      async function apiFetch(endpoint, options = {}) {
+        if (!AUTH_TOKEN) throw new Error("Not authenticated");
+        options.headers = {
+          ...options.headers,
+          Authorization: AUTH_TOKEN,
+          "Content-Type": "application/json",
+        };
+        const res = await fetch(API_BASE + endpoint, options);
+        if (!res.ok) {
+          let err = {};
+          try {
+            err = await res.json();
+          } catch {}
+          throw new Error(err.error || "API error");
         }
-        data.animes.forEach((anime) => {
-          const card = document.createElement('div');
-          card.className = 'bg-gray-900 rounded-lg shadow-md overflow-hidden flex flex-col';
-          card.innerHTML = `
-            <img
-              src="${anime.anime_image}"
-              alt="Anime cover image for ${anime.anime_name}, vibrant anime style artwork"
-              class="w-full h-48 object-cover"
-              loading="lazy"
-            />
-            <div class="p-4 flex flex-col flex-grow">
-              <h4 class="text-white font-semibold text-lg mb-1 truncate">${anime.anime_name}</h4>
-              <p class="text-gray-400 text-xs mb-2">ID: ${anime.id}</p>
-              <button data-id="${anime.id}" class="mt-auto bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-1 rounded transition open-characters-btn">
-                View Characters
-              </button>
-            </div>
-          `;
-          animesList.appendChild(card);
-        });
-      } catch (e) {
-        animesList.innerHTML = `<p class="text-red-500 col-span-full text-center">Failed to load animes: ${e.message}</p>`;
+        return res.json();
       }
-    }
 
-    // Load characters for an anime
-    async function loadCharacters(animeId) {
-      try {
-        const data = await apiFetch(`/get_characters_by_anime?anime_id=${encodeURIComponent(animeId)}`, { method: 'GET' });
-        charactersList.innerHTML = '';
-        if (!data.characters || data.characters.length === 0) {
-          charactersList.innerHTML = '<p class="text-gray-500 col-span-full text-center">No characters found for this anime.</p>';
-          return;
+      // Clear container helper
+      function clearContainer(container) {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
         }
-        data.characters.forEach((char) => {
-          const card = document.createElement('div');
-          card.className = 'bg-gray-900 rounded-lg shadow-md overflow-hidden flex flex-col';
-          card.innerHTML = `
-            <img
-              src="${char.img_url}"
-              alt="Character image of ${char.character_name}, anime style portrait with detailed features"
-              class="w-full h-48 object-cover"
-              loading="lazy"
-            />
-            <div class="p-4 flex flex-col flex-grow">
-              <h4 class="text-white font-semibold text-lg mb-1 truncate">${char.character_name}</h4>
-              <p class="text-gray-400 text-xs mb-1">Role: ${char.role}</p>
-              <p class="text-gray-400 text-xs mb-2">Grade: ${char.grade.type} ${char.grade.icon}</p>
-              <p class="text-gray-400 text-xs mb-2">ID: ${char.id}</p>
-            </div>
-          `;
-          charactersList.appendChild(card);
-        });
-        // Scroll to characters section
-        charactersList.scrollIntoView({ behavior: 'smooth' });
-      } catch (e) {
-        charactersList.innerHTML = `<p class="text-red-500 col-span-full text-center">Failed to load characters: ${e.message}</p>`;
       }
-    }
 
-    // Search handler
-    searchForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const query = searchInput.value.trim();
-      if (!query) return;
-      searchResults.innerHTML = '<p class="text-gray-400 col-span-full text-center">Searching...</p>';
-      try {
-        // Search characters by name
-        const charactersData = await apiFetch(`/search_character_from_anime?character_name=${encodeURIComponent(query)}`, { method: 'GET' });
-        // Search anime by name
-        let animeData = null;
+      // Create anime card element
+      function createAnimeCard(anime) {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.setAttribute("role", "listitem");
+        card.tabIndex = 0;
+        card.innerHTML = `
+          <img
+            src="${anime.anime_image}"
+            alt="Anime cover image for ${anime.anime_name}, vibrant anime style artwork"
+            loading="lazy"
+            decoding="async"
+            width="224"
+            height="192"
+          />
+          <div class="card-content">
+            <h4 class="card-title" title="${anime.anime_name}">${anime.anime_name}</h4>
+            <p class="card-subtitle">ID: ${anime.id}</p>
+            <button class="card-button" aria-label="View characters of ${anime.anime_name}" data-id="${anime.id}">View Characters</button>
+          </div>
+        `;
+        return card;
+      }
+
+      // Create character card element
+      function createCharacterCard(char) {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.setAttribute("role", "listitem");
+        card.tabIndex = 0;
+        card.innerHTML = `
+          <img
+            src="${char.img_url}"
+            alt="Character image of ${char.character_name}, anime style portrait with detailed features"
+            loading="lazy"
+            decoding="async"
+            width="224"
+            height="192"
+          />
+          <div class="card-content">
+            <h4 class="card-title" title="${char.character_name}">${char.character_name}</h4>
+            <p class="card-subtitle">Role: ${char.role}</p>
+            <p class="card-subtitle">Grade: ${char.grade.type} ${char.grade.icon}</p>
+            <p class="card-subtitle">ID: ${char.id}</p>
+          </div>
+        `;
+        return card;
+      }
+
+      // Load all animes
+      async function loadAnimes() {
+        animesList.setAttribute("aria-busy", "true");
+        clearContainer(animesList);
         try {
-          animeData = await apiFetch(`/get_anime_by_name?anime_name=${encodeURIComponent(query)}`, { method: 'GET' });
-        } catch {
-          animeData = null;
+          const data = await apiFetch("/get_all_anime", { method: "GET" });
+          if (!data.animes || data.animes.length === 0) {
+            animesList.innerHTML =
+              '<p class="text-gray-500 col-span-full text-center select-text">No animes found.</p>';
+            return;
+          }
+          data.animes.forEach((anime) => {
+            const card = createAnimeCard(anime);
+            animesList.appendChild(card);
+          });
+        } catch (e) {
+          animesList.innerHTML = `<p class="text-red-500 col-span-full text-center select-text">Failed to load animes: ${e.message}</p>`;
+          showToast(`Failed to load animes: ${e.message}`, "error");
+        } finally {
+          animesList.removeAttribute("aria-busy");
         }
-        searchResults.innerHTML = '';
-        if ((!charactersData.characters || charactersData.characters.length === 0) && !animeData) {
-          searchResults.innerHTML = '<p class="text-gray-500 col-span-full text-center">No results found.</p>';
+      }
+
+      // Load characters for an anime
+      async function loadCharacters(animeId) {
+        charactersList.setAttribute("aria-busy", "true");
+        clearContainer(charactersList);
+        try {
+          const data = await apiFetch(
+            `/get_characters_by_anime?anime_id=${encodeURIComponent(animeId)}`,
+            { method: "GET" }
+          );
+          if (!data.characters || data.characters.length === 0) {
+            charactersList.innerHTML =
+              '<p class="text-gray-500 col-span-full text-center select-text">No characters found for this anime.</p>';
+            return;
+          }
+          data.characters.forEach((char) => {
+            const card = createCharacterCard(char);
+            charactersList.appendChild(card);
+          });
+          charactersList.scrollIntoView({ behavior: "smooth" });
+        } catch (e) {
+          charactersList.innerHTML = `<p class="text-red-500 col-span-full text-center select-text">Failed to load characters: ${e.message}</p>`;
+          showToast(`Failed to load characters: ${e.message}`, "error");
+        } finally {
+          charactersList.removeAttribute("aria-busy");
+        }
+      }
+
+      // Search handler
+      searchForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        if (!query) return;
+        searchResults.setAttribute("aria-busy", "true");
+        clearContainer(searchResults);
+        searchResults.innerHTML =
+          '<p class="text-gray-400 col-span-full text-center select-text">Searching...</p>';
+        try {
+          const charactersData = await apiFetch(
+            `/search_character_from_anime?character_name=${encodeURIComponent(query)}`,
+            { method: "GET" }
+          );
+          let animeData = null;
+          try {
+            animeData = await apiFetch(
+              `/get_anime_by_name?anime_name=${encodeURIComponent(query)}`,
+              { method: "GET" }
+            );
+          } catch {
+            animeData = null;
+          }
+          clearContainer(searchResults);
+          if (
+            (!charactersData.characters || charactersData.characters.length === 0) &&
+            !animeData
+          ) {
+            searchResults.innerHTML =
+              '<p class="text-gray-500 col-span-full text-center select-text">No results found.</p>';
+            return;
+          }
+          if (animeData && animeData.anime) {
+            const anime = animeData.anime;
+            const animeCard = createAnimeCard(anime);
+            searchResults.appendChild(animeCard);
+          }
+          if (charactersData.characters && charactersData.characters.length > 0) {
+            charactersData.characters.forEach((char) => {
+              const charCard = createCharacterCard(char);
+              searchResults.appendChild(charCard);
+            });
+          }
+        } catch (e) {
+          clearContainer(searchResults);
+          searchResults.innerHTML = `<p class="text-red-500 col-span-full text-center select-text">Search failed: ${e.message}</p>`;
+          showToast(`Search failed: ${e.message}`, "error");
+        } finally {
+          searchResults.removeAttribute("aria-busy");
+        }
+      });
+
+      // Delegate click for "View Characters" buttons in animes and search results
+      document.body.addEventListener("click", (e) => {
+        const btn = e.target.closest(".card-button");
+        if (btn && btn.dataset.id) {
+          loadCharacters(btn.dataset.id);
+          document.getElementById("characters").scrollIntoView({ behavior: "smooth" });
+        }
+      });
+
+      // User authentication form
+      userAuthForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const token = authTokenInput.value.trim();
+        if (!token) {
+          showToast("Authorization token is required", "error");
           return;
         }
-        // Show anime if found
-        if (animeData && animeData.anime) {
-          const anime = animeData.anime;
-          const animeCard = document.createElement('div');
-          animeCard.className = 'bg-gray-900 rounded-lg shadow-md overflow-hidden flex flex-col';
-          animeCard.innerHTML = `
-            <img
-              src="${anime.anime_image}"
-              alt="Anime cover image for ${anime.anime_name}, vibrant anime style artwork"
-              class="w-full h-48 object-cover"
-              loading="lazy"
-            />
-            <div class="p-4 flex flex-col flex-grow">
-              <h4 class="text-white font-semibold text-lg mb-1 truncate">${anime.anime_name}</h4>
-              <p class="text-gray-400 text-xs mb-2">ID: ${anime.id}</p>
-              <button data-id="${anime.id}" class="mt-auto bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-1 rounded transition open-characters-btn">
-                View Characters
-              </button>
-            </div>
-          `;
-          searchResults.appendChild(animeCard);
-        }
-        // Show characters if found
-        if (charactersData.characters && charactersData.characters.length > 0) {
-          charactersData.characters.forEach((char) => {
-            const charCard = document.createElement('div');
-            charCard.className = 'bg-gray-900 rounded-lg shadow-md overflow-hidden flex flex-col';
-            charCard.innerHTML = `
-              <img
-                src="${char.img_url}"
-                alt="Character image of ${char.character_name}, anime style portrait with detailed features"
-                class="w-full h-48 object-cover"
-                loading="lazy"
-              />
-              <div class="p-4 flex flex-col flex-grow">
-                <h4 class="text-white font-semibold text-lg mb-1 truncate">${char.character_name}</h4>
-                <p class="text-gray-400 text-xs mb-1">Role: ${char.role}</p>
-                <p class="text-gray-400 text-xs mb-2">Grade: ${char.grade.type} ${char.grade.icon}</p>
-                <p class="text-gray-400 text-xs mb-2">ID: ${char.id}</p>
-              </div>
-            `;
-            searchResults.appendChild(charCard);
-          });
-        }
-      } catch (e) {
-        searchResults.innerHTML = `<p class="text-red-500 col-span-full text-center">Search failed: ${e.message}</p>`;
-      }
-    });
-
-    // Delegate click for "View Characters" buttons in animes and search results
-    document.body.addEventListener('click', (e) => {
-      if (e.target.closest('.open-characters-btn')) {
-        const btn = e.target.closest('.open-characters-btn');
-        const animeId = btn.getAttribute('data-id');
-        if (animeId) {
-          loadCharacters(animeId);
-          // Scroll to characters section
-          document.getElementById('characters').scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    });
-
-    // User authentication form
-    userAuthForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const token = authTokenInput.value.trim();
-      if (!token) return;
-      AUTH_TOKEN = token;
-      userActions.classList.remove('hidden');
-      userAuthForm.classList.add('hidden');
-      loadAnimes();
-      charactersList.innerHTML = '';
-      searchResults.innerHTML = '';
-    });
-
-    // Add Anime form submission
-    addAnimeForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const animeName = document.getElementById('anime-name').value.trim();
-      const animeImage = document.getElementById('anime-image').value.trim();
-      if (!animeName || !animeImage) return;
-      try {
-        await apiFetch('/create_anime', {
-          method: 'POST',
-          body: JSON.stringify({ anime_name: animeName, anime_image: animeImage }),
-        });
-        alert('Anime added successfully!');
-        addAnimeForm.reset();
+        AUTH_TOKEN = token;
+        userActions.classList.remove("hidden");
+        userAuthForm.classList.add("hidden");
         loadAnimes();
-      } catch (err) {
-        alert('Failed to add anime: ' + err.message);
-      }
-    });
+        clearContainer(charactersList);
+        clearContainer(searchResults);
+        showToast("Authenticated successfully", "success");
+      });
 
-    // Add Character form submission
-    addCharacterForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const animeId = document.getElementById('character-anime-id').value.trim();
-      const characterName = document.getElementById('character-name').value.trim();
-      const imgUrl = document.getElementById('character-image').value.trim();
-      const grade = document.getElementById('character-grade').value;
-      const role = document.getElementById('character-role').value.trim();
-      if (!animeId || !characterName || !imgUrl || !grade || !role) return;
-      try {
-        await apiFetch('/add_character', {
-          method: 'POST',
-          body: JSON.stringify({
-            anime_id: animeId,
-            character_name: characterName,
-            img_url: imgUrl,
-            role: role,
-            grade: grade,
-          }),
+      // Add Anime form submission
+      addAnimeForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const animeName = document.getElementById("anime-name").value.trim();
+        const animeImage = document.getElementById("anime-image").value.trim();
+        if (!animeName || !animeImage) {
+          showToast("Anime name and image URL are required", "error");
+          return;
+        }
+        try {
+          await apiFetch("/create_anime", {
+            method: "POST",
+            body: JSON.stringify({ anime_name: animeName, anime_image: animeImage }),
+          });
+          showToast("Anime added successfully!", "success");
+          addAnimeForm.reset();
+          loadAnimes();
+        } catch (err) {
+          showToast("Failed to add anime: " + err.message, "error");
+        }
+      });
+
+      // Add Character form submission
+      addCharacterForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const animeId = document.getElementById("character-anime-id").value.trim();
+        const characterName = document.getElementById("character-name").value.trim();
+        const imgUrl = document.getElementById("character-image").value.trim();
+        const grade = characterGradeSelect.value;
+        const role = characterRoleSelect.value;
+        if (!animeId || !characterName || !imgUrl || !grade || !role) {
+          showToast("All character fields are required", "error");
+          return;
+        }
+        try {
+          await apiFetch("/add_character", {
+            method: "POST",
+            body: JSON.stringify({
+              anime_id: animeId,
+              character_name: characterName,
+              img_url: imgUrl,
+              role: role,
+              grade: grade,
+            }),
+          });
+          showToast("Character added successfully!", "success");
+          addCharacterForm.reset();
+          characterRoleSelect.innerHTML = '<option value="" disabled selected>Select Role</option>';
+          loadCharacters(animeId);
+        } catch (err) {
+          showToast("Failed to add character: " + err.message, "error");
+        }
+      });
+
+      // Update roles dropdown based on grade selection
+      characterGradeSelect.addEventListener("change", () => {
+        const grade = characterGradeSelect.value;
+        const roles = GRADE_ROLES[grade] || [];
+        characterRoleSelect.innerHTML = "";
+        if (roles.length === 0) {
+          characterRoleSelect.innerHTML =
+            '<option value="" disabled selected>No roles available</option>';
+          characterRoleSelect.disabled = true;
+          return;
+        }
+        characterRoleSelect.disabled = false;
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "Select Role";
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        characterRoleSelect.appendChild(defaultOption);
+        roles.forEach((role) => {
+          if (role.trim() === "") return; // skip empty role for Peachling
+          const option = document.createElement("option");
+          option.value = role;
+          option.textContent = role;
+          characterRoleSelect.appendChild(option);
         });
-        alert('Character added successfully!');
-        addCharacterForm.reset();
-        loadCharacters(animeId);
-      } catch (err) {
-        alert('Failed to add character: ' + err.message);
-      }
-    });
+      });
+
+      // Initialize roles dropdown disabled
+      characterRoleSelect.disabled = true;
+
+      // Initial load: nothing until auth
+
+      // Accessibility: trap focus in mobile menu when open (optional enhancement)
+    })();
   </script>
- </body>
+</body>
 </html>
