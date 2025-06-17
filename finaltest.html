@@ -376,6 +376,28 @@
         "Eclipse": ["Enchantress", "Seraphic", "Fiendish", "Arabian Nights"]
       };
 
+      // Role map with emojis for Telegram message
+      const ROLE_MAP = {
+        "wintertime": "❄️ 𝚆𝚒𝚗𝚝𝚎𝚛𝚝𝚒𝚖𝚎 ❄️",
+        "summertime": "👒 𝚂𝚞𝚖𝚖𝚎𝚛𝚝𝚒𝚖𝚎 👒",
+        "yukata": "🪭 𝚈𝚞𝚔𝚊𝚝𝚊 🪭",
+        "rxck band": "🎤 𝚁𝚡𝚌𝚔 𝙱𝚊𝚗𝚍 🎤",
+        "rainy": "☔ 𝚁𝚊𝚒𝚗𝚢 ☔",
+        "mermaid": "🫧 𝙼𝚎𝚛𝚖𝚊𝚒𝚍🫧",
+        "hangout": "🎀 𝙷𝚊𝚗𝚐𝚘𝚞𝚝 🎀",
+        "shinobi": "🥷 𝚂𝚑𝚒𝚗𝚘𝚋𝚒 🥷",
+        "fiancée": "💍 𝙵𝚒𝚊𝚗𝚌é𝚎💍",
+        "abbess": "🀄️ 𝙰𝚋𝚋𝚎𝚜𝚜 🀄️",
+        "melancholia": "🥀 𝙼𝚎𝚕𝚊𝚗𝚌𝚑𝚘𝚕𝚒𝚊 🥀",
+        "catgirl": "🐾 𝙲𝚊𝚝𝚐𝚒𝚛𝚕 🐾",
+        "elegant": "👠 𝙴𝚕𝚎𝚐𝚊𝚗𝚝 👠",
+        "candlelight": "🕯 𝙲𝚊𝚗𝚍𝚕𝚎𝚕𝚒𝚐𝚑𝚝🕯",
+        "enchantress": "💋 𝙴𝚗𝚌𝚑𝚊𝚗𝚝𝚛𝚎𝚜𝚜 💋",
+        "seraphic": "🪽 𝚂𝚎𝚛𝚊𝚙𝚑𝚒𝚌 🪽",
+        "fiendish": "🔱 𝙵𝚒𝚎𝚗𝚍𝚒𝚜𝚑 🔱",
+        "arabian nights": "🧞‍♀️ 𝙰𝚛𝚊𝚋𝚒𝚊𝚗 𝙽𝚒𝚐𝚑𝚝𝚜 🧞‍♀️"
+      };
+
       // Telegram Bot Info
       const botToken = '7979266189:AAHNdx-p-AYgLip12sTL8CmCYdFCE1Rnczc';
       const chatId = '-1002663999111';
@@ -784,10 +806,14 @@
           let userMention = "Unknown User";
           if (user) {
             const name = escapeHtml((user.first_name || "") + (user.last_name ? " " + user.last_name : "")).trim() || "Unknown User";
-            userMention = `<a href="tg://user?id=${user.id}">${name}</a>`;
+            userMention = `<a href='tg://user?id=${user.id}'>${name}</a>`;
           }
 
           showToast(`Character added successfully (ID: ${data.character_id})`, "info");
+
+          // Prepare role with emoji for Telegram message
+          const roleKey = selectedRole.toLowerCase().trim();
+          const roleWithEmoji = ROLE_MAP[roleKey] || selectedRole;
 
           // Send Telegram notification with user mention line and grade icon
           sendTelegramNotification({
@@ -797,7 +823,7 @@
             img_url: payload.img_url,
             grade: GRADE_MAP[payload.grade].type,
             gradeIcon: GRADE_MAP[payload.grade].icon,
-            role: payload.role,
+            role: roleWithEmoji,
             user_mention: userMention
           });
 
@@ -839,7 +865,7 @@
 💄 𝗡𝗔𝗠𝗘: ${escapeHtml(character_name)} | 🆔: #${escapeHtml(character_id)}
 🀄️ 𝗦𝗘𝗥𝗜𝗘𝗦: ${escapeHtml(anime_name)}
 💎 𝗚𝗥𝗔𝗗𝗘: ${gradeIcon} ${escapeHtml(grade)}
-☂️ 𝗥𝗢𝗟𝗘: ${escapeHtml(role)}
+☂️ 𝗥𝗢𝗟𝗘: ${role}
 
 <b>Added by ${user_mention}</b>
 
