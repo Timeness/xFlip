@@ -81,7 +81,7 @@
       linkDiv.innerHTML = "Uploading...";
 
       try {
-        const response = await fetch("https://catboxapi.vercel.app/upload", {
+        const response = await fetch("https://catboxapi.vercel.app/api/upload", {
           method: "POST",
           body: formData,
         });
