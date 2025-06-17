@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimate Crypto Deep Dive</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-gray-100 antialiased">
+  <div class="min-h-screen grid grid-cols-1 lg:grid-cols-4">
+    <!-- Sidebar: Coin Rankings -->
+    <aside class="lg:col-span-1 p-4 border-r border-gray-700">
+      <h2 class="text-xl font-bold text-yellow-400 mb-4">📊 Top Coins</h2>
+      <div id="coin-list" class="space-y-2 text-sm">Loading…</div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:col-span-3 p-4 space-y-8">
+      <!-- Live Crypto News -->
+      <section>
+        <h1 class="text-3xl font-bold text-red-400">🔴 Live News Feed</h1>
+        <iframe src="https://cryptopanic.com/news/all/embed"
+                class="w-full h-96 my-4 border border-gray-700 rounded-lg"></iframe>
+      </section>
+
+      <!-- Tweets Alpha -->
+      <section>
+        <h2 class="text-2xl font-bold text-blue-400">🐦 Real-Time Alpha Tweets</h2>
+        <a class="twitter-timeline" data-theme="dark" data-height="500"
+           href="https://twitter.com/search?q=crypto%20airdrop%20OR%20testnet&ref_src=twsrc%5Etfw">
+          Tweets about crypto airdrop or testnet
+        </a>
+      </section>
+
+      <!-- Airdrops & Trackers Grid -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-xl font-semibold text-pink-400">🪂 Airdrops & Testnets</h3>
+          <ul class="list-disc list-inside text-gray-300">
+            <li><a href="https://defillama.com/airdrop" target="_blank">DeFiLlama List</a></li>
+            <li><a href="https://drophunter.io" target="_blank">DropHunter Tasks</a></li>
+            <li><a href="https://coinmarketcap.com/airdrop/" target="_blank">CMC Airdrops</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-green-400">🐳 Whale Watch</h3>
+          <iframe src="https://www.ddigest.com/whale-alert/embed" class="w-full h-48 border border-gray-700 rounded-lg"></iframe>
+        </div>
+      </section>
+
+      <!-- DeFi / NFT Trends -->
+      <section>
+        <h3 class="text-xl font-semibold text-purple-400">📈 DeFi & NFT Trends</h3>
+        <ul class="list-disc list-inside text-gray-300">
+          <li><a href="https://dappradar.com/rankings" target="_blank">DappRadar Trending</a></li>
+          <li><a href="https://theblock.co" target="_blank">The Block News</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer with Live Clock -->
+  <footer class="fixed bottom-0 left-0 w-full bg-gray-800 text-center py-2 text-sm text-gray-400">
+    Last updated: <span id="live-clock">--:--:--</span>
+  </footer>
+
+  <script async src="https://platform.twitter.com/widgets.js"></script>
+  <script>
+    // Live coin list fetch from CoinGecko
+    fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=5')
+      .then(r => r.json())
+      .then(data => {
+        const el = document.getElementById('coin-list');
+        el.innerHTML = data.map(c => `<div>${c.market_cap_rank}. ${c.name}: $${c.current_price.toLocaleString()}</div>`).join('');
+      });
+
+    // Live digital clock
+    function updateClock() {
+      document.getElementById('live-clock').innerText = new Date().toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
