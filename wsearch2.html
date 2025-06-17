@@ -12,72 +12,105 @@
   <style>
     body {
       font-family: 'Baloo 2', cursive;
-      background-color: #000000;
-      color: #ffffff;
+      background: url('https://cloudimgs.vercel.app/images/0xWCK07SIJ') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
       min-height: 100vh;
       margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 1rem;
+      color: #fff;
     }
-    .line-md--loading-twotone-loop {
-      display: inline-block;
-      width: 24px;
-      height: 24px;
-      --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath stroke-dasharray='16' stroke-dashoffset='16' d='M12 3c4.97 0 9 4.03 9 9'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' dur='0.3s' values='16;0'/%3E%3CanimateTransform attributeName='transform' dur='1.5s' repeatCount='indefinite' type='rotate' values='0 12 12;360 12 12'/%3E%3C/path%3E%3Cpath stroke-dasharray='64' stroke-dashoffset='64' stroke-opacity='0.3' d='M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' dur='1.2s' values='64;0'/%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
-      background-color: currentColor;
-      -webkit-mask-image: var(--svg);
-      mask-image: var(--svg);
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 0;
     }
-    a.buy-button {
-      display: inline-block;
-      margin-top: 1.5rem;
-      font-weight: 700;
-      font-size: 1.25rem;
-      color: #60a5fa;
-      text-decoration: none;
-      transition: color 0.3s ease;
-      padding: 0;
-      border: none;
-      background: none;
-      cursor: pointer;
+    #app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
     }
-    a.buy-button:hover {
-      color: #3b82f6;
+    .container {
+      background: rgba(18, 18, 18, 0.85);
+      border: 1px solid #374151; /* Tailwind gray-700 */
+      border-radius: 1rem;
+      overflow: hidden;
+      padding: 1.5rem 1.75rem;
+      box-sizing: border-box;
+      box-shadow: 0 0 15px rgb(37 99 235 / 0.5);
     }
     table {
       border-collapse: collapse;
       width: 100%;
       color: white;
+      font-size: 0.875rem; /* smaller font */
     }
     td {
       border: 1px solid #374151; /* Tailwind gray-700 */
-      padding: 0.75rem 1.5rem;
-      font-size: 1.125rem;
+      padding: 0.5rem 1rem;
       vertical-align: middle;
     }
     td:first-child {
       font-weight: 700;
-      width: 7rem;
+      width: 6.5rem;
+      font-size: 0.9rem;
+    }
+    .image-cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem 0;
     }
     .image-cell img {
-      width: 80px;
-      height: 100px;
+      width: 100px;
+      height: 130px;
       object-fit: cover;
+      border-radius: 0.75rem;
+      box-shadow: 0 0 12px #2563eb;
+      user-select: none;
+    }
+    .character-name {
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      gap: 0.5rem;
+    }
+    .grade-icon {
+      font-size: 1.75rem;
+      line-height: 1;
+    }
+    a.buy-button {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: #60a5fa;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      padding: 0.5rem 1.5rem;
       border-radius: 0.5rem;
-      box-shadow: 0 0 8px #2563eb;
+      background: rgba(255 255 255 / 0.1);
+      box-shadow: 0 0 10px rgb(96 165 250 / 0.6);
+      user-select: none;
+    }
+    a.buy-button:hover {
+      color: #3b82f6;
+      background: rgba(255 255 255 / 0.15);
+      box-shadow: 0 0 15px rgb(59 130 246 / 0.8);
     }
   </style>
 </head>
 <body>
-  <div class="rounded-xl border border-gray-700 overflow-hidden w-full max-w-md bg-[#121212] p-6">
-    <div id="content">
-      <!-- Content will be injected here -->
+  <div id="app">
+    <div class="container" id="content">
+      <!-- Content injected here -->
     </div>
   </div>
 
@@ -100,7 +133,6 @@
       return params.get("s");
     }
 
-    // Fetch character with anime details from new API route
     async function fetchCharacterWithAnime(characterId) {
       try {
         const url = new URL(API_BASE + "/get_character_with_anime");
@@ -160,8 +192,7 @@
     function createGradeIcon(icon) {
       const span = document.createElement("span");
       span.textContent = icon;
-      span.className = "mr-2";
-      span.style.fontSize = "1.5rem";
+      span.className = "grade-icon";
       return span;
     }
 
@@ -187,10 +218,7 @@
 
       container.innerHTML = "";
 
-      // Table container
-      const tableWrapper = document.createElement("div");
-      tableWrapper.className = "rounded-xl border border-gray-700 overflow-hidden bg-[#121212]";
-
+      // Create table
       const table = document.createElement("table");
       table.className = "table-fixed border-collapse w-full text-white";
 
@@ -205,14 +233,11 @@
       tdLabelImage.textContent = "Image";
 
       const tdImage = document.createElement("td");
-      tdImage.className = "px-6 py-3 image-cell flex justify-center";
+      tdImage.className = "image-cell";
 
       const img = document.createElement("img");
       img.src = characterData.img_url || "https://placehold.co/600x800?text=No+Image";
       img.alt = `Image of character ${characterData.character_name} from anime ${characterData.anime_name || "Unknown"}`;
-      img.width = 80;
-      img.height = 100;
-      img.className = "rounded-lg shadow-lg";
 
       tdImage.appendChild(img);
       trImage.appendChild(tdLabelImage);
@@ -228,7 +253,7 @@
       tdLabelName.textContent = "Character";
 
       const tdName = document.createElement("td");
-      tdName.className = "px-6 py-3 flex items-center text-lg font-semibold";
+      tdName.className = "character-name";
 
       if (characterData.grade?.icon) {
         const iconSpan = createGradeIcon(characterData.grade.icon);
@@ -306,21 +331,23 @@
       trGrade.appendChild(tdGrade);
       tbody.appendChild(trGrade);
 
-      // Role row
-      const trRole = document.createElement("tr");
-      trRole.className = "border-b border-gray-700";
+      // Conditionally add Role row only if role is not "Unknown" or empty
+      if (characterData.role && characterData.role.toLowerCase() !== "unknown") {
+        const trRole = document.createElement("tr");
+        trRole.className = "border-b border-gray-700";
 
-      const tdLabelRole = document.createElement("td");
-      tdLabelRole.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
-      tdLabelRole.textContent = "Role";
+        const tdLabelRole = document.createElement("td");
+        tdLabelRole.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
+        tdLabelRole.textContent = "Role";
 
-      const tdRole = document.createElement("td");
-      tdRole.className = "px-6 py-3 text-lg font-semibold";
-      tdRole.textContent = characterData.role || "Unknown";
+        const tdRole = document.createElement("td");
+        tdRole.className = "px-6 py-3 text-lg font-semibold";
+        tdRole.textContent = characterData.role;
 
-      trRole.appendChild(tdLabelRole);
-      trRole.appendChild(tdRole);
-      tbody.appendChild(trRole);
+        trRole.appendChild(tdLabelRole);
+        trRole.appendChild(tdRole);
+        tbody.appendChild(trRole);
+      }
 
       // Globally owned row
       const trOwned = document.createElement("tr");
@@ -338,10 +365,9 @@
       tbody.appendChild(trOwned);
 
       table.appendChild(tbody);
-      tableWrapper.appendChild(table);
-      container.appendChild(tableWrapper);
+      container.appendChild(table);
 
-      // Buy button as deep link
+      // Buy button as deep link with transparent box
       const buyLink = document.createElement("a");
       buyLink.href = "https://t.me/Waifu_verse_bot";
       buyLink.target = "_blank";
