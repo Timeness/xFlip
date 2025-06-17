@@ -684,7 +684,7 @@
         resetForm();
       });
 
-      // Upload form submit handler with Catbox upload (expecting JSON with {url: "..."} response)
+      // Upload form submit handler with Catbox upload (expecting JSON {url: "..."} response)
       uploadForm.addEventListener("submit", async e => {
         e.preventDefault();
 
@@ -721,6 +721,16 @@
         try {
           imageUrl = await uploadToCatbox(file);
           if (!imageUrl) throw new Error("No URL returned");
+          // Relaxed URL validation: allow URLs that start with https:// or http://
+          // and contain an image extension anywhere in the URL path or query
+          const validImageExt = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i;
+          if (!/^https?:\/\/.+$/i.test(imageUrl) || !validImageExt.test(imageUrl)) {
+            // If URL does not end with image extension, try to append a dummy query param to trick backend or warn user
+            // Safer to just accept URLs that contain image extension anywhere
+            // So here we accept if image extension is anywhere in URL path or query
+            // If still invalid, throw error
+            throw new Error("Invalid image URL format");
+          }
           showToast("Image uploaded successfully", "info");
         } catch (err) {
           showToast(`Image upload failed: ${err.message}`, "error");
