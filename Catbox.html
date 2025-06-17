@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catbox Image Uploader</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    #drop-area {
+      border: 2px dashed #888;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      background: #222;
+      cursor: pointer;
+    }
+    #drop-area.hover {
+      border-color: #0f0;
+    }
+    #link {
+      margin-top: 20px;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h2>Drop or Select Image to Upload</h2>
+  <div id="drop-area">
+    <p>Click or drag image here</p>
+    <input type="file" id="fileElem" accept="image/*" style="display:none" />
+  </div>
+  <div id="link"></div>
+
+  <script>
+    const dropArea = document.getElementById("drop-area");
+    const fileElem = document.getElementById("fileElem");
+    const linkDiv = document.getElementById("link");
+
+    dropArea.addEventListener("click", () => fileElem.click());
+
+    fileElem.addEventListener("change", () => {
+      if (fileElem.files.length) {
+        uploadFile(fileElem.files[0]);
+      }
+    });
+
+    dropArea.addEventListener("dragover", e => {
+      e.preventDefault();
+      dropArea.classList.add("hover");
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+      dropArea.classList.remove("hover");
+    });
+
+    dropArea.addEventListener("drop", e => {
+      e.preventDefault();
+      dropArea.classList.remove("hover");
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith("image/")) {
+        uploadFile(file);
+      } else {
+        alert("Only image files allowed.");
+      }
+    });
+
+    async function uploadFile(file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      linkDiv.innerHTML = "Uploading...";
+
+      try {
+        const response = await fetch("https://catboxapi.vercel.app/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const text = await response.text();
+        if (text.startsWith("http")) {
+          linkDiv.innerHTML = `<a href="${text}" target="_blank">${text}</a>`;
+        } else {
+          linkDiv.textContent = text;
+        }
+      } catch (err) {
+        linkDiv.textContent = "❌ Upload failed.";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
