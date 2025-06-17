@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WaifuVerse CSearch</title>
+  <title>WaifuVerse Character Search</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Puppets&display=swap"
@@ -102,7 +102,20 @@
         if (!data.character_data) {
           return null;
         }
-        return data.character_data;
+        // The API returns { character: {...}, anime: {...} }
+        // Flatten for easier use
+        const character = data.character_data.character || {};
+        const anime = data.character_data.anime || {};
+        return {
+          id: character.id,
+          character_name: character.character_name,
+          img_url: character.img_url,
+          role: character.role,
+          grade: character.grade,
+          anime_id: anime.id,
+          anime_name: anime.anime_name,
+          anime_image: anime.anime_image
+        };
       } catch (e) {
         console.error("Fetch error:", e);
         return null;
