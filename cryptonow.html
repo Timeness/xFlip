@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Crypto Alpha Hub</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <div class="max-w-4xl mx-auto p-4 space-y-8">
+    <h1 class="text-3xl font-bold text-yellow-400 text-center">💣 CRYPTO BOMB DASHBOARD 💣</h1>
+
+    <!-- 🔴 LIVE NEWS -->
+    <div>
+      <h2 class="text-xl font-semibold text-red-400 mb-2">🔴 Live Crypto News</h2>
+      <iframe src="https://cryptopanic.com/news/all/embed" class="w-full h-96 border-2 border-red-500 rounded-xl"></iframe>
+    </div>
+
+    <!-- 🐦 TWITTER ALPHA -->
+    <div>
+      <h2 class="text-xl font-semibold text-blue-400 mb-2">🐦 Top Crypto Tweets</h2>
+      <a class="twitter-timeline" data-theme="dark" data-height="500"
+         href="https://twitter.com/search?q=crypto%20airdrop%20OR%20testnet&ref_src=twsrc%5Etfw">
+        Tweets about crypto airdrop or testnet
+      </a>
+      <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    </div>
+
+    <!-- 🪂 AIRDROPS & TESTNETS -->
+    <div>
+      <h2 class="text-xl font-semibold text-pink-400 mb-2">🪂 Airdrops & Testnet Trackers</h2>
+      <ul class="list-disc list-inside space-y-1 text-gray-300">
+        <li><a href="https://defillama.com/airdrop" target="_blank" class="text-pink-300 hover:underline">DefiLlama Airdrop List</a></li>
+        <li><a href="https://drophunter.io" target="_blank" class="text-pink-300 hover:underline">DropHunter – Testnet Tasks</a></li>
+        <li><a href="https://coinmarketcap.com/airdrop/" target="_blank" class="text-pink-300 hover:underline">CMC Airdrops</a></li>
+      </ul>
+    </div>
+
+    <!-- 🐳 WHALE TRACKERS -->
+    <div>
+      <h2 class="text-xl font-semibold text-green-400 mb-2">🐳 Whale Wallet Trackers</h2>
+      <ul class="list-disc list-inside space-y-1 text-gray-300">
+        <li><a href="https://app.zerion.io" target="_blank" class="text-green-300 hover:underline">Zerion Feed</a></li>
+        <li><a href="https://debank.com/feed" target="_blank" class="text-green-300 hover:underline">Debank Feed</a></li>
+      </ul>
+    </div>
+
+    <!-- 📈 DEFI / NFT ALPHA -->
+    <div>
+      <h2 class="text-xl font-semibold text-purple-400 mb-2">📈 DeFi / NFT Alpha & Trending</h2>
+      <ul class="list-disc list-inside space-y-1 text-gray-300">
+        <li><a href="https://dappradar.com/rankings" target="_blank" class="text-purple-300 hover:underline">DappRadar Trending</a></li>
+        <li><a href="https://theblock.co" target="_blank" class="text-purple-300 hover:underline">The Block – Industry News</a></li>
+        <li><a href="https://cryptopanic.com" target="_blank" class="text-purple-300 hover:underline">CryptoPanic</a></li>
+      </ul>
+    </div>
+
+    <!-- 📌 FOOTER -->
+    <footer class="mt-10 text-center text-gray-500 text-sm">
+      🚀 Built for you | Last updated: <span id="date" class="text-white font-semibold"></span>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("date").innerText = new Date().toLocaleString();
+  </script>
+</body>
+</html>
