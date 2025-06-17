@@ -1,0 +1,365 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>WaifuVerse Character Search</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <style>
+    body {
+      font-family: 'Baloo 2', cursive;
+      background-color: #000000;
+      color: #ffffff;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .line-md--loading-twotone-loop {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath stroke-dasharray='16' stroke-dashoffset='16' d='M12 3c4.97 0 9 4.03 9 9'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' dur='0.3s' values='16;0'/%3E%3CanimateTransform attributeName='transform' dur='1.5s' repeatCount='indefinite' type='rotate' values='0 12 12;360 12 12'/%3E%3C/path%3E%3Cpath stroke-dasharray='64' stroke-dashoffset='64' stroke-opacity='0.3' d='M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' dur='1.2s' values='64;0'/%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+      background-color: currentColor;
+      -webkit-mask-image: var(--svg);
+      mask-image: var(--svg);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+    }
+    a.buy-button {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #60a5fa;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+    a.buy-button:hover {
+      color: #3b82f6;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      color: white;
+    }
+    td {
+      border: 1px solid #374151; /* Tailwind gray-700 */
+      padding: 0.75rem 1.5rem;
+      font-size: 1.125rem;
+      vertical-align: middle;
+    }
+    td:first-child {
+      font-weight: 700;
+      width: 7rem;
+    }
+    .image-cell img {
+      width: 80px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 8px #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="rounded-xl border border-gray-700 overflow-hidden w-full max-w-md bg-[#121212] p-6">
+    <div id="content">
+      <!-- Content will be injected here -->
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://yash.mirza.ink";
+    const AUTH_PASS = "WaifuVerse:0000&admin";
+
+    function escapeHtml(text) {
+      if (!text) return "";
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function getCharacterIdFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("s");
+    }
+
+    // Fetch character with anime details from new API route
+    async function fetchCharacterWithAnime(characterId) {
+      try {
+        const url = new URL(API_BASE + "/get_character_with_anime");
+        url.searchParams.append("character_id", characterId);
+        const res = await fetch(url.toString(), {
+          headers: { Authorization: AUTH_PASS },
+        });
+        if (!res.ok) {
+          throw new Error(`API error: ${res.status}`);
+        }
+        const data = await res.json();
+        if (!data.character_data) {
+          return null;
+        }
+        const character = data.character_data.character || {};
+        const anime = data.character_data.anime || {};
+        return {
+          id: character.id,
+          character_name: character.character_name,
+          img_url: character.img_url,
+          role: character.role,
+          grade: character.grade,
+          anime_id: anime.id,
+          anime_name: anime.anime_name,
+          anime_image: anime.anime_image
+        };
+      } catch (e) {
+        console.error("Fetch error:", e);
+        return null;
+      }
+    }
+
+    async function fetchGlobalOwnershipCount(characterId) {
+      try {
+        const url = new URL(API_BASE + "/get_all_users");
+        const res = await fetch(url.toString(), {
+          headers: { Authorization: AUTH_PASS },
+        });
+        if (!res.ok) {
+          throw new Error(`API error: ${res.status}`);
+        }
+        const data = await res.json();
+        if (!data.users) return 0;
+        let count = 0;
+        for (const user of data.users) {
+          if (user.characters && user.characters.some(c => c.id === characterId)) {
+            count++;
+          }
+        }
+        return count;
+      } catch (e) {
+        console.error("Fetch ownership count error:", e);
+        return 0;
+      }
+    }
+
+    function createGradeIcon(icon) {
+      const span = document.createElement("span");
+      span.textContent = icon;
+      span.className = "mr-2";
+      span.style.fontSize = "1.5rem";
+      return span;
+    }
+
+    async function renderCharacterDetails(characterId) {
+      const container = document.getElementById("content");
+      container.innerHTML = "";
+
+      // Loading spinner
+      const loading = document.createElement("div");
+      loading.className = "flex justify-center items-center py-20";
+      const spinner = document.createElement("div");
+      spinner.className = "line-md--loading-twotone-loop text-white";
+      loading.appendChild(spinner);
+      container.appendChild(loading);
+
+      const characterData = await fetchCharacterWithAnime(characterId);
+      if (!characterData) {
+        container.innerHTML = `<p class="text-center text-gray-400 text-lg mt-20">Character not found.</p>`;
+        return;
+      }
+
+      const ownedCount = await fetchGlobalOwnershipCount(characterId);
+
+      container.innerHTML = "";
+
+      // Table container
+      const tableWrapper = document.createElement("div");
+      tableWrapper.className = "rounded-xl border border-gray-700 overflow-hidden bg-[#121212]";
+
+      const table = document.createElement("table");
+      table.className = "table-fixed border-collapse w-full text-white";
+
+      const tbody = document.createElement("tbody");
+
+      // Image row
+      const trImage = document.createElement("tr");
+      trImage.className = "border-b border-gray-700";
+
+      const tdLabelImage = document.createElement("td");
+      tdLabelImage.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg w-28";
+      tdLabelImage.textContent = "Image";
+
+      const tdImage = document.createElement("td");
+      tdImage.className = "px-6 py-3 image-cell flex justify-center";
+
+      const img = document.createElement("img");
+      img.src = characterData.img_url || "https://placehold.co/600x800?text=No+Image";
+      img.alt = `Image of character ${characterData.character_name} from anime ${characterData.anime_name || "Unknown"}`;
+      img.width = 80;
+      img.height = 100;
+      img.className = "rounded-lg shadow-lg";
+
+      tdImage.appendChild(img);
+      trImage.appendChild(tdLabelImage);
+      trImage.appendChild(tdImage);
+      tbody.appendChild(trImage);
+
+      // Character Name row
+      const trName = document.createElement("tr");
+      trName.className = "border-b border-gray-700";
+
+      const tdLabelName = document.createElement("td");
+      tdLabelName.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
+      tdLabelName.textContent = "Character";
+
+      const tdName = document.createElement("td");
+      tdName.className = "px-6 py-3 flex items-center text-lg font-semibold";
+
+      if (characterData.grade?.icon) {
+        const iconSpan = createGradeIcon(characterData.grade.icon);
+        tdName.appendChild(iconSpan);
+      }
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = characterData.character_name;
+      tdName.appendChild(nameSpan);
+
+      trName.appendChild(tdLabelName);
+      trName.appendChild(tdName);
+      tbody.appendChild(trName);
+
+      // Character ID row
+      const trCharId = document.createElement("tr");
+      trCharId.className = "border-b border-gray-700";
+
+      const tdLabelCharId = document.createElement("td");
+      tdLabelCharId.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
+      tdLabelCharId.textContent = "Character ID";
+
+      const tdCharId = document.createElement("td");
+      tdCharId.className = "px-6 py-3 text-lg font-semibold";
+      tdCharId.textContent = characterData.id;
+
+      trCharId.appendChild(tdLabelCharId);
+      trCharId.appendChild(tdCharId);
+      tbody.appendChild(trCharId);
+
+      // Anime Name row
+      const trAnimeName = document.createElement("tr");
+      trAnimeName.className = "border-b border-gray-700";
+
+      const tdLabelAnimeName = document.createElement("td");
+      tdLabelAnimeName.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
+      tdLabelAnimeName.textContent = "Anime Name";
+
+      const tdAnimeName = document.createElement("td");
+      tdAnimeName.className = "px-6 py-3 text-lg font-semibold";
+      tdAnimeName.textContent = characterData.anime_name || "Unknown";
+
+      trAnimeName.appendChild(tdLabelAnimeName);
+      trAnimeName.appendChild(tdAnimeName);
+      tbody.appendChild(trAnimeName);
+
+      // Anime ID row
+      const trAnimeId = document.createElement("tr");
+      trAnimeId.className = "border-b border-gray-700";
+
+      const tdLabelAnimeId = document.createElement("td");
+      tdLabelAnimeId.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
+      tdLabelAnimeId.textContent = "Anime ID";
+
+      const tdAnimeId = document.createElement("td");
+      tdAnimeId.className = "px-6 py-3 text-lg font-semibold";
+      tdAnimeId.textContent = characterData.anime_id;
+
+      trAnimeId.appendChild(tdLabelAnimeId);
+      trAnimeId.appendChild(tdAnimeId);
+      tbody.appendChild(trAnimeId);
+
+      // Grade row
+      const trGrade = document.createElement("tr");
+      trGrade.className = "border-b border-gray-700";
+
+      const tdLabelGrade = document.createElement("td");
+      tdLabelGrade.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
+      tdLabelGrade.textContent = "Grade";
+
+      const tdGrade = document.createElement("td");
+      tdGrade.className = "px-6 py-3 text-lg font-semibold";
+      tdGrade.textContent = characterData.grade?.type || "Unknown";
+
+      trGrade.appendChild(tdLabelGrade);
+      trGrade.appendChild(tdGrade);
+      tbody.appendChild(trGrade);
+
+      // Role row
+      const trRole = document.createElement("tr");
+      trRole.className = "border-b border-gray-700";
+
+      const tdLabelRole = document.createElement("td");
+      tdLabelRole.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
+      tdLabelRole.textContent = "Role";
+
+      const tdRole = document.createElement("td");
+      tdRole.className = "px-6 py-3 text-lg font-semibold";
+      tdRole.textContent = characterData.role || "Unknown";
+
+      trRole.appendChild(tdLabelRole);
+      trRole.appendChild(tdRole);
+      tbody.appendChild(trRole);
+
+      // Globally owned row
+      const trOwned = document.createElement("tr");
+
+      const tdLabelOwned = document.createElement("td");
+      tdLabelOwned.className = "border-r border-gray-700 px-6 py-3 font-bold text-lg";
+      tdLabelOwned.textContent = "Globally Owned";
+
+      const tdOwned = document.createElement("td");
+      tdOwned.className = "px-6 py-3 text-lg font-semibold";
+      tdOwned.textContent = `${ownedCount} user${ownedCount !== 1 ? "s" : ""}`;
+
+      trOwned.appendChild(tdLabelOwned);
+      trOwned.appendChild(tdOwned);
+      tbody.appendChild(trOwned);
+
+      table.appendChild(tbody);
+      tableWrapper.appendChild(table);
+      container.appendChild(tableWrapper);
+
+      // Buy button as deep link
+      const buyLink = document.createElement("a");
+      buyLink.href = "https://t.me/Waifu_verse_bot";
+      buyLink.target = "_blank";
+      buyLink.rel = "noopener noreferrer";
+      buyLink.className = "buy-button";
+      buyLink.textContent = "Buy";
+      container.appendChild(buyLink);
+    }
+
+    (function () {
+      const characterId = getCharacterIdFromQuery();
+      const container = document.getElementById("content");
+      if (!characterId) {
+        container.innerHTML = "";
+        return;
+      }
+      renderCharacterDetails(characterId);
+    })();
+  </script>
+</body>
+</html>
