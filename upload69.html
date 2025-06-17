@@ -241,13 +241,13 @@
     }
     /* Upload button with lighter green */
     button[type="submit"] {
-      background-color: #a3e635; /* lime-400 */
+      background-color: #bef264; /* lime-300 */
       color: #1f2937; /* dark text for contrast */
       font-weight: 600;
       transition: background-color 0.2s ease;
     }
     button[type="submit"]:hover {
-      background-color: #84cc16; /* lime-500 */
+      background-color: #a3e635; /* lime-400 */
     }
   </style>
 </head>
@@ -684,7 +684,7 @@
         resetForm();
       });
 
-      // Upload form submit handler with Catbox upload
+      // Upload form submit handler with Catbox upload (expecting JSON {url: "..."} response)
       uploadForm.addEventListener("submit", async e => {
         e.preventDefault();
 
@@ -721,6 +721,12 @@
         try {
           imageUrl = await uploadToCatbox(file);
           if (!imageUrl) throw new Error("No URL returned");
+          // Validate URL format (must start with https:// and end with image extension)
+          if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(imageUrl)) {
+            // If URL does not end with image extension, try to append a query param to trick backend or warn user
+            // But safer to just reject here
+            throw new Error("Invalid image URL format");
+          }
           showToast("Image uploaded successfully", "info");
         } catch (err) {
           showToast(`Image upload failed: ${err.message}`, "error");
@@ -755,7 +761,7 @@
         }
       });
 
-      // Upload file to catboxapi.vercel.app/upload
+      // Upload file to catboxapi.vercel.app/upload expecting JSON {url: "..."}
       async function uploadToCatbox(file) {
         const formData = new FormData();
         formData.append("file", file);
@@ -764,14 +770,18 @@
           body: formData
         });
         if (!res.ok) {
-          const text = await res.text().catch(() => "");
-          throw new Error(text || `Upload failed with status ${res.status}`);
+          let errMsg = `Upload failed with status ${res.status}`;
+          try {
+            const errData = await res.json();
+            if (errData.error) errMsg = errData.error;
+          } catch {}
+          throw new Error(errMsg);
         }
-        const text = await res.text();
-        if (!text.startsWith("http")) {
-          throw new Error(text || "No URL returned from upload");
+        const data = await res.json();
+        if (!data.url) {
+          throw new Error("No URL returned from upload");
         }
-        return text.trim();
+        return data.url.trim();
       }
 
       // Search input event
