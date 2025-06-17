@@ -2,10 +2,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WaifuVerse Character Search</title>
+  <title>WaifuVerse CSearch</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Puppets&display=swap"
     rel="stylesheet"
   />
   <link
@@ -14,12 +14,12 @@
   />
   <style>
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Puppets', cursive, sans-serif;
       background-color: #000000;
       color: #ffffff;
       min-height: 100vh;
+      margin: 0;
     }
-    /* Remove button border and background */
     button {
       background: none;
       border: none;
@@ -28,26 +28,30 @@
       font-size: 1.125rem;
       color: #60a5fa; /* Tailwind blue-400 */
       transition: color 0.3s ease;
+      padding: 0;
     }
     button:hover {
       color: #3b82f6; /* Tailwind blue-500 */
     }
-    /* Hide scrollbar for image container if needed */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+    .line-md--loading-twotone-loop {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath stroke-dasharray='16' stroke-dashoffset='16' d='M12 3c4.97 0 9 4.03 9 9'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' dur='0.3s' values='16;0'/%3E%3CanimateTransform attributeName='transform' dur='1.5s' repeatCount='indefinite' type='rotate' values='0 12 12;360 12 12'/%3E%3C/path%3E%3Cpath stroke-dasharray='64' stroke-dashoffset='64' stroke-opacity='0.3' d='M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' dur='1.2s' values='64;0'/%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+      background-color: currentColor;
+      -webkit-mask-image: var(--svg);
+      mask-image: var(--svg);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
     }
   </style>
 </head>
 <body>
   <div id="app" class="flex flex-col min-h-screen">
     <main class="flex-grow flex flex-col justify-center items-center px-4 py-8 max-w-4xl mx-auto w-full">
-      <div id="content" class="w-full max-w-3xl">
-        <!-- Content will be injected here -->
-      </div>
+      <div id="content" class="w-full max-w-3xl"></div>
     </main>
   </div>
 
@@ -55,8 +59,8 @@
     const API_BASE = "https://yash.mirza.ink";
     const AUTH_PASS = "WaifuVerse:0000&admin";
 
-    // Utility: escape HTML to prevent XSS
     function escapeHtml(text) {
+      if (!text) return "";
       return text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -65,13 +69,11 @@
         .replace(/'/g, "&#039;");
     }
 
-    // Get query param ?s=character_id
     function getCharacterIdFromQuery() {
       const params = new URLSearchParams(window.location.search);
       return params.get("s");
     }
 
-    // Create element with classes and text
     function createEl(tag, classes = "", text = "") {
       const el = document.createElement(tag);
       if (classes) el.className = classes;
@@ -79,17 +81,16 @@
       return el;
     }
 
-    // Create icon span for grade icon
     function createGradeIcon(icon) {
       const span = createEl("span", "text-2xl mr-2");
       span.textContent = icon;
       return span;
     }
 
-    // Fetch character details by character_id
-    async function fetchCharacterDetails(characterId) {
+    // Fetch character with anime details from new API route
+    async function fetchCharacterWithAnime(characterId) {
       try {
-        const url = new URL(API_BASE + "/search_character_from_anime");
+        const url = new URL(API_BASE + "/get_character_with_anime");
         url.searchParams.append("character_id", characterId);
         const res = await fetch(url.toString(), {
           headers: { Authorization: AUTH_PASS },
@@ -98,37 +99,16 @@
           throw new Error(`API error: ${res.status}`);
         }
         const data = await res.json();
-        if (!data.characters || data.characters.length === 0) {
+        if (!data.character_data) {
           return null;
         }
-        // Return first matched character
-        return data.characters[0];
+        return data.character_data;
       } catch (e) {
         console.error("Fetch error:", e);
         return null;
       }
     }
 
-    // Fetch anime details by anime_id
-    async function fetchAnimeById(animeId) {
-      try {
-        const url = new URL(API_BASE + "/get_anime_by_id");
-        url.searchParams.append("anime_id", animeId);
-        const res = await fetch(url.toString(), {
-          headers: { Authorization: AUTH_PASS },
-        });
-        if (!res.ok) {
-          throw new Error(`API error: ${res.status}`);
-        }
-        const data = await res.json();
-        return data.anime || null;
-      } catch (e) {
-        console.error("Fetch anime error:", e);
-        return null;
-      }
-    }
-
-    // Fetch how many users own this character (globally owned count)
     async function fetchGlobalOwnershipCount(characterId) {
       try {
         const url = new URL(API_BASE + "/get_all_users");
@@ -153,37 +133,30 @@
       }
     }
 
-    // Render the character details UI
     async function renderCharacterDetails(characterId) {
       const container = document.getElementById("content");
       container.innerHTML = "";
 
-      // Show loading spinner
       const loading = createEl("div", "flex justify-center items-center py-20");
-      loading.innerHTML = `
-        <svg class="animate-spin h-10 w-10 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-        </svg>
-      `;
+      const spinner = createEl("div", "line-md--loading-twotone-loop text-white");
+      loading.appendChild(spinner);
       container.appendChild(loading);
 
-      const character = await fetchCharacterDetails(characterId);
-      if (!character) {
+      const characterData = await fetchCharacterWithAnime(characterId);
+      if (!characterData) {
         container.innerHTML = `<p class="text-center text-gray-400 text-lg mt-20">Character not found.</p>`;
         return;
       }
 
-      const anime = await fetchAnimeById(character.anime_id);
       const ownedCount = await fetchGlobalOwnershipCount(characterId);
 
       container.innerHTML = "";
 
-      // Image
+      // Image container
       const imgWrapper = createEl("div", "w-full max-w-md mx-auto rounded-lg overflow-hidden shadow-lg mb-8");
       const img = createEl("img", "w-full object-cover");
-      img.src = character.img_url || "https://placehold.co/600x800?text=No+Image";
-      img.alt = `Image of character ${character.character_name} from anime ${anime ? anime.anime_name : "Unknown"}`;
+      img.src = characterData.img_url || "https://placehold.co/600x800?text=No+Image";
+      img.alt = `Image of character ${characterData.character_name} from anime ${characterData.anime_name || "Unknown"}`;
       imgWrapper.appendChild(img);
       container.appendChild(imgWrapper);
 
@@ -191,37 +164,37 @@
       const details = createEl("div", "text-center space-y-4");
 
       // Character Name with Grade Icon
-      const gradeIcon = character.grade?.icon || "";
+      const gradeIcon = characterData.grade?.icon || "";
       const charNameEl = createEl("h1", "text-4xl font-semibold flex justify-center items-center justify-center");
       if (gradeIcon) {
         const iconSpan = createGradeIcon(gradeIcon);
         charNameEl.appendChild(iconSpan);
       }
-      charNameEl.appendChild(document.createTextNode(character.character_name));
+      charNameEl.appendChild(document.createTextNode(characterData.character_name));
       details.appendChild(charNameEl);
 
       // Character ID
       const charIdEl = createEl("p", "text-gray-400 text-sm");
-      charIdEl.textContent = `Character ID: ${character.id}`;
+      charIdEl.textContent = `Character ID: ${characterData.id}`;
       details.appendChild(charIdEl);
 
       // Anime Name and ID
       const animeNameEl = createEl("p", "text-lg font-medium");
-      animeNameEl.innerHTML = `Anime Name: <span class="font-semibold">${anime ? escapeHtml(anime.anime_name) : "Unknown"}</span>`;
+      animeNameEl.innerHTML = `Anime Name: <span class="font-semibold">${escapeHtml(characterData.anime_name || "Unknown")}</span>`;
       details.appendChild(animeNameEl);
 
       const animeIdEl = createEl("p", "text-gray-400 text-sm");
-      animeIdEl.textContent = `Anime ID: ${character.anime_id}`;
+      animeIdEl.textContent = `Anime ID: ${characterData.anime_id}`;
       details.appendChild(animeIdEl);
 
       // Grade
       const gradeEl = createEl("p", "text-lg");
-      gradeEl.innerHTML = `Grade: <span class="font-semibold">${character.grade?.type || "Unknown"}</span>`;
+      gradeEl.innerHTML = `Grade: <span class="font-semibold">${characterData.grade?.type || "Unknown"}</span>`;
       details.appendChild(gradeEl);
 
       // Role(s)
       const roleEl = createEl("p", "text-lg");
-      roleEl.innerHTML = `Role: <span class="font-semibold">${character.role || "Unknown"}</span>`;
+      roleEl.innerHTML = `Role: <span class="font-semibold">${characterData.role || "Unknown"}</span>`;
       details.appendChild(roleEl);
 
       // Globally owned count
@@ -237,17 +210,15 @@
       buyBtn.textContent = "Buy";
       buyBtn.setAttribute("aria-label", "Buy this character");
       buyBtn.addEventListener("click", () => {
-        alert(`You clicked Buy for ${character.character_name}`);
+        alert(`You clicked Buy for ${characterData.character_name}`);
       });
       btnWrapper.appendChild(buyBtn);
       container.appendChild(btnWrapper);
     }
 
-    // On load
     (function () {
       const characterId = getCharacterIdFromQuery();
       if (!characterId) {
-        // Show only black page with no content
         document.getElementById("content").innerHTML = "";
         return;
       }
