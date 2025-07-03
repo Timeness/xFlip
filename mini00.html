@@ -24,18 +24,18 @@
     }
     #browserFrame {
       width: 100%;
-      height: calc(100% - 64px);
+      height: calc(100% - 56px);
       border: none;
       display: none;
       transition: opacity 0.3s ease;
     }
     #loader {
       display: none;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.7);
     }
     .navbar {
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     .history-panel {
@@ -47,46 +47,57 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       color: black;
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 12px;
       z-index: 30;
       max-width: 90%;
+      width: 320px;
       text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    #errorMessage button {
+      width: 120px;
     }
     @media (max-width: 640px) {
       .navbar {
-        padding: 2px;
-      }
-      .navbar button, .navbar input {
         padding: 8px;
-        font-size: 12px;
       }
-      #urlInput {
-        width: 100%;
+      .navbar button {
+        padding: 6px;
+      }
+      .navbar input {
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+      .nav-buttons {
+        gap: 2px;
       }
       .history-panel {
         width: 100%;
       }
-      .nav-buttons {
-        display: flex;
-        gap: 4px;
-      }
       .iconify {
-        font-size: 18px;
+        font-size: 16px;
+      }
+      #errorMessage {
+        width: 80%;
+        padding: 15px;
+      }
+      #errorMessage button {
+        width: 100%;
+        margin-top: 8px;
       }
     }
   </style>
 </head>
 <body>
   <!-- Navigation Bar -->
-  <div class="navbar w-full p-3 bg-black/80 flex items-center justify-between gap-2 z-10">
-    <div class="flex items-center gap-2">
-      <span class="iconify text-yellow-400 text-2xl" data-icon="mdi:rocket-launch"></span>
+  <div class="navbar w-full p-2 bg-black/80 flex items-center justify-between gap-1 z-10">
+    <div class="flex items-center">
+      <span class="iconify text-yellow-400 text-xl" data-icon="mdi:web"></span>
     </div>
-    <div class="flex items-center gap-2 flex-1 mx-2">
+    <div class="flex items-center gap-1 flex-1 mx-2">
       <div class="nav-buttons flex gap-1">
         <button onclick="goBack()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" title="Back">
           <span class="iconify" data-icon="mdi:arrow-left"></span>
@@ -118,14 +129,14 @@
   </div>
 
   <!-- History Panel -->
-  <div id="historyPanel" class="history-panel fixed right-0 top-[64px] h-[calc(100%-64px)] w-80 bg-black/90 p-4 transform translate-x-full z-20 md:w-64">
-    <h2 class="text-white text-lg font-semibold mb-4">Browsing History</h2>
-    <ul id="historyList" class="text-white text-sm space-y-2 overflow-y-auto h-[calc(100%-60px)]"></ul>
+  <div id="historyPanel" class="history-panel fixed right-0 top-[56px] h-[calc(100%-56px)] w-80 bg-black/90 p-3 transform translate-x-full z-20 md:w-64">
+    <h2 class="text-white text-base font-semibold mb-3">History</h2>
+    <ul id="historyList" class="text-white text-sm space-y-2 overflow-y-auto h-[calc(100%-50px)]"></ul>
   </div>
 
   <!-- Loading Spinner -->
   <div id="loader" class="absolute inset-0 flex items-center justify-center z-20">
-    <div class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+    <div class="w-10 h-10 border-3 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
   </div>
 
   <!-- Error Message -->
@@ -169,6 +180,8 @@
       frame.style.display = "none";
       errorMessage.style.display = "none";
       currentUrl = input;
+
+      // Try loading in iframe
       frame.src = input;
 
       // Update history
@@ -194,7 +207,7 @@
     function handleIframeError() {
       loader.style.display = "none";
       frame.style.display = "none";
-      errorText.innerHTML = `Unable to load ${currentUrl}. This site may block embedding.<br>Try opening it in a new tab.`;
+      errorText.innerHTML = `Cannot load ${currentUrl}.<br>This site may not allow embedding.<br>Try opening it in a new tab.`;
       errorMessage.style.display = "block";
     }
 
@@ -265,7 +278,7 @@
     const vertices = [];
     const colors = [];
 
-    for (let i = 0; i < 2000; i++) {
+    for (let i = 0; i < 1500; i++) {
       vertices.push(
         (Math.random() - 0.5) * 200,
         (Math.random() - 0.5) * 200,
@@ -278,10 +291,10 @@
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 0.3,
+      size: 0.25,
       vertexColors: true,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.7
     });
 
     const particleSystem = new THREE.Points(geometry, material);
@@ -291,7 +304,7 @@
 
     function animate() {
       requestAnimationFrame(animate);
-      particleSystem.rotation.y += 0.002;
+      particleSystem.rotation.y += 0.0015;
       particleSystem.rotation.x += 0.001;
       renderer.render(scene, camera);
     }
