@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoBrowser - Ultimate Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background: black;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    #browserFrame {
+      width: 100%;
+      height: calc(100% - 80px);
+      border: none;
+      display: none;
+      transition: opacity 0.3s ease;
+    }
+    #loader {
+      display: none;
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .navbar {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .history-panel {
+      transition: transform 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar w-full p-3 bg-black/80 flex items-center justify-between gap-2 z-10">
+    <div class="flex items-center gap-2">
+      <span class="iconify text-yellow-400 text-2xl" data-icon="mdi:rocket-launch"></span>
+      <h1 class="text-white text-lg font-bold">NeoBrowser</h1>
+    </div>
+    <div class="flex items-center gap-2 flex-1 mx-4">
+      <div class="flex gap-2">
+        <button onclick="goBack()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" title="Back">
+          <span class="iconify" data-icon="mdi:arrow-left"></span>
+        </button>
+        <button onclick="goForward()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" title="Forward">
+          <span class="iconify" data-icon="mdi:arrow-right"></span>
+        </button>
+        <button onclick="reload()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" title="Reload">
+          <span class="iconify" data-icon="mdi:refresh"></span>
+        </button>
+      </div>
+      <input
+        id="urlInput"
+        type="text"
+        placeholder="Enter URL or search..."
+        class="flex-1 px-4 py-2 rounded-full bg-white/10 text-sm text-white focus:outline-none placeholder:text-gray-400 hover:bg-white/20 transition-all"
+        onkeypress="if(event.key === 'Enter') goToSite()"
+      />
+      <button
+        onclick="goToSite()"
+        class="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black rounded-full text-sm font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all"
+      >
+        Go
+      </button>
+    </div>
+    <button onclick="toggleHistory()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" title="History">
+      <span class="iconify" data-icon="mdi:history"></span>
+    </button>
+  </div>
+
+  <!-- History Panel -->
+  <div id="historyPanel" class="history-panel fixed right-0 top-80px h-full w-80 bg-black/90 p-4 transform translate-x-full z-20">
+    <h2 class="text-white text-lg font-semibold mb-4">Browsing History</h2>
+    <ul id="historyList" class="text-white text-sm space-y-2"></ul>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loader" class="absolute inset-0 flex items-center justify-center z-20">
+    <div class="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <!-- iFrame -->
+  <iframe id="browserFrame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+
+  <!-- Scripts -->
+  <script>
+    const frame = document.getElementById("browserFrame");
+    const loader = document.getElementById("loader");
+    const urlInput = document.getElementById("urlInput");
+    const historyPanel = document.getElementById("historyPanel");
+    const historyList = document.getElementById("historyList");
+    let browsingHistory = JSON.parse(localStorage.getItem("browsingHistory")) || [];
+
+    // Navigation functions
+    function goToSite() {
+      let input = urlInput.value.trim();
+      if (!input) return;
+
+      const isUrl = input.match(/^(https?:\/\/)?([\w-]+\.)+[\w]{2,}(\/.*)?$/);
+      if (!isUrl && !input.startsWith("http")) {
+        input = "https://www.google.com/search?q=" + encodeURIComponent(input);
+      } else if (!input.startsWith("http")) {
+        input = "https://" + input;
+      }
+
+      loader.style.display = "flex";
+      frame.style.display = "none";
+      frame.src = input;
+
+      // Update history
+      browsingHistory.push({ url: input, time: new Date().toLocaleString() });
+      localStorage.setItem("browsingHistory", JSON.stringify(browsingHistory));
+      updateHistory();
+
+      frame.onload = () => {
+        loader.style.display = "none";
+        frame.style.display = "block";
+        urlInput.value = frame.contentWindow.location.href;
+      };
+
+      frame.onerror = () => {
+        loader.style.display = "none";
+        alert("Failed to load site. Please check the URL.");
+      };
+    }
+
+    function goBack() {
+      frame.contentWindow.history.back();
+    }
+
+    function goForward() {
+      frame.contentWindow.history.forward();
+    }
+
+    function reload() {
+      frame.contentWindow.location.reload();
+    }
+
+    function toggleHistory() {
+      historyPanel.classList.toggle("translate-x-full");
+    }
+
+    function updateHistory() {
+      historyList.innerHTML = "";
+      browsingHistory.slice(-10).reverse().forEach((item, index) => {
+        const li = document.createElement("li");
+        li.className = "p-2 hover:bg-white/10 rounded cursor-pointer";
+        li.innerHTML = `<span class="text-gray-400 text-xs">${item.time}</span><br>${item.url}`;
+        li.onclick = () => {
+          urlInput.value = item.url;
+          goToSite();
+        };
+        historyList.appendChild(li);
+      });
+    }
+
+    // Initialize history
+    updateHistory();
+
+    // Three.js Background
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [];
+    const colors = [];
+
+    for (let i = 0; i < 2000; i++) {
+      vertices.push(
+        (Math.random() - 0.5) * 200,
+        (Math.random() - 0.5) * 200,
+        (Math.random() - 0.5) * 200
+      );
+      colors.push(1, Math.random() * 0.5 + 0.5, 0.2);
+    }
+
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: 0.3,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.8
+    });
+
+    const particleSystem = new THREE.Points(geometry, material);
+    scene.add(particleSystem);
+
+    camera.position.z = 100;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      particleSystem.rotation.y += 0.002;
+      particleSystem.rotation.x += 0.001;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
