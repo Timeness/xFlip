@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NeoBrowser - Ultimate Edition</title>
+  <title>Ultimate Browser</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
   <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
@@ -24,7 +24,7 @@
     }
     #browserFrame {
       width: 100%;
-      height: calc(100% - 80px);
+      height: calc(100% - 64px);
       border: none;
       display: none;
       transition: opacity 0.3s ease;
@@ -41,6 +41,43 @@
     .history-panel {
       transition: transform 0.3s ease;
     }
+    #errorMessage {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      color: black;
+      padding: 20px;
+      border-radius: 8px;
+      z-index: 30;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    @media (max-width: 640px) {
+      .navbar {
+        padding: 2px;
+      }
+      .navbar button, .navbar input {
+        padding: 8px;
+        font-size: 12px;
+      }
+      #urlInput {
+        width: 100%;
+      }
+      .history-panel {
+        width: 100%;
+      }
+      .nav-buttons {
+        display: flex;
+        gap: 4px;
+      }
+      .iconify {
+        font-size: 18px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -48,10 +85,9 @@
   <div class="navbar w-full p-3 bg-black/80 flex items-center justify-between gap-2 z-10">
     <div class="flex items-center gap-2">
       <span class="iconify text-yellow-400 text-2xl" data-icon="mdi:rocket-launch"></span>
-      <h1 class="text-white text-lg font-bold">NeoBrowser</h1>
     </div>
-    <div class="flex items-center gap-2 flex-1 mx-4">
-      <div class="flex gap-2">
+    <div class="flex items-center gap-2 flex-1 mx-2">
+      <div class="nav-buttons flex gap-1">
         <button onclick="goBack()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" title="Back">
           <span class="iconify" data-icon="mdi:arrow-left"></span>
         </button>
@@ -66,12 +102,12 @@
         id="urlInput"
         type="text"
         placeholder="Enter URL or search..."
-        class="flex-1 px-4 py-2 rounded-full bg-white/10 text-sm text-white focus:outline-none placeholder:text-gray-400 hover:bg-white/20 transition-all"
+        class="flex-1 px-3 py-2 rounded-full bg-white/10 text-sm text-white focus:outline-none placeholder:text-gray-400 hover:bg-white/20 transition-all"
         onkeypress="if(event.key === 'Enter') goToSite()"
       />
       <button
         onclick="goToSite()"
-        class="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black rounded-full text-sm font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all"
+        class="px-3 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black rounded-full text-sm font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all"
       >
         Go
       </button>
@@ -82,14 +118,25 @@
   </div>
 
   <!-- History Panel -->
-  <div id="historyPanel" class="history-panel fixed right-0 top-80px h-full w-80 bg-black/90 p-4 transform translate-x-full z-20">
+  <div id="historyPanel" class="history-panel fixed right-0 top-[64px] h-[calc(100%-64px)] w-80 bg-black/90 p-4 transform translate-x-full z-20 md:w-64">
     <h2 class="text-white text-lg font-semibold mb-4">Browsing History</h2>
-    <ul id="historyList" class="text-white text-sm space-y-2"></ul>
+    <ul id="historyList" class="text-white text-sm space-y-2 overflow-y-auto h-[calc(100%-60px)]"></ul>
   </div>
 
   <!-- Loading Spinner -->
   <div id="loader" class="absolute inset-0 flex items-center justify-center z-20">
-    <div class="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+    <div class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <!-- Error Message -->
+  <div id="errorMessage">
+    <p id="errorText"></p>
+    <button onclick="openInNewTab()" class="mt-4 px-4 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500">
+      Open in New Tab
+    </button>
+    <button onclick="hideError()" class="mt-2 px-4 py-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400">
+      Close
+    </button>
   </div>
 
   <!-- iFrame -->
@@ -102,9 +149,11 @@
     const urlInput = document.getElementById("urlInput");
     const historyPanel = document.getElementById("historyPanel");
     const historyList = document.getElementById("historyList");
+    const errorMessage = document.getElementById("errorMessage");
+    const errorText = document.getElementById("errorText");
     let browsingHistory = JSON.parse(localStorage.getItem("browsingHistory")) || [];
+    let currentUrl = "";
 
-    // Navigation functions
     function goToSite() {
       let input = urlInput.value.trim();
       if (!input) return;
@@ -118,35 +167,69 @@
 
       loader.style.display = "flex";
       frame.style.display = "none";
+      errorMessage.style.display = "none";
+      currentUrl = input;
       frame.src = input;
 
       // Update history
       browsingHistory.push({ url: input, time: new Date().toLocaleString() });
       localStorage.setItem("browsingHistory", JSON.stringify(browsingHistory));
       updateHistory();
+    }
 
-      frame.onload = () => {
-        loader.style.display = "none";
-        frame.style.display = "block";
+    frame.onload = () => {
+      loader.style.display = "none";
+      frame.style.display = "block";
+      try {
         urlInput.value = frame.contentWindow.location.href;
-      };
+      } catch (e) {
+        handleIframeError();
+      }
+    };
 
-      frame.onerror = () => {
-        loader.style.display = "none";
-        alert("Failed to load site. Please check the URL.");
-      };
+    frame.onerror = () => {
+      handleIframeError();
+    };
+
+    function handleIframeError() {
+      loader.style.display = "none";
+      frame.style.display = "none";
+      errorText.innerHTML = `Unable to load ${currentUrl}. This site may block embedding.<br>Try opening it in a new tab.`;
+      errorMessage.style.display = "block";
+    }
+
+    function openInNewTab() {
+      window.open(currentUrl, "_blank");
+      hideError();
+    }
+
+    function hideError() {
+      errorMessage.style.display = "none";
+      frame.style.display = "block";
     }
 
     function goBack() {
-      frame.contentWindow.history.back();
+      try {
+        frame.contentWindow.history.back();
+      } catch (e) {
+        handleIframeError();
+      }
     }
 
     function goForward() {
-      frame.contentWindow.history.forward();
+      try {
+        frame.contentWindow.history.forward();
+      } catch (e) {
+        handleIframeError();
+      }
     }
 
     function reload() {
-      frame.contentWindow.location.reload();
+      try {
+        frame.contentWindow.location.reload();
+      } catch (e) {
+        handleIframeError();
+      }
     }
 
     function toggleHistory() {
@@ -155,9 +238,9 @@
 
     function updateHistory() {
       historyList.innerHTML = "";
-      browsingHistory.slice(-10).reverse().forEach((item, index) => {
+      browsingHistory.slice(-10).reverse().forEach((item) => {
         const li = document.createElement("li");
-        li.className = "p-2 hover:bg-white/10 rounded cursor-pointer";
+        li.className = "p-2 hover:bg-white/10 rounded cursor-pointer truncate";
         li.innerHTML = `<span class="text-gray-400 text-xs">${item.time}</span><br>${item.url}`;
         li.onclick = () => {
           urlInput.value = item.url;
