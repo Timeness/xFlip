@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecentralChat Beta - E2EE P2P</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
+        #login { text-align: center; }
+        input { padding: 10px; margin: 5px; border: 1px solid #333; background: #1e1e1e; color: #e0e0e0; border-radius: 5px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #app { display: none; }
+        #users { list-style: none; padding: 0; }
+        #users li { padding: 10px; background: #1e1e1e; margin: 5px 0; border-radius: 5px; cursor: pointer; }
+        #users li:hover { background: #333; }
+        #chat { height: 400px; overflow-y: auto; background: #1e1e1e; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        #message { width: 70%; }
+        #send { width: 25%; }
+        .typing { font-style: italic; color: #888; }
+        .message { margin: 5px 0; }
+        .own { text-align: right; color: #007bff; }
+    </style>
+    <!-- Free public signaling via PubNub (no API key needed for demo; replace if rate-limited) -->
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.39.0.js"></script>
+</head>
+<body>
+    <div id="login">
+        <h1>DecentralChat Beta</h1>
+        <p>Create your decentralized username (stored locally):</p>
+        <input type="text" id="username" placeholder="Enter username" maxlength="20">
+        <button onclick="createAccount()">Create Account</button>
+        <p>Already have one? <a href="#" onclick="loadAccount()">Load Existing</a></p>
+    </div>
+    <div id="app">
+        <h2>Online Users</h2>
+        <input type="text" id="search" placeholder="Search users to chat..." onkeyup="searchUsers()">
+        <ul id="users"></ul>
+        <div id="chat"></div>
+        <input type="text" id="message" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+        <button id="send" onclick="sendMessage()">Send</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Global vars
+        let currentUser = '';
+        let pubnub; // Signaling
+        let localPeer; // WebRTC peer connection
+        let dataChannel; // For messaging
+        let onlineUsers = {}; // {username: socketId}
+        let connectedPeer = null; // Current chat peer
+        let typingTimer;
+
+        // Decentralized Account (localStorage)
+        function createAccount() {
+            const uname = document.getElementById('username').value.trim();
+            if (!uname) return alert('Enter a username!');
+            if (localStorage.getItem('decentralUser')) return alert('Account exists! Load it.');
+            localStorage.setItem('decentralUser', uname);
+            startApp(uname);
+        }
+
+        function loadAccount() {
+            const uname = localStorage.getItem('decentralUser');
+            if (!uname) return alert('No account found. Create one!');
+            startApp(uname);
+        }
+
+        function startApp(uname) {
+            currentUser = uname;
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            initSignaling();
+            updateStatus('Online. Search for users to start chatting.');
+        }
+
+        // Signaling with PubNub (free tier)
+        function initSignaling() {
+            pubnub = new PubNub({
+                publishKey: 'demo', // Public demo key
+                subscribeKey: 'demo',
+                channel: 'decentralchat_signal'
+            });
+            pubnub.addListener({
+                message: function(m) {
+                    handleSignal(m.message);
+                }
+            });
+            pubnub.subscribe({ channels: ['decentralchat_signal'] });
+
+            // Announce online
+            setInterval(() => {
+                pubnub.publish({
+                    channel: 'decentralchat_signal',
+                    message: { type: 'online', user: currentUser, socketId: Date.now() } // Simple ID
+                }, (status) => {});
+                updateOnlineUsers();
+            }, 5000);
+        }
+
+        function updateOnlineUsers() {
+            // Simulate fetching online users (in prod, use pubnub presence)
+            // For beta, assume manual refresh or populate from signals
+            const usersList = document.getElementById('users');
+            usersList.innerHTML = '';
+            Object.keys(onlineUsers).forEach(user => {
+                if (user !== currentUser) {
+                    const li = document.createElement('li');
+                    li.textContent = user;
+                    li.onclick = () => startChat(user);
+                    usersList.appendChild(li);
+                }
+            });
+        }
+
+        function searchUsers() {
+            const query = document.getElementById('search').value.toLowerCase();
+            const lis = document.querySelectorAll('#users li');
+            lis.forEach(li => {
+                li.style.display = li.textContent.toLowerCase().includes(query) ? 'block' : 'none';
+            });
+        }
+
+        // Start P2P Chat
+        function startChat(targetUser) {
+            connectedPeer = targetUser;
+            updateStatus(`Connecting to ${targetUser}...`);
+            createPeerConnection();
+            // Send offer via signaling
+            pubnub.publish({
+                channel: 'decentralchat_signal',
+                message: { type: 'offer', from: currentUser, to: targetUser, offer: localPeer.localDescription }
+            });
+        }
+
+        function createPeerConnection() {
+            localPeer = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] // Free STUN
+            });
+
+            localPeer.onicecandidate = (e) => {
+                if (e.candidate) {
+                    pubnub.publish({
+                        channel: 'decentralchat_signal',
+                        message: { type: 'ice', from: currentUser, to: connectedPeer, candidate: e.candidate }
+                    });
+                }
+            };
+
+            dataChannel = localPeer.createDataChannel('chat');
+            setupDataChannel();
+
+            localPeer.createOffer().then(offer => {
+                localPeer.setLocalDescription(offer);
+            });
+        }
+
+        function setupDataChannel() {
+            dataChannel.onopen = () => updateStatus('Connected! Chat securely.');
+            dataChannel.onmessage = (e) => {
+                const decrypted = decryptMessage(e.data);
+                addMessage(decrypted, false);
+                if (decrypted === '...') showTyping(false);
+            };
+            dataChannel.onclose = () => updateStatus('Connection closed.');
+        }
+
+        function handleSignal(msg) {
+            if (msg.to !== currentUser) return;
+            if (msg.type === 'offer') {
+                createPeerConnection();
+                localPeer.setRemoteDescription(new RTCSessionDescription(msg.offer));
+                localPeer.createAnswer().then(answer => {
+                    localPeer.setLocalDescription(answer);
+                    pubnub.publish({
+                        channel: 'decentralchat_signal',
+                        message: { type: 'answer', from: currentUser, to: msg.from, answer }
+                    });
+                });
+            } else if (msg.type === 'answer') {
+                localPeer.setRemoteDescription(new RTCSessionDescription(msg.answer));
+            } else if (msg.type === 'ice') {
+                localPeer.addIceCandidate(new RTCIceCandidate(msg.candidate));
+            } else if (msg.type === 'online') {
+                onlineUsers[msg.user] = msg.socketId;
+                updateOnlineUsers();
+            }
+        }
+
+        // E2EE with Web Crypto API
+        async function deriveKey(password) {
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveBits']);
+            return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: enc.encode('decentralchat_salt'), iterations: 100000, hash: 'SHA-256' }, keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+        }
+
+        async function encryptMessage(msg) {
+            const key = await deriveKey(currentUser + connectedPeer);
+            const enc = new TextEncoder();
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(msg));
+            return btoa(String.fromCharCode(...new Uint8Array([...iv, ...new Uint8Array(encrypted)]))); // Base64 for channel
+        }
+
+        async function decryptMessage(encryptedB64) {
+            const key = await deriveKey(currentUser + connectedPeer);
+            const data = Uint8Array.from(atob(encryptedB64), c => c.charCodeAt(0));
+            const iv = data.slice(0, 12);
+            const encrypted = data.slice(12);
+            const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, encrypted);
+            return new TextDecoder().decode(decrypted);
+        }
+
+        // UI Helpers
+        function sendMessage() {
+            const msg = document.getElementById('message').value.trim();
+            if (!msg || !dataChannel || dataChannel.readyState !== 'open') return;
+            encryptMessage(msg).then(encrypted => {
+                dataChannel.send(encrypted);
+                addMessage(msg, true);
+                document.getElementById('message').value = '';
+            });
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+            // Typing indicator
+            clearTimeout(typingTimer);
+            dataChannel?.send(await encryptMessage('...'));
+            typingTimer = setTimeout(() => showTyping(true), 1000);
+        }
+
+        function showTyping(hide) {
+            if (hide) dataChannel?.send(await encryptMessage(' ')); // Clear
+        }
+
+        function addMessage(msg, isOwn) {
+            const chat = document.getElementById('chat');
+            const div = document.createElement('div');
+            div.className = `message ${isOwn ? 'own' : ''}`;
+            div.textContent = `${isOwn ? '' : connectedPeer + ': '}${msg}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function updateStatus(text) {
+            document.getElementById('status').textContent = text;
+        }
+
+        // Fallback: Manual signaling (if search fails)
+        // Add button in HTML if needed: <button onclick="manualSignal()">Manual Connect</button>
+        // Implement copy-paste offer/answer in console.
+    </script>
+</body>
+</html>
