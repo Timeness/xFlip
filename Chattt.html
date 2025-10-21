@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quosz - Decentralized E2EE Chat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>Quosz - Ultimate Decentralized E2EE Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.39.0.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Roboto', sans-serif; 
+            font-family: 'Poppins', sans-serif; 
             background: #000; 
             color: #d1d5db; 
             min-height: 100vh; 
@@ -17,38 +17,57 @@
             justify-content: center; 
             align-items: center; 
             padding: 16px; 
+            animation: fadeIn 0.7s ease-out; 
             transition: background 0.5s ease; 
-            animation: fadeIn 0.5s ease-out; 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%233b82f6" d="M2 2l16 16-6-6-4 4-6-6z"/></svg>'), auto; 
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(-30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-        .container { max-width: 800px; width: 100%; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes flip { from { transform: rotateY(90deg); } to { transform: rotateY(0); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 5px #3b82f6; } 50% { box-shadow: 0 0 15px #3b82f6; } }
+        .container { max-width: 900px; width: 100%; }
         .form-container, .app-container { 
-            background: #111827; 
+            background: rgba(17, 24, 39, 0.7); 
+            backdrop-filter: blur(10px); 
             padding: 24px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); 
-            animation: slideUp 0.5s ease-out; 
+            border-radius: 16px; 
+            animation: slideUp 0.7s ease-out; 
         }
-        .form-container { text-align: center; }
-        .form-toggle { margin: 12px 0; font-size: 12px; }
-        .form-toggle a { color: #3b82f6; text-decoration: none; transition: color 0.3s; }
-        .form-toggle a:hover { color: #2563eb; }
+        .form-container { text-align: center; perspective: 1000px; }
+        .form-inner { transition: transform 0.5s ease; transform-style: preserve-3d; }
+        .form-inner.flip { transform: rotateY(180deg); }
+        .logo { width: 40px; height: 40px; margin-bottom: 16px; animation: bounce 1s ease-out; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } }
+        .form-field { position: relative; margin: 12px 0; }
+        .form-field label { 
+            position: absolute; 
+            top: 10px; 
+            left: 12px; 
+            font-size: 12px; 
+            color: #9ca3af; 
+            transition: all 0.3s ease; 
+            pointer-events: none; 
+        }
+        .form-field input:focus + label, .form-field input:not(:placeholder-shown) + label { 
+            top: -8px; 
+            font-size: 10px; 
+            color: #3b82f6; 
+        }
         input { 
-            background: #1f2937; 
+            background: rgba(31, 41, 55, 0.7); 
             color: #d1d5db; 
             padding: 10px; 
             border-radius: 8px; 
             border: none; 
             width: 100%; 
-            margin: 8px 0; 
             font-size: 14px; 
             outline: none; 
-            transition: background 0.3s ease, transform 0.2s ease; 
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; 
         }
-        input:focus { background: #374151; transform: scale(1.02); }
+        input:focus { background: rgba(55, 65, 81, 0.7); transform: scale(1.02); box-shadow: 0 0 10px #3b82f6; }
         button { 
             background: #3b82f6; 
             color: white; 
@@ -57,10 +76,18 @@
             border: none; 
             cursor: pointer; 
             font-size: 14px; 
-            transition: background 0.3s ease, transform 0.2s ease; 
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; 
         }
-        button:hover { background: #2563eb; transform: scale(1.05); }
+        button:hover { background: #2563eb; transform: scale(1.05); box-shadow: 0 0 15px #3b82f6; }
         button:active { transform: scale(0.95); }
+        .error { color: #f87171; font-size: 12px; animation: shake 0.3s ease; }
+        .success { color: #22c55e; font-size: 12px; }
+        .photo-preview { width: 60px; height: 60px; border-radius: 50%; margin: 8px auto; display: none; }
+        .password-meter { height: 4px; background: #374151; border-radius: 2px; margin-top: 4px; }
+        .password-meter div { height: 100%; border-radius: 2px; transition: width 0.3s ease; }
+        .weak { background: #f87171; width: 33%; }
+        .medium { background: #facc15; width: 66%; }
+        .strong { background: #22c55e; width: 100%; }
         .app-container { display: none; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .search-bar { display: flex; gap: 8px; margin-bottom: 16px; position: relative; }
@@ -69,28 +96,29 @@
             top: 100%; 
             left: 0; 
             right: 0; 
-            background: #1f2937; 
+            background: rgba(31, 41, 55, 0.7); 
+            backdrop-filter: blur(10px); 
             border-radius: 8px; 
             max-height: 200px; 
             overflow-y: auto; 
             z-index: 10; 
         }
-        .autocomplete div { padding: 8px; cursor: pointer; transition: background 0.3s; }
-        .autocomplete div:hover { background: #374151; }
+        .autocomplete div { padding: 8px; cursor: pointer; transition: background 0.3s ease; }
+        .autocomplete div:hover { background: rgba(55, 65, 81, 0.7); }
         .user-list { list-style: none; }
         .user-list li { 
             display: flex; 
             align-items: center; 
             gap: 12px; 
             padding: 10px; 
-            background: #1f2937; 
+            background: rgba(31, 41, 55, 0.7); 
             border-radius: 8px; 
             margin: 8px 0; 
             cursor: pointer; 
             transition: background 0.3s ease, transform 0.2s ease, opacity 0.3s ease; 
             animation: slideIn 0.3s ease-out forwards; 
         }
-        .user-list li:hover { background: #374151; transform: scale(1.02); }
+        .user-list li:hover { background: rgba(55, 65, 81, 0.7); transform: scale(1.02); box-shadow: 0 0 10px #3b82f6; }
         .user-list li.hidden { opacity: 0; height: 0; margin: 0; overflow: hidden; }
         .avatar { 
             width: 36px; 
@@ -99,13 +127,15 @@
             object-fit: cover; 
             transition: transform 0.3s ease; 
         }
-        .avatar:hover { transform: scale(1.1); }
+        .avatar.active { animation: glow 1s infinite; }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; margin-left: 8px; }
         .online { background: #22c55e; }
-        .offline { background: #ef4444; }
+        .away { background: #facc15; }
+        .offline { background: #f87171; }
         .chat-box { 
             height: 400px; 
-            background: #111827; 
+            background: rgba(17, 24, 39, 0.7); 
+            backdrop-filter: blur(10px); 
             border-radius: 8px; 
             padding: 16px; 
             overflow-y: auto; 
@@ -114,27 +144,34 @@
         }
         .message { 
             margin: 8px 0; 
+            padding: 8px; 
+            background: rgba(31, 41, 55, 0.7); 
+            border-radius: 8px; 
             animation: slideIn 0.3s ease-out; 
             position: relative; 
-            cursor: pointer; 
         }
         .message:hover .message-actions { display: block; }
         .message-actions { 
             display: none; 
             position: absolute; 
-            right: 0; 
-            top: -20px; 
-            background: #1f2937; 
+            right: 8px; 
+            top: -16px; 
+            background: rgba(31, 41, 55, 0.7); 
             border-radius: 4px; 
             padding: 4px; 
         }
-        .own { text-align: right; color: #3b82f6; }
+        .own { text-align: right; background: rgba(59, 130, 246, 0.2); }
         .read { color: #60a5fa; }
-        .typing { font-style: italic; color: #6b7280; animation: pulse 1.5s infinite; }
+        .typing { font-style: italic; color: #6b7280; }
+        .typing span { display: inline-block; animation: pulse 0.5s infinite alternate; }
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
         .chat-input { display: flex; gap: 8px; }
         .chat-input input { flex: 1; }
+        .emoji-picker { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .emoji-picker span { cursor: pointer; font-size: 18px; transition: transform 0.2s ease; }
+        .emoji-picker span:hover { transform: scale(1.2); }
         .status { color: #9ca3af; font-size: 12px; margin-top: 8px; transition: opacity 0.3s ease; }
-        .error { color: #f87171; font-size: 12px; animation: slideUp 0.3s ease-out; }
         .spinner { 
             border: 2px solid #3b82f6; 
             border-top: 2px solid transparent; 
@@ -145,37 +182,80 @@
             display: inline-block; 
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .emoji-picker { display: flex; gap: 8px; margin-top: 8px; }
-        .emoji-picker span { cursor: pointer; font-size: 18px; }
+        .profile-card { 
+            position: absolute; 
+            background: rgba(31, 41, 55, 0.9); 
+            backdrop-filter: blur(10px); 
+            border-radius: 8px; 
+            padding: 8px; 
+            z-index: 10; 
+            display: none; 
+        }
         canvas { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="form" class="form-container">
-            <h1 class="text-xl font-medium mb-4">Quosz</h1>
-            <div id="register-form">
-                <p class="mb-4 text-sm">Create Decentralized Account</p>
-                <input type="text" id="reg-username" placeholder="Username (min 3 chars)" maxlength="20" aria-label="Username">
-                <input type="email" id="reg-email" placeholder="Email (optional)" aria-label="Email">
-                <input type="password" id="reg-password" placeholder="Password" aria-label="Password">
-                <input type="file" id="photo" accept="image/*" class="mb-4" aria-label="Profile photo">
-                <canvas id="photo-preview" width="100" height="100"></canvas>
-                <button onclick="createAccount()">Register</button>
-                <p class="form-toggle text-sm">Have an account? <a href="#" onclick="showLogin()">Login</a></p>
-            </div>
-            <div id="login-form" style="display: none;">
-                <p class="mb-4 text-sm">Login to Quosz</p>
-                <input type="text" id="login-username" placeholder="Username" aria-label="Username">
-                <input type="password" id="login-password" placeholder="Password" aria-label="Password">
-                <button onclick="login()">Login</button>
-                <p class="form-toggle text-sm">Need an account? <a href="#" onclick="showRegister()">Register</a></p>
+            <svg class="logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 5L30 15V35H10V15L20 5Z" fill="#3b82f6"/>
+                <circle cx="20" cy="20" r="8" fill="#fff"/>
+                <path d="M20 16V24M16 20H24" stroke="#3b82f6" stroke-width="2"/>
+            </svg>
+            <div class="form-inner">
+                <div id="register-form">
+                    <p class="mb-4 text-sm">Create Quosz Account</p>
+                    <div class="form-field">
+                        <input type="text" id="reg-username" placeholder=" " aria-label="Username">
+                        <label>Username (min 3 chars)</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="email" id="reg-email" placeholder=" " aria-label="Email">
+                        <label>Email (optional)</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="password" id="reg-password" placeholder=" " aria-label="Password">
+                        <label>Password</label>
+                        <div id="password-meter" class="password-meter"><div></div></div>
+                    </div>
+                    <div class="form-field">
+                        <input type="text" id="reg-recovery" placeholder=" " aria-label="Recovery question">
+                        <label>Recovery question (e.g., Pet's name)</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="file" id="photo" accept="image/*" aria-label="Profile photo">
+                        <label>Profile Photo</label>
+                        <img id="photo-preview" class="photo-preview" src="">
+                    </div>
+                    <button onclick="createAccount()">Register</button>
+                    <p class="form-toggle text-sm">Have an account? <a href="#" onclick="showLogin()">Login</a></p>
+                </div>
+                <div id="login-form" style="display: none;">
+                    <p class="mb-4 text-sm">Login to Quosz</p>
+                    <div class="form-field">
+                        <input type="text" id="login-username" placeholder=" " aria-label="Username">
+                        <label>Username</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="password" id="login-password" placeholder=" " aria-label="Password">
+                        <label>Password</label>
+                    </div>
+                    <button onclick="login()">Login</button>
+                    <p class="form-toggle text-sm">Need an account? <a href="#" onclick="showRegister()">Register</a></p>
+                    <p class="form-toggle text-sm"><a href="#" onclick="recoverAccount()">Forgot Password?</a></p>
+                </div>
             </div>
             <p id="error" class="error"></p>
+            <p id="success" class="success"></p>
         </div>
         <div id="app" class="app-container">
             <div class="header">
                 <div class="flex items-center gap-4">
+                    <svg class="logo" style="width: 24px; height: 24px;" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 5L30 15V35H10V15L20 5Z" fill="#3b82f6"/>
+                        <circle cx="20" cy="20" r="8" fill="#fff"/>
+                        <path d="M20 16V24M16 20H24" stroke="#3b82f6" stroke-width="2"/>
+                    </svg>
                     <img id="userAvatar" class="avatar" src="https://via.placeholder.com/36" alt="User avatar">
                     <h2 id="userInfo" class="font-medium text-sm"></h2>
                 </div>
@@ -183,6 +263,8 @@
                     <button onclick="toggleTheme()" class="text-sm">🌙</button>
                     <button onclick="editProfile()" class="text-sm ml-2">✏️</button>
                     <button onclick="logout()" class="text-sm ml-2">🚪</button>
+                    <button onclick="exportChats()" class="text-sm ml-2">📤</button>
+                    <button onclick="importChats()" class="text-sm ml-2">📥</button>
                 </div>
             </div>
             <div class="search-bar">
@@ -199,52 +281,65 @@
                 <span onclick="addEmoji('😊')">😊</span>
                 <span onclick="addEmoji('👍')">👍</span>
                 <span onclick="addEmoji('❤️')">❤️</span>
+                <span onclick="addEmoji('😂')">😂</span>
+                <input type="text" id="emoji-search" placeholder="Search emoji..." onkeyup="filterEmojis()" class="text-sm">
             </div>
-            <div id="status" class="status"></div>
+            <div class="status">Status: <span id="status-text"></span></div>
             <canvas id="qr-code" width="100" height="100" style="display: none;"></canvas>
         </div>
     </div>
 
     <script>
         // Global vars
-        let currentUser = { username: '', id: '', photo: '', email: '' };
+        let currentUser = { username: '', id: '', photo: '', email: '', recovery: '', alias: '', status: 'Available' };
         let pubnub, localPeer, dataChannel, connectedPeer = null;
         let onlineUsers = {};
-        let typingTimer;
-        let isDark = true;
         let chatHistory = JSON.parse(localStorage.getItem('quoszChats') || '{}');
+        let typingTimer, sessionTimer;
+        let isDark = true;
+        let offlineQueue = [];
+        const emojis = ['😊', '👍', '❤️', '😂', '😎', '😢', '🎉'];
 
-        // QR Code generator (simple canvas-based)
+        // QR Code (mock)
         function generateQR(text) {
             const canvas = document.getElementById('qr-code');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const size = 100, pixels = 25;
-            for (let i = 0; i < pixels; i++) for (let j = 0; j < pixels; j++)
-                if (Math.random() > 0.5) ctx.fillRect(i * 4, j * 4, 4, 4); // Pseudo-QR
-            alert('QR Code for ID: ' + text); // Replace with QR lib in prod
+            for (let i = 0; i < 25; i++) for (let j = 0; j < 25; j++)
+                if (Math.random() > 0.5) ctx.fillRect(i * 4, j * 4, 4, 4);
+            alert('QR Code for ID: ' + text);
         }
 
-        // Photo crop preview
+        // Photo crop
         function previewPhoto(file, callback) {
-            const canvas = document.getElementById('photo-preview');
+            const canvas = document.getElementById('qr-code'); // Reuse canvas
             const ctx = canvas.getContext('2d');
             const img = new Image();
             img.onload = () => {
                 ctx.drawImage(img, 0, 0, 100, 100);
+                document.getElementById('photo-preview').src = canvas.toDataURL();
+                document.getElementById('photo-preview').style.display = 'block';
                 callback(canvas.toDataURL());
             };
             img.src = URL.createObjectURL(file);
         }
 
-        // Password hash (SHA-256)
+        // Password hash
         async function hashPassword(password) {
             const enc = new TextEncoder();
             const hash = await crypto.subtle.digest('SHA-256', enc.encode(password));
             return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // UUID generator
+        // Password strength
+        function checkPasswordStrength(password) {
+            const meter = document.getElementById('password-meter').firstChild;
+            if (password.length < 6) meter.className = 'weak';
+            else if (password.length < 10) meter.className = 'medium';
+            else meter.className = 'strong';
+        }
+
+        // UUID
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
                 const r = Math.random() * 16 | 0;
@@ -252,35 +347,49 @@
             });
         }
 
+        // Avatar generator
+        function generateAvatar(username) {
+            return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36'><rect width='100%' height='100%' fill='%233b82f6'/><text x='50%' y='50%' font-family='Poppins' font-size='18' fill='white' text-anchor='middle' dy='.3em'>${username[0].toUpperCase()}</text></svg>`;
+        }
+
         // Account management
         async function createAccount() {
             const username = document.getElementById('reg-username').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const password = document.getElementById('reg-password').value;
+            const recovery = document.getElementById('reg-recovery').value.trim();
             const photoInput = document.getElementById('photo');
             const error = document.getElementById('error');
+            const success = document.getElementById('success');
 
-            if (username.length < 3) return error.textContent = 'Username must be at least 3 characters';
+            if (username.length < 3) return error.textContent = 'Username must be 3+ characters';
             const existingUsers = JSON.parse(localStorage.getItem('quoszUsers') || '[]');
             if (existingUsers.includes(username)) return error.textContent = 'Username taken';
             if (!password) return error.textContent = 'Password required';
+            if (!recovery) return error.textContent = 'Recovery question required';
 
-            let photo = '';
+            let photo = generateAvatar(username);
             if (photoInput.files[0]) {
                 photo = await new Promise(resolve => previewPhoto(photoInput.files[0], resolve));
             }
 
-            currentUser = { 
-                username, 
-                id: generateUUID(), 
-                photo, 
-                email, 
+            currentUser = {
+                username,
+                id: generateUUID(),
+                photo,
+                email,
+                recovery,
                 password: await hashPassword(password),
-                lastSeen: Date.now()
+                alias: username,
+                status: 'Available',
+                lastSeen: Date.now(),
+                verified: Math.random() > 0.8 // Mock verification
             };
             localStorage.setItem('quoszUser', JSON.stringify(currentUser));
             localStorage.setItem('quoszUsers', JSON.stringify([...existingUsers, username]));
-            startApp();
+            localStorage.setItem('quoszActivity', JSON.stringify([...JSON.parse(localStorage.getItem('quoszActivity') || '[]'), { action: 'register', time: Date.now() }]));
+            success.textContent = 'Account created!';
+            setTimeout(startApp, 1000);
         }
 
         async function login() {
@@ -294,28 +403,46 @@
                 return;
             }
             currentUser = user;
+            localStorage.setItem('quoszActivity', JSON.stringify([...JSON.parse(localStorage.getItem('quoszActivity') || '[]'), { action: 'login', time: Date.now() }]));
             startApp();
         }
 
+        function recoverAccount() {
+            const recovery = prompt('Enter your recovery answer:');
+            const user = JSON.parse(localStorage.getItem('quoszUser') || '{}');
+            if (user.recovery === recovery) alert('Password: ' + user.password); // Mock recovery
+            else document.getElementById('error').textContent = 'Invalid recovery answer';
+        }
+
         function showLogin() {
-            document.getElementById('register-form').style.display = 'none';
-            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('form-inner').classList.add('flip');
+            setTimeout(() => {
+                document.getElementById('register-form').style.display = 'none';
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('form-inner').classList.remove('flip');
+            }, 250);
         }
 
         function showRegister() {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('register-form').style.display = 'block';
+            document.getElementById('form-inner').classList.add('flip');
+            setTimeout(() => {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('register-form').style.display = 'block';
+                document.getElementById('form-inner').classList.remove('flip');
+            }, 250);
         }
 
         function startApp() {
             document.getElementById('form').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            document.getElementById('userInfo').textContent = `${currentUser.username} (${currentUser.id})`;
+            document.getElementById('userInfo').textContent = `${currentUser.alias} (${currentUser.id}) ${currentUser.verified ? '✅' : ''}`;
             if (currentUser.photo) document.getElementById('userAvatar').src = currentUser.photo;
             generateQR(currentUser.id);
             initSignaling();
             updateStatus('Online. Search for users to chat.');
             loadChatHistory();
+            sessionTimer = setTimeout(logout, 30 * 60 * 1000);
+            document.getElementById('reg-password').oninput = (e) => checkPasswordStrength(e.target.value);
         }
 
         function editProfile() {
@@ -325,6 +452,8 @@
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('reg-username').value = currentUser.username;
             document.getElementById('reg-email').value = currentUser.email;
+            document.getElementById('reg-recovery').value = currentUser.recovery;
+            if (currentUser.photo) document.getElementById('photo-preview').src = currentUser.photo;
         }
 
         function logout() {
@@ -335,12 +464,13 @@
             document.getElementById('login-form').style.display = 'block';
             document.getElementById('register-form').style.display = 'none';
             pubnub?.unsubscribeAll();
+            clearTimeout(sessionTimer);
         }
 
         function toggleTheme() {
             isDark = !isDark;
-            document.body.style.background = isDark ? '#000' : '#111827';
-            localStorage.setItem('quoszTheme', isDark ? 'dark' : 'gray');
+            document.body.style.background = isDark ? '#000' : 'linear-gradient(135deg, #111827, #1e293b)';
+            localStorage.setItem('quoszTheme', isDark ? 'dark' : 'gradient');
         }
 
         // Signaling
@@ -371,17 +501,36 @@
                 if (user.username !== currentUser.username && !blocked.includes(user.username)) {
                     const li = document.createElement('li');
                     li.style.animationDelay = `${index * 0.05}s`;
-                    const status = Date.now() - user.lastSeen < 10000 ? 'online' : 'offline';
+                    const timeDiff = (Date.now() - user.lastSeen) / 1000 / 60;
+                    const status = timeDiff < 1 ? 'online' : timeDiff < 5 ? 'away' : 'offline';
                     li.innerHTML = `
-                        <img src="${user.photo || 'https://via.placeholder.com/36'}" class="avatar">
-                        ${user.username} <span class="status-dot ${status}"></span>
-                        <small>${new Date(user.lastSeen).toLocaleTimeString()}</small>
+                        <img src="${user.photo || generateAvatar(user.username)}" class="avatar ${status === 'online' ? 'active' : ''}">
+                        ${user.alias || user.username} ${user.verified ? '✅' : ''}
+                        <span class="status-dot ${status}"></span>
+                        <small>${timeDiff < 1 ? 'Now' : timeDiff < 60 ? Math.floor(timeDiff) + 'm ago' : new Date(user.lastSeen).toLocaleTimeString()}</small>
                     `;
                     li.onclick = () => startChat(user);
                     li.oncontextmenu = (e) => { e.preventDefault(); blockUser(user.username); };
+                    li.onmouseenter = () => showProfileCard(user, li);
+                    li.onmouseleave = () => document.querySelector('.profile-card')?.remove();
                     usersList.appendChild(li);
                 }
             });
+        }
+
+        function showProfileCard(user, li) {
+            const card = document.createElement('div');
+            card.className = 'profile-card';
+            card.style.top = `${li.offsetTop + 40}px`;
+            card.style.left = `${li.offsetLeft}px`;
+            card.innerHTML = `
+                <p><strong>${user.alias || user.username}</strong> ${user.verified ? '✅' : ''}</p>
+                <p>ID: ${user.id}</p>
+                <p>Email: ${user.email || 'N/A'}</p>
+                <p>Status: ${user.status}</p>
+            `;
+            document.querySelector('.container').appendChild(card);
+            setTimeout(() => card.style.display = 'block', 10);
         }
 
         function blockUser(username) {
@@ -403,9 +552,17 @@
                         autocomplete.appendChild(div);
                     }
                 });
+                localStorage.setItem('quoszSearchHistory', JSON.stringify([...JSON.parse(localStorage.getItem('quoszSearchHistory') || '[]'), query].slice(-5)));
             }
             document.querySelectorAll('.user-list li').forEach(li => {
                 li.classList.toggle('hidden', !li.textContent.toLowerCase().includes(query));
+            });
+        }
+
+        function filterEmojis() {
+            const query = document.getElementById('emoji-search').value.toLowerCase();
+            document.querySelectorAll('.emoji-picker span').forEach(span => {
+                span.style.display = emojis.includes(span.textContent) && span.textContent.includes(query) ? 'inline' : 'none';
             });
         }
 
@@ -418,9 +575,13 @@
                 channel: 'quosz_signal',
                 message: { type: 'offer', from: currentUser, to: targetUser, offer: localPeer.localDescription }
             });
+            if (offlineQueue.length) {
+                offlineQueue.forEach(msg => dataChannel?.send(msg));
+                offlineQueue = [];
+            }
         }
 
-        function createPeerConnection() {
+        function createPeerConnection(retryCount = 0) {
             localPeer = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
             localPeer.onicecandidate = e => {
                 if (e.candidate) {
@@ -433,27 +594,31 @@
             dataChannel = localPeer.createDataChannel('chat');
             setupDataChannel();
             localPeer.createOffer().then(offer => localPeer.setLocalDescription(offer));
-            setTimeout(() => {
-                if (dataChannel.readyState !== 'open') startChat(connectedPeer); // Auto-reconnect
-            }, 10000);
+            if (retryCount < 3) {
+                setTimeout(() => {
+                    if (dataChannel.readyState !== 'open') createPeerConnection(retryCount + 1);
+                }, 5000 * (retryCount + 1));
+            } else {
+                updateStatus('Connection failed. Try again.');
+            }
         }
 
         function setupDataChannel() {
             dataChannel.onopen = () => {
-                updateStatus(`Connected to ${connectedPeer.username} <span class="status-dot online"></span>`);
+                updateStatus(`Connected to ${connectedPeer.username} 🔒 <span class="status-dot online"></span>`);
                 sendReadReceipts();
             };
             dataChannel.onmessage = async e => {
                 const decrypted = await decryptMessage(e.data);
-                if (decrypted !== '...') {
+                if (decrypted === 'read') markMessagesRead();
+                else if (decrypted === 'reaction') addReaction(e.data.meta);
+                else if (decrypted !== '...') {
                     addMessage(decrypted, false);
                     playNotification();
-                    navigator.vibrate?.(200);
+                    navigator.vibrate?.([200, 100, 200]);
                     saveChatHistory(decrypted, false);
                     dataChannel.send(await encryptMessage('read'));
-                }
-                if (decrypted === '...') showTyping(false);
-                if (decrypted === 'read') markMessagesRead();
+                } else showTyping(false);
             };
             dataChannel.onclose = () => updateStatus('Connection closed.');
         }
@@ -493,41 +658,56 @@
             );
         }
 
-        async function encryptMessage(msg) {
+        async function encryptMessage(msg, meta = null) {
             const key = await deriveKey();
             const enc = new TextEncoder();
             const iv = crypto.getRandomValues(new Uint8Array(12));
             const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(msg));
-            return btoa(String.fromCharCode(...new Uint8Array([...iv, ...new Uint8Array(encrypted)])));
+            return { data: btoa(String.fromCharCode(...new Uint8Array([...iv, ...new Uint8Array(encrypted)]))), meta };
         }
 
-        async function decryptMessage(encryptedB64) {
+        async function decryptMessage({ data, meta }) {
             const key = await deriveKey();
-            const data = Uint8Array.from(atob(encryptedB64), c => c.charCodeAt(0));
-            const iv = data.slice(0, 12);
-            const encrypted = data.slice(12);
+            const decoded = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+            const iv = decoded.slice(0, 12);
+            const encrypted = decoded.slice(12);
             const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, encrypted);
-            return new TextDecoder().decode(decrypted);
+            return { text: new TextDecoder().decode(decrypted), meta };
         }
 
         // Chat UI
         async function sendMessage() {
             const msg = document.getElementById('message').value.trim();
-            if (!msg || !dataChannel || dataChannel.readyState !== 'open') return;
-            const encrypted = await encryptMessage(msg);
-            dataChannel.send(encrypted);
-            addMessage(msg, true);
-            saveChatHistory(msg, true);
+            if (!msg || !dataChannel || dataChannel.readyState !== 'open') {
+                if (msg) offlineQueue.push(await encryptMessage(msg));
+                return;
+            }
+            const formatted = formatMessage(msg);
+            const encrypted = await encryptMessage(formatted);
+            dataChannel.send(encrypted.data);
+            addMessage(formatted, true);
+            saveChatHistory(formatted, true);
             document.getElementById('message').value = '';
-            navigator.vibrate?.(100);
+            navigator.vibrate?.([100, 50, 100]);
             playNotification();
         }
 
         function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
+            if (e.ctrlKey && e.key === 'Enter') sendMessage();
+            if (e.key === 'Escape') document.getElementById('message').value = '';
             clearTimeout(typingTimer);
-            dataChannel?.send(encryptMessage('...').then(enc => dataChannel.send(enc)));
+            dataChannel?.send((await encryptMessage('...')).data);
             typingTimer = setTimeout(() => showTyping(true), 1000);
+            const input = document.getElementById('message');
+            if (input.value.match(/:[a-z]+:/)) {
+                const emoji = emojis.find(e => input.value.includes(`:${e}:`));
+                if (emoji) input.value = input.value.replace(/:[a-z]+:/, emoji);
+            }
+            localStorage.setItem('quoszDraft', input.value);
+        }
+
+        function formatMessage(msg) {
+            return msg.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>');
         }
 
         function addEmoji(emoji) {
@@ -546,13 +726,13 @@
             if (!typingEl) {
                 typingEl = document.createElement('div');
                 typingEl.className = 'message typing';
-                typingEl.textContent = `${connectedPeer?.username || ''} is typing...`;
+                typingEl.innerHTML = `${connectedPeer?.username || ''} is typing <span>.</span><span>.</span><span>.</span>`;
                 chat.appendChild(typingEl);
                 chat.scrollTop = chat.scrollHeight;
             }
         }
 
-        function addMessage(msg, isOwn) {
+        function addMessage(msg, isOwn, time = Date.now()) {
             const chat = document.getElementById('chat');
             if (chat.querySelector('.typing')) chat.querySelector('.typing').remove();
             const div = document.createElement('div');
@@ -560,14 +740,16 @@
             div.innerHTML = `
                 ${isOwn ? '' : connectedPeer.username + ': '}
                 ${msg}
-                <small>${new Date().toLocaleTimeString()}</small>
+                <small title="${new Date(time).toLocaleString()}">${new Date(time).toLocaleTimeString()}</small>
                 <div class="message-actions">
                     <button onclick="copyMessage(this)" class="text-xs">Copy</button>
-                    ${isOwn ? `<button onclick="deleteMessage(this)" class="text-xs">Delete</button>` : ''}
+                    ${isOwn ? `<button onclick="editMessage(this)" class="text-xs">Edit</button><button onclick="deleteMessage(this)" class="text-xs">Delete</button>` : ''}
+                    <button onclick="reactMessage(this, '👍')" class="text-xs">👍</button>
+                    <button onclick="reactMessage(this, '❤️')" class="text-xs">❤️</button>
                 </div>
             `;
             chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
+            if (!chat.dataset.scrollLocked) chat.scrollTop = chat.scrollHeight;
         }
 
         function copyMessage(btn) {
@@ -576,24 +758,51 @@
             updateStatus('Message copied');
         }
 
+        function editMessage(btn) {
+            const msgEl = btn.parentElement.parentElement;
+            const text = msgEl.childNodes[1].textContent;
+            const newText = prompt('Edit message:', text);
+            if (newText && Date.now() - new Date(msgEl.querySelector('small').title).getTime() < 5 * 60 * 1000) {
+                msgEl.childNodes[1].textContent = formatMessage(newText);
+                saveChatHistory(null, null, true);
+                saveChatHistory(newText, true);
+            }
+        }
+
         function deleteMessage(btn) {
             btn.parentElement.parentElement.remove();
             saveChatHistory(null, null, true);
+        }
+
+        function reactMessage(btn, emoji) {
+            const msgEl = btn.parentElement.parentElement;
+            msgEl.innerHTML += ` <span>${emoji}</span>`;
+            dataChannel?.send((await encryptMessage('reaction', { emoji, id: msgEl.dataset.id })).data);
+        }
+
+        function addReaction({ emoji, id }) {
+            const msgEl = document.querySelector(`.message[data-id="${id}"]`);
+            if (msgEl) msgEl.innerHTML += ` <span>${emoji}</span>`;
         }
 
         function saveChatHistory(msg, isOwn, clear = false) {
             if (!connectedPeer) return;
             if (!chatHistory[connectedPeer.username]) chatHistory[connectedPeer.username] = [];
             if (clear) chatHistory[connectedPeer.username] = [];
-            else if (msg) chatHistory[connectedPeer.username].push({ msg, isOwn, time: Date.now() });
+            else if (msg) chatHistory[connectedPeer.username].push({ msg, isOwn, time: Date.now(), id: generateUUID() });
             localStorage.setItem('quoszChats', JSON.stringify(chatHistory));
+            setTimeout(() => localStorage.setItem('quoszChatsBackup', JSON.stringify(chatHistory)), 5 * 60 * 1000);
         }
 
         function loadChatHistory() {
             if (!connectedPeer) return;
             const chat = document.getElementById('chat');
             chat.innerHTML = '';
-            (chatHistory[connectedPeer.username] || []).forEach(({ msg, isOwn }) => addMessage(msg, isOwn));
+            (chatHistory[connectedPeer.username] || []).forEach(({ msg, isOwn, time, id }) => {
+                const div = document.createElement('div');
+                div.dataset.id = id;
+                addMessage(msg, isOwn, time);
+            });
         }
 
         function markMessagesRead() {
@@ -601,15 +810,43 @@
         }
 
         function sendReadReceipts() {
-            dataChannel?.send(encryptMessage('read').then(enc => dataChannel.send(enc)));
+            dataChannel?.send((await encryptMessage('read')).data);
+        }
+
+        function exportChats() {
+            const data = JSON.stringify(chatHistory);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'quosz_chats.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importChats() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = () => {
+                    chatHistory = JSON.parse(reader.result);
+                    localStorage.setItem('quoszChats', JSON.stringify(chatHistory));
+                    loadChatHistory();
+                };
+                reader.readAsText(file);
+            };
+            input.click();
         }
 
         function playNotification() {
-            new Audio('data:audio/mp3;base64,//MkxAA...').play().catch(() => {}); // Placeholder; add real sound
+            new Audio('data:audio/mp3;base64,//MkxAA...').play().catch(() => {}); // Replace with real sound
         }
 
         function updateStatus(text) {
-            const status = document.getElementById('status');
+            const status = document.getElementById('status-text');
             status.style.opacity = 0;
             setTimeout(() => {
                 status.innerHTML = text;
@@ -622,7 +859,8 @@
             currentUser = JSON.parse(localStorage.getItem('quoszUser'));
             startApp();
         }
-        if (localStorage.getItem('quoszTheme') === 'gray') toggleTheme();
+        if (localStorage.getItem('quoszTheme') !== 'dark') toggleTheme();
+        document.getElementById('message').value = localStorage.getItem('quoszDraft') || '';
     </script>
 </body>
 </html>
