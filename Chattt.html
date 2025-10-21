@@ -4,18 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quosz - Decentralized E2EE Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.39.0.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            background: #0f172a; 
-            color: #e2e8f0; 
+            font-family: 'Roboto', sans-serif; 
+            background: #000; 
+            color: #d1d5db; 
             min-height: 100vh; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             padding: 16px; 
+            transition: background 0.5s ease; 
             animation: fadeIn 0.5s ease-out; 
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -24,72 +26,86 @@
         @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         .container { max-width: 800px; width: 100%; }
         .form-container, .app-container { 
-            background: #1e293b; 
+            background: #111827; 
             padding: 24px; 
             border-radius: 12px; 
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); 
-        }
-        .form-container { 
-            text-align: center; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); 
             animation: slideUp 0.5s ease-out; 
         }
+        .form-container { text-align: center; }
+        .form-toggle { margin: 12px 0; font-size: 12px; }
+        .form-toggle a { color: #3b82f6; text-decoration: none; transition: color 0.3s; }
+        .form-toggle a:hover { color: #2563eb; }
         input { 
-            background: #334155; 
-            color: #e2e8f0; 
-            padding: 12px; 
+            background: #1f2937; 
+            color: #d1d5db; 
+            padding: 10px; 
             border-radius: 8px; 
             border: none; 
             width: 100%; 
             margin: 8px 0; 
-            font-size: 16px; 
+            font-size: 14px; 
             outline: none; 
             transition: background 0.3s ease, transform 0.2s ease; 
         }
-        input:focus { background: #475569; transform: scale(1.02); }
+        input:focus { background: #374151; transform: scale(1.02); }
         button { 
             background: #3b82f6; 
             color: white; 
-            padding: 12px 24px; 
+            padding: 10px 20px; 
             border-radius: 8px; 
             border: none; 
             cursor: pointer; 
-            font-size: 16px; 
+            font-size: 14px; 
             transition: background 0.3s ease, transform 0.2s ease; 
         }
         button:hover { background: #2563eb; transform: scale(1.05); }
         button:active { transform: scale(0.95); }
-        .app-container { display: none; animation: slideUp 0.5s ease-out; }
-        .search-bar { 
-            display: flex; 
-            gap: 8px; 
-            margin-bottom: 16px; 
+        .app-container { display: none; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .search-bar { display: flex; gap: 8px; margin-bottom: 16px; position: relative; }
+        .autocomplete { 
+            position: absolute; 
+            top: 100%; 
+            left: 0; 
+            right: 0; 
+            background: #1f2937; 
+            border-radius: 8px; 
+            max-height: 200px; 
+            overflow-y: auto; 
+            z-index: 10; 
         }
+        .autocomplete div { padding: 8px; cursor: pointer; transition: background 0.3s; }
+        .autocomplete div:hover { background: #374151; }
         .user-list { list-style: none; }
         .user-list li { 
             display: flex; 
             align-items: center; 
             gap: 12px; 
-            padding: 12px; 
-            background: #334155; 
+            padding: 10px; 
+            background: #1f2937; 
             border-radius: 8px; 
             margin: 8px 0; 
             cursor: pointer; 
             transition: background 0.3s ease, transform 0.2s ease, opacity 0.3s ease; 
             animation: slideIn 0.3s ease-out forwards; 
         }
-        .user-list li:hover { background: #475569; transform: scale(1.02); }
+        .user-list li:hover { background: #374151; transform: scale(1.02); }
         .user-list li.hidden { opacity: 0; height: 0; margin: 0; overflow: hidden; }
         .avatar { 
-            width: 40px; 
-            height: 40px; 
+            width: 36px; 
+            height: 36px; 
             border-radius: 50%; 
             object-fit: cover; 
             transition: transform 0.3s ease; 
         }
         .avatar:hover { transform: scale(1.1); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; margin-left: 8px; }
+        .online { background: #22c55e; }
+        .offline { background: #ef4444; }
         .chat-box { 
             height: 400px; 
-            background: #1e293b; 
+            background: #111827; 
             border-radius: 8px; 
             padding: 16px; 
             overflow-y: auto; 
@@ -99,53 +115,134 @@
         .message { 
             margin: 8px 0; 
             animation: slideIn 0.3s ease-out; 
+            position: relative; 
+            cursor: pointer; 
+        }
+        .message:hover .message-actions { display: block; }
+        .message-actions { 
+            display: none; 
+            position: absolute; 
+            right: 0; 
+            top: -20px; 
+            background: #1f2937; 
+            border-radius: 4px; 
+            padding: 4px; 
         }
         .own { text-align: right; color: #3b82f6; }
-        .typing { font-style: italic; color: #64748b; animation: pulse 1.5s infinite; }
-        .chat-input { 
-            display: flex; 
-            gap: 8px; 
-        }
+        .read { color: #60a5fa; }
+        .typing { font-style: italic; color: #6b7280; animation: pulse 1.5s infinite; }
+        .chat-input { display: flex; gap: 8px; }
         .chat-input input { flex: 1; }
-        .status { color: #94a3b8; font-size: 14px; margin-top: 8px; transition: opacity 0.3s ease; }
-        .error { color: #ef4444; animation: slideUp 0.3s ease-out; }
+        .status { color: #9ca3af; font-size: 12px; margin-top: 8px; transition: opacity 0.3s ease; }
+        .error { color: #f87171; font-size: 12px; animation: slideUp 0.3s ease-out; }
+        .spinner { 
+            border: 2px solid #3b82f6; 
+            border-top: 2px solid transparent; 
+            border-radius: 50%; 
+            width: 16px; 
+            height: 16px; 
+            animation: spin 1s linear infinite; 
+            display: inline-block; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .emoji-picker { display: flex; gap: 8px; margin-top: 8px; }
+        .emoji-picker span { cursor: pointer; font-size: 18px; }
+        canvas { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="form" class="form-container">
-            <h1 class="text-2xl font-bold mb-4">Welcome to Quosz</h1>
-            <p class="mb-4">Create your decentralized account</p>
-            <input type="text" id="username" placeholder="Username (min 3 chars)" maxlength="20">
-            <input type="file" id="photo" accept="image/*" class="mb-4">
-            <button onclick="createAccount()">Create Account</button>
-            <p class="mt-2 text-sm">Have an account? <a href="#" onclick="loadAccount()" class="text-blue-400 hover:text-blue-300 transition-colors">Load</a></p>
+            <h1 class="text-xl font-medium mb-4">Quosz</h1>
+            <div id="register-form">
+                <p class="mb-4 text-sm">Create Decentralized Account</p>
+                <input type="text" id="reg-username" placeholder="Username (min 3 chars)" maxlength="20" aria-label="Username">
+                <input type="email" id="reg-email" placeholder="Email (optional)" aria-label="Email">
+                <input type="password" id="reg-password" placeholder="Password" aria-label="Password">
+                <input type="file" id="photo" accept="image/*" class="mb-4" aria-label="Profile photo">
+                <canvas id="photo-preview" width="100" height="100"></canvas>
+                <button onclick="createAccount()">Register</button>
+                <p class="form-toggle text-sm">Have an account? <a href="#" onclick="showLogin()">Login</a></p>
+            </div>
+            <div id="login-form" style="display: none;">
+                <p class="mb-4 text-sm">Login to Quosz</p>
+                <input type="text" id="login-username" placeholder="Username" aria-label="Username">
+                <input type="password" id="login-password" placeholder="Password" aria-label="Password">
+                <button onclick="login()">Login</button>
+                <p class="form-toggle text-sm">Need an account? <a href="#" onclick="showRegister()">Register</a></p>
+            </div>
             <p id="error" class="error"></p>
         </div>
         <div id="app" class="app-container">
-            <div class="flex items-center gap-4 mb-4">
-                <img id="userAvatar" class="avatar" src="https://via.placeholder.com/40" alt="Avatar">
-                <h2 id="userInfo" class="font-semibold"></h2>
+            <div class="header">
+                <div class="flex items-center gap-4">
+                    <img id="userAvatar" class="avatar" src="https://via.placeholder.com/36" alt="User avatar">
+                    <h2 id="userInfo" class="font-medium text-sm"></h2>
+                </div>
+                <div>
+                    <button onclick="toggleTheme()" class="text-sm">🌙</button>
+                    <button onclick="editProfile()" class="text-sm ml-2">✏️</button>
+                    <button onclick="logout()" class="text-sm ml-2">🚪</button>
+                </div>
             </div>
             <div class="search-bar">
-                <input type="text" id="search" placeholder="Search users to chat..." onkeyup="searchUsers()">
+                <input type="text" id="search" placeholder="Search users..." onkeyup="searchUsers()" aria-label="Search users">
+                <div id="autocomplete" class="autocomplete"></div>
             </div>
             <ul id="users" class="user-list"></ul>
             <div id="chat" class="chat-box"></div>
             <div class="chat-input">
-                <input type="text" id="message" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="message" placeholder="Type a message..." onkeypress="handleKeyPress(event)" aria-label="Chat message">
                 <button onclick="sendMessage()">Send</button>
             </div>
+            <div class="emoji-picker">
+                <span onclick="addEmoji('😊')">😊</span>
+                <span onclick="addEmoji('👍')">👍</span>
+                <span onclick="addEmoji('❤️')">❤️</span>
+            </div>
             <div id="status" class="status"></div>
+            <canvas id="qr-code" width="100" height="100" style="display: none;"></canvas>
         </div>
     </div>
 
     <script>
         // Global vars
-        let currentUser = { username: '', id: '', photo: '' };
+        let currentUser = { username: '', id: '', photo: '', email: '' };
         let pubnub, localPeer, dataChannel, connectedPeer = null;
         let onlineUsers = {};
         let typingTimer;
+        let isDark = true;
+        let chatHistory = JSON.parse(localStorage.getItem('quoszChats') || '{}');
+
+        // QR Code generator (simple canvas-based)
+        function generateQR(text) {
+            const canvas = document.getElementById('qr-code');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const size = 100, pixels = 25;
+            for (let i = 0; i < pixels; i++) for (let j = 0; j < pixels; j++)
+                if (Math.random() > 0.5) ctx.fillRect(i * 4, j * 4, 4, 4); // Pseudo-QR
+            alert('QR Code for ID: ' + text); // Replace with QR lib in prod
+        }
+
+        // Photo crop preview
+        function previewPhoto(file, callback) {
+            const canvas = document.getElementById('photo-preview');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, 100, 100);
+                callback(canvas.toDataURL());
+            };
+            img.src = URL.createObjectURL(file);
+        }
+
+        // Password hash (SHA-256)
+        async function hashPassword(password) {
+            const enc = new TextEncoder();
+            const hash = await crypto.subtle.digest('SHA-256', enc.encode(password));
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         // UUID generator
         function generateUUID() {
@@ -155,48 +252,59 @@
             });
         }
 
-        // Account creation
+        // Account management
         async function createAccount() {
-            const username = document.getElementById('username').value.trim();
+            const username = document.getElementById('reg-username').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
             const photoInput = document.getElementById('photo');
             const error = document.getElementById('error');
 
-            // Validate username
-            if (username.length < 3) {
-                error.textContent = 'Username must be at least 3 characters';
-                return;
-            }
+            if (username.length < 3) return error.textContent = 'Username must be at least 3 characters';
             const existingUsers = JSON.parse(localStorage.getItem('quoszUsers') || '[]');
-            if (existingUsers.includes(username)) {
-                error.textContent = 'Username already taken';
-                return;
-            }
+            if (existingUsers.includes(username)) return error.textContent = 'Username taken';
+            if (!password) return error.textContent = 'Password required';
 
-            // Handle photo
             let photo = '';
             if (photoInput.files[0]) {
-                photo = await new Promise(resolve => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.readAsDataURL(photoInput.files[0]);
-                });
+                photo = await new Promise(resolve => previewPhoto(photoInput.files[0], resolve));
             }
 
-            // Save account
-            currentUser = { username, id: generateUUID(), photo };
+            currentUser = { 
+                username, 
+                id: generateUUID(), 
+                photo, 
+                email, 
+                password: await hashPassword(password),
+                lastSeen: Date.now()
+            };
             localStorage.setItem('quoszUser', JSON.stringify(currentUser));
             localStorage.setItem('quoszUsers', JSON.stringify([...existingUsers, username]));
             startApp();
         }
 
-        function loadAccount() {
+        async function login() {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            const error = document.getElementById('error');
             const user = JSON.parse(localStorage.getItem('quoszUser') || '{}');
-            if (!user.username) {
-                document.getElementById('error').textContent = 'No account found';
+
+            if (user.username !== username || user.password !== await hashPassword(password)) {
+                error.textContent = 'Invalid credentials';
                 return;
             }
             currentUser = user;
             startApp();
+        }
+
+        function showLogin() {
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        }
+
+        function showRegister() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
         }
 
         function startApp() {
@@ -204,8 +312,35 @@
             document.getElementById('app').style.display = 'block';
             document.getElementById('userInfo').textContent = `${currentUser.username} (${currentUser.id})`;
             if (currentUser.photo) document.getElementById('userAvatar').src = currentUser.photo;
+            generateQR(currentUser.id);
             initSignaling();
             updateStatus('Online. Search for users to chat.');
+            loadChatHistory();
+        }
+
+        function editProfile() {
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'block';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('reg-username').value = currentUser.username;
+            document.getElementById('reg-email').value = currentUser.email;
+        }
+
+        function logout() {
+            currentUser.lastSeen = Date.now();
+            localStorage.setItem('quoszUser', JSON.stringify(currentUser));
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('form').style.display = 'block';
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+            pubnub?.unsubscribeAll();
+        }
+
+        function toggleTheme() {
+            isDark = !isDark;
+            document.body.style.background = isDark ? '#000' : '#111827';
+            localStorage.setItem('quoszTheme', isDark ? 'dark' : 'gray');
         }
 
         // Signaling
@@ -219,6 +354,7 @@
             pubnub.subscribe({ channels: ['quosz_signal'] });
 
             setInterval(() => {
+                currentUser.lastSeen = Date.now();
                 pubnub.publish({
                     channel: 'quosz_signal',
                     message: { type: 'online', user: currentUser, socketId: Date.now() }
@@ -230,29 +366,53 @@
         function updateOnlineUsers() {
             const usersList = document.getElementById('users');
             usersList.innerHTML = '';
+            const blocked = JSON.parse(localStorage.getItem('quoszBlocked') || '[]');
             Object.values(onlineUsers).forEach((user, index) => {
-                if (user.username !== currentUser.username) {
+                if (user.username !== currentUser.username && !blocked.includes(user.username)) {
                     const li = document.createElement('li');
                     li.style.animationDelay = `${index * 0.05}s`;
-                    li.innerHTML = `<img src="${user.photo || 'https://via.placeholder.com/40'}" class="avatar"> ${user.username}`;
+                    const status = Date.now() - user.lastSeen < 10000 ? 'online' : 'offline';
+                    li.innerHTML = `
+                        <img src="${user.photo || 'https://via.placeholder.com/36'}" class="avatar">
+                        ${user.username} <span class="status-dot ${status}"></span>
+                        <small>${new Date(user.lastSeen).toLocaleTimeString()}</small>
+                    `;
                     li.onclick = () => startChat(user);
+                    li.oncontextmenu = (e) => { e.preventDefault(); blockUser(user.username); };
                     usersList.appendChild(li);
                 }
             });
         }
 
+        function blockUser(username) {
+            const blocked = JSON.parse(localStorage.getItem('quoszBlocked') || '[]');
+            localStorage.setItem('quoszBlocked', JSON.stringify([...blocked, username]));
+            updateOnlineUsers();
+        }
+
         function searchUsers() {
             const query = document.getElementById('search').value.toLowerCase();
+            const autocomplete = document.getElementById('autocomplete');
+            autocomplete.innerHTML = '';
+            if (query) {
+                Object.values(onlineUsers).forEach(user => {
+                    if (user.username.toLowerCase().includes(query) && user.username !== currentUser.username) {
+                        const div = document.createElement('div');
+                        div.textContent = user.username;
+                        div.onclick = () => { document.getElementById('search').value = user.username; startChat(user); };
+                        autocomplete.appendChild(div);
+                    }
+                });
+            }
             document.querySelectorAll('.user-list li').forEach(li => {
-                const isVisible = li.textContent.toLowerCase().includes(query);
-                li.classList.toggle('hidden', !isVisible);
+                li.classList.toggle('hidden', !li.textContent.toLowerCase().includes(query));
             });
         }
 
         // WebRTC
         function startChat(targetUser) {
             connectedPeer = targetUser;
-            updateStatus(`Connecting to ${targetUser.username}...`);
+            updateStatus(`Connecting to ${targetUser.username}... <span class="spinner"></span>`);
             createPeerConnection();
             pubnub.publish({
                 channel: 'quosz_signal',
@@ -273,14 +433,27 @@
             dataChannel = localPeer.createDataChannel('chat');
             setupDataChannel();
             localPeer.createOffer().then(offer => localPeer.setLocalDescription(offer));
+            setTimeout(() => {
+                if (dataChannel.readyState !== 'open') startChat(connectedPeer); // Auto-reconnect
+            }, 10000);
         }
 
         function setupDataChannel() {
-            dataChannel.onopen = () => updateStatus('Connected! Chat securely.');
+            dataChannel.onopen = () => {
+                updateStatus(`Connected to ${connectedPeer.username} <span class="status-dot online"></span>`);
+                sendReadReceipts();
+            };
             dataChannel.onmessage = async e => {
                 const decrypted = await decryptMessage(e.data);
-                if (decrypted !== '...') addMessage(decrypted, false);
+                if (decrypted !== '...') {
+                    addMessage(decrypted, false);
+                    playNotification();
+                    navigator.vibrate?.(200);
+                    saveChatHistory(decrypted, false);
+                    dataChannel.send(await encryptMessage('read'));
+                }
                 if (decrypted === '...') showTyping(false);
+                if (decrypted === 'read') markMessagesRead();
             };
             dataChannel.onclose = () => updateStatus('Connection closed.');
         }
@@ -337,14 +510,17 @@
             return new TextDecoder().decode(decrypted);
         }
 
-        // UI
+        // Chat UI
         async function sendMessage() {
             const msg = document.getElementById('message').value.trim();
             if (!msg || !dataChannel || dataChannel.readyState !== 'open') return;
             const encrypted = await encryptMessage(msg);
             dataChannel.send(encrypted);
             addMessage(msg, true);
+            saveChatHistory(msg, true);
             document.getElementById('message').value = '';
+            navigator.vibrate?.(100);
+            playNotification();
         }
 
         function handleKeyPress(e) {
@@ -352,6 +528,12 @@
             clearTimeout(typingTimer);
             dataChannel?.send(encryptMessage('...').then(enc => dataChannel.send(enc)));
             typingTimer = setTimeout(() => showTyping(true), 1000);
+        }
+
+        function addEmoji(emoji) {
+            const input = document.getElementById('message');
+            input.value += emoji;
+            input.focus();
         }
 
         function showTyping(hide) {
@@ -375,19 +557,72 @@
             if (chat.querySelector('.typing')) chat.querySelector('.typing').remove();
             const div = document.createElement('div');
             div.className = `message ${isOwn ? 'own' : ''}`;
-            div.textContent = `${isOwn ? '' : connectedPeer.username + ': '}${msg}`;
+            div.innerHTML = `
+                ${isOwn ? '' : connectedPeer.username + ': '}
+                ${msg}
+                <small>${new Date().toLocaleTimeString()}</small>
+                <div class="message-actions">
+                    <button onclick="copyMessage(this)" class="text-xs">Copy</button>
+                    ${isOwn ? `<button onclick="deleteMessage(this)" class="text-xs">Delete</button>` : ''}
+                </div>
+            `;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
+        }
+
+        function copyMessage(btn) {
+            const text = btn.parentElement.parentElement.childNodes[1].textContent;
+            navigator.clipboard.writeText(text);
+            updateStatus('Message copied');
+        }
+
+        function deleteMessage(btn) {
+            btn.parentElement.parentElement.remove();
+            saveChatHistory(null, null, true);
+        }
+
+        function saveChatHistory(msg, isOwn, clear = false) {
+            if (!connectedPeer) return;
+            if (!chatHistory[connectedPeer.username]) chatHistory[connectedPeer.username] = [];
+            if (clear) chatHistory[connectedPeer.username] = [];
+            else if (msg) chatHistory[connectedPeer.username].push({ msg, isOwn, time: Date.now() });
+            localStorage.setItem('quoszChats', JSON.stringify(chatHistory));
+        }
+
+        function loadChatHistory() {
+            if (!connectedPeer) return;
+            const chat = document.getElementById('chat');
+            chat.innerHTML = '';
+            (chatHistory[connectedPeer.username] || []).forEach(({ msg, isOwn }) => addMessage(msg, isOwn));
+        }
+
+        function markMessagesRead() {
+            document.querySelectorAll('.message.own').forEach(msg => msg.classList.add('read'));
+        }
+
+        function sendReadReceipts() {
+            dataChannel?.send(encryptMessage('read').then(enc => dataChannel.send(enc)));
+        }
+
+        function playNotification() {
+            new Audio('data:audio/mp3;base64,//MkxAA...').play().catch(() => {}); // Placeholder; add real sound
         }
 
         function updateStatus(text) {
             const status = document.getElementById('status');
             status.style.opacity = 0;
             setTimeout(() => {
-                status.textContent = text;
+                status.innerHTML = text;
                 status.style.opacity = 1;
             }, 300);
         }
+
+        // Auto-login
+        if (localStorage.getItem('quoszUser')) {
+            currentUser = JSON.parse(localStorage.getItem('quoszUser'));
+            startApp();
+        }
+        if (localStorage.getItem('quoszTheme') === 'gray') toggleTheme();
     </script>
 </body>
 </html>
