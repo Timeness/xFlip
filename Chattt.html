@@ -3,111 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DecentralChat Beta - E2EE P2P</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
-        #login { text-align: center; }
-        input { padding: 10px; margin: 5px; border: 1px solid #333; background: #1e1e1e; color: #e0e0e0; border-radius: 5px; }
-        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        #app { display: none; }
-        #users { list-style: none; padding: 0; }
-        #users li { padding: 10px; background: #1e1e1e; margin: 5px 0; border-radius: 5px; cursor: pointer; }
-        #users li:hover { background: #333; }
-        #chat { height: 400px; overflow-y: auto; background: #1e1e1e; padding: 10px; border-radius: 5px; margin: 10px 0; }
-        #message { width: 70%; }
-        #send { width: 25%; }
-        .typing { font-style: italic; color: #888; }
-        .message { margin: 5px 0; }
-        .own { text-align: right; color: #007bff; }
-    </style>
-    <!-- Free public signaling via PubNub (no API key needed for demo; replace if rate-limited) -->
+    <title>Quosz - E2EE Chat</title>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.39.0.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            background: #0f172a; 
+            color: #e2e8f0; 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 16px; 
+        }
+        .container { max-width: 800px; width: 100%; }
+        .form-container, .app-container { 
+            background: #1e293b; 
+            padding: 24px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); 
+        }
+        .form-container { text-align: center; }
+        input { 
+            background: #334155; 
+            color: #e2e8f0; 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: none; 
+            width: 100%; 
+            margin: 8px 0; 
+            font-size: 16px; 
+            outline: none; 
+            transition: background 0.3s; 
+        }
+        input:focus { background: #475569; }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 16px; 
+            transition: background 0.3s; 
+        }
+        button:hover { background: #2563eb; }
+        .app-container { display: none; }
+        .search-bar { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 16px; 
+        }
+        .user-list { list-style: none; }
+        .user-list li { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 12px; 
+            background: #334155; 
+            border-radius: 8px; 
+            margin: 8px 0; 
+            cursor: pointer; 
+            transition: background 0.3s; 
+        }
+        .user-list li:hover { background: #475569; }
+        .avatar { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+        .chat-box { 
+            height: 400px; 
+            background: #1e293b; 
+            border-radius: 8px; 
+            padding: 16px; 
+            overflow-y: auto; 
+            margin-bottom: 16px; 
+        }
+        .message { margin: 8px 0; }
+        .own { text-align: right; color: #3b82f6; }
+        .typing { font-style: italic; color: #64748b; }
+        .chat-input { 
+            display: flex; 
+            gap: 8px; 
+        }
+        .chat-input input { flex: 1; }
+        .status { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+        .error { color: #ef4444; }
+    </style>
 </head>
 <body>
-    <div id="login">
-        <h1>DecentralChat Beta</h1>
-        <p>Create your decentralized username (stored locally):</p>
-        <input type="text" id="username" placeholder="Enter username" maxlength="20">
-        <button onclick="createAccount()">Create Account</button>
-        <p>Already have one? <a href="#" onclick="loadAccount()">Load Existing</a></p>
-    </div>
-    <div id="app">
-        <h2>Online Users</h2>
-        <input type="text" id="search" placeholder="Search users to chat..." onkeyup="searchUsers()">
-        <ul id="users"></ul>
-        <div id="chat"></div>
-        <input type="text" id="message" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
-        <button id="send" onclick="sendMessage()">Send</button>
-        <div id="status"></div>
+    <div class="container">
+        <div id="form" class="form-container">
+            <h1 class="text-2xl font-bold mb-4">Welcome to Quosz</h1>
+            <p class="mb-4">Create your decentralized account</p>
+            <input type="text" id="username" placeholder="Username (min 3 chars)" maxlength="20">
+            <input type="file" id="photo" accept="image/*" class="mb-4">
+            <button onclick="createAccount()">Create Account</button>
+            <p class="mt-2 text-sm">Have an account? <a href="#" onclick="loadAccount()" class="text-blue-400">Load</a></p>
+            <p id="error" class="error"></p>
+        </div>
+        <div id="app" class="app-container">
+            <div class="flex items-center gap-4 mb-4">
+                <img id="userAvatar" class="avatar" src="https://via.placeholder.com/40" alt="Avatar">
+                <h2 id="userInfo" class="font-semibold"></h2>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search" placeholder="Search users to chat..." onkeyup="searchUsers()">
+            </div>
+            <ul id="users" class="user-list"></ul>
+            <div id="chat" class="chat-box"></div>
+            <div class="chat-input">
+                <input type="text" id="message" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+            <div id="status" class="status"></div>
+        </div>
     </div>
 
     <script>
         // Global vars
-        let currentUser = '';
-        let pubnub; // Signaling
-        let localPeer; // WebRTC peer connection
-        let dataChannel; // For messaging
-        let onlineUsers = {}; // {username: socketId}
-        let connectedPeer = null; // Current chat peer
+        let currentUser = { username: '', id: '', photo: '' };
+        let pubnub, localPeer, dataChannel, connectedPeer = null;
+        let onlineUsers = {};
         let typingTimer;
 
-        // Decentralized Account (localStorage)
-        function createAccount() {
-            const uname = document.getElementById('username').value.trim();
-            if (!uname) return alert('Enter a username!');
-            if (localStorage.getItem('decentralUser')) return alert('Account exists! Load it.');
-            localStorage.setItem('decentralUser', uname);
-            startApp(uname);
+        // UUID generator
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+        }
+
+        // Account creation
+        async function createAccount() {
+            const username = document.getElementById('username').value.trim();
+            const photoInput = document.getElementById('photo');
+            const error = document.getElementById('error');
+
+            // Validate username
+            if (username.length < 3) {
+                error.textContent = 'Username must be at least 3 characters';
+                return;
+            }
+            const existingUsers = JSON.parse(localStorage.getItem('quoszUsers') || '[]');
+            if (existingUsers.includes(username)) {
+                error.textContent = 'Username already taken';
+                return;
+            }
+
+            // Handle photo
+            let photo = '';
+            if (photoInput.files[0]) {
+                photo = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsDataURL(photoInput.files[0]);
+                });
+            }
+
+            // Save account
+            currentUser = { username, id: generateUUID(), photo };
+            localStorage.setItem('quoszUser', JSON.stringify(currentUser));
+            localStorage.setItem('quoszUsers', JSON.stringify([...existingUsers, username]));
+            startApp();
         }
 
         function loadAccount() {
-            const uname = localStorage.getItem('decentralUser');
-            if (!uname) return alert('No account found. Create one!');
-            startApp(uname);
+            const user = JSON.parse(localStorage.getItem('quoszUser') || '{}');
+            if (!user.username) {
+                document.getElementById('error').textContent = 'No account found';
+                return;
+            }
+            currentUser = user;
+            startApp();
         }
 
-        function startApp(uname) {
-            currentUser = uname;
-            document.getElementById('login').style.display = 'none';
+        function startApp() {
+            document.getElementById('form').style.display = 'none';
             document.getElementById('app').style.display = 'block';
+            document.getElementById('userInfo').textContent = `${currentUser.username} (${currentUser.id})`;
+            if (currentUser.photo) document.getElementById('userAvatar').src = currentUser.photo;
             initSignaling();
-            updateStatus('Online. Search for users to start chatting.');
+            updateStatus('Online. Search for users to chat.');
         }
 
-        // Signaling with PubNub (free tier)
+        // Signaling
         function initSignaling() {
             pubnub = new PubNub({
-                publishKey: 'demo', // Public demo key
+                publishKey: 'demo',
                 subscribeKey: 'demo',
-                channel: 'decentralchat_signal'
+                channel: 'quosz_signal'
             });
-            pubnub.addListener({
-                message: function(m) {
-                    handleSignal(m.message);
-                }
-            });
-            pubnub.subscribe({ channels: ['decentralchat_signal'] });
+            pubnub.addListener({ message: m => handleSignal(m.message) });
+            pubnub.subscribe({ channels: ['quosz_signal'] });
 
-            // Announce online
             setInterval(() => {
                 pubnub.publish({
-                    channel: 'decentralchat_signal',
-                    message: { type: 'online', user: currentUser, socketId: Date.now() } // Simple ID
-                }, (status) => {});
+                    channel: 'quosz_signal',
+                    message: { type: 'online', user: currentUser, socketId: Date.now() }
+                });
                 updateOnlineUsers();
             }, 5000);
         }
 
         function updateOnlineUsers() {
-            // Simulate fetching online users (in prod, use pubnub presence)
-            // For beta, assume manual refresh or populate from signals
             const usersList = document.getElementById('users');
             usersList.innerHTML = '';
-            Object.keys(onlineUsers).forEach(user => {
-                if (user !== currentUser) {
+            Object.values(onlineUsers).forEach(user => {
+                if (user.username !== currentUser.username) {
                     const li = document.createElement('li');
-                    li.textContent = user;
+                    li.innerHTML = `<img src="${user.photo || 'https://via.placeholder.com/40'}" class="avatar"> ${user.username}`;
                     li.onclick = () => startChat(user);
                     usersList.appendChild(li);
                 }
@@ -116,65 +225,56 @@
 
         function searchUsers() {
             const query = document.getElementById('search').value.toLowerCase();
-            const lis = document.querySelectorAll('#users li');
-            lis.forEach(li => {
+            document.querySelectorAll('.user-list li').forEach(li => {
                 li.style.display = li.textContent.toLowerCase().includes(query) ? 'block' : 'none';
             });
         }
 
-        // Start P2P Chat
+        // WebRTC
         function startChat(targetUser) {
             connectedPeer = targetUser;
-            updateStatus(`Connecting to ${targetUser}...`);
+            updateStatus(`Connecting to ${targetUser.username}...`);
             createPeerConnection();
-            // Send offer via signaling
             pubnub.publish({
-                channel: 'decentralchat_signal',
+                channel: 'quosz_signal',
                 message: { type: 'offer', from: currentUser, to: targetUser, offer: localPeer.localDescription }
             });
         }
 
         function createPeerConnection() {
-            localPeer = new RTCPeerConnection({
-                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] // Free STUN
-            });
-
-            localPeer.onicecandidate = (e) => {
+            localPeer = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+            localPeer.onicecandidate = e => {
                 if (e.candidate) {
                     pubnub.publish({
-                        channel: 'decentralchat_signal',
+                        channel: 'quosz_signal',
                         message: { type: 'ice', from: currentUser, to: connectedPeer, candidate: e.candidate }
                     });
                 }
             };
-
             dataChannel = localPeer.createDataChannel('chat');
             setupDataChannel();
-
-            localPeer.createOffer().then(offer => {
-                localPeer.setLocalDescription(offer);
-            });
+            localPeer.createOffer().then(offer => localPeer.setLocalDescription(offer));
         }
 
         function setupDataChannel() {
             dataChannel.onopen = () => updateStatus('Connected! Chat securely.');
-            dataChannel.onmessage = (e) => {
-                const decrypted = decryptMessage(e.data);
-                addMessage(decrypted, false);
+            dataChannel.onmessage = async e => {
+                const decrypted = await decryptMessage(e.data);
+                if (decrypted !== '...') addMessage(decrypted, false);
                 if (decrypted === '...') showTyping(false);
             };
             dataChannel.onclose = () => updateStatus('Connection closed.');
         }
 
         function handleSignal(msg) {
-            if (msg.to !== currentUser) return;
+            if (msg.to?.username !== currentUser.username) return;
             if (msg.type === 'offer') {
                 createPeerConnection();
                 localPeer.setRemoteDescription(new RTCSessionDescription(msg.offer));
                 localPeer.createAnswer().then(answer => {
                     localPeer.setLocalDescription(answer);
                     pubnub.publish({
-                        channel: 'decentralchat_signal',
+                        channel: 'quosz_signal',
                         message: { type: 'answer', from: currentUser, to: msg.from, answer }
                     });
                 });
@@ -183,28 +283,34 @@
             } else if (msg.type === 'ice') {
                 localPeer.addIceCandidate(new RTCIceCandidate(msg.candidate));
             } else if (msg.type === 'online') {
-                onlineUsers[msg.user] = msg.socketId;
+                onlineUsers[msg.socketId] = msg.user;
                 updateOnlineUsers();
             }
         }
 
-        // E2EE with Web Crypto API
-        async function deriveKey(password) {
+        // E2EE
+        async function deriveKey() {
             const enc = new TextEncoder();
-            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveBits']);
-            return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: enc.encode('decentralchat_salt'), iterations: 100000, hash: 'SHA-256' }, keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw', enc.encode(currentUser.username + connectedPeer.username),
+                { name: 'PBKDF2' }, false, ['deriveBits']
+            );
+            return crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt: enc.encode('quosz_salt'), iterations: 100000, hash: 'SHA-256' },
+                keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+            );
         }
 
         async function encryptMessage(msg) {
-            const key = await deriveKey(currentUser + connectedPeer);
+            const key = await deriveKey();
             const enc = new TextEncoder();
             const iv = crypto.getRandomValues(new Uint8Array(12));
             const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(msg));
-            return btoa(String.fromCharCode(...new Uint8Array([...iv, ...new Uint8Array(encrypted)]))); // Base64 for channel
+            return btoa(String.fromCharCode(...new Uint8Array([...iv, ...new Uint8Array(encrypted)])));
         }
 
         async function decryptMessage(encryptedB64) {
-            const key = await deriveKey(currentUser + connectedPeer);
+            const key = await deriveKey();
             const data = Uint8Array.from(atob(encryptedB64), c => c.charCodeAt(0));
             const iv = data.slice(0, 12);
             const encrypted = data.slice(12);
@@ -212,34 +318,32 @@
             return new TextDecoder().decode(decrypted);
         }
 
-        // UI Helpers
-        function sendMessage() {
+        // UI
+        async function sendMessage() {
             const msg = document.getElementById('message').value.trim();
             if (!msg || !dataChannel || dataChannel.readyState !== 'open') return;
-            encryptMessage(msg).then(encrypted => {
-                dataChannel.send(encrypted);
-                addMessage(msg, true);
-                document.getElementById('message').value = '';
-            });
+            const encrypted = await encryptMessage(msg);
+            dataChannel.send(encrypted);
+            addMessage(msg, true);
+            document.getElementById('message').value = '';
         }
 
         function handleKeyPress(e) {
             if (e.key === 'Enter') sendMessage();
-            // Typing indicator
             clearTimeout(typingTimer);
-            dataChannel?.send(await encryptMessage('...'));
+            dataChannel?.send(encryptMessage('...'));
             typingTimer = setTimeout(() => showTyping(true), 1000);
         }
 
         function showTyping(hide) {
-            if (hide) dataChannel?.send(await encryptMessage(' ')); // Clear
+            if (hide) dataChannel?.send(encryptMessage(' '));
         }
 
         function addMessage(msg, isOwn) {
             const chat = document.getElementById('chat');
             const div = document.createElement('div');
             div.className = `message ${isOwn ? 'own' : ''}`;
-            div.textContent = `${isOwn ? '' : connectedPeer + ': '}${msg}`;
+            div.textContent = `${isOwn ? '' : connectedPeer.username + ': '}${msg}`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
         }
@@ -247,10 +351,6 @@
         function updateStatus(text) {
             document.getElementById('status').textContent = text;
         }
-
-        // Fallback: Manual signaling (if search fails)
-        // Add button in HTML if needed: <button onclick="manualSignal()">Manual Connect</button>
-        // Implement copy-paste offer/answer in console.
     </script>
 </body>
 </html>
