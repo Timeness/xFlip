@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quosz - E2EE Chat</title>
+    <title>Quosz - Decentralized E2EE Chat</title>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.39.0.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,7 +16,12 @@
             justify-content: center; 
             align-items: center; 
             padding: 16px; 
+            animation: fadeIn 0.5s ease-out; 
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         .container { max-width: 800px; width: 100%; }
         .form-container, .app-container { 
             background: #1e293b; 
@@ -24,7 +29,10 @@
             border-radius: 12px; 
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); 
         }
-        .form-container { text-align: center; }
+        .form-container { 
+            text-align: center; 
+            animation: slideUp 0.5s ease-out; 
+        }
         input { 
             background: #334155; 
             color: #e2e8f0; 
@@ -35,9 +43,9 @@
             margin: 8px 0; 
             font-size: 16px; 
             outline: none; 
-            transition: background 0.3s; 
+            transition: background 0.3s ease, transform 0.2s ease; 
         }
-        input:focus { background: #475569; }
+        input:focus { background: #475569; transform: scale(1.02); }
         button { 
             background: #3b82f6; 
             color: white; 
@@ -46,10 +54,11 @@
             border: none; 
             cursor: pointer; 
             font-size: 16px; 
-            transition: background 0.3s; 
+            transition: background 0.3s ease, transform 0.2s ease; 
         }
-        button:hover { background: #2563eb; }
-        .app-container { display: none; }
+        button:hover { background: #2563eb; transform: scale(1.05); }
+        button:active { transform: scale(0.95); }
+        .app-container { display: none; animation: slideUp 0.5s ease-out; }
         .search-bar { 
             display: flex; 
             gap: 8px; 
@@ -65,15 +74,19 @@
             border-radius: 8px; 
             margin: 8px 0; 
             cursor: pointer; 
-            transition: background 0.3s; 
+            transition: background 0.3s ease, transform 0.2s ease, opacity 0.3s ease; 
+            animation: slideIn 0.3s ease-out forwards; 
         }
-        .user-list li:hover { background: #475569; }
+        .user-list li:hover { background: #475569; transform: scale(1.02); }
+        .user-list li.hidden { opacity: 0; height: 0; margin: 0; overflow: hidden; }
         .avatar { 
             width: 40px; 
             height: 40px; 
             border-radius: 50%; 
             object-fit: cover; 
+            transition: transform 0.3s ease; 
         }
+        .avatar:hover { transform: scale(1.1); }
         .chat-box { 
             height: 400px; 
             background: #1e293b; 
@@ -81,17 +94,21 @@
             padding: 16px; 
             overflow-y: auto; 
             margin-bottom: 16px; 
+            scroll-behavior: smooth; 
         }
-        .message { margin: 8px 0; }
+        .message { 
+            margin: 8px 0; 
+            animation: slideIn 0.3s ease-out; 
+        }
         .own { text-align: right; color: #3b82f6; }
-        .typing { font-style: italic; color: #64748b; }
+        .typing { font-style: italic; color: #64748b; animation: pulse 1.5s infinite; }
         .chat-input { 
             display: flex; 
             gap: 8px; 
         }
         .chat-input input { flex: 1; }
-        .status { color: #94a3b8; font-size: 14px; margin-top: 8px; }
-        .error { color: #ef4444; }
+        .status { color: #94a3b8; font-size: 14px; margin-top: 8px; transition: opacity 0.3s ease; }
+        .error { color: #ef4444; animation: slideUp 0.3s ease-out; }
     </style>
 </head>
 <body>
@@ -102,7 +119,7 @@
             <input type="text" id="username" placeholder="Username (min 3 chars)" maxlength="20">
             <input type="file" id="photo" accept="image/*" class="mb-4">
             <button onclick="createAccount()">Create Account</button>
-            <p class="mt-2 text-sm">Have an account? <a href="#" onclick="loadAccount()" class="text-blue-400">Load</a></p>
+            <p class="mt-2 text-sm">Have an account? <a href="#" onclick="loadAccount()" class="text-blue-400 hover:text-blue-300 transition-colors">Load</a></p>
             <p id="error" class="error"></p>
         </div>
         <div id="app" class="app-container">
@@ -213,9 +230,10 @@
         function updateOnlineUsers() {
             const usersList = document.getElementById('users');
             usersList.innerHTML = '';
-            Object.values(onlineUsers).forEach(user => {
+            Object.values(onlineUsers).forEach((user, index) => {
                 if (user.username !== currentUser.username) {
                     const li = document.createElement('li');
+                    li.style.animationDelay = `${index * 0.05}s`;
                     li.innerHTML = `<img src="${user.photo || 'https://via.placeholder.com/40'}" class="avatar"> ${user.username}`;
                     li.onclick = () => startChat(user);
                     usersList.appendChild(li);
@@ -226,7 +244,8 @@
         function searchUsers() {
             const query = document.getElementById('search').value.toLowerCase();
             document.querySelectorAll('.user-list li').forEach(li => {
-                li.style.display = li.textContent.toLowerCase().includes(query) ? 'block' : 'none';
+                const isVisible = li.textContent.toLowerCase().includes(query);
+                li.classList.toggle('hidden', !isVisible);
             });
         }
 
@@ -331,16 +350,29 @@
         function handleKeyPress(e) {
             if (e.key === 'Enter') sendMessage();
             clearTimeout(typingTimer);
-            dataChannel?.send(encryptMessage('...'));
+            dataChannel?.send(encryptMessage('...').then(enc => dataChannel.send(enc)));
             typingTimer = setTimeout(() => showTyping(true), 1000);
         }
 
         function showTyping(hide) {
-            if (hide) dataChannel?.send(encryptMessage(' '));
+            const chat = document.getElementById('chat');
+            let typingEl = chat.querySelector('.typing');
+            if (hide) {
+                if (typingEl) typingEl.remove();
+                return;
+            }
+            if (!typingEl) {
+                typingEl = document.createElement('div');
+                typingEl.className = 'message typing';
+                typingEl.textContent = `${connectedPeer?.username || ''} is typing...`;
+                chat.appendChild(typingEl);
+                chat.scrollTop = chat.scrollHeight;
+            }
         }
 
         function addMessage(msg, isOwn) {
             const chat = document.getElementById('chat');
+            if (chat.querySelector('.typing')) chat.querySelector('.typing').remove();
             const div = document.createElement('div');
             div.className = `message ${isOwn ? 'own' : ''}`;
             div.textContent = `${isOwn ? '' : connectedPeer.username + ': '}${msg}`;
@@ -349,7 +381,12 @@
         }
 
         function updateStatus(text) {
-            document.getElementById('status').textContent = text;
+            const status = document.getElementById('status');
+            status.style.opacity = 0;
+            setTimeout(() => {
+                status.textContent = text;
+                status.style.opacity = 1;
+            }, 300);
         }
     </script>
 </body>
