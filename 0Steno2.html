@@ -1,145 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stego Encode/Decode</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Share Tech Mono', monospace;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stego Stealth v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #050505;
+            --card-bg: #0f0f0f;
+            --accent: #22c55e;
+            --border-color: #1f1f1f;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #e5e7eb;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .next-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            transition: border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .next-card:hover {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .custom-input {
+            background: #141414;
+            border: 1px solid #262626;
+            transition: all 0.3s;
+        }
+
+        .custom-input:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.1);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: translateY(200%);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+        }
+
+        .toast.active { transform: translateY(0); }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #d1d1d1;
+            transform: translateY(-1px);
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+    </style>
 </head>
-<body class="bg-black text-green-400 p-6">
-  <h1 class="text-2xl mb-6">Steganography Encoder / Decoder</h1>
+<body class="antialiased">
 
-  <div class="grid md:grid-cols-2 gap-6">
-    <div class="bg-gray-900 p-4 rounded-xl border border-green-500">
-      <h2 class="text-lg mb-2">Encode File into Image</h2>
-      <input type="file" id="fileInput" class="mb-2 w-full bg-black text-white p-1">
-      <input type="file" id="coverImage" accept="image/*" class="mb-2 w-full bg-black text-white p-1">
-      <button onclick="encodeFile()" class="mt-2 bg-green-700 hover:bg-green-500 text-black px-4 py-2 rounded">Encode & Download</button>
-      <canvas id="canvasEncode" class="hidden"></canvas>
+    <nav class="border-b border-[#1f1f1f] py-4 px-6 flex justify-between items-center backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center font-bold text-black">S</div>
+            <span class="font-bold tracking-tight text-xl">STEGO<span class="text-green-500">LAB</span></span>
+        </div>
+        <div class="hidden md:flex gap-6 text-sm text-gray-400">
+            <a href="#" class="hover:text-white transition">Algorithm</a>
+            <a href="#" class="hover:text-white transition">Encryption</a>
+            <a href="#" class="hover:text-white transition">Github</a>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-12">
+        <div class="text-center mb-16">
+            <h2 class="text-5xl md:text-6xl font-bold tracking-tighter mb-4 text-white">Hide files in plain sight.</h2>
+            <p class="text-gray-400 max-w-xl mx-auto text-lg">Military-grade LSB steganography tool. Pure client-side, your data never leaves your browser.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="next-card p-8 rounded-2xl">
+                <div class="flex items-center justify-between mb-8">
+                    <span class="text-xs font-bold uppercase tracking-widest text-green-500 bg-green-500/10 px-3 py-1 rounded-full">Secure Encode</span>
+                    <svg class="text-gray-600" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 0l-4 4m4-4l4 4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="custom-input p-4 rounded-xl group">
+                        <label class="block text-xs font-semibold text-gray-500 mb-2 uppercase">1. File to hide</label>
+                        <input type="file" id="fileInput" class="text-sm text-gray-400 w-full file:hidden cursor-pointer">
+                    </div>
+
+                    <div class="custom-input p-4 rounded-xl group">
+                        <label class="block text-xs font-semibold text-gray-500 mb-2 uppercase">2. Cover Image</label>
+                        <input type="file" id="coverImage" accept="image/*" class="text-sm text-gray-400 w-full file:hidden cursor-pointer">
+                    </div>
+
+                    <button onclick="encodeFile()" class="btn-primary w-full py-4 rounded-xl shadow-xl shadow-white/5">
+                        Download Encrypted PNG
+                    </button>
+                </div>
+            </div>
+
+            <div class="next-card p-8 rounded-2xl border-blue-500/20">
+                <div class="flex items-center justify-between mb-8">
+                    <span class="text-xs font-bold uppercase tracking-widest text-blue-500 bg-blue-500/10 px-3 py-1 rounded-full">Instant Decode</span>
+                    <svg class="text-gray-600" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a7 7 0 10-14 0v2"/></svg>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="custom-input p-4 rounded-xl border-dashed">
+                        <label class="block text-xs font-semibold text-gray-500 mb-2 uppercase text-center">Drag or Upload Stego Image</label>
+                        <input type="file" id="stegoImage" accept="image/*" class="text-sm text-gray-400 w-full file:hidden cursor-pointer">
+                    </div>
+
+                    <button onclick="decodeFile()" class="w-full bg-[#1a1a1a] border border-[#262626] hover:bg-[#222] py-4 rounded-xl font-semibold transition">
+                        Extract Secret Data
+                    </button>
+
+                    <div id="resultArea" class="hidden animate-in fade-in duration-500">
+                        <div id="loader" class="flex items-center gap-3 text-sm text-gray-500 py-2">
+                            <div class="w-4 h-4 border-2 border-blue-500 border-t-transparent animate-spin rounded-full"></div>
+                            Processing bitstream...
+                        </div>
+                        <div id="downloadBox" class="hidden">
+                            <a id="downloadLink" class="flex items-center justify-between p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm hover:bg-green-500/20 transition cursor-pointer">
+                                <span id="fileNameDisplay" class="truncate font-mono">secret_file.zip</span>
+                                <span class="font-bold underline">Download</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast">
+        <span id="toastMsg" class="text-sm font-medium">Message here</span>
     </div>
 
-    <div class="bg-gray-900 p-4 rounded-xl border border-green-500">
-      <h2 class="text-lg mb-2">Decode File from Image</h2>
-      <input type="file" id="stegoImage" accept="image/*" class="mb-2 w-full bg-black text-white p-1">
-      <button onclick="decodeFile()" class="bg-blue-700 hover:bg-blue-500 text-black px-4 py-2 rounded">Decode</button>
-      <div id="downloadSection" class="mt-4 hidden">
-        <p class="mb-2 text-lime-300">Decoded file:</p>
-        <a id="downloadLink" class="underline text-green-300" target="_blank"></a>
-      </div>
-      <div id="errorSection" class="text-red-500 mt-3 hidden">Decoding failed. Maybe wrong image or too small to hold file.</div>
-      <canvas id="canvasDecode" class="hidden"></canvas>
-    </div>
-  </div>
+    <canvas id="canvas" class="hidden"></canvas>
 
-  <script>
-    function toBinary(str) {
-      return str.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join('');
-    }
+    <script>
+        const END_TAG = "::X_STEGO_END_X::";
 
-    function fromBinary(bin) {
-      return bin.match(/.{1,8}/g).map(b => String.fromCharCode(parseInt(b, 2))).join('');
-    }
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = msg;
+            toast.style.borderLeftColor = type === 'success' ? '#22c55e' : '#ef4444';
+            toast.classList.add('active');
+            setTimeout(() => toast.classList.remove('active'), 3000);
+        }
 
-    function encodeFile() {
-      const file = document.getElementById("fileInput").files[0];
-      const image = document.getElementById("coverImage").files[0];
-      if (!file || !image) return alert("Select both file and image");
+        async function encodeFile() {
+            const file = document.getElementById("fileInput").files[0];
+            const imgFile = document.getElementById("coverImage").files[0];
+            
+            if (!file || !imgFile) return showToast("Select both files first!", "error");
 
-      const reader = new FileReader();
-      reader.onload = fe => {
-        const fileData = btoa(fe.target.result);
-        const fileName = file.name;
-        const combined = fileName + "::" + fileData + "::END";
-        const binary = toBinary(combined);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const payload = file.name + "|" + e.target.result + END_TAG;
+                const bin = payload.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join('');
 
-        const imgReader = new FileReader();
-        imgReader.onload = e => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.getElementById("canvasEncode");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const img = new Image();
+                img.src = URL.createObjectURL(imgFile);
+                img.onload = () => {
+                    const canvas = document.getElementById("canvas");
+                    const ctx = canvas.getContext("2d");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
 
-            if (binary.length > imgData.data.length / 4) {
-              alert("Image too small for this file. Try a bigger image.");
-              return;
-            }
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    if (bin.length > imgData.data.length * 0.75) return showToast("Image too small!", "error");
 
-            for (let i = 0; i < binary.length; i++) {
-              imgData.data[i * 4] = (imgData.data[i * 4] & 0xFE) | parseInt(binary[i]);
-            }
+                    for (let i = 0; i < bin.length; i++) {
+                        let idx = Math.floor(i/3)*4 + (i%3);
+                        imgData.data[idx] = (imgData.data[idx] & 0xFE) | parseInt(bin[i]);
+                    }
 
-            ctx.putImageData(imgData, 0, 0);
-            const link = document.createElement("a");
-            link.download = "stego-image.png";
-            link.href = canvas.toDataURL();
-            link.click();
-          };
-          img.src = e.target.result;
-        };
-        imgReader.readAsDataURL(image);
-      };
-      reader.readAsBinaryString(file);
-    }
+                    ctx.putImageData(imgData, 0, 0);
+                    const link = document.createElement("a");
+                    link.download = `stego_${imgFile.name.split('.')[0]}.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+                    showToast("File Encrypted Successfully!");
+                };
+            };
+        }
 
-    function decodeFile() {
-      document.getElementById("errorSection").classList.add("hidden");
-      document.getElementById("downloadSection").classList.add("hidden");
+        async function decodeFile() {
+            const stegoInput = document.getElementById("stegoImage");
+            if (!stegoInput.files[0]) return showToast("Upload an image first!", "error");
 
-      const file = document.getElementById("stegoImage").files[0];
-      if (!file) return alert("Upload stego image");
+            const resArea = document.getElementById("resultArea");
+            const loader = document.getElementById("loader");
+            const downloadBox = document.getElementById("downloadBox");
 
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.getElementById("canvasDecode");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          let binary = "";
-          let stop = false;
-          for (let i = 0; i < imgData.data.length; i += 4) {
-            binary += (imgData.data[i] & 1);
-            const checkText = fromBinary(binary);
-            if (checkText.includes("::END")) {
-              stop = true;
-              break;
-            }
-            if (i > 1000000) break;
-          }
+            resArea.classList.remove("hidden");
+            loader.classList.remove("hidden");
+            downloadBox.classList.add("hidden");
 
-          if (!stop) {
-            document.getElementById("errorSection").classList.remove("hidden");
-            return;
-          }
+            const img = new Image();
+            img.src = URL.createObjectURL(stegoInput.files[0]);
+            img.onload = () => {
+                const canvas = document.getElementById("canvas");
+                const ctx = canvas.getContext("2d");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
 
-          const text = fromBinary(binary).replace("::END", "");
-          const parts = text.split("::");
-          const fileName = parts[0];
-          const base64 = parts[1];
-          const blob = new Blob([Uint8Array.from(atob(base64), c => c.charCodeAt(0))]);
-          const link = document.getElementById("downloadLink");
-          link.href = URL.createObjectURL(blob);
-          link.download = fileName;
-          link.textContent = "Download " + fileName;
-          document.getElementById("downloadSection").classList.remove("hidden");
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  </script>
+                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                let binary = "";
+                let extracted = "";
+
+                for (let i = 0; i < data.length; i++) {
+                    if ((i + 1) % 4 === 0) continue;
+                    binary += (data[i] & 1);
+
+                    if (binary.length === 8) {
+                        extracted += String.fromCharCode(parseInt(binary, 2));
+                        binary = "";
+                        if (extracted.endsWith(END_TAG)) {
+                            const [name, content] = extracted.replace(END_TAG, "").split("|");
+                            document.getElementById("fileNameDisplay").innerText = name;
+                            document.getElementById("downloadLink").href = content;
+                            document.getElementById("downloadLink").download = name;
+                            
+                            loader.classList.add("hidden");
+                            downloadBox.classList.remove("hidden");
+                            showToast("Decoded successfully!");
+                            return;
+                        }
+                    }
+                    if (extracted.length > 5000000) break;
+                }
+                loader.classList.add("hidden");
+                showToast("No secret data found.", "error");
+            };
+        }
+    </script>
 </body>
 </html>
