@@ -1,92 +1,233 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Steganography Encoder & Decoder for text, audio, video, and files with file disguise." />
-  <meta name="keywords" content="steganography, encoder, decoder, hide files, image steganography, hack style" />
-  <meta name="author" content="You" />
-  <title>StegoX - Encode & Decode Secret Files</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Share Tech Mono', monospace; background-color: #0f0f0f; color: #00ff99; }
-    .tab { display: none; }
-    .active-tab { display: block; }
-    .btn { @apply px-4 py-2 bg-green-500 hover:bg-green-600 text-black rounded shadow; }
-    .input-style { @apply bg-gray-800 text-white p-2 rounded w-full; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stego Pro | Hidden in Plain Sight</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass:hover {
+            border-color: #22c55e;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.1);
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text {
+            background: linear-gradient(to right, #4ade80, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        input[type="file"]::file-selector-button {
+            background: #1e293b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+    </style>
 </head>
-<body class="p-6">
-  <div class="flex space-x-4 mb-6">
-    <button onclick="switchTab('encode')" class="btn">Encode</button>
-    <button onclick="switchTab('decode')" class="btn">Decode</button>
-  </div>  <div id="encode" class="tab active-tab">
-    <h1 class="text-xl mb-4">Stego Encode</h1>
-    <input type="file" id="coverImage" class="input-style mb-2" accept="image/*">
-    <select id="dataType" class="input-style mb-2">
-      <option value="text">Text</option>
-      <option value="file">File</option>
-    </select>
-    <textarea id="textData" placeholder="Enter secret text..." class="input-style mb-2 h-32"></textarea>
-    <input type="file" id="fileData" class="input-style mb-2 hidden">
-    <button onclick="encodeData()" class="btn">Encode and Download</button>
-  </div>  <div id="decode" class="tab">
-    <h1 class="text-xl mb-4">Stego Decode</h1>
-    <input type="file" id="stegoImage" class="input-style mb-2" accept="image/*">
-    <button onclick="decodeData()" class="btn">Decode</button>
-    <div id="output" class="mt-4"></div>
-  </div>  <script>
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active-tab'));
-      document.getElementById(tabId).classList.add('active-tab');
-    }
+<body class="text-slate-200 p-4 md:p-10">
 
-    document.getElementById('dataType').addEventListener('change', e => {
-      const isText = e.target.value === 'text';
-      document.getElementById('textData').classList.toggle('hidden', !isText);
-      document.getElementById('fileData').classList.toggle('hidden', isText);
-    });
+    <div class="max-w-5xl mx-auto">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2 gradient-text">STEGO PRO</h1>
+            <p class="text-slate-400 mono text-sm tracking-widest uppercase">Ultra-Secure LSB Image Steganography</p>
+        </header>
 
-    async function encodeData() {
-      const imgInput = document.getElementById('coverImage');
-      const dataType = document.getElementById('dataType').value;
-      const text = document.getElementById('textData').value;
-      const file = document.getElementById('fileData').files[0];
-      if (!imgInput.files[0]) return alert("Select a cover image");
-      const img = await createImageBitmap(imgInput.files[0]);
-      const canvas = new OffscreenCanvas(img.width, img.height);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      const imgData = ctx.getImageData(0, 0, img.width, img.height);
-      let bytes = dataType === 'text' ? new TextEncoder().encode(text) : new Uint8Array(await file.arrayBuffer());
-      if (bytes.length > imgData.data.length / 4 - 4) return alert("Data too large for image");
-      for (let i = 0; i < bytes.length; i++) imgData.data[i * 4] = bytes[i];
-      imgData.data[bytes.length * 4] = 0;
-      ctx.putImageData(imgData, 0, 0);
-      const blob = await canvas.convertToBlob();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = "encoded.png";
-      a.click();
-    }
+        <div class="grid lg:grid-cols-2 gap-8">
+            <div class="glass p-6 md:p-8 rounded-3xl relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-30 transition-opacity">
+                    <svg width="60" height="60" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                </div>
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="w-2 h-8 bg-green-500 rounded-full"></span> Encode
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-2 uppercase tracking-wider">Step 1: Secret File</label>
+                        <input type="file" id="fileInput" class="w-full bg-black/40 p-2 rounded-xl border border-white/5">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-2 uppercase tracking-wider">Step 2: Cover Image</label>
+                        <input type="file" id="coverImage" accept="image/*" class="w-full bg-black/40 p-2 rounded-xl border border-white/5">
+                    </div>
+                    <button onclick="encodeFile()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-green-900/20 mt-4">
+                        ENCRYPT & SAVE
+                    </button>
+                </div>
+            </div>
 
-    async function decodeData() {
-      const imgInput = document.getElementById('stegoImage');
-      if (!imgInput.files[0]) return alert("Select stego image");
-      const img = await createImageBitmap(imgInput.files[0]);
-      const canvas = new OffscreenCanvas(img.width, img.height);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      const imgData = ctx.getImageData(0, 0, img.width, img.height);
-      let output = [], i = 0;
-      while (imgData.data[i * 4] !== 0) output.push(imgData.data[i * 4]), i++;
-      const blob = new Blob([new Uint8Array(output)]);
-      const mime = new TextDecoder().decode(blob.slice(0, 20)).includes('<') ? 'text/plain' : 'application/octet-stream';
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'decoded';
-      link.click();
-      document.getElementById('output').innerText = `Decoded content type: ${mime}, Size: ${blob.size} bytes.`;
-    }
-  </script></body>
+            <div class="glass p-6 md:p-8 rounded-3xl relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-30 transition-opacity">
+                    <svg width="60" height="60" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                </div>
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="w-2 h-8 bg-blue-500 rounded-full"></span> Decode
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-2 uppercase tracking-wider">Upload Encrypted Image</label>
+                        <input type="file" id="stegoImage" accept="image/*" class="w-full bg-black/40 p-2 rounded-xl border border-white/5">
+                    </div>
+                    <button onclick="decodeFile()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-900/20 mt-4">
+                        EXTRACT HIDDEN FILE
+                    </button>
+
+                    <div id="status" class="mt-4 hidden">
+                        <div id="loader" class="flex justify-center py-4">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
+                        <div id="downloadSection" class="hidden animate-bounce text-center">
+                            <a id="downloadLink" class="inline-block bg-white text-black px-6 py-3 rounded-full font-bold text-sm"></a>
+                        </div>
+                        <div id="errorSection" class="text-red-400 text-center text-sm p-4 bg-red-900/20 rounded-xl hidden border border-red-500/30">
+                            No hidden data found in this image.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-slate-500 text-xs mono">
+            LSB ALGORITHM • 2026 EDITION • PRIVATE & SECURE
+        </footer>
+    </div>
+
+    <canvas id="canvas" class="hidden"></canvas>
+
+    <script>
+        const END_TAG = "::END_STEGO::";
+
+        function toBinary(str) {
+            return str.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join('');
+        }
+
+        async function encodeFile() {
+            const fileInput = document.getElementById("fileInput");
+            const imageInput = document.getElementById("coverImage");
+            
+            if (!fileInput.files[0] || !imageInput.files[0]) return alert("Please select both files.");
+
+            const file = fileInput.files[0];
+            const imgFile = imageInput.files[0];
+
+            // Convert file to Base64
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async (e) => {
+                const base64Data = e.target.result; // This includes MIME type
+                const payload = file.name + "|" + base64Data + END_TAG;
+                const binaryPayload = toBinary(payload);
+
+                const img = new Image();
+                img.src = URL.createObjectURL(imgFile);
+                img.onload = () => {
+                    const canvas = document.getElementById("canvas");
+                    const ctx = canvas.getContext("2d");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const pixels = imgData.data;
+
+                    if (binaryPayload.length > pixels.length / 4 * 3) {
+                        return alert("File too large for this image!");
+                    }
+
+                    // Encode bits into Red, Green, Blue channels (LSB)
+                    for (let i = 0; i < binaryPayload.length; i++) {
+                        // Skip every 4th value (Alpha channel)
+                        let pixelIndex = Math.floor(i / 3) * 4 + (i % 3);
+                        pixels[pixelIndex] = (pixels[pixelIndex] & 0xFE) | parseInt(binaryPayload[i]);
+                    }
+
+                    ctx.putImageData(imgData, 0, 0);
+                    const link = document.createElement("a");
+                    link.download = "encrypted_" + imgFile.name.split('.')[0] + ".png";
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+                };
+            };
+        }
+
+        async function decodeFile() {
+            const stegoInput = document.getElementById("stegoImage");
+            if (!stegoInput.files[0]) return alert("Select an image first.");
+
+            const status = document.getElementById("status");
+            const errorSection = document.getElementById("errorSection");
+            const downloadSection = document.getElementById("downloadSection");
+            const loader = document.getElementById("loader");
+
+            status.classList.remove("hidden");
+            errorSection.classList.add("hidden");
+            downloadSection.classList.add("hidden");
+            loader.classList.remove("hidden");
+
+            const img = new Image();
+            img.src = URL.createObjectURL(stegoInput.files[0]);
+            img.onload = () => {
+                const canvas = document.getElementById("canvas");
+                const ctx = canvas.getContext("2d");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imgData.data;
+
+                let binary = "";
+                let extractedText = "";
+
+                // Extraction loop
+                for (let i = 0; i < pixels.length; i++) {
+                    if ((i + 1) % 4 === 0) continue; // Skip alpha channel
+
+                    binary += (pixels[i] & 1);
+
+                    if (binary.length === 8) {
+                        const char = String.fromCharCode(parseInt(binary, 2));
+                        extractedText += char;
+                        binary = "";
+
+                        if (extractedText.endsWith(END_TAG)) {
+                            const cleanData = extractedText.replace(END_TAG, "");
+                            const [fileName, fileData] = cleanData.split("|");
+                            
+                            const link = document.getElementById("downloadLink");
+                            link.href = fileData;
+                            link.download = fileName;
+                            link.textContent = "🚀 Download: " + fileName;
+                            
+                            loader.classList.add("hidden");
+                            downloadSection.classList.remove("hidden");
+                            return;
+                        }
+                    }
+                    // Safety break
+                    if (extractedText.length > 5000000) break; 
+                }
+
+                loader.classList.add("hidden");
+                errorSection.classList.remove("hidden");
+            };
+        }
+    </script>
+</body>
 </html>
