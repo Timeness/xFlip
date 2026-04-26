@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login Verification</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #ffffff;
+      background-color: #0a0a0a;
+    }
+
+    .wrapper {
+      width: 100%;
+      table-layout: fixed;
+      background-color: #0a0a0a;
+      padding: 40px 0;
+    }
+
+    .container {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 500px;
+      background-color: #141414;
+      border: 1px solid #222;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .header {
+      padding: 30px;
+      text-align: center;
+      background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+      border-bottom: 1px solid #222;
+    }
+
+    .header a {
+      font-size: 1.2em;
+      color: #00bc88;
+      text-decoration: none;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .content {
+      padding: 40px 30px;
+      line-height: 1.6;
+    }
+
+    .salutation {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+
+    .main-text {
+      color: #b0b0b0;
+      font-size: 15px;
+    }
+
+    .otp-container {
+      margin: 35px 0;
+      text-align: center;
+    }
+
+    .otp {
+      background: linear-gradient(90deg, #00bc69 0%, #00bc88 50%, #00bca8 100%);
+      display: inline-block;
+      padding: 15px 40px;
+      color: #ffffff;
+      border-radius: 12px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 8px;
+      box-shadow: 0 10px 20px rgba(0, 188, 136, 0.2);
+    }
+
+    .timer-text {
+      font-size: 0.85em;
+      color: #888;
+      margin-top: 10px;
+      display: block;
+    }
+
+    .warning-box {
+      background-color: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid #00bc88;
+      padding: 15px;
+      margin: 25px 0;
+      font-size: 0.9em;
+      color: #999;
+    }
+
+    .footer-section {
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #222;
+      background-color: #0f0f0f;
+    }
+
+    .footer-links {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .footer-links a {
+      color: #00bc88;
+      text-decoration: none;
+    }
+
+    .copyright {
+      margin-top: 20px;
+      font-size: 11px;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header">
+        <a>Prove Your [App Name] Identity</a>
+      </div>
+
+      <div class="content">
+        <div class="salutation">Dear [Recipient Name],</div>
+        
+        <p class="main-text">
+          We have received a login request for your [App Name] account. For
+          security purposes, please verify your identity by providing the
+          following One-Time Password (OTP).
+          <br /><br />
+          <b>Your One-Time Password (OTP) verification code is:</b>
+        </p>
+
+        <div class="otp-container">
+          <div class="otp">{Insert OTP}</div>
+          <span class="timer-text"><strong>One-Time Password (OTP) is valid for 3 minutes.</strong></span>
+        </div>
+
+        <div class="warning-box">
+          If you did not initiate this login request, please disregard this
+          message. Please ensure the confidentiality of your OTP and do not share
+          it with anyone.<br />
+          <strong>Do not forward or give this code to anyone.</strong>
+        </div>
+
+        <p class="main-text">
+          <strong>Thank you for using [App Name].</strong>
+          <br /><br />
+          Best regards,<br />
+          <strong>[Company Name]</strong>
+        </p>
+      </div>
+
+      <div class="footer-section">
+        <div class="footer-links">
+          <p>This email can't receive replies.</p>
+          <p>
+            For more information about [App Name] and your account, visit
+            <a href="#"><strong>[Name]</strong></a>
+          </p>
+          <p>
+            This email was sent to
+            <a href="mailto:{Email Adress}">{Email Adress}</a>
+          </p>
+          <p>
+            <a href="#">[Company Name]</a> | [Address]
+            | [Address] - [Zip Code/Pin Code], [Country Name]
+          </p>
+        </div>
+        <div class="copyright">
+          &copy; 2023 [Company Name]. All rights reserved.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
